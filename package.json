@@ -1,0 +1,61 @@
+{
+  "name": "cockroach-crawler",
+  "version": "0.1.0",
+  "description": "Public-web crawler for agent workflows with robots.txt, sitemaps, depth limits, filters, markdown extraction, and JSONL output.",
+  "license": "MIT",
+  "author": {
+    "name": "Ajnas",
+    "email": "ajnasnb@gmail.com"
+  },
+  "type": "module",
+  "bin": {
+    "cockroach-crawl": "bin/cockroach-crawl.js",
+    "cockroach-crawler": "bin/cockroach-crawl.js"
+  },
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "assets/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "crawl": "node bin/cockroach-crawl.js"
+  },
+  "keywords": [
+    "crawler",
+    "cockroach-crawler",
+    "agent",
+    "web-crawler",
+    "scraper",
+    "robots.txt",
+    "sitemap",
+    "markdown",
+    "jsonl",
+    "research"
+  ],
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "robots-parser": "^3.0.1",
+    "turndown": "^7.2.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AjnasNB/cockroach-crawler.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AjnasNB/cockroach-crawler/issues"
+  },
+  "homepage": "https://github.com/AjnasNB/cockroach-crawler#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}
