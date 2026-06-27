@@ -1,6 +1,6 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Public-web crawler for agent workflows with robots.txt, sitemaps, depth limits, filters, markdown extraction, and JSONL output.",
   "license": "MIT",
   "author": {
@@ -25,6 +25,8 @@
   ],
   "scripts": {
     "test": "node --test",
+    "check": "npm test && npm run bench",
+    "prepublishOnly": "npm test",
     "bench": "node bench/local-benchmark.mjs",
     "crawl": "node bin/cockroach-crawl.js"
   },

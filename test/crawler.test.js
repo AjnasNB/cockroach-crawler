@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { after, before, test } from "node:test";
-import { crawl, extractPage } from "../src/index.js";
+import { crawl, discoverSitemapUrls, extractPage } from "../src/index.js";
 
 let server;
 let baseUrl;
@@ -14,6 +14,11 @@ before(async () => {
       return;
     }
     if (req.url === "/sitemap.xml") {
+      res.setHeader("content-type", "application/xml");
+      res.end(`<?xml version="1.0"?><sitemapindex><sitemap><loc>${baseUrl}/nested-sitemap.xml</loc></sitemap></sitemapindex>`);
+      return;
+    }
+    if (req.url === "/nested-sitemap.xml") {
       res.setHeader("content-type", "application/xml");
       res.end(`<?xml version="1.0"?><urlset><url><loc>${baseUrl}/about</loc></url></urlset>`);
       return;
@@ -81,4 +86,32 @@ test("crawler can discover sitemap URLs", async () => {
   });
 
   assert.ok(pages.some((page) => page.url.endsWith("/about")));
+});
+
+test("discoverSitemapUrls follows sitemap indexes", async () => {
+  const urls = await discoverSitemapUrls(`${baseUrl}/sitemap.xml`, {
+    userAgent: "CockroachCrawlerTest/1.0",
+    timeoutMs: 15_000,
+    maxBytes: 1024 * 1024,
+    maxSitemapDepth: 3
+  });
+
+  assert.deepEqual(urls, [`${baseUrl}/about`]);
+});
+
+test("crawler validates bad inputs early", async () => {
+  await assert.rejects(
+    () => crawl({ seeds: ["notaurl"] }),
+    /Invalid seed URL/
+  );
+
+  await assert.rejects(
+    () => crawl({ seeds: [`${baseUrl}/`], maxPages: 0 }),
+    /maxPages must be an integer >= 1/
+  );
+
+  await assert.rejects(
+    () => crawl({ seeds: [`${baseUrl}/`], include: ["["] }),
+    /Invalid include regex/
+  );
 });

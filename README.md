@@ -106,6 +106,7 @@ cockroach-crawl https://example.com --contact "mailto:you@example.com"
 - `--output <file>`: write output to a file.
 - `--user-agent <ua>`: custom user agent.
 - `--contact <email/url>`: add contact detail to the default user agent.
+- `--version`: show package version.
 
 ## Library API
 
@@ -151,6 +152,7 @@ console.log(pages[0].markdown);
 ```bash
 npm install
 npm test
+npm run check
 npm run bench
 ```
 

@@ -2,7 +2,7 @@ import * as cheerio from "cheerio";
 import robotsParser from "robots-parser";
 import TurndownService from "turndown";
 
-const DEFAULT_USER_AGENT = "CockroachCrawler/0.1 (+https://github.com/AjnasNB/cockroach-crawler)";
+const DEFAULT_USER_AGENT = "CockroachCrawler/0.1.1 (+https://github.com/AjnasNB/cockroach-crawler)";
 const DEFAULT_MAX_BYTES = 3 * 1024 * 1024;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -37,12 +37,53 @@ function sameOrigin(a, b) {
   return new URL(a).origin === new URL(b).origin;
 }
 
-function compilePatterns(values) {
-  return (values || []).map((value) => new RegExp(value));
+function compilePatterns(values, label) {
+  const list = values == null ? [] : Array.isArray(values) ? values : [values];
+  return list.map((value) => {
+    if (value instanceof RegExp) return value;
+    try {
+      return new RegExp(String(value));
+    } catch (error) {
+      throw new Error(`Invalid ${label} regex "${value}": ${error.message}`);
+    }
+  });
 }
 
 function matchesAny(value, patterns) {
-  return patterns.some((pattern) => pattern.test(value));
+  return patterns.some((pattern) => {
+    pattern.lastIndex = 0;
+    return pattern.test(value);
+  });
+}
+
+function asList(value) {
+  if (value == null) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+function normalizeSeeds(input) {
+  const seeds = [];
+  const invalid = [];
+  for (const seed of asList(input)) {
+    if (typeof seed !== "string" || !isHttpUrl(seed)) {
+      invalid.push(String(seed));
+      continue;
+    }
+    seeds.push(normalizeUrl(seed));
+  }
+
+  if (invalid.length) {
+    throw new Error(`Invalid seed URL(s): ${invalid.join(", ")}. Use absolute http(s) URLs.`);
+  }
+  return [...new Set(seeds)];
+}
+
+function integerOption(value, label, { min }) {
+  const number = Number(value);
+  if (!Number.isInteger(number) || number < min) {
+    throw new Error(`${label} must be an integer >= ${min}.`);
+  }
+  return number;
 }
 
 async function fetchText(url, options) {
@@ -122,10 +163,31 @@ async function loadRobots(origin, options) {
   }
 }
 
-async function discoverSitemapUrls(sitemapUrl, options) {
-  const discovered = [];
+async function discoverSitemapUrls(sitemapUrl, inputOptions = {}, state = {}) {
+  const options = {
+    userAgent: DEFAULT_USER_AGENT,
+    timeoutMs: 15_000,
+    maxBytes: DEFAULT_MAX_BYTES,
+    maxSitemapDepth: 3,
+    ...inputOptions
+  };
+  const seenSitemaps = state.seenSitemaps || new Set();
+  const sitemapDepth = state.depth || 0;
+  let normalizedSitemapUrl;
   try {
-    const { response, text, contentType } = await fetchText(sitemapUrl, {
+    normalizedSitemapUrl = normalizeUrl(sitemapUrl);
+  } catch {
+    return [];
+  }
+  if (seenSitemaps.has(normalizedSitemapUrl) || sitemapDepth > options.maxSitemapDepth) {
+    return [];
+  }
+  seenSitemaps.add(normalizedSitemapUrl);
+
+  const discovered = [];
+  const childSitemaps = [];
+  try {
+    const { response, text, contentType } = await fetchText(normalizedSitemapUrl, {
       ...options,
       accept: "application/xml,text/xml,*/*;q=0.5"
     });
@@ -139,12 +201,18 @@ async function discoverSitemapUrls(sitemapUrl, options) {
     });
     $("sitemap > loc").each((_, el) => {
       const value = $(el).text().trim();
-      if (isHttpUrl(value)) discovered.push(normalizeUrl(value));
+      if (isHttpUrl(value)) childSitemaps.push(normalizeUrl(value));
     });
+    for (const childSitemap of childSitemaps) {
+      discovered.push(...(await discoverSitemapUrls(childSitemap, options, {
+        seenSitemaps,
+        depth: sitemapDepth + 1
+      })));
+    }
   } catch {
     return discovered;
   }
-  return discovered;
+  return [...new Set(discovered)];
 }
 
 function extractLinks($, baseUrl) {
@@ -212,7 +280,7 @@ class CrawlQueue {
 
   shift() {
     if (this.offset >= this.items.length) return null;
-      const value = this.items[this.offset];
+    const value = this.items[this.offset];
     this.offset += 1;
     if (this.offset > 1000 && this.offset * 2 > this.items.length) {
       this.items = this.items.slice(this.offset);
@@ -227,28 +295,27 @@ class CrawlQueue {
 }
 
 export async function crawl(input = {}) {
-  const seeds = (input.seeds || input.urls || [])
-    .map((seed) => (isHttpUrl(seed) ? normalizeUrl(seed) : null))
-    .filter(Boolean);
+  const seeds = normalizeSeeds(input.seeds || input.urls || []);
 
   if (!seeds.length) {
     throw new Error("At least one http(s) seed URL is required.");
   }
 
   const options = {
-    maxPages: input.maxPages ?? 50,
-    concurrency: input.concurrency ?? 4,
+    maxPages: integerOption(input.maxPages ?? 50, "maxPages", { min: 1 }),
+    concurrency: integerOption(input.concurrency ?? 4, "concurrency", { min: 1 }),
     sameOrigin: input.sameOrigin ?? true,
-    maxDepth: input.maxDepth ?? 2,
-    include: compilePatterns(input.include),
-    exclude: compilePatterns(input.exclude),
+    maxDepth: integerOption(input.maxDepth ?? 2, "maxDepth", { min: 0 }),
+    include: compilePatterns(input.include, "include"),
+    exclude: compilePatterns(input.exclude, "exclude"),
     publicOnly: input.publicOnly ?? true,
     includeSitemaps: input.includeSitemaps ?? false,
+    maxSitemapDepth: integerOption(input.maxSitemapDepth ?? 3, "maxSitemapDepth", { min: 0 }),
     obeyRobots: input.obeyRobots ?? true,
     userAgent: input.userAgent || DEFAULT_USER_AGENT,
-    delayMs: input.delayMs ?? 250,
-    timeoutMs: input.timeoutMs ?? 15_000,
-    maxBytes: input.maxBytes ?? DEFAULT_MAX_BYTES,
+    delayMs: integerOption(input.delayMs ?? 250, "delayMs", { min: 0 }),
+    timeoutMs: integerOption(input.timeoutMs ?? 15_000, "timeoutMs", { min: 1 }),
+    maxBytes: integerOption(input.maxBytes ?? DEFAULT_MAX_BYTES, "maxBytes", { min: 1 }),
     onPage: input.onPage || null,
     onError: input.onError || null
   };
@@ -266,6 +333,7 @@ export async function crawl(input = {}) {
   };
   const robotsByOrigin = new Map();
   const lastFetchByOrigin = new Map();
+  const originSchedules = new Map();
   const seedOrigins = new Set(seeds.map((seed) => new URL(seed).origin));
 
   const isAllowedByFilters = (url) => {
@@ -277,8 +345,8 @@ export async function crawl(input = {}) {
   const isPublicUrl = (url) => {
     if (!options.publicOnly) return true;
     const parsed = new URL(url);
-    const banned = /(?:login|signin|sign-in|signup|account|admin|dashboard|checkout|cart|billing|private|wp-admin)/i;
-    return !banned.test(parsed.pathname);
+    const banned = /(?:login|logout|signin|sign-in|signup|auth|account|admin|dashboard|checkout|cart|billing|private|session|password|reset|wp-admin)/i;
+    return !banned.test(`${parsed.pathname}${parsed.search}`);
   };
 
   const enqueue = (url, depth = 0) => {
@@ -322,10 +390,18 @@ export async function crawl(input = {}) {
 
   async function waitForOrigin(url) {
     const origin = new URL(url).origin;
-    const last = lastFetchByOrigin.get(origin) || 0;
-    const waitMs = Math.max(0, last + options.delayMs - Date.now());
-    if (waitMs) await sleep(waitMs);
-    lastFetchByOrigin.set(origin, Date.now());
+    const previous = originSchedules.get(origin) || Promise.resolve();
+    const scheduled = previous.catch(() => {}).then(async () => {
+      const last = lastFetchByOrigin.get(origin) || 0;
+      const waitMs = Math.max(0, last + options.delayMs - Date.now());
+      if (waitMs) await sleep(waitMs);
+      lastFetchByOrigin.set(origin, Date.now());
+    });
+    originSchedules.set(origin, scheduled);
+    await scheduled;
+    if (originSchedules.get(origin) === scheduled) {
+      originSchedules.delete(origin);
+    }
   }
 
   async function worker() {
@@ -352,6 +428,9 @@ export async function crawl(input = {}) {
         }
         stats.fetched += 1;
         if (!/html|xml|text\//i.test(contentType)) {
+          continue;
+        }
+        if (results.length >= options.maxPages) {
           continue;
         }
 
