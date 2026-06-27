@@ -25,6 +25,7 @@
   ],
   "scripts": {
     "test": "node --test",
+    "bench": "node bench/local-benchmark.mjs",
     "crawl": "node bin/cockroach-crawl.js"
   },
   "keywords": [
