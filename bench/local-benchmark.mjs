@@ -64,9 +64,10 @@ try {
   const pages = await crawl({
     seeds: [`${origin}/`],
     maxPages: pageCount,
-    maxDepth: pageCount,
+    maxDepth: Math.min(pageCount, 100),
     concurrency,
     delayMs: 0,
+    allowPrivateNetworks: true,
     includeSitemaps: true
   });
   const elapsedMs = performance.now() - startedAt;

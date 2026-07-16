@@ -1,10 +1,10 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Public-web crawler for agent workflows with robots.txt, sitemaps, depth limits, filters, markdown extraction, and JSONL output.",
   "license": "MIT",
   "author": {
-    "name": "Ajnas",
+    "name": "Ajnas NB",
     "email": "ajnasnb@gmail.com"
   },
   "type": "module",
@@ -13,20 +13,40 @@
     "cockroach-crawler": "bin/cockroach-crawl.js"
   },
   "main": "src/index.js",
+  "types": "types/index.d.ts",
   "exports": {
-    ".": "./src/index.js"
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./agent": {
+      "types": "./types/agent.d.ts",
+      "import": "./src/agent.js",
+      "default": "./src/agent.js"
+    }
   },
   "files": [
     "bin/",
     "src/",
+    "types/",
     "assets/",
+    "docs/RELEASE.md",
+    "docs/DEPENDENCY_LICENSES.md",
+    "docs/PROVENANCE.md",
     "README.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test",
-    "check": "npm test && npm run bench",
-    "prepublishOnly": "npm test",
+    "test": "node --test test/cli.test.js test/crawler.test.js test/limits.test.js test/security.test.js",
+    "test:browser": "node --test browser-test/integration.test.js",
+    "test:types": "node scripts/consumer-types.mjs",
+    "audit:licenses": "node scripts/audit-direct-licenses.mjs",
+    "check": "npm test && npm run test:types && npm run bench && npm run audit:licenses",
+    "release:check": "npm run check && npm run test:browser && npm audit --omit=dev --audit-level=high && npm pack --dry-run --ignore-scripts",
+    "prepublishOnly": "npm run release:check",
     "bench": "node bench/local-benchmark.mjs",
     "crawl": "node bin/cockroach-crawl.js"
   },
@@ -44,11 +64,25 @@
   ],
   "dependencies": {
     "cheerio": "^1.0.0",
+    "ipaddr.js": "^2.4.0",
     "robots-parser": "^3.0.1",
-    "turndown": "^7.2.0"
+    "turndown": "^7.2.0",
+    "undici": "^7.28.0"
+  },
+  "peerDependencies": {
+    "playwright": ">=1.48.0 <2"
+  },
+  "peerDependenciesMeta": {
+    "playwright": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1",
+    "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.18.1"
   },
   "repository": {
     "type": "git",

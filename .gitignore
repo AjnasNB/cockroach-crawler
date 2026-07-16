@@ -2,5 +2,12 @@ node_modules/
 coverage/
 *.tgz
 npm-debug.log*
+.npmrc
+.env
+.env.*
+!.env.example
+!.env.*.example
 .DS_Store
 Thumbs.db
+auth-state*.json
+playwright/.auth/

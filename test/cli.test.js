@@ -85,7 +85,7 @@ test("CLI rejects invalid option values with a friendly error", async () => {
 
 test("CLI writes crawl output to nested JSON file", async () => {
   const output = path.join(tempDir, "nested", "crawl.json");
-  const result = await runCli([baseUrl, "--max-pages", "3", "--delay", "0", "--output", output]);
+  const result = await runCli([baseUrl, "--allow-private-networks", "--max-pages", "3", "--delay", "0", "--output", output]);
   assert.equal(result.code, 0, result.stderr);
 
   const parsed = JSON.parse(await readFile(output, "utf8"));
@@ -95,11 +95,17 @@ test("CLI writes crawl output to nested JSON file", async () => {
 });
 
 test("CLI writes JSONL when requested", async () => {
-  const result = await runCli([baseUrl, "--max-pages", "1", "--delay", "0", "--jsonl"]);
+  const result = await runCli([baseUrl, "--allow-private-networks", "--max-pages", "1", "--delay", "0", "--jsonl"]);
   assert.equal(result.code, 0, result.stderr);
 
   const lines = result.stdout.trim().split(/\r?\n/);
   assert.equal(lines.length, 1);
   const page = JSON.parse(lines[0]);
   assert.equal(page.title, "CLI Home");
+});
+
+test("CLI validates browser options before launching Playwright", async () => {
+  const result = await runCli([baseUrl, "--browser", "--wait-until", "idle-ish", "--allow-private-networks"]);
+  assert.notEqual(result.code, 0);
+  assert.match(result.stderr, /browser\.waitUntil must be one of/);
 });

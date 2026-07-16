@@ -19,22 +19,42 @@ Options:
   --url-file <file>       Read seed URLs from a text file, one URL per line
   --max-pages <n>         Maximum pages to return. Default: 50
   --max-depth <n>         Maximum link depth from seeds. Default: 2
+  --max-requests <n>      Total network-request budget. Default: derived from max-pages
+  --max-duration <ms>     Total crawl deadline. Default: 600000
+  --max-bytes <n>         Maximum decoded bytes per page. Default: 3145728
+  --max-total-bytes <n>   Total decoded-byte budget
+  --max-redirects <n>     Maximum validated redirect hops. Default: 5
   --concurrency <n>       Concurrent workers. Default: 4
   --delay <ms>            Minimum delay per origin. Default: 250
   --timeout <ms>          Request timeout. Default: 15000
   --sitemaps              Discover URLs from robots.txt sitemaps and /sitemap.xml
-  --all-origins           Allow crawling across origins discovered from links
+  --all-origins           Use the explicit --allow-origin allowlist across origins
+  --allow-origin <origin> Permit an HTTP(S) origin. Can be repeated
+  --allow-private-networks
+                          Trust private/loopback networks; metadata/link-local stay blocked
   --include <regex>       Only crawl URLs matching regex. Can be repeated
   --exclude <regex>       Skip URLs matching regex. Can be repeated
-  --allow-non-public      Allow likely login/account/admin/cart URLs
+  --allow-sensitive-paths Allow likely login/account/admin/cart paths
   --jsonl                 Output JSON Lines instead of a JSON array
   --output <file>         Write output to a file
   --user-agent <ua>       Custom user agent
   --contact <email/url>   Add contact detail to the default user agent
+  --browser               Render pages with Playwright before extraction
+  --headed                Launch Playwright with a visible browser window
+  --wait-until <state>    Browser wait state: load, domcontentloaded, networkidle, commit
+  --wait-for <target>     Wait for selector or ms:<number> in browser mode
+  --click <selector>      Click selector in browser mode. Can be repeated
+  --storage-state <file>  Load Playwright storage state for authorized sessions
+  --save-storage-state <file>
+                          Save Playwright storage state after the crawl
+  --browser-channel <id>  Playwright browser channel, for example chrome
+  --browser-executable <path>
+                          Custom browser executable path
   --version               Show package version
   --help                  Show this help
 
-This crawler respects robots.txt by default and does not bypass access controls.
+This crawler enforces robots.txt and public-network policy by default.
+Browser mode requires Playwright installed alongside Cockroach Crawler, plus: npx playwright install chromium
 `);
 }
 
@@ -71,15 +91,28 @@ async function readArgs(argv) {
   const options = {
     maxPages: 50,
     maxDepth: 2,
+    maxRequests: undefined,
+    maxDurationMs: 600_000,
+    maxBytes: 3 * 1024 * 1024,
+    maxTotalBytes: undefined,
+    maxRedirects: 5,
     concurrency: 4,
     delayMs: 250,
     timeoutMs: 15_000,
     includeSitemaps: false,
     sameOrigin: true,
-    publicOnly: true,
+    allowedOrigins: [],
+    allowPrivateNetworks: false,
+    skipSensitivePaths: true,
     jsonl: false,
     output: null,
-    userAgent: undefined
+    userAgent: undefined,
+    browser: null
+  };
+
+  const ensureBrowser = () => {
+    options.browser ||= {};
+    return options.browser;
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -98,6 +131,21 @@ async function readArgs(argv) {
     } else if (arg === "--max-depth") {
       options.maxDepth = parseInteger(readValue(argv, i, "--max-depth"), "--max-depth", 0);
       i += 1;
+    } else if (arg === "--max-requests") {
+      options.maxRequests = parseInteger(readValue(argv, i, "--max-requests"), "--max-requests", 1);
+      i += 1;
+    } else if (arg === "--max-duration") {
+      options.maxDurationMs = parseInteger(readValue(argv, i, "--max-duration"), "--max-duration", 100);
+      i += 1;
+    } else if (arg === "--max-bytes") {
+      options.maxBytes = parseInteger(readValue(argv, i, "--max-bytes"), "--max-bytes", 1024);
+      i += 1;
+    } else if (arg === "--max-total-bytes") {
+      options.maxTotalBytes = parseInteger(readValue(argv, i, "--max-total-bytes"), "--max-total-bytes", 1024);
+      i += 1;
+    } else if (arg === "--max-redirects") {
+      options.maxRedirects = parseInteger(readValue(argv, i, "--max-redirects"), "--max-redirects", 0);
+      i += 1;
     } else if (arg === "--concurrency") {
       options.concurrency = parseInteger(readValue(argv, i, "--concurrency"), "--concurrency", 1);
       i += 1;
@@ -111,14 +159,19 @@ async function readArgs(argv) {
       options.includeSitemaps = true;
     } else if (arg === "--all-origins") {
       options.sameOrigin = false;
+    } else if (arg === "--allow-origin") {
+      options.allowedOrigins.push(readValue(argv, i, "--allow-origin"));
+      i += 1;
+    } else if (arg === "--allow-private-networks") {
+      options.allowPrivateNetworks = true;
     } else if (arg === "--include") {
       include.push(readValue(argv, i, "--include"));
       i += 1;
     } else if (arg === "--exclude") {
       exclude.push(readValue(argv, i, "--exclude"));
       i += 1;
-    } else if (arg === "--allow-non-public") {
-      options.publicOnly = false;
+    } else if (arg === "--allow-sensitive-paths" || arg === "--allow-non-public") {
+      options.skipSensitivePaths = false;
     } else if (arg === "--jsonl") {
       options.jsonl = true;
     } else if (arg === "--output" || arg === "-o") {
@@ -131,6 +184,33 @@ async function readArgs(argv) {
       const contact = readValue(argv, i, "--contact");
       options.userAgent = `CockroachCrawler/${version} (+${contact})`;
       i += 1;
+    } else if (arg === "--browser" || arg === "--rendered") {
+      ensureBrowser();
+    } else if (arg === "--headed") {
+      ensureBrowser().headed = true;
+    } else if (arg === "--wait-until") {
+      ensureBrowser().waitUntil = readValue(argv, i, "--wait-until");
+      i += 1;
+    } else if (arg === "--wait-for") {
+      ensureBrowser().waitFor = readValue(argv, i, "--wait-for");
+      i += 1;
+    } else if (arg === "--click") {
+      const browser = ensureBrowser();
+      browser.click ||= [];
+      browser.click.push(readValue(argv, i, "--click"));
+      i += 1;
+    } else if (arg === "--storage-state") {
+      ensureBrowser().storageState = readValue(argv, i, "--storage-state");
+      i += 1;
+    } else if (arg === "--save-storage-state") {
+      ensureBrowser().saveStorageState = readValue(argv, i, "--save-storage-state");
+      i += 1;
+    } else if (arg === "--browser-channel") {
+      ensureBrowser().channel = readValue(argv, i, "--browser-channel");
+      i += 1;
+    } else if (arg === "--browser-executable") {
+      ensureBrowser().executablePath = readValue(argv, i, "--browser-executable");
+      i += 1;
     } else if (arg.startsWith("-")) {
       throw new Error(`Unknown option: ${arg}`);
     } else {
@@ -140,6 +220,9 @@ async function readArgs(argv) {
 
   options.include = include;
   options.exclude = exclude;
+  if (!options.sameOrigin && !options.allowedOrigins.length) {
+    throw new Error("--all-origins requires at least one --allow-origin entry.");
+  }
   return { urls, options };
 }
 
@@ -181,15 +264,23 @@ async function main() {
     seeds: urls,
     maxPages: options.maxPages,
     maxDepth: options.maxDepth,
+    maxRequests: options.maxRequests,
+    maxDurationMs: options.maxDurationMs,
+    maxBytes: options.maxBytes,
+    maxTotalBytes: options.maxTotalBytes,
+    maxRedirects: options.maxRedirects,
     concurrency: options.concurrency,
     delayMs: options.delayMs,
     timeoutMs: options.timeoutMs,
     includeSitemaps: options.includeSitemaps,
     sameOrigin: options.sameOrigin,
-    publicOnly: options.publicOnly,
+    allowedOrigins: options.allowedOrigins,
+    allowPrivateNetworks: options.allowPrivateNetworks,
+    skipSensitivePaths: options.skipSensitivePaths,
     include: options.include,
     exclude: options.exclude,
     userAgent: options.userAgent,
+    browser: options.browser,
     onError: (failure) => {
       process.stderr.write(`crawl warning: ${failure.url}: ${failure.error}\n`);
     }

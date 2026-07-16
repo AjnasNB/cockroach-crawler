@@ -1,0 +1,37 @@
+# Security policy
+
+## Supported versions
+
+Security fixes are provided for the latest published minor release. Until `0.2.0` is published, the npm `0.1.x` line remains the public release but does not contain the hardened network boundary described here.
+
+Report a suspected vulnerability privately through the GitHub repository's security-advisory form. Do not include credentials, session state, private page content, or cloud metadata in a public issue. If the advisory form is unavailable, contact `ajnasnb@gmail.com` with a minimal reproduction.
+
+## Network boundary
+
+The default HTTP transport permits only absolute, credential-free HTTP(S) URLs whose complete DNS answer set contains public unicast addresses. It rejects loopback, RFC1918/private, IPv6 unique-local, link-local, multicast, unspecified, reserved, benchmarking, carrier-grade NAT, IPv4-mapped private addresses, common metadata hostnames, and known provider/platform addresses. The explicit platform denylist includes AWS IMDS, Azure's `168.63.129.16` host virtual IP/WireServer, Alibaba ECS metadata, and Oracle's legacy metadata endpoint; it remains denied even when private-network crawling is enabled.
+
+`allowPrivateNetworks: true` is a trusted-operator option for intentional loopback/private/unique-local crawling. It never permits link-local, multicast, unspecified, reserved, or metadata ranges. Do not expose this option to untrusted users or model-generated tool input.
+
+The non-browser transport resolves and validates every redirect hop, pins each request to the validated address through an Undici dispatcher, and disables automatic redirects. Seeds, page links, robots files, sitemap documents, sitemap entries, and redirects share the same scheme/origin/network policy.
+
+Robots retrieval fails closed on network failures and every status except successful responses and true absence (`404`/`410`). Robots and sitemap redirect hops retain the recursively decoded sensitive-path policy and are rejected before contact when the policy denies them. The CLI and agent adapter do not expose a robots bypass. The lower-level library retains `obeyRobots: false` only for explicit, trusted use such as local fixtures or owner-authorized crawling.
+
+## Browser boundary
+
+Browser mode registers a BrowserContext-wide HTTP route before creating pages. It never calls `route.continue()` or Playwright's network fetcher: every HTTP(S) `GET` or `HEAD` is fetched with the same DNS validation and one-resolution address pinning as the non-browser transport, then fulfilled into Chromium. This includes top-level and frame navigations, every redirect hop, subresources, and a popup's first request. Robots, scheme, URL length, origin, exclusion, sensitive-path, redirect, request, per-resource byte, total decoded-byte, request-timeout, and total-duration policy is applied before or during every proxy operation. Inclusion patterns select page navigations rather than subresources. Accepted redirect Set-Cookie values are applied to Chromium before the next validated hop, and eligible cookies are recomputed for that target with conservative SameSite handling so source-origin credentials are never forwarded. Because Playwright's additive cookie API bypasses browser response validation, the proxy supports only host-only, unpartitioned cookies. It rejects every `Domain` or `Partitioned` response attribute, validates Secure/HTTPS plus `__Secure-`, `__Host-`, `__Http-`, and `__Host-Http-` invariants, derives RFC default paths, and filters the unscoped cookie jar itself by exact host, path boundary, expiry, Secure, credentials evidence, and SameSite context. SameSite comparison intentionally requires the same scheme and exact host instead of a registrable-domain approximation, so sibling subdomains fail closed as cross-site. Missing ancestry, opaque sandbox origins, and non-navigation requests without a Chromium-emitted Cookie header also fail closed for cookie send/store because Playwright does not expose every browser cookie decision or Fetch credentials mode. Top-level redirects are replayed at their final URL. Cross-origin subresource, frame, and popup redirects are rejected rather than fulfilled at an incorrect origin that could bypass browser CORS rules.
+
+Chromium is also launched behind a local deny-by-default proxy sink. Any browser request that escapes routing is terminated and fails the crawl. Service workers and downloads are blocked; WebSockets are routed without connecting to a server; state-changing HTTP methods are rejected; workers, WebTransport, beacons, and WebRTC/STUN are disabled; and observed popups are closed after their first request has passed through the context route. Browser operations use the remaining total deadline, and cancellation closes the page, context, pinned request, browser, and sink.
+
+The browser remains **not a process or JavaScript sandbox**. Hostile JavaScript can consume CPU or memory and may exploit browser defects. `maxTotalBytes` measures decoded response-body bytes delivered by the pinned proxy, not HTTP headers, compressed wire size, TLS records, or other framing. Rendered DOM bytes are checked separately against `maxBytes`. Prefer the Playwright-bundled Chromium; custom executable paths and channels are trusted-operator options whose behavior must be reviewed. Keep browser work isolated with restricted host egress for untrusted targets as defense in depth.
+
+Storage-state files contain authentication secrets. Keep them outside source control, restrict file permissions, and never accept their path from model/user-controlled agent input. Only `GET` and `HEAD` are proxied, but page JavaScript and explicit clicks can trigger server behavior implemented on unsafe `GET` endpoints. Sensitive-path matching is defense in depth rather than an authorization boundary; use browser actions only on authorized pages with policy and selectors reviewed by an operator.
+
+## Agent and content boundary
+
+The agent adapter validates an exact runtime schema. Unknown fields are rejected, creator limits are upper bounds, politeness delays are creator-controlled, robots remains enabled, private-network access is creator-only, and browser input is rejected unless the creator sets `allowBrowser: true`. Crawl input, creator defaults, authority-bearing arrays, and browser settings are copied from own enumerable data properties into null-prototype snapshots. Inherited authority and accessors are rejected, and later mutation cannot broaden policy. Agent include/exclude values are escaped literal URL fragments, not executable regular expressions.
+
+Crawled HTML, text, links, and Markdown are untrusted data. They can contain indirect prompt injection, malicious instructions, false claims, or sensitive content. Keep tool output in a data/evidence channel, preserve its URL and content hash, and never treat page text as system or developer instructions.
+
+## Resource limits
+
+All numeric controls have hard upper bounds. Crawls enforce seed, request, queue, link-per-page, sitemap-document, URL-length, depth, page-count, per-response byte, total decoded-byte, redirect, retry, concurrency, request-timeout, and total-duration limits. `AbortSignal` cancellation covers DNS, pacing, network operations, asynchronous `onPage`/`onError` callbacks, and browser finalization. `maxPages` and `onPage` are exact under concurrency. JavaScript cannot preempt a callback that performs synchronous CPU work; callbacks are trusted application code and should remain short and non-blocking.
