@@ -34,6 +34,7 @@
 - Cross-origin crawling now requires one or more explicit `--allow-origin` entries.
 - Node.js support is declared as `>=20.18.1`, matching the installed dependency floor.
 - Browser mode requires Playwright `>=1.48.0 <2`, and release/prepublish gates now run the real Chromium suite.
+- Chromium process startup uses the total crawl deadline while network and page operations retain the configured per-request timeout, avoiding false startup failures with strict request budgets.
 - Numeric library and agent options reject booleans and numeric strings instead of coercing them.
 
 ## 0.1.1 - 2026-06-27

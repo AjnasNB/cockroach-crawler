@@ -1125,10 +1125,10 @@ test("browser mode never falls through to Chromium DNS after trusted validation"
     delayMs: 0,
     obeyRobots: false,
     allowPrivateNetworks: true,
-    // Leave enough time for Chromium startup on slower CI runners. The
-    // assertion is about pinned DNS/egress behavior, not a 300 ms deadline.
-    timeoutMs: 2_000,
-    maxDurationMs: 10_000,
+    timeoutMs: 300,
+    // The 300 ms request budget proves the pinning behavior. The larger total
+    // budget only accommodates Chromium startup/teardown under loaded CI hosts.
+    maxDurationMs: 30_000,
     dnsLookup: async () => [{ address: "127.0.0.2", family: 4 }],
     browser: { waitUntil: "domcontentloaded" }
   });

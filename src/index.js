@@ -784,13 +784,17 @@ function isFatalCrawlError(error) {
   ].includes(error?.code) || error?.name === "AbortError";
 }
 
-function remainingBrowserTimeout(options) {
+function remainingCrawlDuration(options) {
   if (options.signal?.aborted) throw abortError(options.signal);
   const remainingMs = options.deadlineAt - Date.now();
   if (remainingMs <= 0) {
     throw limitError("CRAWL_DURATION_LIMIT", `Crawl exceeded maxDurationMs (${options.maxDurationMs}).`);
   }
-  return Math.max(1, Math.min(options.timeoutMs, remainingMs));
+  return Math.max(1, remainingMs);
+}
+
+function remainingBrowserTimeout(options) {
+  return Math.min(options.timeoutMs, remainingCrawlDuration(options));
 }
 
 async function waitForBrowserTarget(page, target, options) {
@@ -1210,7 +1214,10 @@ async function createBrowserFetcher(options, hooks) {
       headless: options.browser.headless,
       channel: options.browser.channel,
       executablePath: options.browser.executablePath,
-      timeout: remainingBrowserTimeout(options),
+      // Browser process startup is bounded by the crawl deadline, not the
+      // per-request timeout. A small network timeout must not make Chromium
+      // startup flaky on slower runners.
+      timeout: remainingCrawlDuration(options),
       proxy: { server: sink.url },
       args: [
         "--proxy-bypass-list=<-loopback>",
