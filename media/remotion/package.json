@@ -1,0 +1,31 @@
+{
+  "name": "cockroach-crawler-release-media",
+  "version": "0.3.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture": "node scripts/capture-evidence.mjs && node scripts/capture-workflow.mjs",
+    "narrate": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-narration.ps1",
+    "captions": "node scripts/generate-captions.mjs",
+    "render:main": "remotion render src/index.ts CockroachCrawlerMain renders/cockroach-crawler-main-60s.mp4 --codec=h264 --audio-codec=aac --crf=18 --pixel-format=yuv420p",
+    "render:cut": "remotion render src/index.ts ProviderServerlessCut renders/cockroach-crawler-providers-serverless-30s.mp4 --codec=h264 --audio-codec=aac --crf=18 --pixel-format=yuv420p",
+    "render:workflow": "remotion render src/index.ts CockroachCrawlerWorkflowProof renders/cockroach-crawler-workflow-proof-45s.mp4 --codec=h264 --audio-codec=aac --crf=18 --pixel-format=yuv420p",
+    "render:vertical": "remotion render src/index.ts ProviderServerlessVerticalShort renders/cockroach-crawler-vertical-short-30s.mp4 --codec=h264 --audio-codec=aac --crf=18 --pixel-format=yuv420p",
+    "render:posters": "remotion still src/index.ts CockroachCrawlerMain renders/cockroach-crawler-main-poster.png --frame=90 && remotion still src/index.ts ProviderServerlessCut renders/cockroach-crawler-providers-serverless-poster.png --frame=390 && remotion still src/index.ts CockroachCrawlerWorkflowProof renders/cockroach-crawler-workflow-proof-poster.png --frame=630 && remotion still src/index.ts ProviderServerlessVerticalShort renders/cockroach-crawler-vertical-short-poster.png --frame=450",
+    "render:all": "npm run render:main && npm run render:cut && npm run render:workflow && npm run render:vertical && npm run render:posters",
+    "validate": "node scripts/validate-renders.mjs"
+  },
+  "dependencies": {
+    "@remotion/media": "4.0.490",
+    "@remotion/transitions": "4.0.490",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "remotion": "4.0.490"
+  },
+  "devDependencies": {
+    "@remotion/cli": "4.0.490",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "typescript": "5.9.3"
+  }
+}

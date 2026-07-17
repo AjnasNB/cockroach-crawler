@@ -1,0 +1,27 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "cockroach-crawler-serverless",
+  "main": "worker.js",
+  "compatibility_date": "2026-07-17",
+  "workers_dev": true,
+  "vars": {
+    "CRAWLER_ALLOWED_ORIGINS": "https://example.com"
+  },
+  "secrets": {
+    "required": ["CRAWLER_API_TOKEN"]
+  },
+  "ratelimits": [
+    {
+      "name": "CRAWLER_RATE_LIMITER",
+      "namespace_id": "310042",
+      "simple": {
+        "limit": 10,
+        "period": 60
+      }
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1
+  }
+}

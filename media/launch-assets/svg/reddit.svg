@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+    <title id="title">A crawler that fails closed.</title>
+    <desc id="desc">Private targets, unsafe redirects, expired budgets, and disallowed routes stop before extraction.</desc>
+    <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07100e"/><stop offset="1" stop-color="#050806"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#426156"/><stop offset=".45" stop-color="#1d312a"/><stop offset="1" stop-color="#0b1512"/></linearGradient>
+    <linearGradient id="metal2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#223c33"/><stop offset="1" stop-color="#0a1411"/></linearGradient>
+    <linearGradient id="beam" x1="0" x2="1"><stop stop-color="#79f2a6" stop-opacity="0"/><stop offset=".5" stop-color="#79f2a6"/><stop offset="1" stop-color="#8cd8e8" stop-opacity="0"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#79f2a6" stop-opacity=".3"/><stop offset="1" stop-color="#79f2a6" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#284139" stroke-width="1" opacity=".32"/></pattern>
+    <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#000" flood-opacity=".55"/></filter>
+  </defs>
+    <rect width="1200" height="900" fill="url(#bg)"/><rect width="1200" height="900" fill="url(#grid)" opacity=".18"/>
+    <path d="M0 27H1200" stroke="#1e3029"/><path d="M0 868.5H1200" stroke="#1e3029"/>
+    <g transform="translate(54 54)">
+    <rect width="34" height="34" rx="6.12" fill="#0e1c17" stroke="#45675c"/>
+    <path d="M6.800000000000001 23.799999999999997V11.56l10.2 6.800000000000001 10.2-6.800000000000001v12.24" fill="none" stroke="#79f2a6" stroke-width="2.72" stroke-linecap="square" stroke-linejoin="miter"/>
+    <circle cx="17" cy="18.36" r="2.55" fill="#8cd8e8"/>
+    <text x="47" y="23.459999999999997" fill="#f1f5f2" font-family="'Arial',sans-serif" font-size="15.979999999999999" font-weight="700" letter-spacing="4.08">COCKROACH CRAWLER</text>
+  </g>
+    <text x="54" y="111.96000000000001" fill="#79f2a6" font-family="'Courier New',monospace" font-size="16" font-weight="700" letter-spacing="2.88">WHAT WE BUILT</text>
+    <text x="54" y="171" fill="#f1f5f2" font-family="'Arial',sans-serif" font-size="72" font-weight="750" letter-spacing="-2.3040000000000003"><tspan x="54" dy="0">A crawler that</tspan><tspan x="54" dy="69.12">fails closed.</tspan></text>
+    <foreignObject x="54" y="295.56" width="1092" height="56.35"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,sans-serif;font-size:23px;line-height:1.42;color:#a7b7b0;max-width:1092px">Private targets, unsafe redirects, expired budgets, and disallowed routes stop before extraction.</div></foreignObject>
+    <g transform="translate(54 365.71)"><rect width="174.464" height="34.8" rx="17.4" fill="#08110e" stroke="#79f2a6" stroke-opacity=".55"/><circle cx="16.24" cy="17.4" r="4.06" fill="#79f2a6"/><text x="28.999999999999996" y="22.619999999999997" fill="#c9d8d2" font-family="'Courier New',monospace" font-size="12.76" letter-spacing="0.40599999999999997">LOCAL DNS PINNING</text></g><g transform="translate(240.064 365.71)"><rect width="174.464" height="34.8" rx="17.4" fill="#08110e" stroke="#8cd8e8" stroke-opacity=".55"/><circle cx="16.24" cy="17.4" r="4.06" fill="#8cd8e8"/><text x="28.999999999999996" y="22.619999999999997" fill="#c9d8d2" font-family="'Courier New',monospace" font-size="12.76" letter-spacing="0.40599999999999997">BOUNDED REDIRECTS</text></g><g transform="translate(426.128 365.71)"><rect width="174.464" height="34.8" rx="17.4" fill="#08110e" stroke="#79f2a6" stroke-opacity=".55"/><circle cx="16.24" cy="17.4" r="4.06" fill="#79f2a6"/><text x="28.999999999999996" y="22.619999999999997" fill="#c9d8d2" font-family="'Courier New',monospace" font-size="12.76" letter-spacing="0.40599999999999997">EXPLICIT CEILINGS</text></g>
+    <g transform="translate(54 396)"><rect width="1092" height="405" fill="#09110e" stroke="#355349"/><svg x="0" y="0" width="1092" height="405" viewBox="0 0 720 600" preserveAspectRatio="xMidYMid meet"><svg viewBox="0 0 720 600" role="img" aria-label="Isometric local crawler gate validating DNS and redirects">
+    <rect width="720" height="600" fill="#07100e"/><rect width="720" height="600" fill="url(#grid)"/><circle cx="360" cy="295" r="280" fill="url(#glow)"/>
+    <ellipse cx="370" cy="500" rx="270" ry="52" fill="#000" opacity=".52" filter="url(#soft)"/>
+  <path d="M62 430 293 299l366 96-234 137z" fill="#08120f" stroke="#355349"/>
+  <path d="M63 430v34l362 98v-30z" fill="#0b1915" stroke="#355349"/>
+  <path d="M425 532v30l234-132v-35z" fill="#07110e" stroke="#355349"/>
+  <path d="M94 420 303 326l318 81-207 101z" fill="#101d19" stroke="#45675c"/>
+  <path d="M105 420 413 507 606 411 300 337z" fill="none" stroke="url(#beam)" stroke-width="5" opacity=".85"/>
+    <g transform="translate(78 328)"><g transform="translate(0 0)">
+    <path d="M0 30.16 70 0 140 30.16 70 58Z" fill="#163027" stroke="#527466"/>
+    <path d="M0 30.16v74l70 27.84V58Z" fill="#0a1713" stroke="#527466"/>
+    <path d="M70 58v74L140 104.16V30.16Z" fill="#0d211a" stroke="#527466"/>
+  </g><circle cx="27" cy="57" r="5" fill="#79f2a6"/><path d="M43 56h54M27 75h76M27 94h43" stroke="#8cd8e8" stroke-width="3"/><text x="15" y="-12" fill="#9db2aa" font-family="monospace" font-size="12">PUBLIC URL</text></g>
+    <g transform="translate(260 145)" filter="url(#shadow)"><g transform="translate(0 55)">
+    <path d="M0 52 120 0 240 52 120 100Z" fill="url(#metal)" stroke="#527466"/>
+    <path d="M0 52v225l120 48V100Z" fill="#0a1713" stroke="#527466"/>
+    <path d="M120 100v225L240 277V52Z" fill="#0d211a" stroke="#527466"/>
+  </g><path d="M35 110V52l84-42 88 23v62" fill="none" stroke="#79f2a6" stroke-width="8"/><path d="M57 103V69l61-30 64 17v29" fill="none" stroke="#20382f" stroke-width="18"/><path d="m91 236 30-15 34 9-32 16z" fill="#79f2a6"/><path d="M91 236v43l32 9v-42z" fill="#285640"/><path d="M123 246v42l32-16v-42z" fill="#17432f"/><circle cx="38" cy="162" r="7" fill="#79f2a6"/><circle cx="38" cy="190" r="7" fill="#79f2a6"/><circle cx="38" cy="218" r="7" fill="#ffb589"/><path d="M56 161h42M56 189h62M56 217h36" stroke="#769189" stroke-width="4"/><text x="55" y="318" fill="#c0d7cd" font-family="monospace" font-size="13" transform="skewY(16)">DNS + REDIRECT GATE</text></g>
+    <g transform="translate(525 330)"><g transform="translate(0 0)">
+    <path d="M0 27.04 65 0 130 27.04 65 52Z" fill="#173128" stroke="#8cd8e8"/>
+    <path d="M0 27.04v64l65 24.96V52Z" fill="#0a1713" stroke="#8cd8e8"/>
+    <path d="M65 52v64L130 91.03999999999999V27.04Z" fill="#0d211a" stroke="#8cd8e8"/>
+  </g><path d="M23 55h72M23 73h55M23 91h82" stroke="#79f2a6" stroke-width="3"/><text x="21" y="-12" fill="#9db2aa" font-family="monospace" font-size="12">RECORD</text></g>
+    <g font-family="monospace" font-size="10" text-anchor="middle"><g transform="translate(206 405)"><rect width="78" height="25" rx="12" fill="#07100e" stroke="#79f2a6"/><text x="39" y="17" fill="#b1f8c9">DNS SET</text></g><g transform="translate(305 431)"><rect width="88" height="25" rx="12" fill="#07100e" stroke="#79f2a6"/><text x="44" y="17" fill="#b1f8c9">REDIRECT</text></g><g transform="translate(410 437)"><rect width="75" height="25" rx="12" fill="#07100e" stroke="#79f2a6"/><text x="37" y="17" fill="#b1f8c9">ROBOTS</text></g></g>
+    <g transform="translate(88 152)"><rect width="128" height="49" fill="#141b19" stroke="#ff8b7b"/><text x="64" y="29" text-anchor="middle" fill="#ffc1ba" font-family="monospace" font-size="11">PRIVATE TARGET</text><path d="m45 7 38 35m0-35L45 42" stroke="#ff8b7b" stroke-width="3"/></g>
+    <text x="35" y="45" fill="#79f2a6" font-family="monospace" font-size="12" letter-spacing="2">HARDENED LOCAL TIER</text><text x="35" y="70" fill="#8da19a" font-family="monospace" font-size="11">validate • resolve • pin • re-check every hop</text>
+  </svg></svg></g>
+    <text x="54" y="869.22" fill="#8da19a" font-family="'Courier New',monospace" font-size="13" letter-spacing=".8">NO CLAIM OF UNIVERSAL SAFETY. THE BOUNDARY IS DOCUMENTED.</text>
+    <text x="1146" y="869.22" text-anchor="end" fill="#79f2a6" font-family="'Courier New',monospace" font-size="13" letter-spacing=".8">COCKROACHCRAWLER.COM</text>
+  </svg>

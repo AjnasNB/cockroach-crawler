@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" role="img" aria-labelledby="title desc"><title id="title">Cockroach Crawler Product Hunt thumbnail</title><desc id="desc">Mechanical policy gate representing bounded public-web crawling.</desc><defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07100e"/><stop offset="1" stop-color="#050806"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#426156"/><stop offset=".45" stop-color="#1d312a"/><stop offset="1" stop-color="#0b1512"/></linearGradient>
+    <linearGradient id="metal2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#223c33"/><stop offset="1" stop-color="#0a1411"/></linearGradient>
+    <linearGradient id="beam" x1="0" x2="1"><stop stop-color="#79f2a6" stop-opacity="0"/><stop offset=".5" stop-color="#79f2a6"/><stop offset="1" stop-color="#8cd8e8" stop-opacity="0"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#79f2a6" stop-opacity=".3"/><stop offset="1" stop-color="#79f2a6" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#284139" stroke-width="1" opacity=".32"/></pattern>
+    <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#000" flood-opacity=".55"/></filter>
+  </defs><rect width="240" height="240" fill="url(#bg)"/><svg x="15" y="10" width="210" height="175" viewBox="0 0 720 600"><svg viewBox="0 0 720 600" role="img" aria-label="Mechanical boundary gate brand mark">
+    <rect width="720" height="600" fill="#07100e"/><rect width="720" height="600" fill="url(#grid)"/><circle cx="360" cy="300" r="280" fill="url(#glow)"/>
+    <g transform="translate(220 105)" filter="url(#shadow)"><g transform="translate(0 70)">
+    <path d="M0 58.24 140 0 280 58.24 140 112Z" fill="url(#metal)" stroke="#527466"/>
+    <path d="M0 58.24v225l140 53.76V112Z" fill="#0a1713" stroke="#527466"/>
+    <path d="M140 112v225L280 283.24V58.24Z" fill="#0d211a" stroke="#527466"/>
+  </g><path d="M42 136V67L139 18l101 27v74" fill="none" stroke="#79f2a6" stroke-width="12"/><path d="M72 126V90l66-34 72 20v32" fill="none" stroke="#20382f" stroke-width="25"/><path d="m103 231 36-18 42 12-40 20z" fill="#79f2a6"/><path d="M103 231v55l38 11v-52z" fill="#285640"/><path d="M141 245v52l40-19v-53z" fill="#17432f"/><circle cx="48" cy="184" r="10" fill="#79f2a6"/><circle cx="48" cy="222" r="10" fill="#8cd8e8"/><circle cx="48" cy="260" r="10" fill="#ffb589"/></g>
+  </svg></svg><text x="120" y="200" text-anchor="middle" fill="#f1f5f2" font-family="Arial" font-size="13" font-weight="800" letter-spacing="2">COCKROACH</text><text x="120" y="218" text-anchor="middle" fill="#79f2a6" font-family="monospace" font-size="10" letter-spacing="2">CRAWLER</text><text x="120" y="232" text-anchor="middle" fill="#8da19a" font-family="monospace" font-size="5.5" letter-spacing=".7">BOUNDED PUBLIC-WEB REACH</text></svg>

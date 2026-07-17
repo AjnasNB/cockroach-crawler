@@ -1,0 +1,122 @@
+[
+  {
+    "id": "github-social-preview",
+    "width": 1280,
+    "height": 640,
+    "motif": "composite",
+    "hook": "GitHub repository preview",
+    "alt": "Crawling with a boundary. Hardened local crawling, a restricted serverless tier, and read-only source adapters."
+  },
+  {
+    "id": "product-hunt-01-two-tiers",
+    "width": 1270,
+    "height": 760,
+    "motif": "tiers",
+    "hook": "Choose the security boundary before the first request.",
+    "alt": "Two crawl tiers. One honest boundary. Use DNS-pinned local crawling for untrusted public URLs. Use the small serverless tier only for origins you own or trust."
+  },
+  {
+    "id": "product-hunt-02-source-doctor",
+    "width": 1270,
+    "height": 760,
+    "motif": "doctor",
+    "hook": "No cookie scraping. Missing credentials stay visible.",
+    "alt": "Know which sources are ready. Run one local doctor command before a workflow touches the public web or a provider API."
+  },
+  {
+    "id": "product-hunt-03-budgets",
+    "width": 1270,
+    "height": 760,
+    "motif": "budgets",
+    "hook": "A crawler should know when to stop.",
+    "alt": "Every discovery path spends a budget. Creator-owned limits cover pages, depth, bytes, requests, concurrency, and deadline."
+  },
+  {
+    "id": "product-hunt-thumbnail",
+    "width": 240,
+    "height": 240,
+    "motif": "thumbnail",
+    "hook": "Product Hunt thumbnail",
+    "alt": "COCKROACH CRAWLER BOUNDED PUBLIC-WEB REACH"
+  },
+  {
+    "id": "x-landscape",
+    "width": 1600,
+    "height": 900,
+    "motif": "local",
+    "hook": "Read-only by default. Evidence stays attributable.",
+    "alt": "Give agents reach— with boundaries. The local tier validates DNS answers, pins the admitted address, and re-checks every redirect hop."
+  },
+  {
+    "id": "x-square",
+    "width": 1080,
+    "height": 1080,
+    "motif": "budgets",
+    "hook": "Open source • Node.js • MIT",
+    "alt": "Crawl wider. Stay bounded. Put hard limits around every discovery path."
+  },
+  {
+    "id": "linkedin",
+    "width": 1200,
+    "height": 627,
+    "motif": "records",
+    "hook": "For developers building evidence-aware agent workflows.",
+    "alt": "Reach that names its boundary. Normalize public pages and read-only provider results into records a workflow can inspect and cite."
+  },
+  {
+    "id": "reddit",
+    "width": 1200,
+    "height": 900,
+    "motif": "local",
+    "hook": "No claim of universal safety. The boundary is documented.",
+    "alt": "A crawler that fails closed. Private targets, unsafe redirects, expired budgets, and disallowed routes stop before extraction."
+  },
+  {
+    "id": "devto-cover",
+    "width": 1000,
+    "height": 420,
+    "motif": "local",
+    "hook": "Dev.to cover",
+    "alt": "Building an agent crawler that fails closed DNS admission, redirect checks, robots, and creator-owned budgets."
+  },
+  {
+    "id": "hashnode-cover",
+    "width": 1600,
+    "height": 840,
+    "motif": "tiers",
+    "hook": "Hashnode cover",
+    "alt": "Two crawl tiers. One explicit security model. A hardened local path for untrusted URLs and a restricted serverless path for owned or trusted origins."
+  },
+  {
+    "id": "medium-cover",
+    "width": 1400,
+    "height": 788,
+    "motif": "records",
+    "hook": "Medium cover",
+    "alt": "From public URL to normalized record. Keep the route, retrieval metadata, extracted content, and source identity visible to the workflow."
+  },
+  {
+    "id": "hackernoon-cover",
+    "width": 1200,
+    "height": 630,
+    "motif": "budgets",
+    "hook": "HackerNoon cover",
+    "alt": "Your crawler should know when to stop. Hard ceilings for pages, depth, bytes, requests, concurrency, and time."
+  },
+  {
+    "id": "youtube-thumbnail",
+    "width": 1280,
+    "height": 720,
+    "motif": "doctor",
+    "hook": "Cockroach Crawler",
+    "alt": "Public-web reach. Checked first. Source doctor → bounded crawl → normalized evidence"
+  },
+  {
+    "id": "readme-proof-still",
+    "width": 1600,
+    "height": 900,
+    "motif": "composite",
+    "hook": "Open source • Node.js • MIT",
+    "alt": "Bound the crawl. Keep the evidence. A policy-aware crawl path for public pages plus read-only adapters for GitHub, YouTube, X, and Reddit."
+  }
+]

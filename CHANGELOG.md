@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.3.0-alpha.1 - 2026-07-18
+
+### Added
+
+- A read-only `cockroach-crawler/sources` registry with immutable capability diagnostics and normalized evidence records.
+- Offline-tested GitHub public/token REST, YouTube oEmbed/Data API, X API v2 bearer, Reddit application-only OAuth, and hardened web-crawler adapters.
+- The `cockroach-sources` CLI with `doctor`, `search`, and `read` commands. Credentials are environment-only and never accepted as CLI flags.
+- Content hashes, adapter versions, warnings, authentication state, and retrieval provenance on normalized source records.
+- A separate `cockroach-crawler/serverless` entry point and Cloudflare Worker template for small, bearer-authenticated, rate-limited crawls of deployment-owned allowlisted HTTPS origins.
+- Worker dry-run bundling and generated-binding type checks through Wrangler.
+
+### Security
+
+- Provider options reject inherited authority, accessors, symbols, unknown keys, control characters, and unsafe result limits.
+- Social providers use documented official API paths and never extract browser cookies or silently fall back to session scraping.
+- Credential values are held in provider closures and excluded from records, doctor output, and typed error details.
+- Serverless requests require an explicit HTTPS origin allowlist and bearer secret; IP literals, localhost, URL credentials, non-HTTPS targets, and cross-origin redirects are denied.
+- Serverless robots failures fail closed and page/request/redirect/byte/depth/time ceilings are enforced.
+- The deployment template requires Cloudflare's Rate Limiting binding and reports the absence of rate limiting as unavailable rather than serving a crawl.
+
+### Known alpha limits
+
+- YouTube transcript retrieval is not implemented; the capability is reported as false.
+- X and Reddit require operator-owned approved credentials. No cookie or unofficial API adapter is bundled.
+- The Worker is a self-host template, not a hosted arbitrary-origin API, and it cannot provide the local CLI's DNS pinning or Playwright boundary.
+- Distributed jobs, proxy rotation, CSS/XPath schemas, PDF/media extraction, and competitor API compatibility remain roadmap work.
+
 ## 0.2.0 - 2026-07-15
 
 ### Added

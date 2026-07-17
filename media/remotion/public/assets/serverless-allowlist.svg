@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-labelledby="title desc">
+  <title id="title">Restricted serverless origin allowlist</title>
+  <desc id="desc">A URL enters an HTTPS origin allowlist, bearer and rate-limit checks, then a restricted HTML fetch. A redirect outside the allowlist is blocked.</desc>
+  <defs>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#17352b" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="tower" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#173c30"/>
+      <stop offset="1" stop-color="#091710"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="520" fill="#06100d"/>
+  <rect width="900" height="520" fill="url(#grid)" opacity=".7"/>
+  <text x="32" y="40" fill="#79f2a6" font-family="Consolas,monospace" font-size="15" letter-spacing="2">RESTRICTED WORKER · URL-ORIGIN POLICY</text>
+  <text x="32" y="66" fill="#96aaa2" font-family="Consolas,monospace" font-size="13">no DNS classification or address pinning claim</text>
+
+  <g transform="translate(48 192)">
+    <polygon points="0,42 92,0 184,42 92,84" fill="#15372c" stroke="#79f2a6" stroke-width="2"/>
+    <polygon points="0,42 92,84 92,156 0,114" fill="#0a1c16" stroke="#3d7560" stroke-width="2"/>
+    <polygon points="92,84 184,42 184,114 92,156" fill="#0d261d" stroke="#3d7560" stroke-width="2"/>
+    <text x="92" y="104" text-anchor="middle" fill="#eff3ed" font-family="Consolas,monospace" font-size="17">HTTPS URL</text>
+  </g>
+
+  <path d="M238 270H330" stroke="#79f2a6" stroke-width="5" stroke-dasharray="12 10"/>
+  <circle cx="285" cy="270" r="8" fill="#79f2a6"/>
+
+  <g transform="translate(330 124)">
+    <polygon points="0,66 120,10 240,66 120,122" fill="#214c3d" stroke="#79f2a6" stroke-width="2"/>
+    <polygon points="0,66 120,122 120,290 0,234" fill="#0b2018" stroke="#3d7560" stroke-width="2"/>
+    <polygon points="120,122 240,66 240,234 120,290" fill="url(#tower)" stroke="#3d7560" stroke-width="2"/>
+    <rect x="44" y="143" width="152" height="46" rx="23" fill="#06100d" stroke="#79f2a6" stroke-width="2"/>
+    <text x="120" y="172" text-anchor="middle" fill="#79f2a6" font-family="Consolas,monospace" font-size="16">ORIGIN ALLOWLIST</text>
+    <rect x="44" y="202" width="70" height="34" rx="17" fill="#06100d" stroke="#8cd8e8"/>
+    <text x="79" y="224" text-anchor="middle" fill="#8cd8e8" font-family="Consolas,monospace" font-size="13">SECRET</text>
+    <rect x="126" y="202" width="70" height="34" rx="17" fill="#06100d" stroke="#8cd8e8"/>
+    <text x="161" y="224" text-anchor="middle" fill="#8cd8e8" font-family="Consolas,monospace" font-size="13">RATE</text>
+  </g>
+
+  <path d="M570 270H660" stroke="#79f2a6" stroke-width="5" stroke-dasharray="12 10"/>
+  <circle cx="615" cy="270" r="8" fill="#79f2a6"/>
+
+  <g transform="translate(660 192)">
+    <polygon points="0,42 92,0 184,42 92,84" fill="#15372c" stroke="#79f2a6" stroke-width="2"/>
+    <polygon points="0,42 92,84 92,156 0,114" fill="#0a1c16" stroke="#3d7560" stroke-width="2"/>
+    <polygon points="92,84 184,42 184,114 92,156" fill="#0d261d" stroke="#3d7560" stroke-width="2"/>
+    <text x="92" y="104" text-anchor="middle" fill="#eff3ed" font-family="Consolas,monospace" font-size="17">HTML FETCH</text>
+  </g>
+
+  <g transform="translate(584 398)">
+    <rect width="270" height="72" rx="8" fill="#17110e" stroke="#ff8b7b" stroke-width="2"/>
+    <path d="M20 18L54 52M54 18L20 52" stroke="#ff8b7b" stroke-width="4"/>
+    <text x="70" y="33" fill="#ff8b7b" font-family="Consolas,monospace" font-size="14">REDIRECT ESCAPE</text>
+    <text x="70" y="54" fill="#ffb589" font-family="Consolas,monospace" font-size="15">BLOCKED BEFORE FETCH</text>
+  </g>
+
+  <g transform="translate(52 410)" font-family="Consolas,monospace" font-size="14">
+    <rect width="126" height="38" rx="19" fill="#071b13" stroke="#79f2a6"/>
+    <text x="63" y="24" text-anchor="middle" fill="#79f2a6">BEARER SECRET</text>
+    <rect x="140" width="112" height="38" rx="19" fill="#071b13" stroke="#79f2a6"/>
+    <text x="196" y="24" text-anchor="middle" fill="#79f2a6">RATE LIMIT</text>
+    <rect x="266" width="96" height="38" rx="19" fill="#071b13" stroke="#79f2a6"/>
+    <text x="314" y="24" text-anchor="middle" fill="#79f2a6">HTML ONLY</text>
+  </g>
+</svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+    <title id="title">Crawling with a boundary.</title>
+    <desc id="desc">Hardened local crawling, a restricted serverless tier, and read-only source adapters.</desc>
+    <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07100e"/><stop offset="1" stop-color="#050806"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#426156"/><stop offset=".45" stop-color="#1d312a"/><stop offset="1" stop-color="#0b1512"/></linearGradient>
+    <linearGradient id="metal2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#223c33"/><stop offset="1" stop-color="#0a1411"/></linearGradient>
+    <linearGradient id="beam" x1="0" x2="1"><stop stop-color="#79f2a6" stop-opacity="0"/><stop offset=".5" stop-color="#79f2a6"/><stop offset="1" stop-color="#8cd8e8" stop-opacity="0"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#79f2a6" stop-opacity=".3"/><stop offset="1" stop-color="#79f2a6" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#284139" stroke-width="1" opacity=".32"/></pattern>
+    <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#000" flood-opacity=".55"/></filter>
+  </defs>
+    <rect width="1280" height="640" fill="url(#bg)"/><rect width="1280" height="640" fill="url(#grid)" opacity=".18"/>
+    <path d="M0 19.2H1280" stroke="#1e3029"/><path d="M0 617.6H1280" stroke="#1e3029"/>
+    <g transform="translate(38 38)">
+    <rect width="28.799999999999997" height="28.799999999999997" rx="5.183999999999999" fill="#0e1c17" stroke="#45675c"/>
+    <path d="M5.76 20.159999999999997V9.792l8.639999999999999 5.76 8.639999999999999-5.76v10.367999999999999" fill="none" stroke="#79f2a6" stroke-width="2.304" stroke-linecap="square" stroke-linejoin="miter"/>
+    <circle cx="14.399999999999999" cy="15.552" r="2.1599999999999997" fill="#8cd8e8"/>
+    <text x="41.8" y="19.871999999999996" fill="#f1f5f2" font-family="'Arial',sans-serif" font-size="13.535999999999998" font-weight="700" letter-spacing="3.4559999999999995">COCKROACH CRAWLER</text>
+  </g>
+    <text x="38" y="127.66720000000002" fill="#79f2a6" font-family="'Courier New',monospace" font-size="13.440000000000001" font-weight="700" letter-spacing="2.4192">OPEN-SOURCE CRAWL CONTROL</text>
+    <text x="38" y="172.8" fill="#f1f5f2" font-family="'Arial',sans-serif" font-size="55.03999999999999" font-weight="750" letter-spacing="-1.7612799999999997"><tspan x="38" dy="0">Crawling with</tspan><tspan x="38" dy="52.83839999999999">a boundary.</tspan></text>
+    <foreignObject x="38" y="268.01919999999996" width="537.6" height="45.47200000000001"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,sans-serif;font-size:18.560000000000002px;line-height:1.42;color:#a7b7b0;max-width:537.6px">Hardened local crawling, a restricted serverless tier, and read-only source adapters.</div></foreignObject>
+    <g transform="translate(38 324.62719999999996)"><rect width="159.2888888888889" height="26.666666666666664" rx="13.333333333333332" fill="#08110e" stroke="#79f2a6" stroke-opacity=".55"/><circle cx="12.444444444444443" cy="13.333333333333332" r="3.1111111111111107" fill="#79f2a6"/><text x="22.22222222222222" y="17.333333333333332" fill="#c9d8d2" font-family="'Courier New',monospace" font-size="9.777777777777777" letter-spacing="0.31111111111111106">DNS-PINNED LOCAL PATH</text></g><g transform="translate(206.17777777777778 324.62719999999996)"><rect width="127.28888888888888" height="26.666666666666664" rx="13.333333333333332" fill="#08110e" stroke="#8cd8e8" stroke-opacity=".55"/><circle cx="12.444444444444443" cy="13.333333333333332" r="3.1111111111111107" fill="#8cd8e8"/><text x="22.22222222222222" y="17.333333333333332" fill="#c9d8d2" font-family="'Courier New',monospace" font-size="9.777777777777777" letter-spacing="0.31111111111111106">EXPLICIT BUDGETS</text></g><g transform="translate(342.35555555555555 324.62719999999996)"><rect width="140.08888888888887" height="26.666666666666664" rx="13.333333333333332" fill="#08110e" stroke="#79f2a6" stroke-opacity=".55"/><circle cx="12.444444444444443" cy="13.333333333333332" r="3.1111111111111107" fill="#79f2a6"/><text x="22.22222222222222" y="17.333333333333332" fill="#c9d8d2" font-family="'Courier New',monospace" font-size="9.777777777777777" letter-spacing="0.31111111111111106">NORMALIZED RECORDS</text></g>
+    <g transform="translate(652.8 76.8)"><rect width="576" height="460.79999999999995" fill="#09110e" stroke="#355349"/><svg x="0" y="0" width="576" height="460.79999999999995" viewBox="0 0 720 600" preserveAspectRatio="xMidYMid meet"><svg viewBox="0 0 720 600" role="img" aria-label="Cockroach Crawler system map from public sources through a bounded gate to normalized records">
+    <rect width="720" height="600" fill="#07100e"/><rect width="720" height="600" fill="url(#grid)"/><circle cx="365" cy="300" r="285" fill="url(#glow)"/>
+    <ellipse cx="370" cy="500" rx="270" ry="52" fill="#000" opacity=".52" filter="url(#soft)"/>
+  <path d="M62 430 293 299l366 96-234 137z" fill="#08120f" stroke="#355349"/>
+  <path d="M63 430v34l362 98v-30z" fill="#0b1915" stroke="#355349"/>
+  <path d="M425 532v30l234-132v-35z" fill="#07110e" stroke="#355349"/>
+  <path d="M94 420 303 326l318 81-207 101z" fill="#101d19" stroke="#45675c"/>
+  <path d="M105 420 413 507 606 411 300 337z" fill="none" stroke="url(#beam)" stroke-width="5" opacity=".85"/>
+    <g transform="translate(65 205)"><g transform="translate(0 0)">
+    <path d="M0 28.080000000000002 67.5 0 135 28.080000000000002 67.5 54Z" fill="#162720" stroke="#527466"/>
+    <path d="M0 28.080000000000002v70l67.5 25.919999999999998V54Z" fill="#0a1713" stroke="#527466"/>
+    <path d="M67.5 54v70L135 98.08V28.080000000000002Z" fill="#0d211a" stroke="#527466"/>
+  </g><circle cx="27" cy="55" r="5" fill="#79f2a6"/><path d="M43 55h50M27 74h68M27 93h42" stroke="#8cd8e8" stroke-width="3"/><text x="14" y="-12" fill="#9db2aa" font-family="monospace" font-size="11">PUBLIC WEB</text></g>
+    <g transform="translate(70 365)"><rect width="133" height="70" fill="#0e1b17" stroke="#45675c"/><text x="17" y="25" fill="#79f2a6" font-family="monospace" font-size="10">READ-ONLY APIs</text><text x="17" y="47" fill="#cbd8d3" font-family="monospace" font-size="9">GH · YT · X · REDDIT</text></g>
+    <g transform="translate(277 135)" filter="url(#shadow)"><g transform="translate(0 54)">
+    <path d="M0 48.88 115 0 230 48.88 115 94Z" fill="url(#metal)" stroke="#527466"/>
+    <path d="M0 48.88v214l115 45.12V94Z" fill="#0a1713" stroke="#527466"/>
+    <path d="M115 94v214L230 262.88V48.88Z" fill="#0d211a" stroke="#527466"/>
+  </g><path d="M35 108V53l80-40 84 22v59" fill="none" stroke="#79f2a6" stroke-width="8"/><path d="M59 101V69l55-27 59 15v29" fill="none" stroke="#20382f" stroke-width="17"/><path d="m86 226 30-15 32 9-31 16z" fill="#79f2a6"/><path d="M86 226v42l31 9v-41z" fill="#285640"/><path d="M117 236v41l31-15v-42z" fill="#17432f"/><circle cx="36" cy="158" r="7" fill="#79f2a6"/><circle cx="36" cy="186" r="7" fill="#8cd8e8"/><circle cx="36" cy="214" r="7" fill="#ffb589"/><text x="57" y="303" fill="#c0d7cd" font-family="monospace" font-size="13" transform="skewY(16)">BOUNDARY GATE</text></g>
+    <g transform="translate(545 288)"><g transform="translate(0 0)">
+    <path d="M0 26 62.5 0 125 26 62.5 50Z" fill="#173128" stroke="#8cd8e8"/>
+    <path d="M0 26v70l62.5 24V50Z" fill="#0a1713" stroke="#8cd8e8"/>
+    <path d="M62.5 50v70L125 96V26Z" fill="#0d211a" stroke="#8cd8e8"/>
+  </g><path d="M22 55h70M22 75h51M22 95h80" stroke="#79f2a6" stroke-width="3"/><text x="16" y="-12" fill="#9db2aa" font-family="monospace" font-size="11">RECORDS</text></g>
+    <path d="M201 289 290 269M201 402l91-62M500 360l51-20" stroke="#79f2a6" stroke-width="4" stroke-dasharray="8 6"/>
+    <g font-family="monospace" font-size="9" text-anchor="middle"><g transform="translate(252 444)"><rect width="96" height="24" rx="12" fill="#07100e" stroke="#79f2a6"/><text x="48" y="16" fill="#b1f8c9">POLICY</text></g><g transform="translate(363 466)"><rect width="96" height="24" rx="12" fill="#07100e" stroke="#79f2a6"/><text x="48" y="16" fill="#b1f8c9">BUDGETS</text></g><g transform="translate(472 447)"><rect width="96" height="24" rx="12" fill="#07100e" stroke="#8cd8e8"/><text x="48" y="16" fill="#b9e7f1">EVIDENCE</text></g></g>
+    <text x="35" y="45" fill="#79f2a6" font-family="monospace" font-size="12" letter-spacing="2">PUBLIC REACH / EXPLICIT BOUNDARY</text><text x="35" y="70" fill="#8da19a" font-family="monospace" font-size="11">admit • fetch • extract • normalize • attribute</text>
+  </svg></svg></g>
+    <text x="38" y="618.34" fill="#8da19a" font-family="'Courier New',monospace" font-size="11.52" letter-spacing=".8">GITHUB REPOSITORY PREVIEW</text>
+    <text x="1242" y="618.34" text-anchor="end" fill="#79f2a6" font-family="'Courier New',monospace" font-size="11.52" letter-spacing=".8">COCKROACHCRAWLER.COM</text>
+  </svg>

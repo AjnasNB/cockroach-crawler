@@ -1,0 +1,9 @@
+{
+  "capturedAt": "2026-07-17T22:54:48.350Z",
+  "mode": "offline-loopback",
+  "files": {
+    "workflow-cli-output.json": "sha256:9c34e3e3425a281aa6d7b22383549db3e291a52ef8cb7d08817bc562915daad0",
+    "workflow-denied.txt": "sha256:579dc8b9ac865e03aa926b41082d466434bc6a5851d6eba99bb16c9ee1a83218",
+    "workflow-normalized-record.json": "sha256:4dda3fc4275379d00669f11a8e342f11c012bb28b6486e37b156c7b8685661b2"
+  }
+}

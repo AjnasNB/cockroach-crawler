@@ -1,0 +1,77 @@
+name: Bug report
+description: Report a reproducible problem in the crawler, source adapters, CLI, or serverless runtime.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Cockroach Crawler. Remove secrets, tokens, cookies, and private URLs from every field.
+        Security vulnerabilities belong in a [private advisory](https://github.com/AjnasNB/cockroach-crawler/security/advisories/new), not this form.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Paste the exact package version or commit SHA.
+      placeholder: 0.3.0-alpha.1
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - Hardened Node.js crawler / CLI
+        - Serverless Worker
+        - Source adapter (web, GitHub, YouTube, X, Reddit)
+        - TypeScript declarations
+        - Packaging or documentation
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime and platform
+      description: Include the Node.js version, operating system, and deployment runtime when applicable.
+      placeholder: Node 24.15.0 on Ubuntu 24.04 / Cloudflare Workers
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: Provide the smallest deterministic commands or code that reproduce the problem. Use a public test target and redact secrets.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include the exact error code or sanitized output. Attach a small fixture if it is required to reproduce the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Note redirects, robots behavior, provider rate limits, and configuration relevant to the failure.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety checks
+      options:
+        - label: I searched existing issues for this problem.
+          required: true
+        - label: I removed credentials, cookies, private URLs, and personal data.
+          required: true
+        - label: This report does not disclose an unpatched security vulnerability.
+          required: true

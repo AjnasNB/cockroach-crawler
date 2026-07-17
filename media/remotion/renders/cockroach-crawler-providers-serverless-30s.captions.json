@@ -1,0 +1,65 @@
+[
+  {
+    "text": "One package, two deliberate surfaces: a hardened local crawler and",
+    "startMs": 200,
+    "endMs": 3017,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "a restricted serverless endpoint.",
+    "startMs": 3017,
+    "endMs": 5833,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Doctor reports web and GitHub ready, YouTube partial, and X",
+    "startMs": 6200,
+    "endMs": 8736,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "and Reddit as credentialed APIs.",
+    "startMs": 8736,
+    "endMs": 11272,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "There is no cookie scraping or credential fallback. Provider status",
+    "startMs": 12200,
+    "endMs": 14765,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "stays explicit.",
+    "startMs": 14765,
+    "endMs": 17330,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Worker requests need an HTTPS allowlist and secret. Redirect escape",
+    "startMs": 18200,
+    "endMs": 20854,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "is blocked.",
+    "startMs": 20854,
+    "endMs": 23509,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "CLI for control. Serverless for small jobs. Both return records.",
+    "startMs": 24200,
+    "endMs": 29689,
+    "timestampMs": null,
+    "confidence": null
+  }
+]

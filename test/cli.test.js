@@ -74,7 +74,7 @@ test("CLI help and version execute successfully", async () => {
 
   const version = await runCli(["--version"]);
   assert.equal(version.code, 0);
-  assert.match(version.stdout.trim(), /^\d+\.\d+\.\d+$/);
+  assert.match(version.stdout.trim(), /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/);
 });
 
 test("CLI rejects invalid option values with a friendly error", async () => {

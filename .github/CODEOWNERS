@@ -1,0 +1,4 @@
+# Publishing and security automation require explicit maintainer review.
+/.github/workflows/ @AjnasNB
+/.github/dependabot.yml @AjnasNB
+/.github/release.yml @AjnasNB

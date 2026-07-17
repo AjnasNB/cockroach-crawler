@@ -1,0 +1,105 @@
+{
+  "fps": 30,
+  "voice": "Microsoft David Desktop",
+  "rate": 2,
+  "compositions": {
+    "main": {
+      "durationSeconds": 60,
+      "audioOffsetFrames": 15,
+      "scenes": [
+        {
+          "startFrame": 0,
+          "durationFrames": 315,
+          "text": "Cockroach Crawler gives agent workflows a bounded path to public web evidence. It is not a browser free-for-all."
+        },
+        {
+          "startFrame": 300,
+          "durationFrames": 315,
+          "text": "The hardened Node CLI validates every seed, DNS answer, redirect, robots rule, and byte budget before network dispatch."
+        },
+        {
+          "startFrame": 600,
+          "durationFrames": 315,
+          "text": "Source doctor reports what is actually available. Web and public GitHub are ready. YouTube is partial. X and Reddit need official credentials."
+        },
+        {
+          "startFrame": 900,
+          "durationFrames": 315,
+          "text": "A separate serverless Worker accepts only allowlisted HTTPS origins, requires a bearer secret, rate limits requests, and fails closed."
+        },
+        {
+          "startFrame": 1200,
+          "durationFrames": 315,
+          "text": "The complete local Node suite passes. A separate one hundred twenty page fixture checks regressions. It is not an industry or global benchmark."
+        },
+        {
+          "startFrame": 1500,
+          "durationFrames": 300,
+          "text": "Use stable zero point two today, or review the zero point three alpha candidate in source. Understand the boundary before you trust the output."
+        }
+      ]
+    },
+    "short": {
+      "durationSeconds": 30,
+      "audioOffsetFrames": 6,
+      "scenes": [
+        {
+          "startFrame": 0,
+          "durationFrames": 192,
+          "text": "One package, two deliberate surfaces: a hardened local crawler and a restricted serverless endpoint."
+        },
+        {
+          "startFrame": 180,
+          "durationFrames": 192,
+          "text": "Doctor reports web and GitHub ready, YouTube partial, and X and Reddit as credentialed APIs."
+        },
+        {
+          "startFrame": 360,
+          "durationFrames": 192,
+          "text": "There is no cookie scraping or credential fallback. Provider status stays explicit."
+        },
+        {
+          "startFrame": 540,
+          "durationFrames": 192,
+          "text": "Worker requests need an HTTPS allowlist and secret. Redirect escape is blocked."
+        },
+        {
+          "startFrame": 720,
+          "durationFrames": 180,
+          "text": "CLI for control. Serverless for small jobs. Both return records."
+        }
+      ]
+    },
+    "workflow": {
+      "durationSeconds": 45,
+      "audioOffsetFrames": 9,
+      "scenes": [
+        {
+          "startFrame": 0,
+          "durationFrames": 285,
+          "text": "This proof starts a deterministic server on loopback. It uses no internet connection, API key, account, or external side effect."
+        },
+        {
+          "startFrame": 270,
+          "durationFrames": 285,
+          "text": "The real command explicitly authorizes loopback and fixes page, depth, request, per-page byte, total-byte, and delay budgets."
+        },
+        {
+          "startFrame": 540,
+          "durationFrames": 285,
+          "text": "The command returns two structured pages with status, depth, and SHA-256 content hashes. The same seed without private-network authority is denied."
+        },
+        {
+          "startFrame": 810,
+          "durationFrames": 285,
+          "text": "Source doctor comes from the same credential-free runtime: web and public GitHub ready, YouTube partial, and X and Reddit requiring credentials."
+        },
+        {
+          "startFrame": 1080,
+          "durationFrames": 270,
+          "text": "The web adapter converts crawler output into normalized records with source, type, adapter version, provenance, metadata, and a separate record hash."
+        }
+      ]
+    }
+  }
+}

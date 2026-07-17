@@ -1,6 +1,6 @@
 # Direct dependency licenses
 
-This is the reviewed direct-dependency snapshot for the `0.2.0` lockfile. From a source checkout, run `npm run audit:licenses` after `npm ci` to verify that installed package versions and SPDX license identifiers still match the lockfile and the project's permissive-license allowlist.
+This is the reviewed direct-dependency snapshot for the `0.3.0-alpha.1` lockfile. From a source checkout, run `npm run audit:licenses` after `npm ci` to verify that installed package versions and SPDX license identifiers still match the lockfile and the project's permissive-license allowlist.
 
 | Package | Resolved version | Relationship | SPDX license |
 | --- | ---: | --- | --- |
@@ -11,5 +11,6 @@ This is the reviewed direct-dependency snapshot for the `0.2.0` lockfile. From a
 | [undici](https://github.com/nodejs/undici) | 7.28.0 | Runtime | MIT |
 | [playwright](https://github.com/microsoft/playwright) | 1.61.1 | Optional peer and development | Apache-2.0 |
 | [typescript](https://github.com/microsoft/TypeScript) | 5.9.3 | Development | Apache-2.0 |
+| [wrangler](https://github.com/cloudflare/workers-sdk) | 4.112.0 | Development / Worker dry-run | MIT OR Apache-2.0 |
 
 This audit covers direct runtime, peer, and development packages only. Transitive dependencies remain governed by their own licenses. Compatible dependency ranges can resolve newer versions for downstream consumers, so license and provenance review must be repeated when the lockfile changes. This inventory is informational and is not legal advice.

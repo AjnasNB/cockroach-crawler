@@ -1,0 +1,40 @@
+WEBVTT
+
+00:00:00.300 --> 00:00:04.438
+This proof starts a deterministic server on loopback. It uses
+
+00:00:04.438 --> 00:00:08.575
+no internet connection, API key, account, or external side effect.
+
+00:00:09.300 --> 00:00:13.339
+The real command explicitly authorizes loopback and fixes page, depth,
+
+00:00:13.339 --> 00:00:17.378
+request, per-page byte, total-byte, and delay budgets.
+
+00:00:18.300 --> 00:00:21.103
+The command returns two structured pages with status, depth, and
+
+00:00:21.103 --> 00:00:23.905
+SHA-256 content hashes. The same seed without private-network authority is
+
+00:00:23.905 --> 00:00:26.708
+denied.
+
+00:00:27.300 --> 00:00:29.767
+Source doctor comes from the same credential-free runtime: web and
+
+00:00:29.767 --> 00:00:32.234
+public GitHub ready, YouTube partial, and X and Reddit requiring
+
+00:00:32.234 --> 00:00:34.701
+credentials.
+
+00:00:36.300 --> 00:00:38.828
+The web adapter converts crawler output into normalized records with
+
+00:00:38.828 --> 00:00:41.357
+source, type, adapter version, provenance, metadata, and a separate record
+
+00:00:41.357 --> 00:00:43.885
+hash.

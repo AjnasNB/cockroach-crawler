@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const packageJson = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
 const lockfile = JSON.parse(await readFile(join(root, 'package-lock.json'), 'utf8'));
-const allowedLicenses = new Set(['MIT', 'Apache-2.0']);
+const allowedLicenses = new Set(['MIT', 'Apache-2.0', 'MIT OR Apache-2.0']);
 const direct = new Map();
 
 for (const [section, label] of [

@@ -7,6 +7,7 @@ import { promisify } from "node:util";
 
 const exec = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const packageManifest = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
 const npmCli = process.env.npm_execpath;
 if (!npmCli) throw new Error("npm_execpath is required; run this check through npm run test:types.");
 const temp = await mkdtemp(path.join(os.tmpdir(), "cockroach-crawler-types-"));
@@ -52,6 +53,15 @@ import {
   createCockroachCrawlerTool,
   type CockroachCrawlerToolInput
 } from "cockroach-crawler/agent";
+import {
+  createSourceRegistry,
+  type SourceRecord,
+  type SourceStatus
+} from "cockroach-crawler/sources";
+import {
+  createServerlessCrawler,
+  type ServerlessCrawlResult
+} from "cockroach-crawler/serverless";
 
 const options: CrawlOptions = {
   seeds: ["https://example.com"],
@@ -72,6 +82,15 @@ const tool = createCockroachCrawlerTool({ maxPages: 2 });
 const input: CockroachCrawlerToolInput = { urls: ["https://example.com"], maxPages: 1 };
 const result = await tool.execute(input);
 result.pages satisfies CrawlPage[];
+
+const sources = createSourceRegistry({ github: {} });
+sources.doctor() satisfies readonly SourceStatus[];
+const sourceResults = await sources.search("github", { query: "crawler", maxResults: 1 });
+sourceResults satisfies readonly SourceRecord[];
+
+const serverless = createServerlessCrawler({ allowedOrigins: ["https://example.com"] });
+const serverlessResult = await serverless.crawl({ url: "https://example.com", maxPages: 1 });
+serverlessResult satisfies ServerlessCrawlResult;
 void page;
 `);
 
@@ -87,7 +106,7 @@ void page;
   await exec(process.execPath, [
     "--input-type=module",
     "--eval",
-    "const root = await import('cockroach-crawler'); const agent = await import('cockroach-crawler/agent'); if (typeof root.crawl !== 'function' || typeof root.resolveUrlTarget !== 'function' || typeof agent.createCockroachCrawlerTool !== 'function') process.exit(1);"
+    "const root = await import('cockroach-crawler'); const agent = await import('cockroach-crawler/agent'); const sources = await import('cockroach-crawler/sources'); const serverless = await import('cockroach-crawler/serverless'); if (typeof root.crawl !== 'function' || typeof root.resolveUrlTarget !== 'function' || typeof agent.createCockroachCrawlerTool !== 'function' || typeof sources.createSourceRegistry !== 'function' || typeof serverless.createServerlessCrawler !== 'function') process.exit(1);"
   ], { cwd: temp, windowsHide: true, maxBuffer: 4 * 1024 * 1024 });
   const installedCli = path.join(temp, "node_modules", "cockroach-crawler", "bin", "cockroach-crawl.js");
   const { stdout: versionOutput } = await exec(process.execPath, [installedCli, "--version"], {
@@ -95,7 +114,9 @@ void page;
     windowsHide: true,
     maxBuffer: 4 * 1024 * 1024
   });
-  if (versionOutput.trim() !== "0.2.0") throw new Error(`Packed CLI returned '${versionOutput.trim()}'.`);
+  if (versionOutput.trim() !== packageManifest.version) {
+    throw new Error(`Packed CLI returned '${versionOutput.trim()}', expected '${packageManifest.version}'.`);
+  }
 
   const tsc = path.join(root, "node_modules", "typescript", "bin", "tsc");
   await readFile(tsc);

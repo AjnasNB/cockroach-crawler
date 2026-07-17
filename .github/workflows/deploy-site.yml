@@ -1,0 +1,48 @@
+name: Deploy website
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cockroach-crawler-website-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Verify and deploy Cloudflare Worker assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: website-production
+      url: https://cockroachcrawler.com
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - name: Install exact dependencies
+        run: npm ci --ignore-scripts
+      - name: Build and verify the website
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm --prefix website run build
+          npm --prefix website run check
+      - name: Deploy immutable repository content
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${CLOUDFLARE_API_TOKEN}"
+          test -n "${CLOUDFLARE_ACCOUNT_ID}"
+          npx wrangler deploy --config website/wrangler.jsonc

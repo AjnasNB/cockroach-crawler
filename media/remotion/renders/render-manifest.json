@@ -1,0 +1,41 @@
+{
+  "validatedAt": "2026-07-17T23:26:17.262Z",
+  "assets": {
+    "cockroach-crawler-main-60s": {
+      "durationSeconds": 60,
+      "width": 1920,
+      "height": 1080,
+      "videoCodec": "h264",
+      "audioCodec": "aac",
+      "sizeBytes": 6040736,
+      "sha256": "5b64a9fc53eb72385091ca9638b0a6a4cd4fcef493fd5addcbf3105a6a6517e7"
+    },
+    "cockroach-crawler-providers-serverless-30s": {
+      "durationSeconds": 30,
+      "width": 1920,
+      "height": 1080,
+      "videoCodec": "h264",
+      "audioCodec": "aac",
+      "sizeBytes": 3096713,
+      "sha256": "bf261f49888ad442711d4fa85c3c89fa8ff316880b7a7529835731cc6b79d7fb"
+    },
+    "cockroach-crawler-workflow-proof-45s": {
+      "durationSeconds": 45,
+      "width": 1920,
+      "height": 1080,
+      "videoCodec": "h264",
+      "audioCodec": "aac",
+      "sizeBytes": 3924716,
+      "sha256": "df5831499ad9fa369b0d86a139072a1e6cc7cad37523a62b983156d072eded0c"
+    },
+    "cockroach-crawler-vertical-short-30s": {
+      "durationSeconds": 30,
+      "width": 1080,
+      "height": 1920,
+      "videoCodec": "h264",
+      "audioCodec": "aac",
+      "sizeBytes": 3445608,
+      "sha256": "c75dbffdb4b88def6a25e9d9509c6a183fb94bbb892ec2ae1fd4b02c77d71f6a"
+    }
+  }
+}
