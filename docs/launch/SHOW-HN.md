@@ -53,9 +53,9 @@ I chose to label the serverless tier's missing DNS pinning in its returned runti
 
 ## Response bank
 
-### “Why not Firecrawl, Crawl4AI, Crawlee, or Scrapy?”
+### “When should I use a larger crawling platform?”
 
-Those are broader products and may be the better choice for hosted extraction, distributed queues, proxy management, or advanced browser workflows. This project is deliberately smaller: a compact Node boundary with explicit origins, strict budgets, read-only provider adapters, and portable records. The README names those tradeoffs rather than ranking the projects.
+Use a larger platform when you need managed extraction, distributed queues, proxy infrastructure, or advanced browser orchestration. Cockroach Crawler is a compact Node boundary with explicit origins, strict budgets, read-only provider adapters, and portable records.
 
 ### “Can it read X or Reddit without credentials?”
 

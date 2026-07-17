@@ -63,7 +63,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/cli.test.js test/crawler.test.js test/limits.test.js test/security.test.js test/sources.test.js test/serverless.test.js",
+    "test": "node --test test/cli.test.js test/crawler.test.js test/limits.test.js test/security.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
     "test:browser": "node --test browser-test/integration.test.js",
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",

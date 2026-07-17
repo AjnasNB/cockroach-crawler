@@ -146,6 +146,48 @@ test("GitHub provider normalizes public REST search and read results", async () 
   assert.throws(() => { readResult.metadata.stars = 99; }, TypeError);
 });
 
+test("GitHub provider searches issues through the public REST issue endpoint", async () => {
+  let requestCount = 0;
+  const registry = createSourceRegistry({
+    fetch: async (value, init = {}) => {
+      requestCount += 1;
+      const url = new URL(value);
+      assert.equal(url.hostname, "api.github.com");
+      assert.equal(url.pathname, "/search/issues");
+      assert.equal(url.searchParams.get("q"), "is:issue crawler");
+      assert.equal(url.searchParams.get("per_page"), "2");
+      assert.equal(init.headers.authorization, undefined);
+      return json({
+        items: [{
+          id: 314,
+          title: "Document the bounded crawl contract",
+          html_url: "https://github.com/example/project/issues/17",
+          body: "An offline issue-search fixture.",
+          user: { login: "maintainer" },
+          created_at: "2025-04-05T06:07:08Z",
+          state: "open",
+          comments: 3,
+          repository_url: "https://api.github.com/repos/example/project"
+        }]
+      });
+    }
+  });
+
+  const [issue] = await registry.search("github", {
+    query: "is:issue crawler",
+    kind: "issues",
+    maxResults: 2
+  });
+  assert.equal(requestCount, 1);
+  assert.equal(issue.type, "issue");
+  assert.equal(issue.title, "Document the bounded crawl contract");
+  assert.equal(issue.author, "maintainer");
+  assert.equal(issue.metadata.state, "open");
+  assert.equal(issue.metadata.comments, 3);
+  assert.equal(issue.metadata.repositoryUrl, "https://api.github.com/repos/example/project");
+  assert.equal(issue.provenance.authenticated, false);
+});
+
 test("YouTube separates public metadata reads, keyed search, and transcripts", async () => {
   const publicRegistry = createSourceRegistry({
     fetch: async (value) => {
@@ -211,6 +253,60 @@ test("YouTube separates public metadata reads, keyed search, and transcripts", a
   );
 });
 
+test("YouTube keyed reads normalize video details and reject a missing video", async () => {
+  const observedRequests = [];
+  const registry = createSourceRegistry({
+    youtube: { apiKey: "private-fixture-key" },
+    fetch: async (value, init = {}) => {
+      const url = new URL(value);
+      observedRequests.push({ url, init });
+      assert.equal(url.hostname, "www.googleapis.com");
+      assert.equal(url.pathname, "/youtube/v3/videos");
+      assert.equal(url.searchParams.get("part"), "snippet,contentDetails,statistics");
+      assert.equal(url.searchParams.has("key"), false);
+      assert.equal(init.headers["x-goog-api-key"], "private-fixture-key");
+      if (url.searchParams.get("id") === "missing0000") return json({ items: [] });
+      return json({
+        items: [{
+          id: "abcdefghijk",
+          snippet: {
+            title: "Keyed metadata fixture",
+            description: "Deterministic video details.",
+            channelTitle: "Fixture channel",
+            channelId: "fixture-channel-id",
+            publishedAt: "2025-05-06T07:08:09Z"
+          },
+          contentDetails: { duration: "PT2M3S" },
+          statistics: {
+            viewCount: "1200",
+            likeCount: "45",
+            commentCount: "6"
+          }
+        }]
+      });
+    }
+  });
+
+  const [video] = await registry.read("youtube", "abcdefghijk");
+  assert.equal(video.title, "Keyed metadata fixture");
+  assert.equal(video.author, "Fixture channel");
+  assert.equal(video.metadata.duration, "PT2M3S");
+  assert.equal(video.metadata.views, "1200");
+  assert.equal(video.metadata.transcriptAvailable, false);
+  assert.equal(video.provenance.authenticated, false);
+  assert.equal(video.provenance.credentialed, true);
+  assert.equal(JSON.stringify(video).includes("private-fixture-key"), false);
+
+  await assert.rejects(
+    registry.read("youtube", "missing0000"),
+    (error) => error instanceof SourceAccessError
+      && error.code === "SOURCE_NOT_FOUND"
+      && error.details.provider === "youtube"
+      && !JSON.stringify(error).includes("private-fixture-key")
+  );
+  assert.equal(observedRequests.length, 2);
+});
+
 test("X provider requires official bearer configuration and never serializes it", async () => {
   await assert.rejects(
     createSourceRegistry().search("x", { query: "crawler" }),
@@ -231,6 +327,50 @@ test("X provider requires official bearer configuration and never serializes it"
   assert.equal(authorization, "Bearer fixture-bearer");
   assert.equal(result.author, "maintainer");
   assert.equal(JSON.stringify(result).includes("fixture-bearer"), false);
+});
+
+test("X provider reads one official API post and rejects a missing post", async () => {
+  const observedRequests = [];
+  const registry = createSourceRegistry({
+    x: { bearerToken: "fixture-bearer" },
+    fetch: async (value, init = {}) => {
+      const url = new URL(value);
+      observedRequests.push({ url, init });
+      assert.equal(url.hostname, "api.x.com");
+      assert.equal(init.headers.authorization, "Bearer fixture-bearer");
+      assert.equal(url.searchParams.get("expansions"), "author_id");
+      if (url.pathname.endsWith("/404404404")) return json({ data: null });
+      return json({
+        data: {
+          id: "1893456789012345678",
+          text: "One deterministic crawler post",
+          author_id: "user-1",
+          conversation_id: "1893456789012345678",
+          created_at: "2025-06-07T08:09:10Z",
+          public_metrics: { like_count: 8, reply_count: 2 }
+        },
+        includes: { users: [{ id: "user-1", username: "fixture_author" }] }
+      });
+    }
+  });
+
+  const [post] = await registry.read("x", "https://x.com/fixture_author/status/1893456789012345678");
+  assert.equal(post.id, "1893456789012345678");
+  assert.equal(post.author, "fixture_author");
+  assert.equal(post.url, "https://x.com/fixture_author/status/1893456789012345678");
+  assert.equal(post.metadata.metrics.like_count, 8);
+  assert.equal(post.provenance.authenticated, true);
+  assert.equal(post.provenance.credentialed, true);
+  assert.equal(JSON.stringify(post).includes("fixture-bearer"), false);
+
+  await assert.rejects(
+    registry.read("x", "404404404"),
+    (error) => error instanceof SourceAccessError
+      && error.code === "SOURCE_NOT_FOUND"
+      && error.details.provider === "x"
+      && !JSON.stringify(error).includes("fixture-bearer")
+  );
+  assert.equal(observedRequests.length, 2);
 });
 
 test("Reddit provider uses application-only OAuth, caches the token, and normalizes posts", async () => {
@@ -280,6 +420,29 @@ test("Reddit provider uses application-only OAuth, caches the token, and normali
   assert.equal(readResult.metadata.commentsSample[0].id, "comment-1");
   assert.equal(tokenRequests, 1);
   assert.equal(JSON.stringify(first).includes("access-token"), false);
+});
+
+test("Reddit denies search and read before dispatch when application credentials are missing", async () => {
+  let requestCount = 0;
+  const registry = createSourceRegistry({
+    fetch: async () => {
+      requestCount += 1;
+      throw new Error("Reddit transport must not run without credentials.");
+    }
+  });
+  const isMissingCredentials = (error) => error instanceof SourceAccessError
+    && error.code === "SOURCE_NOT_CONFIGURED"
+    && error.details.provider === "reddit";
+
+  await assert.rejects(
+    registry.search("reddit", { query: "crawler", maxResults: 1 }),
+    isMissingCredentials
+  );
+  await assert.rejects(
+    registry.read("reddit", "abc123"),
+    isMissingCredentials
+  );
+  assert.equal(requestCount, 0);
 });
 
 test("web provider routes an explicit URL through the hardened crawler", async (t) => {

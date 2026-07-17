@@ -53,13 +53,12 @@ Run this checklist against every release note, page, screenshot, video, article,
 - [ ] No benchmark is called a global standard, certification, SLA, capacity result, or universal competitor ranking.
 - [ ] No “fastest,” “safest,” “best,” “perfect,” “unstoppable,” “zero risk,” or “production ready for everyone” language appears.
 
-## Competitive and provenance claims
+## Compatibility and provenance claims
 
-- [ ] The project is described as narrower than distributed or hosted crawler platforms.
-- [ ] No feature-parity claim is made with Agent Reach, Firecrawl, Crawl4AI, Crawlee, Scrapy, or any managed product.
+- [ ] Every advertised provider and runtime capability has a linked implementation or test.
 - [ ] No partnership, certification, endorsement, or compatibility claim is implied without written evidence.
 - [ ] Third-party code, assets, fonts, audio, and fixtures have reviewed licenses and attribution where required.
-- [ ] Product inspiration is not rewritten as source-code provenance.
+- [ ] Vendored or adapted material records its exact source revision, license, modifications, and notices.
 
 ## Media integrity
 

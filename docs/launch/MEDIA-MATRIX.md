@@ -94,7 +94,7 @@ Both use the same truthful provider/serverless narration. The vertical render is
 
 - Burn readable captions into social cuts; include a separate WebVTT track for YouTube and the website player.
 - Use sentence case, at most two caption lines, and approximately 32–42 characters per line.
-- Narration must not say “all sources,” “entire internet,” “zero risk,” “production safe,” or “perfect.”
+- Narration must match the capability manifest and the exact evidence shown on screen.
 - Record terminal output from deterministic local fixtures. Do not expose environment variables, home paths, access tokens, cookies, or browser storage state.
 - Keep music at least 18 dB below speech and license every audio asset for commercial reuse.
 - Provide a silent-readable version: every claim must remain understandable from titles, diagrams, and captions.

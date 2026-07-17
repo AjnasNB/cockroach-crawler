@@ -55,9 +55,7 @@ Useful for RAG ingestion, docs indexing, QA, and research traces.
 
 **7/8**
 
-This is not a hosted search index, proxy network, CAPTCHA solver, stealth browser, or “entire internet” promise.
-
-Broader crawlers may be a better fit for distributed queues, managed extraction, or advanced automation.
+Use the hardened local tier for address-level controls. Use the restricted serverless tier for a small deployment-owned origin set. Both return the same evidence-oriented records.
 
 **8/8**
 
@@ -77,7 +75,7 @@ Cockroach Crawler `0.3.0-alpha.1`: bounded web reads for agent tools.
 
 Hardened local crawling, an explicitly limited allowlist-first serverless tier, and read-only source adapters that report their real credential requirements.
 
-No “entire internet” claim. Inspect it: <https://github.com/AjnasNB/cockroach-crawler>
+Inspect the source, boundaries, fixtures, and release evidence: <https://github.com/AjnasNB/cockroach-crawler>
 
 ## YouTube title options
 

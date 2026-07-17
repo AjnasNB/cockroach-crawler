@@ -119,11 +119,9 @@ official source registry is invoked separately and reports
 provider-specific search/read/authentication capabilities
 ```
 
-## What this project is not
+## Best fit
 
-Cockroach Crawler is not a distributed queue, proxy network, hosted search index, stealth browser, credential broker, CAPTCHA solver, or universal data-access layer. Crawlee, Scrapy, Firecrawl, Crawl4AI, and managed products may be better choices for broader crawling and extraction requirements.
-
-The narrower goal is to make a common agent integration easier to reason about: an explicit read request enters a creator-owned boundary, consumes a known budget, and returns a record with enough provenance to audit what happened.
+Cockroach Crawler is designed for a common agent integration: an explicit read request enters a creator-owned boundary, consumes a known budget, and returns a record with enough provenance to audit what happened. Distributed queues, proxy infrastructure, hosted search indexes, and large-scale browser orchestration belong in a separate deployment layer.
 
 ## Try the alpha
 

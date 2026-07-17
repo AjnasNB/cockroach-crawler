@@ -14,7 +14,7 @@ Give an agent a bounded way to read public sources without handing model input a
 
 ### Proof points
 
-- Explicit URLs and origins, not an open-ended claim to “the entire internet.”
+- Explicit web destinations and provider capabilities that are visible before a workflow runs.
 - Public-network checks and DNS-pinned hops in the hardened local crawler.
 - Robots, redirect, sensitive-path, request, byte, page, depth, queue, concurrency, and deadline limits.
 - Read-only official adapters for GitHub, YouTube, X, and Reddit with capability reporting.
@@ -60,19 +60,11 @@ A small Worker-style endpoint can expose bounded HTML extraction for the company
 
 The creator configures allowed origins and maximum pages when constructing the crawler tool. Model input may narrow those values but cannot expand them, disable robots, turn on private networks, or enable browser mode unless the creator opted in.
 
-## Competitive context
-
-Use this wording:
-
-> Cockroach Crawler occupies a narrower layer than Crawlee, Scrapy, Firecrawl, Crawl4AI, and browser-agent platforms. Those products may be better for distributed queues, hosted APIs, proxy management, broad automation, or advanced extraction. Cockroach Crawler focuses on a compact Node boundary: explicit network policy, strict resource budgets, read-only source adapters, and portable records for agent workflows.
-
-Do not publish feature-score tables without rerunning each competitor under a dated, reproducible methodology. Do not call the project faster, safer, more complete, or easier than every alternative.
-
 ## FAQ
 
-### Does it see the entire internet?
+### Which sources are ready today?
 
-No. It reads explicit public pages and selected official APIs. Coverage is constrained by allowlists, robots policy, credentials, provider quotas, terms, and this release's implemented endpoints.
+Explicit public web pages and public GitHub search/read work without provider credentials. Known YouTube video metadata works without a key; YouTube search uses an API key. X search/read uses an approved bearer token, and Reddit search/read uses application OAuth. `cockroach-sources doctor` reports the exact current state for every adapter.
 
 ### Is it a search engine?
 

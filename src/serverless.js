@@ -1,3 +1,4 @@
+import { load } from "cheerio/slim";
 import robotsParser from "robots-parser";
 import { PACKAGE_VERSION } from "./version.js";
 
@@ -18,7 +19,6 @@ const CONFIG_KEYS = new Set([
 ]);
 const INPUT_KEYS = new Set(["url", "maxPages", "maxDepth"]);
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
-const HTML_ENTITIES = Object.freeze({ amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " });
 
 export class ServerlessCrawlerError extends Error {
   constructor(code, message, status = 400) {
@@ -85,15 +85,24 @@ function normalizeOrigin(value) {
   if (url.protocol !== "https:" || url.username || url.password || url.pathname !== "/" || url.search || url.hash) {
     throw new TypeError("Serverless allowed origins must be credential-free HTTPS origins without paths.");
   }
-  if (isIpLiteral(url.hostname) || url.hostname === "localhost" || url.hostname.endsWith(".localhost")) {
+  if (isIpLiteral(url.hostname) || isLocalHostname(url.hostname)) {
     throw new TypeError("Serverless allowed origins cannot use IP literals or localhost names.");
   }
   return url.origin;
 }
 
+function policyHostname(hostname) {
+  return String(hostname || "").replace(/^\[|\]$/g, "").replace(/\.$/, "").toLowerCase();
+}
+
 function isIpLiteral(hostname) {
-  const host = hostname.replace(/^\[|\]$/g, "");
+  const host = policyHostname(hostname);
   return /^\d+(?:\.\d+){3}$/.test(host) || host.includes(":");
+}
+
+function isLocalHostname(hostname) {
+  const host = policyHostname(hostname);
+  return host === "localhost" || host.endsWith(".localhost");
 }
 
 function normalizeTarget(value, allowedOrigins) {
@@ -105,7 +114,7 @@ function normalizeTarget(value, allowedOrigins) {
     throw new ServerlessCrawlerError("SERVERLESS_INVALID_URL", "url must be an absolute HTTPS URL.");
   }
   url.hash = "";
-  if (url.protocol !== "https:" || url.username || url.password || isIpLiteral(url.hostname)) {
+  if (url.protocol !== "https:" || url.username || url.password || isIpLiteral(url.hostname) || isLocalHostname(url.hostname)) {
     throw new ServerlessCrawlerError("SERVERLESS_INVALID_URL", "Only credential-free HTTPS URLs with DNS hostnames are supported.");
   }
   if (!allowedOrigins.has(url.origin)) {
@@ -114,52 +123,39 @@ function normalizeTarget(value, allowedOrigins) {
   return url.toString();
 }
 
-function decodeEntities(value) {
-  return String(value || "").replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity) => {
-    if (entity[0] === "#") {
-      const number = entity[1].toLowerCase() === "x"
-        ? Number.parseInt(entity.slice(2), 16)
-        : Number.parseInt(entity.slice(1), 10);
-      if (Number.isSafeInteger(number) && number >= 0 && number <= 0x10ffff) return String.fromCodePoint(number);
-      return "�";
-    }
-    return HTML_ENTITIES[entity.toLowerCase()] ?? match;
+function normalizeText(value) {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function domText(node) {
+  if (!node) return "";
+  if (node.type === "text") return node.data || "";
+  if (!Array.isArray(node.children)) return "";
+  return node.children.map(domText).join(" ");
+}
+
+function metaContent($, name) {
+  const expected = name.toLowerCase();
+  let content = "";
+  $("meta").each((_, element) => {
+    if (content) return;
+    const meta = $(element);
+    const key = String(meta.attr("name") || meta.attr("property") || "").toLowerCase();
+    if (key === expected) content = normalizeText(meta.attr("content"));
   });
+  return content;
 }
 
-function stripTags(value) {
-  return decodeEntities(String(value || "")
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
-    .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, " ")
-    .replace(/<svg\b[^>]*>[\s\S]*?<\/svg>/gi, " ")
-    .replace(/<[^>]+>/g, " "))
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function tagText(html, tag) {
-  const match = html.match(new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"));
-  return match ? stripTags(match[1]) : "";
-}
-
-function metaContent(html, name) {
-  const patternA = new RegExp(`<meta\\b[^>]*(?:name|property)=["']${name}["'][^>]*content=["']([^"']*)["'][^>]*>`, "i");
-  const patternB = new RegExp(`<meta\\b[^>]*content=["']([^"']*)["'][^>]*(?:name|property)=["']${name}["'][^>]*>`, "i");
-  return decodeEntities((html.match(patternA) || html.match(patternB))?.[1] || "").trim();
-}
-
-function extractLinks(html, baseUrl, allowedOrigins, maximum = 500) {
+function extractLinks($, baseUrl, allowedOrigins, maximum = 500) {
   const links = [];
   const seen = new Set();
-  const pattern = /<a\b[^>]*\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
-  let match;
-  while (links.length < maximum && (match = pattern.exec(html))) {
-    const raw = decodeEntities(match[1] || match[2] || match[3] || "");
+  $("a[href]").each((_, element) => {
+    if (links.length >= maximum) return false;
+    const raw = $(element).attr("href") || "";
     try {
       const url = new URL(raw, baseUrl);
       url.hash = "";
-      if (url.protocol !== "https:" || url.username || url.password || !allowedOrigins.has(url.origin)) continue;
+      if (url.protocol !== "https:" || url.username || url.password || !allowedOrigins.has(url.origin)) return;
       const normalized = url.toString();
       if (!seen.has(normalized)) {
         seen.add(normalized);
@@ -168,7 +164,7 @@ function extractLinks(html, baseUrl, allowedOrigins, maximum = 500) {
     } catch {
       // Ignore malformed links in untrusted HTML.
     }
-  }
+  });
   return links;
 }
 
@@ -373,15 +369,17 @@ async function readRequestBody(request, maximum) {
 }
 
 async function extractPage(html, url, depth, discoveredFrom, allowedOrigins) {
-  const text = stripTags(html);
+  const $ = load(html);
+  $("script, style, noscript, svg").remove();
+  const text = normalizeText(domText($.root()[0]));
   return Object.freeze({
     url,
-    title: tagText(html, "title"),
-    description: metaContent(html, "description") || metaContent(html, "og:description"),
-    h1: tagText(html, "h1"),
+    title: normalizeText(domText($("title").first()[0])),
+    description: metaContent($, "description") || metaContent($, "og:description"),
+    h1: normalizeText(domText($("h1").first()[0])),
     text,
     markdown: text,
-    links: Object.freeze(extractLinks(html, url, allowedOrigins)),
+    links: Object.freeze(extractLinks($, url, allowedOrigins)),
     depth,
     discoveredFrom,
     fetchedAt: new Date().toISOString(),

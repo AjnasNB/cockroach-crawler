@@ -33,7 +33,9 @@ jobs:
       - run: npm run test:types
       - run: npm run bench
       - run: npm run audit:licenses
-      - run: npm run worker:check
+      - name: Dry-run Cloudflare Worker bundle
+        if: ${{ matrix.node == 24 }}
+        run: npm run worker:check
       - run: npm audit --omit=dev --audit-level=high
       - run: npm pack --dry-run --json --ignore-scripts
 

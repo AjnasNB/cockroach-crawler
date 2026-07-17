@@ -4,7 +4,7 @@
 
 # Cockroach Crawler
 
-**Cockroach Crawler gives an agent a read-only route to web evidence without pretending every source is freely accessible.** It combines a hardened local Node.js crawler for explicit URLs, normalized adapters for approved source APIs, and a restricted self-hosted Worker for allowlisted sites.
+**Cockroach Crawler gives an agent a bounded, read-only route to web evidence across explicit URLs and supported public source APIs.** It combines a hardened local Node.js crawler, normalized provider adapters, and a restricted self-hosted Worker for allowlisted sites.
 
 The stable npm release remains `0.2.0`. This branch is the `0.3.0-alpha.1` prerelease candidate. After registry verification, install the candidate through the `next` tag or its exact version; stable users are not moved automatically.
 
@@ -45,7 +45,7 @@ Read [SECURITY.md](./SECURITY.md) before exposing crawling to model-generated or
 | Bounded local crawling from Node.js or a CLI | Strong |
 | A strictly limited crawler tool inside an agent runtime | Strong, with creator-owned origin and resource policy |
 | JavaScript-rendered pages with bounded explicit clicks | Optional Chromium mode; isolate it for untrusted targets |
-| Large distributed queues, proxy rotation, or hosted extraction APIs | Use Crawlee, Scrapy, Firecrawl, Crawl4AI, or a managed crawler |
+| Large distributed queues, proxy rotation, or hosted extraction APIs | Outside this compact single-process boundary; use a distributed or managed platform |
 | Bypass paywalls, CAPTCHA, login walls, owner policy, or access control | Not supported |
 
 ## Install
@@ -310,24 +310,20 @@ Each page includes core extraction fields plus crawl provenance:
 }
 ```
 
-## Comparison
+## Why Cockroach Crawler
 
-Cockroach Crawler is deliberately smaller than [Agent Reach](https://github.com/Panniantong/agent-reach), [Crawlee](https://github.com/apify/crawlee), [Scrapy](https://github.com/scrapy/scrapy), [Firecrawl](https://github.com/firecrawl/firecrawl), [Crawl4AI](https://github.com/unclecode/crawl4ai), and browser-agent products.
-
-| Product | Primary strength | Where Cockroach Crawler differs |
+| Surface | What it gives you | Use it for |
 | --- | --- | --- |
-| Agent Reach | Orchestrates many external CLIs and logged-in local tools | Cockroach ships its own hardened local web engine and uses official source adapters; it does not auto-install tools or extract sessions |
-| Firecrawl | Hosted search/scrape/crawl APIs and distributed jobs | Cockroach is local-first and compact; the Worker is a restricted self-host template, not a Firecrawl-compatible cloud |
-| Crawl4AI | Broad browser control, extraction strategies, deep crawl, Python ecosystem | Cockroach uses narrower browser authority and a TypeScript/Node API with explicit network policy |
-| Crawlee / Scrapy | Mature crawling frameworks and distributed integrations | Cockroach has narrower creator-owned policy defaults for agent-controlled inputs and fewer framework features |
+| Hardened local CLI/API | DNS-aware destination checks, per-hop policy, browser controls, and strict crawl budgets | Agent tools, research jobs, RAG ingestion, documentation indexing |
+| Restricted serverless API | A small authenticated endpoint with deployment-owned HTTPS origins and exact limits | Owned documentation, support sites, and narrowly scoped hosted reads |
+| Source registry | One read-only record format for web, GitHub, YouTube, X, and Reddit | Provider-aware search, metadata collection, and capability diagnostics |
+| Evidence records | Content hashes, retrieval time, source URL, adapter version, warnings, and authentication state | Auditable pipelines, deduplication, QA, and reproducible research |
 
-Those projects are better choices for distributed persistence, proxy management, hosted APIs, broad browser automation, or advanced extraction. Cockroach Crawler focuses on a compact Node API/CLI, explicit network policy, strict budgets, agent-safe defaults, and portable evidence records. It does not claim equivalent coverage, reliability, or performance.
+The two crawler tiers intentionally share records rather than network authority: choose the hardened local runtime when model-generated destinations need address-level controls, or the restricted serverless runtime when a deployment owns a small fixed origin set.
 
-## Provenance and third-party licensing
+## License and release provenance
 
-Cockroach Crawler is an original MIT-licensed implementation. The maintainer records that Agent Reach, Crawl4AI, and Firecrawl were consulted only as public product references and that no source or assets from those projects were incorporated. At the dated revisions reviewed, Agent Reach was MIT, Crawl4AI's license file contained the Apache License 2.0 text plus a project-specific mandatory-attribution section, and Firecrawl's core license was GNU AGPL v3 or later (`AGPL-3.0-or-later`). See the exact revisions and scope in [docs/PROVENANCE.md](./docs/PROVENANCE.md). This provenance record is a maintainer attestation, not independent proof or legal advice.
-
-The resolved direct dependencies are all MIT or Apache-2.0. See [docs/DEPENDENCY_LICENSES.md](./docs/DEPENDENCY_LICENSES.md); from a source checkout, run `npm run audit:licenses` to verify the lockfile snapshot.
+Cockroach Crawler is MIT licensed. Release visuals, videos, and command evidence are generated from the committed project sources; the resolved direct dependencies are MIT or Apache-2.0. See [docs/PROVENANCE.md](./docs/PROVENANCE.md) and [docs/DEPENDENCY_LICENSES.md](./docs/DEPENDENCY_LICENSES.md). From a source checkout, run `npm run audit:licenses` to verify the lockfile snapshot.
 
 ## Development and release verification
 

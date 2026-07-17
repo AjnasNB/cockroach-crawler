@@ -58,7 +58,7 @@ I am the author. The design question is whether two runtimes with different netw
 
 **Body:**
 
-I wanted Cockroach Crawler to help agent workflows read more sources. The tempting launch line was “give your agent the entire internet.” The implementation did not support that, and the phrase hides provider credentials, quotas, robots rules, and very different runtime security properties.
+I wanted Cockroach Crawler to give agent workflows one inspectable reading layer across the web and supported public sources. The hard product problem was making provider credentials, quotas, robots rules, and runtime security properties visible instead of hiding them behind one generic tool call.
 
 So the alpha's product decision is narrower:
 

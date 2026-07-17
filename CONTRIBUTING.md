@@ -7,7 +7,7 @@ Thank you for helping improve the project. The most useful contributions make on
 - Use a public issue for bugs, focused features, documentation, and deterministic integration fixtures.
 - Use a [private security advisory](https://github.com/AjnasNB/cockroach-crawler/security/advisories/new) for vulnerabilities. Never paste tokens, cookies, private content, or metadata responses into a public issue.
 - Keep provider work read-only and based on documented public APIs. Do not add browser-cookie extraction, login bypasses, or unofficial session fallbacks.
-- For third-party inspiration or code, record the exact source commit and license in `docs/PROVENANCE.md`. Do not copy code whose license is incompatible with this MIT project.
+- Before incorporating third-party material, record its exact source commit, license, modifications, and required notices in `docs/PROVENANCE.md`. Do not incorporate material whose terms are incompatible with this MIT project.
 
 ## Contribution flow
 

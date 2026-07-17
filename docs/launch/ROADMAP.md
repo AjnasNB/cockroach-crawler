@@ -138,11 +138,9 @@ This roadmap is evidence-driven. Dates start when `0.3.0-alpha.1` is published f
 - Security response targets and supported-version policy.
 - Monthly dependency, provider-contract, and documentation review cadence.
 
-## Explicit non-goals for this horizon
+## Scope gates for this horizon
 
-- “Entire internet” coverage.
 - Login, paywall, CAPTCHA, or access-control bypass.
 - Posting or other provider write operations.
 - Proxy rotation or stealth fingerprinting.
-- A claim of parity with Agent Reach, Firecrawl, Crawl4AI, Crawlee, Scrapy, or managed search products.
-- A guaranteed star, fork, revenue, adoption, or ranking target.
+- Unverified provider capabilities or undocumented credential paths.

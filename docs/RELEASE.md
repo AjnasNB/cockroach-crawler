@@ -30,4 +30,4 @@ Promote to stable only after alpha feedback, an independent security review, cle
 
 Prefer npm trusted publishing with provenance. Never use or store a token pasted into chat. Treat every disclosed token as compromised and revoke it. Cloudflare secrets must be entered interactively with Wrangler or the dashboard and must never enter repository variables, configs, logs, or generated launch assets.
 
-Do not call a release perfect, unstoppable, universally secure, or able to see the entire internet. Record untested integrations and browser/network limitations explicitly.
+Keep release claims tied to the committed tests, benchmark method, provider capability table, and documented browser/network boundaries.

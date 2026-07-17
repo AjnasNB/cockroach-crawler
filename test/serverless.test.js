@@ -10,6 +10,8 @@ test("serverless crawler requires explicit public HTTPS origins", () => {
   assert.throws(() => createServerlessCrawler({ allowedOrigins: [] }), /1-32 entries/);
   assert.throws(() => createServerlessCrawler({ allowedOrigins: ["http://example.com"] }), /HTTPS origins/);
   assert.throws(() => createServerlessCrawler({ allowedOrigins: ["https://127.0.0.1"] }), /IP literals/);
+  assert.throws(() => createServerlessCrawler({ allowedOrigins: ["https://localhost."] }), /localhost names/);
+  assert.throws(() => createServerlessCrawler({ allowedOrigins: ["https://tools.localhost."] }), /localhost names/);
   assert.throws(() => createServerlessCrawler({ allowedOrigins: ["https://example.com/path"] }), /without paths/);
   assert.throws(() => createServerlessCrawler({ allowedOrigins: ["https://example.com"], unexpected: true }), /Unknown serverless crawler option/);
 });
@@ -25,7 +27,12 @@ test("serverless tier crawls bounded allowlisted HTML and exposes its weaker run
       if (url.pathname === "/robots.txt") return new Response("User-agent: *\nAllow: /\n", { headers: { "content-type": "text/plain" } });
       if (url.pathname === "/") {
         return html(`<!doctype html><html><head><title>Serverless fixture</title><meta name="description" content="A bounded page"></head>
-          <body><h1>Fixture</h1><p>Hello &amp; safe.</p><a href="/next">Next</a><a href="https://outside.example/">Outside</a></body></html>`);
+          <body><h1>Fixture</h1><p>Hello &amp; safe.</p>
+          <script>window.secret = "script-content-must-not-leak"</script >
+          <style>.hidden::after { content: "style-content-must-not-leak"; }</style >
+          <noscript>noscript-content-must-not-leak</noscript >
+          <svg><text>svg-content-must-not-leak</text></svg >
+          <a href="/next">Next</a><a href="https://outside.example/">Outside</a></body></html>`);
       }
       if (url.pathname === "/next") return html("<html><head><title>Next page</title></head><body><h1>Next</h1></body></html>");
       throw new Error(`Unexpected path ${url.pathname}`);
@@ -35,6 +42,7 @@ test("serverless tier crawls bounded allowlisted HTML and exposes its weaker run
   assert.equal(result.pages.length, 2);
   assert.equal(result.pages[0].title, "Serverless fixture");
   assert.match(result.pages[0].text, /Hello & safe/);
+  assert.doesNotMatch(result.pages[0].text, /content-must-not-leak/);
   assert.deepEqual(result.pages[0].links, ["https://docs.example.com/next"]);
   assert.match(result.pages[0].contentHash, /^sha256:[a-f0-9]{64}$/);
   assert.equal(result.runtime.dnsValidation, false);
@@ -49,6 +57,31 @@ test("serverless tier crawls bounded allowlisted HTML and exposes its weaker run
     "https://docs.example.com/",
     "https://docs.example.com/next"
   ]);
+});
+
+test("serverless extraction parses raw-text elements instead of filtering HTML with regular expressions", async () => {
+  const crawler = createServerlessCrawler({
+    allowedOrigins: ["https://docs.example.com"],
+    delayMs: 0,
+    fetch: async (value) => {
+      const url = new URL(value);
+      if (url.pathname === "/robots.txt") return new Response("User-agent: *\nAllow: /\n");
+      return html(`<html><head><title>Parser fixture</title></head><body>
+        <p>Visible</p><p>evidence</p>
+        <SCRIPT>script-content-must-not-leak<a href="/must-not-leak">hidden</a></SCRIPT data-extra="ignored">
+        <style>style-content-must-not-leak</style data-extra="ignored">
+        <noscript>noscript-content-must-not-leak</noscript >
+        <svg><text>svg-content-must-not-leak</text></svg >
+        <a href="/allowed">Allowed evidence</a>
+      </body></html>`);
+    }
+  });
+
+  const result = await crawler.crawl({ url: "https://docs.example.com/", maxPages: 1, maxDepth: 0 });
+  assert.equal(result.pages.length, 1);
+  assert.match(result.pages[0].text, /Visible evidence/);
+  assert.doesNotMatch(result.pages[0].text, /content-must-not-leak/);
+  assert.deepEqual(result.pages[0].links, ["https://docs.example.com/allowed"]);
 });
 
 test("serverless tier rejects an unlisted seed before network dispatch", async () => {
