@@ -1,7 +1,7 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.2.0",
-  "description": "Public-web crawler for agent workflows with robots.txt, sitemaps, depth limits, filters, markdown extraction, and JSONL output.",
+  "version": "0.3.0-alpha.1",
+  "description": "Bounded public-web crawling and read-only source adapters for Node.js agent workflows.",
   "license": "MIT",
   "author": {
     "name": "Ajnas NB",
@@ -10,7 +10,8 @@
   "type": "module",
   "bin": {
     "cockroach-crawl": "bin/cockroach-crawl.js",
-    "cockroach-crawler": "bin/cockroach-crawl.js"
+    "cockroach-crawler": "bin/cockroach-crawl.js",
+    "cockroach-sources": "bin/cockroach-sources.js"
   },
   "main": "src/index.js",
   "types": "types/index.d.ts",
@@ -24,6 +25,16 @@
       "types": "./types/agent.d.ts",
       "import": "./src/agent.js",
       "default": "./src/agent.js"
+    },
+    "./sources": {
+      "types": "./types/sources.d.ts",
+      "import": "./src/sources.js",
+      "default": "./src/sources.js"
+    },
+    "./serverless": {
+      "types": "./types/serverless.d.ts",
+      "import": "./src/serverless.js",
+      "default": "./src/serverless.js"
     }
   },
   "files": [
@@ -31,23 +42,37 @@
     "src/",
     "types/",
     "assets/",
+    "worker/worker.js",
+    "worker/wrangler.jsonc",
+    "bench/local-benchmark.mjs",
+    "bench/results/local-regression.json",
     "docs/RELEASE.md",
     "docs/DEPENDENCY_LICENSES.md",
     "docs/PROVENANCE.md",
+    "docs/ARCHITECTURE.md",
+    "docs/SOURCES.md",
+    "docs/SERVERLESS.md",
+    "docs/BENCHMARK.md",
     "README.md",
     "SECURITY.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "GOVERNANCE.md",
+    "SUPPORT.md",
     "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/cli.test.js test/crawler.test.js test/limits.test.js test/security.test.js",
+    "test": "node --test test/cli.test.js test/crawler.test.js test/limits.test.js test/security.test.js test/sources.test.js test/serverless.test.js",
     "test:browser": "node --test browser-test/integration.test.js",
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
     "check": "npm test && npm run test:types && npm run bench && npm run audit:licenses",
-    "release:check": "npm run check && npm run test:browser && npm audit --omit=dev --audit-level=high && npm pack --dry-run --ignore-scripts",
+    "release:check": "npm run check && npm run test:browser && npm run worker:check && npm audit --omit=dev --audit-level=high && npm pack --dry-run --ignore-scripts",
     "prepublishOnly": "npm run release:check",
     "bench": "node bench/local-benchmark.mjs",
+    "worker:check": "wrangler deploy --dry-run --outdir .wrangler-dist --config worker/wrangler.jsonc",
+    "worker:types": "wrangler types --config worker/wrangler.jsonc .wrangler/env.d.ts",
     "crawl": "node bin/cockroach-crawl.js"
   },
   "keywords": [
@@ -60,7 +85,14 @@
     "sitemap",
     "markdown",
     "jsonl",
-    "research"
+    "research",
+    "github-api",
+    "youtube-api",
+    "reddit-api",
+    "x-api",
+    "ssrf-protection",
+    "cloudflare-workers",
+    "serverless"
   ],
   "dependencies": {
     "cheerio": "^1.0.0",
@@ -79,7 +111,8 @@
   },
   "devDependencies": {
     "playwright": "^1.61.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.83.0"
   },
   "engines": {
     "node": ">=20.18.1"
@@ -91,7 +124,7 @@
   "bugs": {
     "url": "https://github.com/AjnasNB/cockroach-crawler/issues"
   },
-  "homepage": "https://github.com/AjnasNB/cockroach-crawler#readme",
+  "homepage": "https://cockroachcrawler.com",
   "publishConfig": {
     "access": "public"
   }

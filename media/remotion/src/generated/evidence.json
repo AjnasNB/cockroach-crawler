@@ -1,0 +1,60 @@
+{
+  "capturedAt": "2026-07-17T23:16:41.134Z",
+  "gitCommit": "7778b89e454c",
+  "workingTreeDirty": true,
+  "revisionLabel": "7778b89e454c + working tree",
+  "nodeVersion": "v24.15.0",
+  "packageName": "cockroach-crawler",
+  "packageVersion": "0.3.0-alpha.1",
+  "doctorLines": [
+    "web      ready                The hardened public-web crawler is ready.",
+    "github   ready                Public GitHub REST is ready at the unauthenticated rate limit.",
+    "youtube  partial              Public oEmbed metadata reads are ready; search requires YOUTUBE_API_KEY.",
+    "x        missing_credentials  Set X_BEARER_TOKEN for approved X API v2 access.",
+    "reddit   missing_credentials  Set REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and COCKROACH_REDDIT_USER_AGENT."
+  ],
+  "helpLines": [
+    "Cockroach Crawler",
+    "Usage:",
+    "  cockroach-crawl <url> [more urls...] [options]",
+    "Options:",
+    "  --url-file <file>       Read seed URLs from a text file, one URL per line",
+    "  --max-pages <n>         Maximum pages to return. Default: 50",
+    "  --max-depth <n>         Maximum link depth from seeds. Default: 2",
+    "  --max-requests <n>      Total network-request budget. Default: derived from max-pages",
+    "  --max-duration <ms>     Total crawl deadline. Default: 600000",
+    "  --max-bytes <n>         Maximum decoded bytes per page. Default: 3145728",
+    "  --max-total-bytes <n>   Total decoded-byte budget",
+    "  --max-redirects <n>     Maximum validated redirect hops. Default: 5",
+    "  --concurrency <n>       Concurrent workers. Default: 4",
+    "  --delay <ms>            Minimum delay per origin. Default: 250",
+    "  --timeout <ms>          Request timeout. Default: 15000",
+    "  --sitemaps              Discover URLs from robots.txt sitemaps and /sitemap.xml",
+    "  --all-origins           Use the explicit --allow-origin allowlist across origins",
+    "  --allow-origin <origin> Permit an HTTP(S) origin. Can be repeated"
+  ],
+  "testLines": [
+    "✔ crawler respects robots.txt and extracts linked pages",
+    "✔ per-response and total byte budgets stop oversized content",
+    "✔ Azure and other provider platform endpoints are denied in every supported form",
+    "✔ every redirect hop is origin-checked before the target receives a request",
+    "✔ serverless redirect validation blocks an origin escape before target contact",
+    "✔ X provider requires official bearer configuration and never serializes it",
+    "✔ Reddit provider uses application-only OAuth, caches the token, and normalizes posts"
+  ],
+  "testSummary": {
+    "tests": 68,
+    "pass": 68,
+    "fail": 0,
+    "durationMs": 4247.8768
+  },
+  "benchmark": {
+    "name": "cockroach-crawler-local-regression",
+    "generatedAt": "2026-07-17T22:53:14.675Z",
+    "pages": 120,
+    "measuredRuns": 7,
+    "correctness": "passed",
+    "medianPagesPerSecond": 508.5,
+    "disclaimer": "Project-local 120-page regression fixture; not an industry or global benchmark."
+  }
+}

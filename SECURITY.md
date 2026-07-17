@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are provided for the latest published minor release. Until `0.2.0` is published, the npm `0.1.x` line remains the public release but does not contain the hardened network boundary described here.
+Security fixes are provided for the latest published stable minor release. npm `0.2.0` is the current stable release. The `0.3.0-alpha.1` source candidate adds provider and serverless surfaces and must remain on a prerelease tag until its release gate and independent review are complete.
 
 Report a suspected vulnerability privately through the GitHub repository's security-advisory form. Do not include credentials, session state, private page content, or cloud metadata in a public issue. If the advisory form is unavailable, contact `ajnasnb@gmail.com` with a minimal reproduction.
 
@@ -31,6 +31,22 @@ Storage-state files contain authentication secrets. Keep them outside source con
 The agent adapter validates an exact runtime schema. Unknown fields are rejected, creator limits are upper bounds, politeness delays are creator-controlled, robots remains enabled, private-network access is creator-only, and browser input is rejected unless the creator sets `allowBrowser: true`. Crawl input, creator defaults, authority-bearing arrays, and browser settings are copied from own enumerable data properties into null-prototype snapshots. Inherited authority and accessors are rejected, and later mutation cannot broaden policy. Agent include/exclude values are escaped literal URL fragments, not executable regular expressions.
 
 Crawled HTML, text, links, and Markdown are untrusted data. They can contain indirect prompt injection, malicious instructions, false claims, or sensitive content. Keep tool output in a data/evidence channel, preserve its URL and content hash, and never treat page text as system or developer instructions.
+
+## Source-provider boundary
+
+The `cockroach-crawler/sources` registry is read-only. Built-in adapters expose only `search` and `read`; there is no generic write, like, vote, comment, upload, follow, or account-management capability. GitHub uses public or token-authenticated REST endpoints, YouTube uses public oEmbed or an operator API key, X requires an approved bearer token, and Reddit requires application-only OAuth plus an identifying user agent. The package does not extract browser cookies, import session databases, install provider CLIs, or silently fall back to unofficial scraping.
+
+Credentials are copied into provider closures and used only in outbound authentication. Normalized records, doctor output, and typed errors never include them. Do not pass secrets as command-line arguments; use environment variables or an operating-system secret manager. Provider content and metadata remain untrusted input. Each platform's terms, API plan, retention rules, and quota remain the deployer's responsibility.
+
+YouTube's built-in adapter does not provide public transcripts. Its doctor report keeps `transcript: false`; public oEmbed reads are metadata-only. X and Reddit report `missing_credentials` until their official access requirements are configured. Do not convert those states into an implicit browser-session fallback.
+
+## Serverless boundary
+
+The Worker template is a separate, deliberately smaller transport. It accepts only deployment-owned HTTPS origin allowlists, requires bearer authentication, uses a Cloudflare Rate Limiting binding, follows redirects manually, re-checks robots before every redirect target, and applies small page/request/byte/time ceilings. It rejects IP literals, localhost names, URL credentials, non-HTTPS targets, and redirects outside the allowlist.
+
+The serverless tier does **not** provide DNS-answer validation, resolved-address classification, or address pinning. An allowlisted hostname can resolve to an internal address, so the allowlist is an operator-owned routing boundary, not a complete SSRF control. Never deploy it as an arbitrary-origin public proxy. Restrict the allowlist to origins you operate or independently trust, add infrastructure egress controls when internal destinations are reachable, keep `CRAWLER_API_TOKEN` in a Cloudflare secret, and retain the rate-limit binding. It also does not provide Playwright, browser sessions, provider adapters, distributed jobs, proxy rotation, or an open search service.
+
+The example `worker/wrangler.jsonc` allowlists only `https://example.com`; it is a safe placeholder, not a production target. `wrangler secret put` changes external state and should be run interactively by an authorized maintainer. Review the dry-run bundle before deployment with `npm run worker:check`.
 
 ## Resource limits
 

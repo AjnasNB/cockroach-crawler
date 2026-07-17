@@ -1,0 +1,11 @@
+{
+  "capturedAt": "2026-07-17T23:16:41.134Z",
+  "gitCommit": "7778b89e454c",
+  "workingTreeDirty": true,
+  "files": {
+    "doctor.txt": "sha256:328d97151511a01a4cdd8ee96121fae95154da1e22f0121adfcc5db5b1cf88c2",
+    "cli-help.txt": "sha256:3fe419e6d8e47defb4ee2651cb20db2936d65c7c6f9c6971a904f7ff174baaa8",
+    "npm-test.txt": "sha256:26ba15e313835d697198f9e1a251f51985795b2554f482373aef39f1e5d110f7",
+    "local-regression.json": "sha256:f7c742ee141e6aad73cdcc49a578b217e505491be9fc59cab01d2991e58d0acf"
+  }
+}

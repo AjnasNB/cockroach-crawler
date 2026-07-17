@@ -1,0 +1,46 @@
+
+Cockroach Crawler
+
+Usage:
+  cockroach-crawl <url> [more urls...] [options]
+
+Options:
+  --url-file <file>       Read seed URLs from a text file, one URL per line
+  --max-pages <n>         Maximum pages to return. Default: 50
+  --max-depth <n>         Maximum link depth from seeds. Default: 2
+  --max-requests <n>      Total network-request budget. Default: derived from max-pages
+  --max-duration <ms>     Total crawl deadline. Default: 600000
+  --max-bytes <n>         Maximum decoded bytes per page. Default: 3145728
+  --max-total-bytes <n>   Total decoded-byte budget
+  --max-redirects <n>     Maximum validated redirect hops. Default: 5
+  --concurrency <n>       Concurrent workers. Default: 4
+  --delay <ms>            Minimum delay per origin. Default: 250
+  --timeout <ms>          Request timeout. Default: 15000
+  --sitemaps              Discover URLs from robots.txt sitemaps and /sitemap.xml
+  --all-origins           Use the explicit --allow-origin allowlist across origins
+  --allow-origin <origin> Permit an HTTP(S) origin. Can be repeated
+  --allow-private-networks
+                          Trust private/loopback networks; metadata/link-local stay blocked
+  --include <regex>       Only crawl URLs matching regex. Can be repeated
+  --exclude <regex>       Skip URLs matching regex. Can be repeated
+  --allow-sensitive-paths Allow likely login/account/admin/cart paths
+  --jsonl                 Output JSON Lines instead of a JSON array
+  --output <file>         Write output to a file
+  --user-agent <ua>       Custom user agent
+  --contact <email/url>   Add contact detail to the default user agent
+  --browser               Render pages with Playwright before extraction
+  --headed                Launch Playwright with a visible browser window
+  --wait-until <state>    Browser wait state: load, domcontentloaded, networkidle, commit
+  --wait-for <target>     Wait for selector or ms:<number> in browser mode
+  --click <selector>      Click selector in browser mode. Can be repeated
+  --storage-state <file>  Load Playwright storage state for authorized sessions
+  --save-storage-state <file>
+                          Save Playwright storage state after the crawl
+  --browser-channel <id>  Playwright browser channel, for example chrome
+  --browser-executable <path>
+                          Custom browser executable path
+  --version               Show package version
+  --help                  Show this help
+
+This crawler enforces robots.txt and public-network policy by default.
+Browser mode requires Playwright installed alongside Cockroach Crawler, plus: npx playwright install chromium

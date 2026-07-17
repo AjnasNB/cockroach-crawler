@@ -1,0 +1,12 @@
+{
+  "name": "cockroach-crawler-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node check.mjs",
+    "check:browser": "node browser-check.mjs",
+    "render:social": "node render-social.mjs",
+    "serve": "node serve.mjs"
+  }
+}

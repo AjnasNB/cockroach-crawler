@@ -1,0 +1,69 @@
+{
+  "pages": [
+    {
+      "url": "http://127.0.0.1:58324/",
+      "canonical": "http://127.0.0.1:58324/",
+      "title": "Offline Evidence Index",
+      "description": "Deterministic loopback fixture",
+      "h1": "Offline Evidence Index",
+      "language": "en",
+      "text": "Offline Evidence IndexLocal fixture content for a real crawler workflow proof.Evidence record",
+      "markdown": "# Offline Evidence Index\n\nLocal fixture content for a real crawler workflow proof.\n\n[Evidence record](/evidence)",
+      "links": [
+        "http://127.0.0.1:58324/evidence"
+      ],
+      "fetchedAt": "2026-07-17T22:54:47.003Z",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 313,
+      "contentHash": "sha256:65cefce6a731c217f58676f21069cc58a96e361a7c1f3d8bee3fe46fb45900be",
+      "depth": 0,
+      "discoveredFrom": null,
+      "redirectChain": [],
+      "etag": null,
+      "lastModified": null,
+      "robotsAllowed": true
+    },
+    {
+      "url": "http://127.0.0.1:58324/evidence",
+      "canonical": "http://127.0.0.1:58324/evidence",
+      "title": "Bounded Evidence Record",
+      "description": "",
+      "h1": "Bounded Evidence Record",
+      "language": "en",
+      "text": "Bounded Evidence RecordCockroach Crawler reached this page through one explicit loopback authority and finite budgets.",
+      "markdown": "# Bounded Evidence Record\n\nCockroach Crawler reached this page through one explicit loopback authority and finite budgets.",
+      "links": [],
+      "fetchedAt": "2026-07-17T22:54:47.013Z",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 255,
+      "contentHash": "sha256:2c3365dbefbde4d655a0e10ae2ca4b043c022986e08d1e197732bbff77825d62",
+      "depth": 1,
+      "discoveredFrom": "http://127.0.0.1:58324/",
+      "redirectChain": [],
+      "etag": null,
+      "lastModified": null,
+      "robotsAllowed": true
+    }
+  ],
+  "stats": {
+    "fetched": 2,
+    "requests": 3,
+    "bytes": 591,
+    "retries": 0,
+    "skippedRobots": 0,
+    "skippedFiltered": 0,
+    "skippedNonPublic": 0,
+    "skippedOrigin": 0,
+    "queueDropped": 0,
+    "errors": 0,
+    "pages": 2,
+    "failures": 0,
+    "queued": 2,
+    "seen": 2,
+    "durationMs": 78,
+    "startedAt": "2026-07-17T22:54:46.935Z",
+    "finishedAt": "2026-07-17T22:54:47.013Z"
+  }
+}

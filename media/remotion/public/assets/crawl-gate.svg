@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 600" role="img" aria-labelledby="title desc">
+  <title id="title">Bounded crawl gate</title>
+  <desc id="desc">An isometric machine routes a public URL through network, robots, origin, and budget checks before producing structured page records.</desc>
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#162720"/><stop offset="1" stop-color="#09120f"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#426156"/><stop offset=".45" stop-color="#1d312a"/><stop offset="1" stop-color="#0b1512"/></linearGradient>
+    <linearGradient id="beam" x1="0" x2="1"><stop stop-color="#79f2a6" stop-opacity="0"/><stop offset=".5" stop-color="#79f2a6"/><stop offset="1" stop-color="#8cd8e8" stop-opacity="0"/></linearGradient>
+    <filter id="shadow"><feGaussianBlur stdDeviation="12"/></filter>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#284139" stroke-width="1" opacity=".35"/></pattern>
+  </defs>
+  <rect width="720" height="600" fill="#07100e"/><rect width="720" height="600" fill="url(#grid)"/>
+  <ellipse cx="378" cy="479" rx="275" ry="52" fill="#000" opacity=".5" filter="url(#shadow)"/>
+  <path d="M81 416 288 294l342 91-207 124z" fill="#0a1512" stroke="#355349"/><path d="M82 416v36l341 92v-35z" fill="#0d1c17" stroke="#355349"/><path d="M423 509v35l207-122v-37z" fill="#07110e" stroke="#355349"/>
+  <path d="M110 408 298 318l298 77-183 91z" fill="#111e1a" stroke="#45675c"/><path d="M118 408 413 486 583 402 290 329z" fill="none" stroke="url(#beam)" stroke-width="5" opacity=".9"/>
+  <g transform="translate(88 302)"><path d="M0 34 79 0l74 21-78 36z" fill="#173027" stroke="#79f2a6"/><path d="M0 34v73l75 22V57z" fill="#0a1713" stroke="#45675c"/><path d="M75 57v72l78-36V21z" fill="#0d211a" stroke="#45675c"/><circle cx="27" cy="55" r="5" fill="#79f2a6"/><path d="M40 53h58M27 70h71M27 86h49" stroke="#8cd8e8" stroke-width="3" opacity=".72"/><text x="16" y="-11" fill="#9db2aa" font-family="monospace" font-size="12">PUBLIC URL</text></g>
+  <g transform="translate(265 170)"><path d="M0 86 111 36l122 34-112 53z" fill="url(#metal)" stroke="#55796d"/><path d="M0 86v214l121 34V123z" fill="#0a1512" stroke="#45675c"/><path d="M121 123v211l112-55V70z" fill="#0c1c17" stroke="#45675c"/><path d="M38 74V21l73-33 76 20v55" fill="none" stroke="#79f2a6" stroke-width="7"/><path d="M58 67V40l52-24 54 15v26" fill="none" stroke="#223a32" stroke-width="18"/><path d="m88 191 33-16 34 10-34 17z" fill="#79f2a6" opacity=".9"/><path d="M88 191v45l33 10v-44z" fill="#285640"/><path d="M121 202v44l34-16v-45z" fill="#17432f"/><circle cx="36" cy="116" r="8" fill="#ff8b7b"/><circle cx="36" cy="146" r="8" fill="#ffb589"/><circle cx="36" cy="176" r="8" fill="#79f2a6"/><path d="M57 115h35M57 145h55M57 175h43" stroke="#769189" stroke-width="4"/><text x="51" y="283" fill="#bde8cc" font-family="monospace" font-size="13" transform="skewY(15)">POLICY GATE</text></g>
+  <g transform="translate(511 269)"><path d="m0 57 74-35 73 20-74 37z" fill="url(#panel)" stroke="#8cd8e8"/><path d="M0 57v48l73 20V79z" fill="#0b1814" stroke="#45675c"/><path d="M73 79v46l74-36V42z" fill="#0b1b17" stroke="#45675c"/><path d="m12 48 62-29M31 54l62-29M51 60l62-29" stroke="#79f2a6" stroke-width="2" opacity=".65"/><text x="31" y="4" fill="#9db2aa" font-family="monospace" font-size="12">RECORDS</text></g>
+  <g fill="#07100e" stroke="#79f2a6"><rect x="251" y="374" width="72" height="25" rx="12"/><rect x="342" y="399" width="78" height="25" rx="12"/><rect x="431" y="406" width="73" height="25" rx="12"/></g>
+  <g fill="#b1f8c9" font-family="monospace" font-size="10" text-anchor="middle"><text x="287" y="390">NETWORK</text><text x="381" y="415">ROBOTS</text><text x="468" y="422">BUDGET</text></g>
+  <path d="M230 407h37M322 395l25 9M419 416h18M503 412l32-16" fill="none" stroke="#79f2a6" stroke-width="2" stroke-dasharray="5 5"/><g fill="#79f2a6"><circle cx="230" cy="407" r="4"/><circle cx="535" cy="396" r="4"/></g>
+  <text x="36" y="50" fill="#79f2a6" font-family="monospace" font-size="12" letter-spacing="2">COCKROACH CRAWLER / BOUNDED PATH</text><text x="36" y="76" fill="#8da19a" font-family="monospace" font-size="11">one admitted route · explicit limits · structured evidence</text>
+</svg>

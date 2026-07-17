@@ -1,0 +1,138 @@
+{
+  "capturedAt": "2026-07-17T22:54:48.350Z",
+  "fixture": {
+    "mode": "offline-loopback",
+    "authority": "http://127.0.0.1:58324/",
+    "externalNetworkRequests": 0,
+    "credentialsUsed": false,
+    "routes": [
+      "/robots.txt",
+      "/",
+      "/evidence"
+    ]
+  },
+  "allowed": {
+    "command": "cockroach-crawl http://127.0.0.1:58324/ --allow-private-networks --max-pages 2 --max-depth 1 --max-requests 6 --max-bytes 65536 --max-total-bytes 131072 --delay 0",
+    "exitCode": 0,
+    "pageCount": 2,
+    "stats": {
+      "fetched": 2,
+      "requests": 3,
+      "bytes": 591,
+      "retries": 0,
+      "skippedRobots": 0,
+      "skippedFiltered": 0,
+      "skippedNonPublic": 0,
+      "skippedOrigin": 0,
+      "queueDropped": 0,
+      "errors": 0,
+      "pages": 2,
+      "failures": 0,
+      "queued": 2,
+      "seen": 2,
+      "durationMs": 78,
+      "startedAt": "2026-07-17T22:54:46.935Z",
+      "finishedAt": "2026-07-17T22:54:47.013Z"
+    },
+    "pages": [
+      {
+        "title": "Offline Evidence Index",
+        "url": "http://127.0.0.1:58324/",
+        "depth": 0,
+        "status": 200,
+        "contentHash": "sha256:65cefce6a731c217f58676f21069cc58a96e361a7c1f3d8bee3fe46fb45900be"
+      },
+      {
+        "title": "Bounded Evidence Record",
+        "url": "http://127.0.0.1:58324/evidence",
+        "depth": 1,
+        "status": 200,
+        "contentHash": "sha256:2c3365dbefbde4d655a0e10ae2ca4b043c022986e08d1e197732bbff77825d62"
+      }
+    ]
+  },
+  "denied": {
+    "command": "cockroach-crawl http://127.0.0.1:58324/ --max-pages 1 --max-requests 2 --delay 0",
+    "exitCode": 1,
+    "pageCount": 0,
+    "warning": "cockroach-crawl: Address range 'loopback' is not allowed for crawler requests."
+  },
+  "doctor": [
+    {
+      "id": "web",
+      "status": "ready",
+      "capabilities": {
+        "search": false,
+        "read": true,
+        "crawl": true
+      },
+      "authentication": "none",
+      "message": "The hardened public-web crawler is ready."
+    },
+    {
+      "id": "github",
+      "status": "ready",
+      "capabilities": {
+        "search": true,
+        "read": true
+      },
+      "authentication": "optional",
+      "message": "Public GitHub REST is ready at the unauthenticated rate limit."
+    },
+    {
+      "id": "youtube",
+      "status": "partial",
+      "capabilities": {
+        "search": false,
+        "read": true,
+        "transcript": false
+      },
+      "authentication": "optional",
+      "message": "Public oEmbed metadata reads are ready; search requires YOUTUBE_API_KEY."
+    },
+    {
+      "id": "x",
+      "status": "missing_credentials",
+      "capabilities": {
+        "search": false,
+        "read": false
+      },
+      "authentication": "bearer_token",
+      "message": "Set X_BEARER_TOKEN for approved X API v2 access."
+    },
+    {
+      "id": "reddit",
+      "status": "missing_credentials",
+      "capabilities": {
+        "search": false,
+        "read": false
+      },
+      "authentication": "oauth_client_credentials",
+      "message": "Set REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and COCKROACH_REDDIT_USER_AGENT."
+    }
+  ],
+  "normalizedRecord": {
+    "source": "web",
+    "id": "sha256:65cefce6a731c217f58676f21069cc58a96e361a7c1f3d8bee3fe46fb45900be",
+    "type": "web_page",
+    "title": "Offline Evidence Index",
+    "url": "http://127.0.0.1:58324/",
+    "contentHash": "sha256:268e32f4590b6695fb5ac1235b793ceee6389b4fc5c9dc2a3056055a8d1b6e33",
+    "adapterVersion": "0.3.0-alpha.1",
+    "warnings": [],
+    "metadata": {
+      "description": "Deterministic loopback fixture",
+      "language": "en",
+      "depth": 0,
+      "contentHash": "sha256:65cefce6a731c217f58676f21069cc58a96e361a7c1f3d8bee3fe46fb45900be",
+      "discoveredFrom": null,
+      "redirectChain": []
+    },
+    "provenance": {
+      "retrievedAt": "2026-07-17T22:54:48.350Z",
+      "method": "crawler",
+      "authenticated": false,
+      "credentialed": false
+    }
+  }
+}

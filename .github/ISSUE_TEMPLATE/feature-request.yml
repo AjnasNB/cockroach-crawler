@@ -1,0 +1,64 @@
+name: Feature or integration request
+description: Propose a focused capability with an explicit security, provider, and runtime boundary.
+title: "feature: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Proposals are strongest when they name the user outcome, official provider contract, and a deterministic offline test plan. A request does not imply provider partnership or certification.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the concrete workflow that is difficult today and who needs it.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Explain the smallest public API or CLI behavior that would solve the problem.
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Best-fit surface
+      options:
+        - Hardened Node.js crawler / CLI
+        - Serverless Worker
+        - Read-only source adapter
+        - Optional external-service integration
+        - Documentation or example
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: provider
+    attributes:
+      label: Provider and authorization boundary
+      description: Link the official API or protocol documentation and state required credentials, scopes, quotas, and terms. Write not applicable for provider-neutral changes.
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Acceptance criteria and test plan
+      description: Include allow/deny cases, offline fixtures, supported Node versions, and failure behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Contribution checks
+      options:
+        - label: I searched existing issues and the roadmap for a duplicate.
+          required: true
+        - label: This proposal does not require credential extraction, access-control bypass, robots bypass, or undocumented private APIs.
+          required: true

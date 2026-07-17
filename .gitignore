@@ -1,4 +1,8 @@
 node_modules/
+.wrangler/
+**/.wrangler-dist/
+.wrangler-dist-site/
+worker/env.d.ts
 coverage/
 *.tgz
 npm-debug.log*
@@ -11,3 +15,5 @@ npm-debug.log*
 Thumbs.db
 auth-state*.json
 playwright/.auth/
+media/remotion/review/
+website/dist/

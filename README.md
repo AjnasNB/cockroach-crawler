@@ -1,12 +1,27 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/AjnasNB/cockroach-crawler/main/assets/logo.png" alt="Cockroach Crawler" width="620">
+  <img src="./assets/readme-proof-still.svg" alt="Cockroach Crawler system map: a public URL and read-only APIs pass through explicit policy and budget gates into normalized evidence records" width="960">
 </p>
 
 # Cockroach Crawler
 
-Cockroach Crawler is a local Node.js crawler for public or explicitly trusted HTTP(S) pages. It produces structured JSON/JSONL with readable text, Markdown, links, response metadata, redirect provenance, and content hashes for documentation indexing, RAG ingestion, content inventory, QA, research, and agent tools.
+**Cockroach Crawler gives an agent a read-only route to web evidence without pretending every source is freely accessible.** It combines a hardened local Node.js crawler for explicit URLs, normalized adapters for approved source APIs, and a restricted self-hosted Worker for allowlisted sites.
+
+The stable npm release remains `0.2.0`. This branch is the `0.3.0-alpha.1` prerelease candidate. After registry verification, install the candidate through the `next` tag or its exact version; stable users are not moved automatically.
+
+The local crawler produces structured JSON/JSONL with readable text, Markdown, links, response metadata, redirect provenance, and content hashes for documentation indexing, RAG ingestion, content inventory, QA, research, and agent tools. The source adapters normalize GitHub, YouTube, X, and Reddit records when each provider's documented access requirements are met.
 
 It does not call an LLM, require a hosted account, or include stealth, CAPTCHA, paywall, authentication, or authorization bypasses.
+
+Documentation: [website](https://cockroachcrawler.com/docs/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [serverless profile](./docs/SERVERLESS.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
+
+## Two execution tiers
+
+| Tier | Best for | Boundary |
+| --- | --- | --- |
+| Hardened local crawler | Agent tools, CI, RAG ingestion, authorized browser rendering, arbitrary public sites | DNS validation and address pinning, manual redirects, robots, strict budgets, optional restricted Playwright |
+| Self-hosted serverless crawler | Small synchronous crawls of deployment-owned allowlisted origins | HTTPS origin allowlist, bearer auth, Cloudflare rate limit, per-hop robots checks, manual redirects, and small hard budgets; no browser, social providers, or DNS pinning |
+
+The Worker is a separate transport. Cloudflare Workers cannot preserve the local engine's `node:dns`, `node:net`, Undici dispatcher, or Playwright boundary. It does not resolve, classify, or pin DNS answers; an allowlisted hostname can resolve internally. Use only operator-owned or independently trusted origins plus infrastructure egress controls. The API reports that difference in every result.
 
 ## Security defaults
 
@@ -41,7 +56,13 @@ Requires Node.js `>=20.18.1`.
 npm install cockroach-crawler
 ```
 
-For the CLI:
+Install the prerelease explicitly rather than moving stable users automatically:
+
+```bash
+npm install cockroach-crawler@next
+```
+
+For the stable crawler CLI:
 
 ```bash
 npm install --global cockroach-crawler
@@ -105,6 +126,81 @@ Important options:
 - `--contact <email-or-url>`: contact-aware crawler user agent.
 
 Run `cockroach-crawl --help` for the complete browser and output option list.
+
+## Source adapters
+
+`cockroach-sources` is read-only. It never accepts secrets on command-line flags, extracts browser cookies, installs provider tools, or silently falls back from an official API to session scraping.
+
+```bash
+npm install cockroach-crawler@next
+npx cockroach-sources doctor
+npx cockroach-sources search github "secure web crawler" --max-results 5
+npx cockroach-sources read github AjnasNB/cockroach-crawler
+npx cockroach-sources read youtube https://youtu.be/VIDEO_ID
+```
+
+Current capability contract:
+
+| Provider | Without credentials | With operator credentials | Deliberate limit |
+| --- | --- | --- | --- |
+| Web | Hardened URL crawl | Same; trusted creator may opt into private networks/browser | No search engine or access-control bypass |
+| GitHub | Public repository/issue search and repository read at the unauthenticated limit | Higher documented REST limit with `GITHUB_TOKEN` or `GH_TOKEN` | Read-only REST calls |
+| YouTube | Public oEmbed video metadata read | Search and richer metadata with `YOUTUBE_API_KEY` | No universal transcript claim; `transcript: false` |
+| X | Unavailable | Recent search/read with an approved `X_BEARER_TOKEN` | Official X API v2 only; no cookie scraping |
+| Reddit | Unavailable | Search/read with `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET`, and `COCKROACH_REDDIT_USER_AGENT` | Application-only OAuth; comply with Reddit data terms |
+
+```js
+import { createSourceRegistryFromEnv } from "cockroach-crawler/sources";
+
+const sources = createSourceRegistryFromEnv(process.env);
+console.table(sources.doctor());
+
+const records = await sources.search("github", {
+  query: "robots.txt crawler",
+  maxResults: 5
+});
+
+console.log(records[0]?.contentHash, records[0]?.provenance);
+```
+
+Every normalized record includes `source`, `id`, `type`, `title`, `url`, `text`, author/time metadata, a content hash, adapter version, warnings, and request provenance. Credentials never appear in records or typed provider errors.
+
+## Self-hosted serverless crawler
+
+The Worker is an allowlist-first deployment template, not a public hosted scraping service. Before deployment, replace the example origin in `worker/wrangler.jsonc` with origins you operate or are explicitly authorized to crawl. Store the API token as a Cloudflare secret, never in the config or repository. The following commands run from a source checkout; package consumers can copy the included `worker/` template into their deployment repository first.
+
+```bash
+npm run worker:check
+npx wrangler secret put CRAWLER_API_TOKEN --config worker/wrangler.jsonc
+npx wrangler deploy --config worker/wrangler.jsonc
+```
+
+```bash
+curl https://YOUR-WORKER.example/v1/crawl \
+  -H "Authorization: Bearer YOUR_DEPLOYMENT_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"url":"https://docs.example.com/","maxPages":3,"maxDepth":1}'
+```
+
+The included deployment requires a bearer secret and a Cloudflare Rate Limiting binding. The default ceilings are five pages, one link-depth level, 25 subrequests, 1 MiB per page, 5 MiB total, and 15 seconds. Do not remove authentication or expose an arbitrary-origin proxy.
+
+For direct Worker integration:
+
+```js
+import { createServerlessCrawler } from "cockroach-crawler/serverless";
+
+export default {
+  async fetch(request, env) {
+    const crawler = createServerlessCrawler({
+      allowedOrigins: ["https://docs.example.com"],
+      accessToken: env.CRAWLER_API_TOKEN
+    });
+    return crawler.fetch(request);
+  }
+};
+```
+
+`createServerlessCrawler` enforces its application-level allowlist and budgets, but a custom integration must also supply platform rate limiting and infrastructure egress policy. The included Worker template demonstrates the rate-limit binding.
 
 ## JavaScript API
 
@@ -216,11 +312,20 @@ Each page includes core extraction fields plus crawl provenance:
 
 ## Comparison
 
-Cockroach Crawler is deliberately smaller than [Crawlee](https://github.com/apify/crawlee), [Scrapy](https://github.com/scrapy/scrapy), [Firecrawl](https://github.com/firecrawl/firecrawl), [Crawl4AI](https://github.com/unclecode/crawl4ai), and browser-agent products. Those projects are better choices for distributed persistence, proxy management, hosted APIs, broad browser automation, or advanced extraction. Cockroach Crawler focuses on a compact Node API/CLI, explicit network policy, strict budgets, agent-safe defaults, and portable JSON/Markdown records.
+Cockroach Crawler is deliberately smaller than [Agent Reach](https://github.com/Panniantong/agent-reach), [Crawlee](https://github.com/apify/crawlee), [Scrapy](https://github.com/scrapy/scrapy), [Firecrawl](https://github.com/firecrawl/firecrawl), [Crawl4AI](https://github.com/unclecode/crawl4ai), and browser-agent products.
+
+| Product | Primary strength | Where Cockroach Crawler differs |
+| --- | --- | --- |
+| Agent Reach | Orchestrates many external CLIs and logged-in local tools | Cockroach ships its own hardened local web engine and uses official source adapters; it does not auto-install tools or extract sessions |
+| Firecrawl | Hosted search/scrape/crawl APIs and distributed jobs | Cockroach is local-first and compact; the Worker is a restricted self-host template, not a Firecrawl-compatible cloud |
+| Crawl4AI | Broad browser control, extraction strategies, deep crawl, Python ecosystem | Cockroach uses narrower browser authority and a TypeScript/Node API with explicit network policy |
+| Crawlee / Scrapy | Mature crawling frameworks and distributed integrations | Cockroach has narrower creator-owned policy defaults for agent-controlled inputs and fewer framework features |
+
+Those projects are better choices for distributed persistence, proxy management, hosted APIs, broad browser automation, or advanced extraction. Cockroach Crawler focuses on a compact Node API/CLI, explicit network policy, strict budgets, agent-safe defaults, and portable evidence records. It does not claim equivalent coverage, reliability, or performance.
 
 ## Provenance and third-party licensing
 
-Cockroach Crawler is an original MIT-licensed implementation. The maintainer records that Crawl4AI and Firecrawl were consulted only as public product references and that no source from either project was incorporated. At the dated revisions reviewed, Crawl4AI's license file contained the Apache License 2.0 text plus a project-specific mandatory-attribution section, while Firecrawl's core license was GNU AGPL v3 or later (`AGPL-3.0-or-later`). See the exact revisions and scope in [docs/PROVENANCE.md](./docs/PROVENANCE.md). This provenance record is a maintainer attestation, not independent proof or legal advice.
+Cockroach Crawler is an original MIT-licensed implementation. The maintainer records that Agent Reach, Crawl4AI, and Firecrawl were consulted only as public product references and that no source or assets from those projects were incorporated. At the dated revisions reviewed, Agent Reach was MIT, Crawl4AI's license file contained the Apache License 2.0 text plus a project-specific mandatory-attribution section, and Firecrawl's core license was GNU AGPL v3 or later (`AGPL-3.0-or-later`). See the exact revisions and scope in [docs/PROVENANCE.md](./docs/PROVENANCE.md). This provenance record is a maintainer attestation, not independent proof or legal advice.
 
 The resolved direct dependencies are all MIT or Apache-2.0. See [docs/DEPENDENCY_LICENSES.md](./docs/DEPENDENCY_LICENSES.md); from a source checkout, run `npm run audit:licenses` to verify the lockfile snapshot.
 
@@ -232,6 +337,8 @@ npm test
 npm run test:types
 npm run bench
 npm run audit:licenses
+npm run worker:check
+npm run worker:types
 npx playwright install chromium
 npm run test:browser
 npm audit --omit=dev --audit-level=high

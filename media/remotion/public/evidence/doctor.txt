@@ -1,0 +1,5 @@
+web      ready                The hardened public-web crawler is ready.
+github   ready                Public GitHub REST is ready at the unauthenticated rate limit.
+youtube  partial              Public oEmbed metadata reads are ready; search requires YOUTUBE_API_KEY.
+x        missing_credentials  Set X_BEARER_TOKEN for approved X API v2 access.
+reddit   missing_credentials  Set REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and COCKROACH_REDDIT_USER_AGENT.

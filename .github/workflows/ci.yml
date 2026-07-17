@@ -20,9 +20,11 @@ jobs:
         node: [20.18.1, 22, 24]
     steps:
       - name: Check out repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node }}
           cache: npm
@@ -31,6 +33,7 @@ jobs:
       - run: npm run test:types
       - run: npm run bench
       - run: npm run audit:licenses
+      - run: npm run worker:check
       - run: npm audit --omit=dev --audit-level=high
       - run: npm pack --dry-run --json --ignore-scripts
 
@@ -40,12 +43,93 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Check out repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: npx playwright install --with-deps chromium
+      - run: ./node_modules/.bin/playwright install --with-deps chromium
       - run: npm run test:browser
+      - name: Build and verify website
+        run: |
+          npm --prefix website run build
+          npm --prefix website run check
+          npm --prefix website run check:browser
+
+  benchmark-evidence:
+    name: Exact-commit benchmark evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Generate exact-commit raw result
+        env:
+          BENCH_OUTPUT: bench/results/ci-local-regression.json
+        run: npm run bench
+      - name: Verify clean-source provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const result = JSON.parse(fs.readFileSync("bench/results/ci-local-regression.json", "utf8"));
+          if (result.source.commit !== process.env.GITHUB_SHA) throw new Error("Benchmark commit mismatch.");
+          if (result.source.dirty !== false) throw new Error("Benchmark source must be clean.");
+          if (result.correctness.status !== "passed") throw new Error("Benchmark correctness failed.");
+          NODE
+      - name: Upload raw benchmark evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: benchmark-evidence-${{ github.sha }}
+          path: bench/results/ci-local-regression.json
+          if-no-files-found: error
+          retention-days: 90
+
+  package:
+    name: Packed consumer (Node 24)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run test:types
+      - name: Install and execute the packed artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          pack_dir="${RUNNER_TEMP}/pack"
+          consumer_dir="${RUNNER_TEMP}/consumer"
+          mkdir -p "${pack_dir}" "${consumer_dir}"
+          npm pack --ignore-scripts --pack-destination "${pack_dir}" --json > "${RUNNER_TEMP}/pack.json"
+          filename="$(node -e 'const fs=require("node:fs"); const [entry]=JSON.parse(fs.readFileSync(process.argv[1], "utf8")); if (!entry?.filename) process.exit(1); process.stdout.write(entry.filename)' "${RUNNER_TEMP}/pack.json")"
+          tarball="${pack_dir}/${filename}"
+          test -f "${tarball}"
+          cd "${consumer_dir}"
+          npm init --yes >/dev/null
+          npm install "${tarball}" --ignore-scripts --no-audit --no-fund
+          node --input-type=module -e "await import('cockroach-crawler'); await import('cockroach-crawler/agent'); await import('cockroach-crawler/sources'); await import('cockroach-crawler/serverless')"
+          installed_version="$(node -e 'const fs=require("node:fs"); const manifest=JSON.parse(fs.readFileSync("node_modules/cockroach-crawler/package.json", "utf8")); process.stdout.write(manifest.version)')"
+          test "$(./node_modules/.bin/cockroach-crawl --version)" = "${installed_version}"
+          ./node_modules/.bin/cockroach-sources doctor --json > "${RUNNER_TEMP}/doctor.json"
+          node -e 'const fs=require("node:fs"); const report=JSON.parse(fs.readFileSync(process.argv[1], "utf8")); if (!Array.isArray(report) || !report.some((item) => item.id === "web")) process.exit(1)' "${RUNNER_TEMP}/doctor.json"

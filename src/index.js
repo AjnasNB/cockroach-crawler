@@ -4,13 +4,14 @@ import * as cheerio from "cheerio";
 import robotsParser from "robots-parser";
 import TurndownService from "turndown";
 import { getSetCookies } from "undici";
+import { PACKAGE_VERSION } from "./version.js";
 import {
   createCrawlerSecurityError,
   resolveUrlTarget,
   withPinnedFetch
 } from "./security.js";
 
-const DEFAULT_USER_AGENT = "CockroachCrawler/0.2.0 (+https://github.com/AjnasNB/cockroach-crawler)";
+const DEFAULT_USER_AGENT = `CockroachCrawler/${PACKAGE_VERSION} (+https://github.com/AjnasNB/cockroach-crawler)`;
 const DEFAULT_MAX_BYTES = 3 * 1024 * 1024;
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
 const BROWSER_WAIT_STATES = new Set(["load", "domcontentloaded", "networkidle", "commit"]);

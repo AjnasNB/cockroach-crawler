@@ -1,0 +1,93 @@
+[
+  {
+    "text": "This proof starts a deterministic server on loopback. It uses",
+    "startMs": 300,
+    "endMs": 4438,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "no internet connection, API key, account, or external side effect.",
+    "startMs": 4438,
+    "endMs": 8575,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The real command explicitly authorizes loopback and fixes page, depth,",
+    "startMs": 9300,
+    "endMs": 13339,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "request, per-page byte, total-byte, and delay budgets.",
+    "startMs": 13339,
+    "endMs": 17378,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The command returns two structured pages with status, depth, and",
+    "startMs": 18300,
+    "endMs": 21103,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "SHA-256 content hashes. The same seed without private-network authority is",
+    "startMs": 21103,
+    "endMs": 23905,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "denied.",
+    "startMs": 23905,
+    "endMs": 26708,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Source doctor comes from the same credential-free runtime: web and",
+    "startMs": 27300,
+    "endMs": 29767,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "public GitHub ready, YouTube partial, and X and Reddit requiring",
+    "startMs": 29767,
+    "endMs": 32234,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "credentials.",
+    "startMs": 32234,
+    "endMs": 34701,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The web adapter converts crawler output into normalized records with",
+    "startMs": 36300,
+    "endMs": 38828,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "source, type, adapter version, provenance, metadata, and a separate record",
+    "startMs": 38828,
+    "endMs": 41357,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "hash.",
+    "startMs": 41357,
+    "endMs": 43885,
+    "timestampMs": null,
+    "confidence": null
+  }
+]
