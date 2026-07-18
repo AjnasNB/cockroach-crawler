@@ -5,7 +5,7 @@
   "compatibility_date": "2026-07-17",
   "workers_dev": true,
   "vars": {
-    "CRAWLER_ALLOWED_ORIGINS": "https://example.com"
+    "CRAWLER_ALLOWED_ORIGINS": ""
   },
   "secrets": {
     "required": ["CRAWLER_API_TOKEN"]

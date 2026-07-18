@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import worker from "../worker/worker.js";
 
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const TOKEN = "worker-test-secret";
 const BASE_ENV = Object.freeze({
   CRAWLER_ALLOWED_ORIGINS: "https://docs.example.com",
@@ -18,6 +22,19 @@ function crawlRequest(token = TOKEN) {
     body: JSON.stringify({ url: "https://docs.example.com/" })
   });
 }
+
+test("checked-in Worker template has no crawlable origin until the operator configures one", async () => {
+  const config = JSON.parse(await readFile(path.join(ROOT, "worker", "wrangler.jsonc"), "utf8"));
+  assert.equal(config.vars.CRAWLER_ALLOWED_ORIGINS, "");
+
+  const response = await worker.fetch(crawlRequest(), {
+    CRAWLER_ALLOWED_ORIGINS: config.vars.CRAWLER_ALLOWED_ORIGINS,
+    CRAWLER_API_TOKEN: TOKEN,
+    CRAWLER_RATE_LIMITER: { async limit() { return { success: true }; } }
+  });
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).code, "SERVERLESS_ORIGINS_NOT_CONFIGURED");
+});
 
 test("worker rejects an invalid token without invoking the rate limiter", async () => {
   let limiterCalls = 0;

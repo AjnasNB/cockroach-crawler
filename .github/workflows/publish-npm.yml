@@ -8,6 +8,10 @@ on:
         required: true
         default: 0.3.0-alpha.1
         type: string
+      expected_git_commit:
+        description: Exact reviewed lowercase 40-character commit SHA
+        required: true
+        type: string
       dist_tag:
         description: npm dist-tag (alpha releases must use next)
         required: true
@@ -48,6 +52,7 @@ jobs:
       size_bytes: ${{ steps.pack.outputs.size_bytes }}
     env:
       EXPECTED_VERSION: ${{ inputs.version }}
+      EXPECTED_GIT_COMMIT: ${{ inputs.expected_git_commit }}
       DIST_TAG: ${{ inputs.dist_tag }}
       EXPECTED_SIZE_BYTES: ${{ inputs.expected_size_bytes }}
       EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
@@ -60,6 +65,8 @@ jobs:
           set -euo pipefail
           [[ "${GITHUB_REF}" == "refs/heads/main" ]] || { echo "Dispatch from main only." >&2; exit 1; }
           [[ "${GITHUB_REPOSITORY}" == "AjnasNB/cockroach-crawler" ]] || { echo "Unexpected repository." >&2; exit 1; }
+          [[ "${EXPECTED_GIT_COMMIT}" =~ ^[0-9a-f]{40}$ ]] || { echo "Invalid reviewed commit." >&2; exit 1; }
+          [[ "${EXPECTED_GIT_COMMIT}" == "${GITHUB_SHA}" ]] || { echo "Reviewed commit does not match the workflow commit." >&2; exit 1; }
           [[ "${EXPECTED_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]] || { echo "Invalid version." >&2; exit 1; }
           [[ "${EXPECTED_SIZE_BYTES}" =~ ^[1-9][0-9]*$ ]] || { echo "Invalid size." >&2; exit 1; }
           [[ "${EXPECTED_SHA256}" =~ ^[0-9a-f]{64}$ ]] || { echo "Invalid SHA-256." >&2; exit 1; }
@@ -142,6 +149,7 @@ jobs:
       id-token: write
     env:
       EXPECTED_VERSION: ${{ inputs.version }}
+      EXPECTED_GIT_COMMIT: ${{ inputs.expected_git_commit }}
       DIST_TAG: ${{ inputs.dist_tag }}
       EXPECTED_SIZE_BYTES: ${{ inputs.expected_size_bytes }}
       EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
@@ -169,6 +177,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          [[ "${EXPECTED_GIT_COMMIT}" == "${GITHUB_SHA}" ]] || { echo "Reviewed commit changed before publication." >&2; exit 1; }
           pack_dir="${RUNNER_TEMP}/publish-pack"; mkdir -p "${pack_dir}"
           npm pack --ignore-scripts --pack-destination "${pack_dir}" --json > "${RUNNER_TEMP}/pack.json"
           tarball="${pack_dir}/cockroach-crawler-${EXPECTED_VERSION}.tgz"
