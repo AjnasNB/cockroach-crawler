@@ -8,6 +8,9 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 test("alpha release checksums match every named release source asset", async () => {
+  const attributes = await readFile(path.join(ROOT, ".gitattributes"), "utf8");
+  assert.match(attributes, /^\*\.vtt text eol=lf$/m, "release captions must have canonical LF bytes");
+
   const manifestPath = path.join(ROOT, "media", "release-assets", "v0.3.0-alpha.1", "SHA256SUMS.txt");
   const manifest = await readFile(manifestPath, "utf8");
   const entries = manifest.trim().split(/\r?\n/).map((line) => {
@@ -16,13 +19,17 @@ test("alpha release checksums match every named release source asset", async () 
     return { expected: match[1], filename: match[2] };
   });
 
+  assert.equal(entries.length, 27, "the alpha kit must name every reviewed release asset");
   assert.equal(new Set(entries.map(({ filename }) => filename)).size, entries.length, "release filenames must be unique");
   for (const { expected, filename } of entries) {
     const directory = filename.endsWith(".png") && !filename.includes("poster")
       ? path.join(ROOT, "media", "launch-assets", "png")
       : path.join(ROOT, "media", "remotion", "renders");
     const bytes = await readFile(path.join(directory, filename));
-    assert.equal(createHash("sha256").update(bytes).digest("hex"), expected, filename);
+    const canonicalBytes = filename.endsWith(".vtt")
+      ? Buffer.from(bytes.toString("utf8").replace(/\r\n?/g, "\n"), "utf8")
+      : bytes;
+    assert.equal(createHash("sha256").update(canonicalBytes).digest("hex"), expected, filename);
   }
 });
 
