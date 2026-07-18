@@ -99,7 +99,7 @@
     "ipaddr.js": "^2.4.0",
     "robots-parser": "^3.0.1",
     "turndown": "^7.2.0",
-    "undici": "^7.28.0"
+    "undici": "^8.7.0"
   },
   "peerDependencies": {
     "playwright": ">=1.48.0 <2"
