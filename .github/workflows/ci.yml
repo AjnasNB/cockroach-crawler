@@ -128,7 +128,7 @@ jobs:
           consumer_dir="${RUNNER_TEMP}/consumer"
           mkdir -p "${pack_dir}" "${consumer_dir}"
           npm pack --ignore-scripts --pack-destination "${pack_dir}" --json > "${RUNNER_TEMP}/pack.json"
-          filename="$(node -e 'const fs=require("node:fs"); const [entry]=JSON.parse(fs.readFileSync(process.argv[1], "utf8")); if (!entry?.filename) process.exit(1); process.stdout.write(entry.filename)' "${RUNNER_TEMP}/pack.json")"
+          filename="$(node -e 'const fs=require("node:fs"); const value=JSON.parse(fs.readFileSync(process.argv[1], "utf8")); const entry=Array.isArray(value)?value[0]:value["cockroach-crawler"]??Object.values(value)[0]; if (!entry?.filename) process.exit(1); process.stdout.write(entry.filename)' "${RUNNER_TEMP}/pack.json")"
           tarball="${pack_dir}/${filename}"
           test -f "${tarball}"
           cd "${consumer_dir}"
