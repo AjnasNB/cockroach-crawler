@@ -10,6 +10,9 @@
 - Content hashes, adapter versions, warnings, authentication state, and retrieval provenance on normalized source records.
 - A separate `cockroach-crawler/serverless` entry point and Cloudflare Worker template for small, bearer-authenticated, rate-limited crawls of deployment-owned allowlisted HTTPS origins.
 - Worker dry-run bundling and generated-binding type checks through Wrangler.
+- A versioned JSON Schema for normalized source records and deterministic fixtures for web, GitHub, YouTube, X, and Reddit.
+- A reusable offline `SourceProvider` conformance harness for third-party adapters.
+- Explicit text labels for every doctor state, including predictable `NO_COLOR` and JSON behavior.
 
 ### Security
 
@@ -19,6 +22,8 @@
 - Serverless requests require an explicit HTTPS origin allowlist and bearer secret; IP literals, localhost, URL credentials, non-HTTPS targets, and cross-origin redirects are denied.
 - Serverless robots failures fail closed and page/request/redirect/byte/depth/time ceilings are enforced.
 - The deployment template requires Cloudflare's Rate Limiting binding and reports the absence of rate limiting as unavailable rather than serving a crawl.
+- Provider error contracts now distinguish authentication, quota/access, missing-resource, malformed-payload, timeout, cancellation, and response-size failures without serializing credentials.
+- A serverless threat-model draft documents DNS/runtime assumptions, abuse cases, observability, rollback, and residual risks pending independent review.
 
 ### Known alpha limits
 

@@ -2,12 +2,24 @@
 
 The `0.3.0-alpha.1` source candidate adds a capability-aware registry. Check the installed package version before importing it.
 
+Normalized records follow the published JSON Schema at
+`cockroach-crawler/schemas/source-record.json`. Every required field is shared
+across providers; `metadata` is intentionally provider-specific and consumers
+must feature-detect its keys.
+
 ```bash
 npm install cockroach-crawler@next
 npx cockroach-sources doctor --json
 npx cockroach-sources search github "topic:web-crawler language:javascript" --max-results 5 --json
 npx cockroach-sources read youtube "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --json
 ```
+
+Human-readable `doctor` output includes explicit `READY`, `PARTIAL`,
+`MISSING CREDENTIALS`, and `UNAVAILABLE` labels. Color is optional decoration:
+`NO_COLOR=1` disables it, and JSON output is identical in every terminal. The
+command exits zero when it successfully reports capability state, including
+missing optional credentials; invalid commands and failed operations exit
+non-zero.
 
 ```js
 import { createSourceRegistryFromEnv } from "cockroach-crawler/sources";

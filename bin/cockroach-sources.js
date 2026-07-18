@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { createSourceRegistryFromEnv, SourceAccessError } from "../src/sources.js";
+import { formatSourceStatusLine, sourceStatusColorEnabled } from "../src/source-cli-format.js";
 
 function usage() {
   process.stdout.write(`Cockroach Sources
@@ -86,8 +87,9 @@ async function main() {
       process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
       return;
     }
+    const color = sourceStatusColorEnabled(process.stdout, process.env);
     for (const item of report) {
-      process.stdout.write(`${item.id.padEnd(8)} ${item.status.padEnd(20)} ${item.message}\n`);
+      process.stdout.write(`${formatSourceStatusLine(item, { color })}\n`);
     }
     return;
   }

@@ -139,7 +139,7 @@ function optionalSignal(value) {
 
 function combineAbortSignal(signal, timeoutMs) {
   const controller = new AbortController();
-  const abort = () => controller.abort(signal?.reason || new SourceAccessError("SOURCE_ABORTED", "Source request was aborted."));
+  const abort = () => controller.abort(new SourceAccessError("SOURCE_ABORTED", "Source request was aborted."));
   if (signal?.aborted) abort();
   else signal?.addEventListener("abort", abort, { once: true });
   const timer = setTimeout(() => {
@@ -152,6 +152,20 @@ function combineAbortSignal(signal, timeoutMs) {
       signal?.removeEventListener("abort", abort);
     }
   };
+}
+
+function responseError(provider, response) {
+  const details = { provider, status: response.status };
+  if (response.status === 401) {
+    return new SourceAccessError("SOURCE_AUTH_FAILED", `${provider} rejected the configured credentials.`, details);
+  }
+  if (response.status === 403 || response.status === 429) {
+    return new SourceAccessError("SOURCE_QUOTA_EXCEEDED", `${provider} rejected the request because access or quota is unavailable.`, details);
+  }
+  if (response.status === 404 || response.status === 410) {
+    return new SourceAccessError("SOURCE_NOT_FOUND", `${provider} did not find the requested resource.`, details);
+  }
+  return new SourceAccessError("SOURCE_HTTP_ERROR", `${provider} returned HTTP ${response.status}.`, details);
 }
 
 async function readBoundedBody(response, maximum) {
@@ -190,10 +204,7 @@ async function fetchText(context, provider, url, init = {}) {
     const response = await context.fetch(url, { ...init, signal: combined.signal });
     const text = await readBoundedBody(response, context.maxResponseBytes);
     if (!response.ok) {
-      throw new SourceAccessError("SOURCE_HTTP_ERROR", `${provider} returned HTTP ${response.status}.`, {
-        provider,
-        status: response.status
-      });
+      throw responseError(provider, response);
     }
     return { response, text };
   } catch (error) {
@@ -339,7 +350,7 @@ function createGitHubProvider(config, context) {
           headers: { ...headers, accept: "application/vnd.github.raw+json" },
           signal: input.signal
         }).then(({ text }) => text).catch((error) => {
-          if (error?.code === "SOURCE_HTTP_ERROR" && error?.details?.status === 404) return "";
+          if (error?.code === "SOURCE_NOT_FOUND" && error?.details?.status === 404) return "";
           throw error;
         })
       ]);
