@@ -20,7 +20,7 @@ async function waitForServer() {
 
 await mkdir(output, { recursive: true });
 await waitForServer();
-const captionResponse = await fetch(`${origin}/media/cockroach-crawler-main-60s.vtt`, { method: "HEAD" });
+const captionResponse = await fetch(`${origin}/media/captions-cockroach-crawler-main-60s-en.vtt`, { method: "HEAD" });
 const rangeResponse = await fetch(`${origin}/media/cockroach-crawler-main-60s.mp4`, { headers: { Range: "bytes=0-31" } });
 const rangeBody = await rangeResponse.arrayBuffer();
 const mediaServer = {
@@ -65,7 +65,7 @@ try {
       main: document.querySelector("main")?.getAttribute("tabindex"),
       accessibleTables: [...document.querySelectorAll(".table-wrap")].every((region) => region.tabIndex === 0 && region.getAttribute("role") === "region" && region.hasAttribute("aria-label")),
       accessibleCode: [...document.querySelectorAll("pre")].every((region) => region.tabIndex === 0 && region.hasAttribute("aria-label")),
-      videos: [...document.querySelectorAll("video")].map((video) => ({ controls: video.controls, autoplay: video.autoplay, poster: Boolean(video.poster), captions: Boolean(video.querySelector('track[kind="captions"]')) }))
+      videos: [...document.querySelectorAll("video")].map((video) => ({ controls: video.controls, autoplay: video.autoplay, poster: Boolean(video.poster), captions: Boolean(video.querySelector('track[kind="captions"]')), captionsDefault: Boolean(video.querySelector('track[kind="captions"][default]')) }))
     }));
     if (route === "/providers/") await page.screenshot({ path: `${output}/providers-desktop.png`, fullPage: true });
     if (route === "/release/") await page.screenshot({ path: `${output}/release-desktop.png`, fullPage: true });
@@ -126,7 +126,7 @@ try {
     await mobile.close();
   }
 
-  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions));
+  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions || video.captionsDefault));
   const mobileFailed = mobileResults.filter((result) => result.status !== 200 || result.horizontal || result.navVisible === "none" || !result.currentNavVisible || !result.mobileToc || result.errors.length);
   console.log(JSON.stringify({ routes: results, keyboard: { firstFocus, afterSkip, copyLabel }, mediaServer, mobile: mobileResults }, null, 2));
   if (failed.length || mobileFailed.length || !mediaServer.captions || !mediaServer.range || firstFocus.className !== "skip-link" || afterSkip.id !== "main" || copyLabel !== "Copied") {

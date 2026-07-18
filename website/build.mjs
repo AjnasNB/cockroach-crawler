@@ -308,7 +308,7 @@ function homePage() {
       <figure class="video-stage">
         <video controls playsinline preload="metadata" poster="/media/cockroach-crawler-main-poster.png" aria-label="Cockroach Crawler 60-second product demo">
           <source src="/media/cockroach-crawler-main-60s.mp4" type="video/mp4" />
-          <track kind="captions" srclang="en" label="English" src="/media/cockroach-crawler-main-60s.vtt" default />
+          <track kind="captions" srclang="en" label="English" src="/media/captions-cockroach-crawler-main-60s-en.vtt" />
           Your browser does not support embedded video. <a href="/media/cockroach-crawler-main-60s.mp4">Open the MP4</a>.
         </video>
         <figcaption>Captioned, locally narrated, and rendered from the tested command flow. No autoplay.</figcaption>
@@ -656,7 +656,7 @@ function benchmarkPage() {
 
 function mediaSchema() {
   const videos = [
-    ["What Cockroach Crawler does", "A 60-second overview of bounded crawling, structured output, and explicit operator-selected limits.", "cockroach-crawler-main-60s", "PT60S"],
+    ["Install, run, and inspect Cockroach Crawler", "A 60-second deterministic CLI demo covering installation, explicit limits, allowed output, denied dispatch, and normalized evidence.", "cockroach-crawler-main-60s", "PT60S"],
     ["Providers and serverless", "A 30-second explanation of provider access status and the restricted serverless runtime.", "cockroach-crawler-providers-serverless-30s", "PT30S"],
     ["Real CLI workflow proof", "A 45-second deterministic workflow showing doctor output, denied dispatch, and normalized records.", "cockroach-crawler-workflow-proof-45s", "PT45S"],
     ["Short provider boundary", "A 30-second vertical explanation of public, credentialed, and unavailable provider capabilities.", "cockroach-crawler-vertical-short-30s", "PT30S"]
@@ -686,22 +686,22 @@ function mediaSchema() {
 
 function mediaPage() {
   return `
-    <section class="page-hero shell"><p class="eyebrow">Captioned product demos</p><h1>See the boundary, then run the proof.</h1><p class="lede">Four short videos explain the crawler, its provider and serverless surfaces, and the exact offline workflow used to verify a release candidate.</p><div class="page-actions"><a class="button primary" href="#main-demo">Watch the 60-second overview</a><a class="button secondary" href="${repository}/tree/main/media/remotion">Inspect the Remotion source</a></div></section>
-    <section class="section shell" id="main-demo"><div class="section-head"><div><p class="eyebrow">Overview · 60 seconds</p><h2>What Cockroach Crawler does.</h2></div><p>For developers building research, indexing, documentation, monitoring, or agent workflows that need readable web records with explicit network and resource limits.</p></div>
+    <section class="page-hero shell"><p class="eyebrow">Captioned product demos</p><h1>See the boundary, then run the proof.</h1><p class="lede">Four short videos show the real offline CLI flow, provider and serverless boundaries, and the normalized records used by agent workflows.</p><div class="page-actions"><a class="button primary" href="#main-demo">Watch the 60-second demo</a><a class="button secondary" href="${repository}/tree/main/media/remotion">Inspect the Remotion source</a></div></section>
+    <section class="section shell" id="main-demo"><div class="section-head"><div><p class="eyebrow">Real CLI demo · 60 seconds</p><h2>Install. Run. Inspect the record.</h2></div><p>A deterministic loopback run shows installation, explicit ceilings, an allowed crawl, a fail-closed denial, and the resulting source-linked evidence record.</p></div>
       <figure class="video-stage">
         <video controls playsinline preload="metadata" poster="/media/cockroach-crawler-main-poster.png" aria-label="Cockroach Crawler 60-second overview">
           <source src="/media/cockroach-crawler-main-60s.mp4" type="video/mp4" />
-          <track kind="captions" srclang="en" label="English" src="/media/cockroach-crawler-main-60s.vtt" default />
+          <track kind="captions" srclang="en" label="English" src="/media/captions-cockroach-crawler-main-60s-en.vtt" />
           Your browser does not support embedded video. <a href="/media/cockroach-crawler-main-60s.mp4">Open the MP4</a>.
         </video>
-        <figcaption>A permitted URL crosses policy, robots, redirect, and budget checks before becoming a source-linked record.</figcaption>
+        <figcaption>Rendered from the committed Remotion source and deterministic workflow capture. Captions are burned in; an optional English track remains selectable.</figcaption>
       </figure>
     </section>
     <section class="section shell"><div class="section-head"><div><p class="eyebrow">Focused release cuts</p><h2>Choose the proof you need.</h2></div><p>Every cut is captioned, locally narrated, and uses the same release visual system. None autoplay.</p></div>
       <div class="video-grid">
-        <article class="video-card"><div><span>30 seconds</span><h3>Providers and serverless</h3><p>Understand access status, official credentials, deployment-owned origins, and the narrower edge runtime.</p></div><video controls playsinline preload="metadata" poster="/media/cockroach-crawler-providers-serverless-poster.png" aria-label="Providers and serverless 30-second demo"><source src="/media/cockroach-crawler-providers-serverless-30s.mp4" type="video/mp4" /><track kind="captions" srclang="en" label="English" src="/media/cockroach-crawler-providers-serverless-30s.vtt" default /></video></article>
-        <article class="video-card"><div><span>45 seconds</span><h3>Real CLI workflow proof</h3><p>Follow deterministic doctor output, a denied dispatch, and a normalized record captured from the tested offline flow.</p></div><video controls playsinline preload="metadata" poster="/media/cockroach-crawler-workflow-proof-poster.png" aria-label="Real CLI workflow proof 45-second demo"><source src="/media/cockroach-crawler-workflow-proof-45s.mp4" type="video/mp4" /><track kind="captions" srclang="en" label="English" src="/media/cockroach-crawler-workflow-proof-45s.vtt" default /></video></article>
-        <article class="video-card"><div><span>30 seconds · vertical</span><h3>Short provider boundary</h3><p>A vertical cut for mobile and social surfaces: what is public, what needs credentials, and what stays unavailable.</p></div><video controls playsinline preload="metadata" poster="/media/cockroach-crawler-vertical-short-poster.png" aria-label="Vertical provider boundary 30-second demo"><source src="/media/cockroach-crawler-vertical-short-30s.mp4" type="video/mp4" /><track kind="captions" srclang="en" label="English" src="/media/cockroach-crawler-vertical-short-30s.vtt" default /></video></article>
+        <article class="video-card"><div><span>30 seconds</span><h3>Providers and serverless</h3><p>Understand access status, official credentials, deployment-owned origins, and the narrower edge runtime.</p></div><video controls playsinline preload="metadata" poster="/media/cockroach-crawler-providers-serverless-poster.png" aria-label="Providers and serverless 30-second demo"><source src="/media/cockroach-crawler-providers-serverless-30s.mp4" type="video/mp4" /><track kind="captions" srclang="en" label="English" src="/media/captions-cockroach-crawler-providers-serverless-30s-en.vtt" /></video></article>
+        <article class="video-card"><div><span>45 seconds</span><h3>Real CLI workflow proof</h3><p>Follow deterministic doctor output, a denied dispatch, and a normalized record captured from the tested offline flow.</p></div><video controls playsinline preload="metadata" poster="/media/cockroach-crawler-workflow-proof-poster.png" aria-label="Real CLI workflow proof 45-second demo"><source src="/media/cockroach-crawler-workflow-proof-45s.mp4" type="video/mp4" /><track kind="captions" srclang="en" label="English" src="/media/captions-cockroach-crawler-workflow-proof-45s-en.vtt" /></video></article>
+        <article class="video-card"><div><span>30 seconds · vertical</span><h3>Short provider boundary</h3><p>A vertical cut for mobile and social surfaces: what is public, what needs credentials, and what stays unavailable.</p></div><video controls playsinline preload="metadata" poster="/media/cockroach-crawler-vertical-short-poster.png" aria-label="Vertical provider boundary 30-second demo"><source src="/media/cockroach-crawler-vertical-short-30s.mp4" type="video/mp4" /><track kind="captions" srclang="en" label="English" src="/media/captions-cockroach-crawler-vertical-short-30s-en.vtt" /></video></article>
       </div>
     </section>`;
 }
@@ -744,16 +744,16 @@ await mkdir(dist, { recursive: true });
 await cp(join(root, "assets"), join(dist, "assets"), { recursive: true });
 const siteMediaFiles = [
   "cockroach-crawler-main-60s.mp4",
-  "cockroach-crawler-main-60s.vtt",
+  "captions-cockroach-crawler-main-60s-en.vtt",
   "cockroach-crawler-main-poster.png",
   "cockroach-crawler-providers-serverless-30s.mp4",
-  "cockroach-crawler-providers-serverless-30s.vtt",
+  "captions-cockroach-crawler-providers-serverless-30s-en.vtt",
   "cockroach-crawler-providers-serverless-poster.png",
   "cockroach-crawler-workflow-proof-45s.mp4",
-  "cockroach-crawler-workflow-proof-45s.vtt",
+  "captions-cockroach-crawler-workflow-proof-45s-en.vtt",
   "cockroach-crawler-workflow-proof-poster.png",
   "cockroach-crawler-vertical-short-30s.mp4",
-  "cockroach-crawler-vertical-short-30s.vtt",
+  "captions-cockroach-crawler-vertical-short-30s-en.vtt",
   "cockroach-crawler-vertical-short-poster.png"
 ];
 await mkdir(join(dist, "media"), { recursive: true });
