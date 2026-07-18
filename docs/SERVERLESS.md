@@ -41,3 +41,8 @@ Before deployment, replace the example `CRAWLER_ALLOWED_ORIGINS` value with orig
 - Request bodies are streamed with an 8 KiB ceiling rather than buffered without limit.
 
 The profile does **not** resolve, classify, or pin DNS answers. An allowlisted hostname can resolve to an internal destination, so the allowlist is not a complete SSRF control. Use platform egress restrictions whenever internal networks are reachable. The profile also has no Playwright, provider credentials, social adapters, distributed queue, proxy rotation, or arbitrary-origin public proxy.
+
+Read the complete [restricted serverless crawler threat model](SERVERLESS-THREAT-MODEL.md)
+before deployment. It separates library, runtime, and operator controls and
+documents abuse cases, observability, rollback, and residual risks. The current
+threat-model draft still requires independent review under issue #13.

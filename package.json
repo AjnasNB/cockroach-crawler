@@ -31,6 +31,12 @@
       "import": "./src/sources.js",
       "default": "./src/sources.js"
     },
+    "./schemas/source-record.json": "./schemas/source-record.schema.json",
+    "./source-conformance": {
+      "types": "./types/source-conformance.d.ts",
+      "import": "./src/source-conformance.js",
+      "default": "./src/source-conformance.js"
+    },
     "./serverless": {
       "types": "./types/serverless.d.ts",
       "import": "./src/serverless.js",
@@ -41,6 +47,7 @@
     "bin/",
     "src/",
     "types/",
+    "schemas/",
     "assets/",
     "worker/worker.js",
     "worker/wrangler.jsonc",
@@ -51,7 +58,9 @@
     "docs/PROVENANCE.md",
     "docs/ARCHITECTURE.md",
     "docs/SOURCES.md",
+    "docs/SOURCE-CONFORMANCE.md",
     "docs/SERVERLESS.md",
+    "docs/SERVERLESS-THREAT-MODEL.md",
     "docs/BENCHMARK.md",
     "README.md",
     "SECURITY.md",
@@ -63,7 +72,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/cli.test.js test/crawler.test.js test/limits.test.js test/security.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
+    "test": "node --test test/cli.test.js test/crawler.test.js test/limits.test.js test/security.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
     "test:browser": "node --test browser-test/integration.test.js",
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
@@ -110,6 +119,7 @@
     }
   },
   "devDependencies": {
+    "ajv": "^8.18.0",
     "playwright": "^1.61.1",
     "typescript": "^7.0.2",
     "wrangler": "^4.83.0"

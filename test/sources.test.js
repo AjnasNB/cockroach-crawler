@@ -10,6 +10,7 @@ import {
   createSourceRegistryFromEnv,
   SourceAccessError
 } from "../src/sources.js";
+import { formatSourceStatusLine } from "../src/source-cli-format.js";
 import { PACKAGE_VERSION } from "../src/version.js";
 import packageManifest from "../package.json" with { type: "json" };
 
@@ -37,6 +38,20 @@ test("source doctor reports exact unauthenticated capability boundaries", () => 
   ]);
   assert.equal(report.find(({ id }) => id === "youtube").capabilities.transcript, false);
   assert.throws(() => { report[0].status = "unavailable"; }, TypeError);
+});
+
+test("source status labels remain understandable with and without color", () => {
+  const statuses = ["ready", "partial", "missing_credentials", "unavailable"];
+  const plain = statuses.map((status) => formatSourceStatusLine({ id: "fixture", status, message: "Fixture status." }));
+  assert.deepEqual(plain, [
+    "fixture  [READY              ] Fixture status.",
+    "fixture  [PARTIAL            ] Fixture status.",
+    "fixture  [MISSING CREDENTIALS] Fixture status.",
+    "fixture  [UNAVAILABLE        ] Fixture status."
+  ]);
+  const colored = statuses.map((status) => formatSourceStatusLine({ id: "fixture", status, message: "Fixture status." }, { color: true }));
+  assert.deepEqual(colored.map((line) => line.replaceAll(/\u001b\[[0-9;]*m/g, "")), plain);
+  assert.ok(colored.every((line) => line.includes("\u001b[")));
 });
 
 test("source registry rejects inherited authority, accessors, and unknown options", () => {
@@ -476,4 +491,24 @@ test("cockroach-sources CLI exposes a secret-free doctor report", () => {
   const report = JSON.parse(result.stdout);
   assert.equal(report.find(({ id }) => id === "github").status, "ready");
   assert.equal(report.find(({ id }) => id === "x").status, "missing_credentials");
+
+  const plain = spawnSync(process.execPath, [path.join(root, "bin", "cockroach-sources.js"), "doctor"], {
+    cwd: root,
+    encoding: "utf8",
+    env: { PATH: process.env.PATH, NO_COLOR: "1", FORCE_COLOR: "1" }
+  });
+  assert.equal(plain.status, 0, plain.stderr);
+  assert.equal(plain.stdout.includes("\u001b["), false);
+  assert.match(plain.stdout, /web\s+\[READY\s+\]/);
+  assert.match(plain.stdout, /youtube\s+\[PARTIAL\s+\]/);
+  assert.match(plain.stdout, /x\s+\[MISSING CREDENTIALS\]/);
+
+  const colored = spawnSync(process.execPath, [path.join(root, "bin", "cockroach-sources.js"), "doctor"], {
+    cwd: root,
+    encoding: "utf8",
+    env: { PATH: process.env.PATH, FORCE_COLOR: "1" }
+  });
+  assert.equal(colored.status, 0, colored.stderr);
+  assert.match(colored.stdout, /\u001b\[[0-9;]*mREADY/);
+  assert.equal(colored.stdout.replaceAll(/\u001b\[[0-9;]*m/g, ""), plain.stdout);
 });
