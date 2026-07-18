@@ -31,6 +31,8 @@ for (const file of htmlFiles) {
   if (h1Count !== 1) errors.push(`${label}: expected one h1, found ${h1Count}`);
   if (!/<meta name="description"/.test(html) && !label.endsWith("404.html")) errors.push(`${label}: missing description`);
   if (!/<link rel="canonical"/.test(html) && !label.endsWith("404.html")) errors.push(`${label}: missing canonical`);
+  if (!/<link rel="stylesheet" href="\/assets\/styles\.css\?v=[a-f0-9]{12}"/.test(html)) errors.push(`${label}: stylesheet URL is not content-versioned`);
+  if (!label.endsWith("404.html") && !/<script src="\/assets\/app\.js\?v=[a-f0-9]{12}" defer><\/script>/.test(html)) errors.push(`${label}: application script URL is not content-versioned`);
   if (label === "/media/index.html" && (html.match(/"@type":"VideoObject"/g) ?? []).length !== 4) errors.push(`${label}: expected four VideoObject records`);
   for (const image of html.matchAll(/<img\b[^>]*>/g)) {
     if (!/\balt="[^"]*"/.test(image[0])) errors.push(`${label}: image without alt`);

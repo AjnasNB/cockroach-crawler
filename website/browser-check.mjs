@@ -66,8 +66,18 @@ try {
       main: document.querySelector("main")?.getAttribute("tabindex"),
       accessibleTables: [...document.querySelectorAll(".table-wrap")].every((region) => region.tabIndex === 0 && region.getAttribute("role") === "region" && region.hasAttribute("aria-label")),
       accessibleCode: [...document.querySelectorAll("pre")].every((region) => region.tabIndex === 0 && region.hasAttribute("aria-label")),
-      videos: [...document.querySelectorAll("video")].map((video) => ({ controls: video.controls, autoplay: video.autoplay, poster: Boolean(video.poster), captions: Boolean(video.querySelector('track[kind="captions"]')), captionsDefault: Boolean(video.querySelector('track[kind="captions"][default]')) }))
+      videos: [...document.querySelectorAll("video")].map((video) => ({ controls: video.controls, autoplay: video.autoplay, poster: Boolean(video.poster), captions: Boolean(video.querySelector('track[kind="captions"]')), captionsDefault: Boolean(video.querySelector('track[kind="captions"][default]')) })),
+      docsDirectory: (() => {
+        const directory = document.querySelector(".doc-route-grid");
+        if (!directory) return null;
+        return {
+          display: getComputedStyle(directory).display,
+          columns: getComputedStyle(directory).gridTemplateColumns,
+          cards: directory.querySelectorAll(":scope > a").length
+        };
+      })()
     }));
+    if (route === "/docs/") await page.screenshot({ path: `${output}/docs-desktop.png`, fullPage: true });
     if (route === "/providers/") await page.screenshot({ path: `${output}/providers-desktop.png`, fullPage: true });
     if (route === "/release/") await page.screenshot({ path: `${output}/release-desktop.png`, fullPage: true });
     results.push({ route, status: response?.status(), ...metrics, badImages: metrics.images.filter((image) => !image.ok || !image.alt), errors });
@@ -147,7 +157,7 @@ try {
     await mobile.close();
   }
 
-  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions || video.captionsDefault));
+  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions || video.captionsDefault) || (result.route === "/docs/" && (result.docsDirectory?.display !== "grid" || result.docsDirectory.cards !== 6)));
   const mobileFailed = mobileResults.filter((result) => result.status !== 200 || result.horizontal || result.navVisible === "none" || !result.currentNavVisible || !result.mobileToc || result.errors.length);
   console.log(JSON.stringify({ routes: results, keyboard: { firstFocus, afterSkip, copyLabel }, mediaServer, mobile: mobileResults }, null, 2));
   if (failed.length || mobileFailed.length || !mediaServer.captions || !mediaServer.range || firstFocus.className !== "skip-link" || afterSkip.id !== "main" || copyLabel !== "Copied") {

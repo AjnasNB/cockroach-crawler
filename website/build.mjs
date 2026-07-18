@@ -1,4 +1,5 @@
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -13,6 +14,11 @@ const helpWantedIssues = `${repository}/issues?q=is%3Aissue+is%3Aopen+label%3A%2
 const maqamRepository = "https://github.com/AjnasNB/maqam";
 const maqamDocs = "https://maqamagent.com/docs/";
 const benchmarkRun = "https://github.com/AjnasNB/cockroach-crawler/actions/runs/29624859893";
+const assetVersion = createHash("sha256")
+  .update(await readFile(join(root, "assets", "styles.css")))
+  .update(await readFile(join(root, "assets", "app.js")))
+  .digest("hex")
+  .slice(0, 12);
 const benchmarkResult = JSON.parse(
   await readFile(join(root, "..", "bench", "results", "ci-validated.json"), "utf8")
 );
@@ -278,9 +284,9 @@ function pageTemplate(page) {
   <meta name="twitter:title" content="${escapeHtml(page.title)}" />
   <meta name="twitter:description" content="${escapeHtml(page.description)}" />
   <meta name="twitter:image" content="${siteUrl}/assets/social-card.png" />
-  <link rel="stylesheet" href="/assets/styles.css" />
+  <link rel="stylesheet" href="/assets/styles.css?v=${assetVersion}" />
   <script type="application/ld+json">${JSON.stringify(schema).replaceAll("<", "\\u003c")}</script>
-  <script src="/assets/app.js" defer></script>
+  <script src="/assets/app.js?v=${assetVersion}" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -368,14 +374,17 @@ function homePage() {
 
 function docsTopicNav() {
   const topics = [
-    ["CLI", "Install, flags, output files, and trusted-operator options.", "/docs/cli/"],
-    ["JavaScript", "Typed crawl options, results, cancellation, and failures.", "/docs/javascript/"],
-    ["Agents + Maqam", "Creator-owned ceilings and a registered governance boundary.", "/docs/agents/"],
-    ["Providers", "GitHub, YouTube, X, and Reddit capability contracts.", "/docs/providers/"],
-    ["Serverless", "Restricted Cloudflare Worker deployment and tradeoffs.", "/docs/serverless/"],
-    ["Security", "Network, browser, content, and disclosure boundaries.", "/security/"]
+    ["Install and run the CLI", "Copy one bounded crawl command, choose JSON or JSONL output, and inspect failures.", "/docs/cli/", "Open CLI guide"],
+    ["Embed the Node.js API", "Call crawlDetailed with typed limits, cancellation, page records, and crawl statistics.", "/docs/javascript/", "Open API guide"],
+    ["Expose a bounded agent tool", "Keep origins and budgets owned by the host, then optionally route the call through Maqam.", "/docs/agents/", "Open agent guide"],
+    ["Read supported providers", "See which GitHub, YouTube, X, and Reddit reads work and which official credentials are required.", "/docs/providers/", "Open provider guide"],
+    ["Deploy the fixed-origin Worker", "Run a token-authenticated, rate-limited fetch profile for deployment-owned HTTPS origins.", "/docs/serverless/", "Open Worker guide"],
+    ["Review the crawl boundary", "Audit SSRF defenses, robots behavior, browser limits, redirects, and resource ceilings.", "/security/", "Open security guide"]
   ];
-  return `<nav class="doc-route-grid shell" aria-label="Documentation topics">${topics.map(([title, text, href]) => `<a href="${href}"><strong>${title}</strong><span>${text}</span><em>Open guide →</em></a>`).join("")}</nav>`;
+  return `<section class="docs-directory shell" aria-labelledby="docs-directory-title">
+    <div class="docs-directory-head"><p class="eyebrow">Choose a task</p><h2 id="docs-directory-title">What do you need to do?</h2><p>Each guide starts with runnable code and names the limits that still apply.</p></div>
+    <nav class="doc-route-grid" aria-label="Documentation tasks">${topics.map(([title, text, href, action]) => `<a href="${href}"><strong>${title}</strong><span>${text}</span><em>${action} →</em></a>`).join("")}</nav>
+  </section>`;
 }
 
 function focusedDocsPage(eyebrow, title, lede, content) {
@@ -518,7 +527,7 @@ function serverlessDocsPage() {
 function docsPage() {
   const tocLinks = `<a href="#quickstart">Quickstart</a><a href="#cli">CLI</a><a href="#library">JavaScript API</a><a href="#agent">Agent adapter</a><a href="#sources">Source registry</a><a href="#serverless">Serverless</a><a href="#browser">Browser mode</a><a href="#output">Output</a><a href="#limits">Limits</a><a href="#deployment">Deployment notes</a>`;
   return `
-    <section class="page-hero shell"><p class="eyebrow">Documentation</p><h1>From install to a bounded crawl.</h1><p class="lede">Start with public pages you own or are permitted to access. Add limits before adding scale.</p><div class="page-actions"><a class="button primary" href="#quickstart">Quickstart</a><a class="button secondary" href="${repository}/blob/main/README.md">README source</a></div></section>
+    <section class="page-hero shell"><p class="eyebrow">Documentation</p><h1>Install it. Crawl one path. Inspect the result.</h1><p class="lede">Choose the CLI, Node.js API, agent adapter, provider, or Worker path. Every guide includes runnable code, output behavior, failures, and enforced limits.</p><div class="page-actions"><a class="button primary" href="#quickstart">Run the quickstart</a><a class="button secondary" href="${repository}/blob/main/README.md">Read the package README</a></div></section>
     ${docsTopicNav()}
     <details class="mobile-toc shell"><summary>On this page</summary><nav aria-label="On this page">${tocLinks}</nav></details>
     <div class="docs-layout shell">
@@ -759,7 +768,7 @@ function releasePage() {
     <section class="section shell card-grid"><article><p class="eyebrow">Upgrade note</p><h2>Review stricter failures.</h2><p>Cross-origin crawling now requires explicit allowed origins. Numeric strings and booleans are rejected instead of coerced. Robots and sensitive-path failures close earlier.</p></article><article><p class="eyebrow">Package provenance</p><h2>Inspect, do not infer.</h2><p>Review the npm package, committed workflow, lockfile, dependency-license snapshot, and packed tarball. This site does not claim certification.</p></article></section>`;
 }
 
-const notFound = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page not found — Cockroach Crawler</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/assets/styles.css"></head><body><main id="main" tabindex="-1"><section class="page-hero shell not-found"><p class="eyebrow">404</p><h1>This route is outside the crawl map.</h1><p class="lede">The page may have moved. Return to the documentation or inspect the project source.</p><div class="page-actions"><a class="button primary" href="/">Go home</a><a class="button secondary" href="/docs/">Read the docs</a></div></section></main></body></html>`;
+const notFound = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page not found — Cockroach Crawler</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/assets/styles.css?v=${assetVersion}"></head><body><main id="main" tabindex="-1"><section class="page-hero shell not-found"><p class="eyebrow">404</p><h1>This route is outside the crawl map.</h1><p class="lede">The page may have moved. Return to the documentation or inspect the project source.</p><div class="page-actions"><a class="button primary" href="/">Go home</a><a class="button secondary" href="/docs/">Read the docs</a></div></section></main></body></html>`;
 
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
