@@ -879,6 +879,69 @@ code {
   max-width: 68ch;
 }
 
+.doc-route-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin-bottom: 72px;
+  border: 1px solid var(--line-bright);
+  background: var(--line-bright);
+}
+
+.doc-route-grid a {
+  display: flex;
+  min-height: 176px;
+  flex-direction: column;
+  padding: 24px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.doc-route-grid a:hover,
+.doc-route-grid a:focus-visible {
+  background: var(--surface-strong);
+}
+
+.doc-route-grid strong {
+  margin-bottom: 10px;
+  font-size: 1.06rem;
+}
+
+.doc-route-grid span {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.doc-route-grid em {
+  margin-top: auto;
+  padding-top: 24px;
+  color: var(--green);
+  font: 650 0.74rem/1.4 var(--mono);
+  font-style: normal;
+}
+
+.docs-article {
+  max-width: 900px;
+  padding-bottom: 96px;
+}
+
+.docs-article > section {
+  padding: 56px 0;
+  border-top: 1px solid var(--line);
+}
+
+.docs-article > section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.docs-article .code-panel,
+.docs-article .table-wrap,
+.docs-article .next-links {
+  margin-top: 28px;
+}
+
 .docs-layout {
   display: grid;
   grid-template-columns: 210px minmax(0, 800px);
@@ -1316,6 +1379,10 @@ tr:last-child td {
     grid-template-columns: 1fr;
   }
 
+  .doc-route-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .video-card {
     display: grid;
     grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
@@ -1498,6 +1565,15 @@ tr:last-child td {
   .next-links,
   .footer-grid {
     grid-template-columns: 1fr;
+  }
+
+  .doc-route-grid {
+    grid-template-columns: 1fr;
+    margin-bottom: 52px;
+  }
+
+  .doc-route-grid a {
+    min-height: 150px;
   }
 
   .proof-grid > div,

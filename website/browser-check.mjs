@@ -28,7 +28,22 @@ const mediaServer = {
   range: rangeResponse.status === 206 && rangeResponse.headers.get("content-type") === "video/mp4" && rangeResponse.headers.get("content-range")?.startsWith("bytes 0-31/") && rangeBody.byteLength === 32
 };
 const browser = await chromium.launch({ headless: true });
-const routes = ["/", "/docs/", "/security/", "/providers/", "/benchmark/", "/media/", "/roadmap/", "/community/", "/release/"];
+const routes = [
+  "/",
+  "/docs/",
+  "/docs/cli/",
+  "/docs/javascript/",
+  "/docs/agents/",
+  "/docs/providers/",
+  "/docs/serverless/",
+  "/security/",
+  "/providers/",
+  "/benchmark/",
+  "/media/",
+  "/roadmap/",
+  "/community/",
+  "/release/"
+];
 try {
   const results = [];
   for (const route of routes) {

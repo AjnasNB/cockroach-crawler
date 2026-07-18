@@ -7,8 +7,11 @@ const dist = join(root, "dist");
 const siteUrl = "https://cockroachcrawler.com";
 const repository = "https://github.com/AjnasNB/cockroach-crawler";
 const npmPackage = "https://www.npmjs.com/package/cockroach-crawler";
+const maqamRepository = "https://github.com/AjnasNB/maqam";
+const maqamDocs = "https://maqamagent.com/docs/";
+const benchmarkRun = "https://github.com/AjnasNB/cockroach-crawler/actions/runs/29624859893";
 const benchmarkResult = JSON.parse(
-  await readFile(join(root, "..", "bench", "results", "local-regression.json"), "utf8")
+  await readFile(join(root, "..", "bench", "results", "ci-validated.json"), "utf8")
 );
 const benchmarkElapsedMedian = benchmarkResult.results.elapsedMs.median;
 const benchmarkElapsedP95 = benchmarkResult.results.elapsedMs.p95;
@@ -61,6 +64,41 @@ const pages = [
     description: "Copy-paste quickstarts for the Cockroach Crawler CLI, JavaScript API, agent adapter, browser mode, and structured output.",
     body: docsPage(),
     schema: howToSchema()
+  },
+  {
+    slug: "docs/cli",
+    active: "Docs",
+    title: "CLI guide — Cockroach Crawler",
+    description: "Install Cockroach Crawler, run a bounded crawl, choose output formats, and understand the CLI safety controls.",
+    body: cliDocsPage()
+  },
+  {
+    slug: "docs/javascript",
+    active: "Docs",
+    title: "JavaScript API guide — Cockroach Crawler",
+    description: "Use Cockroach Crawler from Node.js with typed limits, callbacks, abort signals, pages, failures, and statistics.",
+    body: javascriptDocsPage()
+  },
+  {
+    slug: "docs/agents",
+    active: "Docs",
+    title: "Agent and Maqam integration — Cockroach Crawler",
+    description: "Expose a creator-bounded crawler tool to an agent and optionally route it through Maqam's registered ToolGateway.",
+    body: agentDocsPage()
+  },
+  {
+    slug: "docs/providers",
+    active: "Docs",
+    title: "Provider adapters guide — Cockroach Crawler",
+    description: "Inspect and use the candidate GitHub, YouTube, X, and Reddit provider contracts without hiding credential requirements.",
+    body: providerDocsPage()
+  },
+  {
+    slug: "docs/serverless",
+    active: "Docs",
+    title: "Serverless deployment guide — Cockroach Crawler",
+    description: "Deploy the restricted Cloudflare Worker crawler tier with fixed origins, a bearer secret, and explicit runtime limits.",
+    body: serverlessDocsPage()
   },
   {
     slug: "security",
@@ -180,7 +218,7 @@ function footer() {
         </div>
         <div><h2>Use</h2><a href="/docs/">Documentation</a><a href="/providers/">Provider status</a><a href="/media/">Product demos</a><a href="${npmPackage}">npm package</a></div>
         <div><h2>Trust</h2><a href="/security/">Security model</a><a href="/benchmark/">Benchmark method</a><a href="${repository}/blob/main/SECURITY.md">Report privately</a></div>
-        <div><h2>Project</h2><a href="/roadmap/">Roadmap</a><a href="/community/">Contribute</a><a href="${repository}">Source code</a></div>
+        <div><h2>Project</h2><a href="/roadmap/">Roadmap</a><a href="/community/">Contribute</a><a href="${repository}">Source code</a><a href="${maqamDocs}">Govern with Maqam</a></div>
       </div>
       <div class="shell legal"><span>MIT · npm stable 0.2.0 · source candidate 0.3.0-alpha.1</span><span>Site content last reviewed 18 July 2026</span></div>
     </footer>`;
@@ -236,7 +274,7 @@ function pageTemplate(page) {
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  ${nav(page.nav)}
+  ${nav(page.active ?? page.nav)}
   <main id="main" tabindex="-1">${page.body}</main>
   ${footer()}
 </body>
@@ -280,9 +318,9 @@ function homePage() {
     <section class="section shell split-intro">
       <div><p class="eyebrow">Choose the smallest mode that works</p><h2>One boundary. Three entry points.</h2><p>Use the CLI for repeatable exports, the library inside a Node service, or the strict adapter inside an agent runtime. Optional Chromium rendering stays behind the same URL and budget policy.</p></div>
       <div class="mode-list">
-        <article><span>01</span><div><h3>CLI</h3><p>Bounded crawl jobs with JSON or JSONL output and explicit flags.</p><a href="/docs/#cli">Copy the command →</a></div></article>
-        <article><span>02</span><div><h3>JavaScript API</h3><p>Typed options, callbacks, abort signals, failures, and crawl statistics.</p><a href="/docs/#library">See the API →</a></div></article>
-        <article><span>03</span><div><h3>Agent adapter</h3><p>Model input cannot expand the origins, budgets, or browser authority set by its creator.</p><a href="/docs/#agent">Bind a tool →</a></div></article>
+        <article><span>01</span><div><h3>CLI</h3><p>Bounded crawl jobs with JSON or JSONL output and explicit flags.</p><a href="/docs/cli/">Copy the command →</a></div></article>
+        <article><span>02</span><div><h3>JavaScript API</h3><p>Typed options, callbacks, abort signals, failures, and crawl statistics.</p><a href="/docs/javascript/">See the API →</a></div></article>
+        <article><span>03</span><div><h3>Agent adapter</h3><p>Model input cannot expand the origins, budgets, or browser authority set by its creator.</p><a href="/docs/agents/">Bind a tool →</a></div></article>
       </div>
     </section>
     <section class="section shell">
@@ -318,10 +356,160 @@ function homePage() {
     </div></section>`;
 }
 
+function docsTopicNav() {
+  const topics = [
+    ["CLI", "Install, flags, output files, and trusted-operator options.", "/docs/cli/"],
+    ["JavaScript", "Typed crawl options, results, cancellation, and failures.", "/docs/javascript/"],
+    ["Agents + Maqam", "Creator-owned ceilings and a registered governance boundary.", "/docs/agents/"],
+    ["Providers", "GitHub, YouTube, X, and Reddit capability contracts.", "/docs/providers/"],
+    ["Serverless", "Restricted Cloudflare Worker deployment and tradeoffs.", "/docs/serverless/"],
+    ["Security", "Network, browser, content, and disclosure boundaries.", "/security/"]
+  ];
+  return `<nav class="doc-route-grid shell" aria-label="Documentation topics">${topics.map(([title, text, href]) => `<a href="${href}"><strong>${title}</strong><span>${text}</span><em>Open guide →</em></a>`).join("")}</nav>`;
+}
+
+function focusedDocsPage(eyebrow, title, lede, content) {
+  return `
+    <section class="page-hero shell"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1><p class="lede">${lede}</p><div class="page-actions"><a class="button secondary" href="/docs/">All documentation</a><a class="button secondary" href="${repository}">Source on GitHub</a></div></section>
+    ${docsTopicNav()}
+    <article class="docs-article shell">${content}</article>`;
+}
+
+function cliDocsPage() {
+  return focusedDocsPage(
+    "Documentation · CLI",
+    "Install once. Put every crawl limit in the command.",
+    "Use the CLI for repeatable exports, scheduled documentation snapshots, content inventories, and local evidence jobs.",
+    `<section><p class="eyebrow">01 · Install</p><h2>Use Node.js 20.18.1 or newer.</h2><p>Global installation exposes <code>cockroach-crawl</code>. A project-local install works with <code>npx</code> and pins the crawler in your lockfile.</p>${codeBlock("cli-install-global", "global", "npm install --global cockroach-crawler\ncockroach-crawl --version")}${codeBlock("cli-install-local", "project local", "npm install cockroach-crawler\nnpx cockroach-crawl --version")}</section>
+    <section><p class="eyebrow">02 · Run</p><h2>Start with one permitted origin.</h2><p>Same-origin traversal and robots enforcement are the defaults. These limits cap discovery, requests, decoded bytes, depth, and wall-clock time.</p>${codeBlock("cli-safe-run", "bounded crawl", "cockroach-crawl https://example.com/docs \\\n+  --max-pages 25 \\\n+  --max-requests 120 \\\n+  --max-depth 2 \\\n+  --max-total-bytes 10000000 \\\n+  --max-duration 60000 \\\n+  --jsonl \\\n+  --output crawl.jsonl")}</section>
+    <section><p class="eyebrow">03 · Inspect</p><h2>Keep records and failures together.</h2><p>JSON is convenient for one bounded result. JSONL streams one page record per line. Each page includes its final URL, status, title, readable text, Markdown, links, content hash, redirect chain, and retrieval time.</p><div class="next-links"><a href="/docs/#output"><span>Output contract</span><strong>See the record shape →</strong></a><a href="/security/"><span>Before production</span><strong>Review the security boundary →</strong></a></div></section>`
+  );
+}
+
+function javascriptDocsPage() {
+  return focusedDocsPage(
+    "Documentation · JavaScript",
+    "Call the crawler from a typed Node service.",
+    "The library returns pages, structured failures, and final statistics so applications do not have to parse terminal output.",
+    `<section><p class="eyebrow">01 · Install</p><h2>Pin the package in the application.</h2>${codeBlock("js-install", "terminal", "npm install cockroach-crawler")}</section>
+    <section><p class="eyebrow">02 · Execute</p><h2>Use <code>crawlDetailed</code> when failures matter.</h2>${codeBlock("js-detailed", "crawl.mjs", `import { crawlDetailed } from "cockroach-crawler";
+
+const controller = new AbortController();
+const result = await crawlDetailed({
+  seeds: ["https://example.com/docs"],
+  allowedOrigins: ["https://example.com"],
+  maxPages: 25,
+  maxRequests: 120,
+  maxDepth: 2,
+  maxDurationMs: 60_000,
+  maxTotalBytes: 10_000_000,
+  includeSitemaps: true,
+  signal: controller.signal
+});
+
+console.log(result.pages);
+console.log(result.failures);
+console.log(result.stats);`, "javascript")}</section>
+    <section><p class="eyebrow">03 · Handle</p><h2>Treat a partial crawl as an explicit state.</h2><p>Inspect <code>failures</code> and <code>stats</code> before indexing. Keep page URLs and hashes beside derived chunks, and keep crawled text in a data channel because page content is untrusted.</p><div class="next-links"><a href="/docs/agents/"><span>Agent use</span><strong>Bind creator-owned ceilings →</strong></a><a href="${repository}/blob/main/types/index.d.ts"><span>Types</span><strong>Read the public declarations →</strong></a></div></section>`
+  );
+}
+
+function agentDocsPage() {
+  return focusedDocsPage(
+    "Documentation · Agents",
+    "Give an agent a crawler without giving it crawl authority.",
+    "The application creator selects origins, budgets, and browser permission. Agent input may narrow those values, but it cannot expand them.",
+    `<section><p class="eyebrow">01 · Strict adapter</p><h2>Create one bounded tool.</h2>${codeBlock("agent-install", "terminal", "npm install cockroach-crawler maqam")}${codeBlock("agent-strict-tool", "agent-tool.mjs", `import { createCockroachCrawlerTool } from "cockroach-crawler/agent";
+
+const crawler = createCockroachCrawlerTool({
+  allowedOrigins: ["https://docs.example.com"],
+  maxPages: 10,
+  maxRequests: 80,
+  maxDepth: 1,
+  maxDurationMs: 60_000,
+  includeSitemaps: true
+});
+
+const result = await crawler.execute({
+  urls: ["https://docs.example.com/start"],
+  maxPages: 5
+});`, "javascript")}</section>
+    <section><p class="eyebrow">02 · Maqam composition</p><h2>Route the tool through a registered governance boundary.</h2><p>Maqam and Cockroach Crawler remain separate packages. The crawler owns network and resource policy; Maqam can add registered-tool policy, traces, approval rules, and evidence records around the call.</p>${codeBlock("agent-maqam", "governed-crawl.mjs", `import { PolicyEngine, ToolGateway } from "maqam";
+import { createCockroachCrawlerTool } from "cockroach-crawler/agent";
+
+const crawler = createCockroachCrawlerTool({
+  allowedOrigins: ["https://docs.example.com"],
+  maxPages: 10,
+  maxRequests: 80
+});
+
+const gateway = new ToolGateway({
+  policyEngine: new PolicyEngine({
+    allowedTools: [crawler.name],
+    allowedOrigins: ["https://docs.example.com"]
+  })
+});
+
+gateway.registerTool(
+  crawler.name,
+  crawler.execute.bind(crawler),
+  { effects: ["read"], risk: "low" }
+);
+
+const result = await gateway.call(crawler.name, {
+  urls: ["https://docs.example.com/start"],
+  maxPages: 5
+}, {
+  runId: "research_1",
+  authorizedOrigins: ["https://docs.example.com"]
+});`, "javascript")}</section>
+    <section><p class="eyebrow">03 · Boundary</p><h2>Remove bypass paths in the host.</h2><p>A registered gateway controls only calls routed through it. Do not also give the model a general shell, unrestricted HTTP client, browser profile, or provider token that can perform the same action outside the adapter.</p><div class="next-links"><a href="${maqamDocs}"><span>Maqam</span><strong>Read the governance documentation →</strong></a><a href="${maqamRepository}"><span>Source</span><strong>Inspect Maqam on GitHub →</strong></a></div></section>`
+  );
+}
+
+function providerDocsPage() {
+  return focusedDocsPage(
+    "Documentation · Providers",
+    "Check capability before making a provider request.",
+    "The source candidate reports whether each adapter is public, keyed, credentialed, partial, or unavailable without serializing secrets.",
+    `<section><p class="eyebrow">01 · Doctor</p><h2>Inspect the current runtime.</h2>${codeBlock("provider-doctor-guide", "source candidate", "git clone https://github.com/AjnasNB/cockroach-crawler.git\ncd cockroach-crawler\nnpm ci --ignore-scripts\nnode bin/cockroach-sources.js doctor --json")}</section>
+    <section><p class="eyebrow">02 · Credentials</p><h2>Use official provider access only.</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Provider credential guide"><table><thead><tr><th>Provider</th><th>Public path</th><th>Optional or required credential</th></tr></thead><tbody><tr><td>GitHub</td><td>Public REST read/search</td><td><code>GITHUB_TOKEN</code> optional for higher rate limits</td></tr><tr><td>YouTube</td><td>Public oEmbed metadata</td><td><code>YOUTUBE_API_KEY</code> required for search</td></tr><tr><td>X</td><td>None in this adapter</td><td><code>X_BEARER_TOKEN</code> required</td></tr><tr><td>Reddit</td><td>None in this adapter</td><td>Official OAuth client ID, secret, and contact user agent</td></tr></tbody></table></div></section>
+    <section><p class="eyebrow">03 · Normalize</p><h2>Keep source identity in every record.</h2><p>Provider results include provider ID, canonical URL, retrieval time, adapter version, content hash, warnings, and the provider-specific payload. Check <a href="/providers/">the live coverage table</a> before promising a capability.</p></section>`
+  );
+}
+
+function serverlessDocsPage() {
+  return focusedDocsPage(
+    "Documentation · Serverless",
+    "Deploy a smaller crawler for fixed public origins.",
+    "The Worker tier is a separate fetch-only profile for operator-owned or independently trusted HTTPS hosts. It is not the hardened Node transport.",
+    `<section><p class="eyebrow">01 · Configure</p><h2>Fix the authority at deployment time.</h2>${codeBlock("worker-config-guide", "worker/wrangler.jsonc", `{
+  "name": "cockroach-crawler-serverless",
+  "main": "worker.js",
+  "compatibility_date": "2026-07-17",
+  "vars": {
+    "CRAWLER_ALLOWED_ORIGINS": "https://docs.example.com"
+  },
+  "ratelimits": [{
+    "name": "CRAWLER_RATE_LIMITER",
+    "namespace_id": "YOUR_NAMESPACE_ID",
+    "simple": { "limit": 10, "period": 60 }
+  }]
+}`, "json")}</section>
+    <section><p class="eyebrow">02 · Protect</p><h2>Store the bearer token as a Worker secret.</h2>${codeBlock("worker-secret-guide", "terminal", "npx wrangler secret put CRAWLER_API_TOKEN --config worker/wrangler.jsonc\nnpm run worker:check\nnpx wrangler deploy --config worker/wrangler.jsonc")}</section>
+    <section><p class="eyebrow">03 · Call</p><h2>Send a bounded job.</h2>${codeBlock("worker-call-guide", "request", `curl https://YOUR-WORKER.example.workers.dev/v1/crawl \\
+  --request POST \\
+  --header "Authorization: Bearer $CRAWLER_API_TOKEN" \\
+  --header "Content-Type: application/json" \\
+  --data '{"url":"https://docs.example.com/start","maxPages":5,"maxRequests":30}'`, "shell")}<div class="callout warning"><strong>Runtime distinction</strong><p>The Worker validates configured HTTPS origins, token authentication, method, content type, rate, and resource limits. It does not resolve and pin DNS answers, launch Chromium, or accept arbitrary request-selected origins. Use Cloudflare egress controls and trusted hostnames.</p></div></section>`
+  );
+}
+
 function docsPage() {
   const tocLinks = `<a href="#quickstart">Quickstart</a><a href="#cli">CLI</a><a href="#library">JavaScript API</a><a href="#agent">Agent adapter</a><a href="#sources">Source registry</a><a href="#serverless">Serverless</a><a href="#browser">Browser mode</a><a href="#output">Output</a><a href="#limits">Limits</a><a href="#deployment">Deployment notes</a>`;
   return `
     <section class="page-hero shell"><p class="eyebrow">Documentation</p><h1>From install to a bounded crawl.</h1><p class="lede">Start with public pages you own or are permitted to access. Add limits before adding scale.</p><div class="page-actions"><a class="button primary" href="#quickstart">Quickstart</a><a class="button secondary" href="${repository}/blob/main/README.md">README source</a></div></section>
+    ${docsTopicNav()}
     <details class="mobile-toc shell"><summary>On this page</summary><nav aria-label="On this page">${tocLinks}</nav></details>
     <div class="docs-layout shell">
       <aside class="toc"><nav aria-label="On this page"><h2>On this page</h2>${tocLinks}</nav></aside>
@@ -451,10 +639,10 @@ function providersPage() {
 
 function benchmarkPage() {
   return `
-    <section class="page-hero shell"><p class="eyebrow">Local regression benchmark</p><h1>Repeat the same workload. Catch the regression.</h1><p class="lede">On 18 July 2026, ${benchmarkMeasuredRuns} measured runs of the deterministic ${benchmarkPages}-page local fixture produced a ${benchmarkElapsedMedian} ms median and ${benchmarkThroughputMedian} pages per second median on this development machine.</p><div class="page-actions"><a class="button primary" href="#reproduce">Reproduce it</a><a class="button secondary" href="${repository}/blob/main/docs/BENCHMARK.md">Read the method</a></div></section>
-    <section class="benchmark-hero shell"><div class="benchmark-number"><span>${benchmarkMeasuredRuns}-run median</span><strong>${benchmarkThroughputMedian}</strong><em>local fixture pages / second</em></div><figure><img src="/assets/benchmark-rig.svg" width="720" height="520" alt="Isometric benchmark rig feeding 120 local pages through a controlled extraction path into measured output" /><figcaption>0.3.0-alpha.1 working tree · ${benchmarkNode} · static local HTML · no public network · no Chromium · no competitor comparison</figcaption></figure></section>
+    <section class="page-hero shell"><p class="eyebrow">CI-validated local regression benchmark</p><h1>Repeat the same workload. Catch the regression.</h1><p class="lede">A clean exact-commit CI run completed ${benchmarkMeasuredRuns} measured passes of the deterministic ${benchmarkPages}-page loopback fixture at a ${benchmarkElapsedMedian} ms median and ${benchmarkThroughputMedian} pages per second median. All correctness and policy probes passed.</p><div class="page-actions"><a class="button primary" href="#reproduce">Reproduce it</a><a class="button secondary" href="${benchmarkRun}">Open the CI run</a><a class="button secondary" href="${repository}/blob/main/docs/BENCHMARK.md">Read the method</a></div></section>
+    <section class="benchmark-hero shell"><div class="benchmark-number"><span>${benchmarkMeasuredRuns}-run median</span><strong>${benchmarkThroughputMedian}</strong><em>loopback fixture pages / second</em></div><figure><img src="/assets/benchmark-rig.svg" width="720" height="520" alt="Isometric benchmark rig feeding 120 local pages through a controlled extraction path into measured output" /><figcaption>Clean CI artifact ${benchmarkCommit} · ${benchmarkNode} · ${benchmarkPages} static loopback pages · ${benchmarkMeasuredRuns}/${benchmarkMeasuredRuns} correctness passes</figcaption></figure></section>
     <section class="section shell"><div class="section-head"><div><p class="eyebrow">Scope</p><h2>What this number measures.</h2></div><p>This deterministic 120-page fixture measures local traversal and extraction. Public-network and production-capacity measurements require a separate workload.</p></div><div class="fit-grid"><article class="fit-yes"><span>Measured</span><h3>Local crawler regression</h3><p>Traversal and extraction across 120 deterministic local pages, including Markdown output and a likely-private URL skip.</p></article><article><span>Separate profile</span><h3>Public-network behavior</h3><p>DNS latency, TLS, remote pacing, robots delays, and real-site extraction need a dated public-network workload.</p></article><article><span>Separate profile</span><h3>Hosted capacity</h3><p>Browser rendering, proxy infrastructure, distributed queues, and production concurrency need deployment-level evidence.</p></article></div></section>
-    <section class="section shell proof-section" id="reproduce"><div><p class="eyebrow">Reproduce</p><h2>Run the committed fixture.</h2><p>Record the commit, Node version, CPU, operating system, and repeated-run distribution before publishing a comparison.</p>${codeBlock("bench-run", "terminal", "git clone https://github.com/AjnasNB/cockroach-crawler.git\ncd cockroach-crawler\nnpm ci --ignore-scripts\nnpm run bench")}</div>${codeBlock("bench-output", "captured 18 July 2026", `{
+    <section class="section shell proof-section" id="reproduce"><div><p class="eyebrow">Reproduce</p><h2>Run the committed fixture.</h2><p>The script records the source fingerprint, commit, dirty state, environment, every sample, correctness assertions, and policy probes in raw JSON.</p>${codeBlock("bench-run", "terminal", "git clone https://github.com/AjnasNB/cockroach-crawler.git\ncd cockroach-crawler\nnpm ci --ignore-scripts\nnpm run bench")}</div>${codeBlock("bench-output", "clean CI summary", `{
   "pages": ${benchmarkPages},
   "measuredRuns": ${benchmarkMeasuredRuns},
   "elapsedMsMedian": ${benchmarkElapsedMedian},
@@ -463,7 +651,6 @@ function benchmarkPage() {
   "correctness": "${benchmarkMeasuredRuns}/${benchmarkMeasuredRuns} passed",
   "policyProbes": "passed"
 }`, "json")}</section>
-    <section class="section shell"><div class="callout warning"><strong>Development evidence, not release evidence</strong><p>The captured JSON records a dirty working tree at baseline commit <code>${benchmarkCommit}</code>. It is useful for local regression tracking, but it must be regenerated from the approved release commit before it is cited as release evidence.</p></div></section>
     <section class="section shell card-grid"><article><p class="eyebrow">Before publishing</p><h2>Use a distribution, not one lucky run.</h2><p>Warm up, run multiple samples, report median and variability, pin dependencies, and attach raw JSON.</p></article><article><p class="eyebrow">Before comparing</p><h2>Match the contract.</h2><p>Use the same pages, rendering mode, concurrency, output fields, robots policy, retry policy, and network conditions.</p></article></section>`;
 }
 
@@ -587,6 +774,6 @@ await writeFile(
 );
 await writeFile(join(dist, "site.webmanifest"), JSON.stringify({ name: "Cockroach Crawler", short_name: "Crawler", start_url: "/", display: "standalone", background_color: "#07100e", theme_color: "#07100e", icons: [{ src: "/assets/mark.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }] }, null, 2), "utf8");
 await writeFile(join(dist, "_headers"), `/*\n  Cache-Control: public, max-age=300, no-transform\n  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()\n\n/assets/*\n  Cache-Control: public, max-age=300, must-revalidate, no-transform\n\n/media/*\n  Cache-Control: public, max-age=3600, must-revalidate, no-transform\n`, "utf8");
-await writeFile(join(dist, "_redirects"), `/docs /docs/ 301\n/security /security/ 301\n/providers /providers/ 301\n/benchmark /benchmark/ 301\n/media /media/ 301\n/roadmap /roadmap/ 301\n/community /community/ 301\n/release /release/ 301\n`, "utf8");
-await writeFile(join(dist, "llms.txt"), `# Cockroach Crawler\n\nnpm stable 0.2.0 is a local Node.js crawler for public or explicitly trusted HTTP(S) pages. It enforces robots, explicit origin policy, public-network defaults, DNS-pinned requests, validated redirects, and resource budgets. It outputs readable text, Markdown, links, hashes, metadata, failures, and crawl stats.\n\nThe 0.3.0-alpha.1 release candidate adds a tested provider registry and separate serverless profile. Provider doctor status: web ready; public GitHub REST ready with optional token; YouTube metadata read ready, search requires YOUTUBE_API_KEY, transcript false; X requires an official bearer token; Reddit requires official OAuth client credentials and a contact-aware user agent. The serverless tier is self-hosted, token-authenticated, rate-limited, and restricted to deployment-configured HTTPS origins. It does not resolve, classify, or pin DNS answers, so operators must use owned/trusted hostnames and infrastructure egress policy. Browser mode is optional and requires process isolation for hostile pages.\n\n- Documentation: ${siteUrl}/docs/\n- Security: ${siteUrl}/security/\n- Provider status: ${siteUrl}/providers/\n- Benchmark method: ${siteUrl}/benchmark/\n- Source: ${repository}\n- npm: ${npmPackage}\n`, "utf8");
+await writeFile(join(dist, "_redirects"), `/docs /docs/ 301\n/docs/cli /docs/cli/ 301\n/docs/javascript /docs/javascript/ 301\n/docs/agents /docs/agents/ 301\n/docs/providers /docs/providers/ 301\n/docs/serverless /docs/serverless/ 301\n/security /security/ 301\n/providers /providers/ 301\n/benchmark /benchmark/ 301\n/media /media/ 301\n/roadmap /roadmap/ 301\n/community /community/ 301\n/release /release/ 301\n`, "utf8");
+await writeFile(join(dist, "llms.txt"), `# Cockroach Crawler\n\nnpm stable 0.2.0 is a local Node.js crawler for public or explicitly trusted HTTP(S) pages. It enforces robots, explicit origin policy, public-network defaults, DNS-pinned requests, validated redirects, and resource budgets. It outputs readable text, Markdown, links, hashes, metadata, failures, and crawl stats.\n\nThe 0.3.0-alpha.1 source candidate adds a tested provider registry and separate serverless profile. Provider doctor status: web ready; public GitHub REST ready with optional token; YouTube metadata read ready, search requires YOUTUBE_API_KEY, transcript false; X requires an official bearer token; Reddit requires official OAuth client credentials and a contact-aware user agent. The serverless tier is self-hosted, token-authenticated, rate-limited, and restricted to deployment-configured HTTPS origins. It does not resolve, classify, or pin DNS answers, so operators must use owned or trusted hostnames and infrastructure egress policy. Browser mode is optional and requires process isolation for hostile pages.\n\n- Documentation overview: ${siteUrl}/docs/\n- CLI guide: ${siteUrl}/docs/cli/\n- JavaScript guide: ${siteUrl}/docs/javascript/\n- Agent and Maqam guide: ${siteUrl}/docs/agents/\n- Provider guide: ${siteUrl}/docs/providers/\n- Serverless guide: ${siteUrl}/docs/serverless/\n- Security: ${siteUrl}/security/\n- Provider status: ${siteUrl}/providers/\n- Benchmark method and clean CI result: ${siteUrl}/benchmark/\n- Maqam governance documentation: ${maqamDocs}\n- Source: ${repository}\n- npm: ${npmPackage}\n`, "utf8");
 console.log(`Built ${pages.length} pages in ${dist}`);
