@@ -84,6 +84,55 @@ test("GitHub offline error contracts cover rate limits, not found, invalid JSON,
   });
 });
 
+test("GitHub rejects invalid successful payload shapes without exposing credentials", async (t) => {
+  const invalidSearchPayloads = [
+    ["null", null],
+    ["array", []],
+    ["missing items", {}],
+    ["non-array items", { items: {} }],
+    ["invalid repository item", { items: [{}] }],
+    ["invalid issue item", { items: [{ id: 1, title: "Issue", html_url: "https://github.com/example/project/issues/1", created_at: "2025-01-01T00:00:00Z" }] }]
+  ];
+  for (const [name, payload] of invalidSearchPayloads) {
+    await t.test(name, async () => {
+      const registry = createSourceRegistry({
+        github: { token: secrets.github },
+        fetch: async () => json(payload)
+      });
+      const kind = name === "invalid issue item" ? "issues" : "repositories";
+      await assert.rejects(
+        registry.search("github", { query: "crawler", kind }),
+        errorIs("SOURCE_INVALID_RESPONSE", [secrets.github])
+      );
+    });
+  }
+
+  await t.test("valid empty search remains successful", async () => {
+    const registry = createSourceRegistry({
+      github: { token: secrets.github },
+      fetch: async () => json({ items: [] })
+    });
+    assert.deepEqual(await registry.search("github", { query: "no results" }), []);
+  });
+
+  for (const [name, payload] of [["null repository", null], ["incompatible repository", { id: 1 }]]) {
+    await t.test(name, async () => {
+      const registry = createSourceRegistry({
+        github: { token: secrets.github },
+        fetch: async (value) => {
+          const url = new URL(value);
+          if (url.pathname.endsWith("/readme")) return new Response("# Fixture");
+          return json(payload);
+        }
+      });
+      await assert.rejects(
+        registry.read("github", "example/project"),
+        errorIs("SOURCE_INVALID_RESPONSE", [secrets.github])
+      );
+    });
+  }
+});
+
 test("YouTube offline contracts cover public metadata, keyed empty/quota/error paths, and no transcripts", async (t) => {
   const publicRegistry = createSourceRegistry({
     fetch: async (value, init = {}) => {

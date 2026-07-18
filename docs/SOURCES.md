@@ -42,4 +42,10 @@ const records = await sources.search("github", {
 
 API keys and tokens are sent in headers where the provider supports it. They are excluded from normalized records, errors, URLs, doctor output, and CLI arguments. A YouTube API key identifies a project/quota context; it does not authenticate a user principal, so records correctly report `authenticated: false` and `credentialed: true`.
 
+Provider responses must contain both valid JSON and the minimum documented
+payload shape before normalization. Malformed JSON and syntactically valid but
+incompatible successful payloads fail separately at the same
+`SOURCE_INVALID_RESPONSE` boundary; valid empty collection payloads remain
+successful empty results.
+
 The built-ins do not post, vote, like, follow, comment, upload, edit, or delete. Provider terms, quotas, approval, regional availability, content truth, and downstream prompt-injection handling remain the operator's responsibility.
