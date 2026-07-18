@@ -18,6 +18,11 @@ The browser check starts a local server and verifies every public route, image,
 single-H1 structure, keyboard skip link, copy feedback, and desktop/mobile
 overflow.
 
+The public launch page is generated at `/launch/`. Its channel drafts, claim
+checklist, campaign assets, and editable video sources live under
+`docs/launch/`, `media/launch-assets/`, and `media/remotion/` in the same
+repository so launch copy stays reviewable with the product.
+
 ## Production deployment
 
 `.github/workflows/deploy-site.yml` rebuilds and verifies the site after a
