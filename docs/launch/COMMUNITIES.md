@@ -79,3 +79,20 @@ Repository: <https://github.com/AjnasNB/cockroach-crawler>
 ## Community follow-up rule
 
 Turn repeated, actionable requests into scoped issues with testable acceptance criteria. Do not promise a provider, date, or security property in a comment before the maintainer has accepted the scope.
+
+## Open-source contributor invitation
+
+Use this only in communities where an offline Node.js testing task is relevant:
+
+> Cockroach Crawler is looking for a small independent contract test, not a
+> generic endorsement. Issue #20 checks how the read-only GitHub adapter handles
+> HTTP 200 responses containing valid JSON with an invalid shape. The fixture is
+> synthetic and offline: no GitHub account, token, or network request is needed.
+> Start by commenting on the issue, then work from a fork and a focused branch.
+> Please include your exact Node version and commands in the pull request.
+>
+> Task: <https://github.com/AjnasNB/cockroach-crawler/issues/20>
+> Contribution guide: <https://github.com/AjnasNB/cockroach-crawler/blob/main/CONTRIBUTING.md>
+
+Do not ask for stars, votes, or mass testing. Ask for one reproducible result or
+one reviewable fixture from people for whom the contract is relevant.

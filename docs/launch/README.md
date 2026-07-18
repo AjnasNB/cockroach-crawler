@@ -58,6 +58,30 @@ Replace these variables only after the target exists and has been tested:
 - [CONTRIBUTOR-ISSUES.md](./CONTRIBUTOR-ISSUES.md): issue backlog designed for real contribution.
 - [CLAIMS-CHECKLIST.md](./CLAIMS-CHECKLIST.md): factual, security, release, and asset preflight.
 
+## Open-source contribution path
+
+The launch should invite verification, not generic star requests. The current
+credential-free entry point is [issue #20: validate successful GitHub payload
+shapes](https://github.com/AjnasNB/cockroach-crawler/issues/20). It is a
+sub-issue of the completed GitHub error-contract work in #8 and uses synthetic
+Fetch responses only.
+
+Contributor flow:
+
+1. Comment on the issue before starting so work is not duplicated.
+2. Fork the repository and create a purpose-named branch such as
+   `test/github-payload-shapes`.
+3. Add the failing deterministic fixture, then the smallest implementation.
+4. Run `npm ci --ignore-scripts` and `npm run release:check`.
+5. Open a pull request with the exact commit, Node version, commands, results,
+   limitations, and any provenance notes. A maintainer reviews and merges it.
+
+More maintained entry points are available through the
+[`good first issue`](https://github.com/AjnasNB/cockroach-crawler/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+and [`help wanted`](https://github.com/AjnasNB/cockroach-crawler/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+filters. Do not include credentials, private payloads, cookies, or account data
+in issues, fixtures, screenshots, recordings, or pull requests.
+
 ## Required release order
 
 1. Review and merge the implementation through the repository's normal controls.
