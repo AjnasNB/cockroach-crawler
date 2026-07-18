@@ -2,6 +2,15 @@
 
 This roadmap is evidence-driven. Dates start when `0.3.0-alpha.1` is published from a reviewed commit. Items may move when provider APIs, security findings, or contributor capacity change. “Done” means the stated exit criteria are met, not that code merely exists on a branch.
 
+## Contribute to the next evidence checkpoint
+
+[Issue #20](https://github.com/AjnasNB/cockroach-crawler/issues/20) is the
+current credential-free community test: distinguish a legitimate empty GitHub
+search result from syntactically valid but unusable payload shapes. It requires
+no account, key, live request, or external side effect. Contributors should
+work from a fork and a focused branch; maintainers review and merge pull
+requests after the required checks pass.
+
 ## First 30 days: make the alpha observable
 
 ### 1. Release and install verification
@@ -44,6 +53,7 @@ This roadmap is evidence-driven. Dates start when `0.3.0-alpha.1` is published f
 - Discussion template for provider requests.
 - Issue forms require use case, official API/docs link, auth model, read/write scope, sample payload, and test plan.
 - No duplicate “add every source” umbrella issues.
+- At least one external, credential-free fixture reproduction records the exact commit, Node version, commands, and result.
 
 ## Days 31–60: deepen integration quality
 

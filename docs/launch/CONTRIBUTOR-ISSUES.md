@@ -2,6 +2,16 @@
 
 Create only the issues the maintainer is prepared to review. Each issue should have one owner, a reproducible fixture, acceptance criteria, and a documented boundary. Do not label security-sensitive network changes as `good first issue`.
 
+## Live contribution entry point
+
+- [#20 Validate successful GitHub payload shapes before normalization](https://github.com/AjnasNB/cockroach-crawler/issues/20)
+  is open, attached as a sub-issue of completed error-contract issue #8, and
+  requires no account, token, or live request.
+- Contributors comment first, fork the repository, use a focused branch, run
+  the release gate, and open a pull request. Maintainers review and merge.
+- The live GitHub issue is authoritative if this planning document and issue
+  state ever differ.
+
 ## Good first issues
 
 ### 1. Add copy-paste source-doctor examples to the README
@@ -63,6 +73,9 @@ Create only the issues the maintainer is prepared to review. Each issue should h
 - No telemetry or hosted dependency is added by default.
 
 ### 6. Offline GitHub error-contract fixtures
+
+**Status:** Completed in #17. Follow-up payload-shape validation is open as
+[#20](https://github.com/AjnasNB/cockroach-crawler/issues/20).
 
 **Labels:** provider:github, testing, help wanted
 
