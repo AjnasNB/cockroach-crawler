@@ -325,6 +325,15 @@ The two crawler tiers intentionally share records rather than network authority:
 
 Cockroach Crawler is MIT licensed. Release visuals, videos, and command evidence are generated from the committed project sources; the resolved direct dependencies are MIT or Apache-2.0. See [docs/PROVENANCE.md](./docs/PROVENANCE.md) and [docs/DEPENDENCY_LICENSES.md](./docs/DEPENDENCY_LICENSES.md). From a source checkout, run `npm run audit:licenses` to verify the lockfile snapshot.
 
+## Launch kit
+
+The reviewable launch plan, channel drafts, claims checklist, media-size matrix,
+and release messaging are in [docs/launch](./docs/launch/README.md). Captioned
+demo renders and their editable Remotion source are in
+[media/remotion](./media/remotion), and platform-sized campaign artwork is in
+[media/launch-assets](./media/launch-assets). The same map is published on the
+[website launch page](https://cockroachcrawler.com/launch/).
+
 ## Development and release verification
 
 ```bash

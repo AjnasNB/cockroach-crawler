@@ -40,6 +40,7 @@ const routes = [
   "/providers/",
   "/benchmark/",
   "/media/",
+  "/launch/",
   "/roadmap/",
   "/community/",
   "/release/"
