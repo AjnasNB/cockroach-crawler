@@ -106,8 +106,28 @@ try {
         const current = nav?.querySelector('[aria-current="page"]');
         const navRect = nav?.getBoundingClientRect();
         const currentRect = current?.getBoundingClientRect();
+        const viewportWidth = document.documentElement.clientWidth;
+        const isInsideHorizontalScroller = (element) => {
+          for (let currentElement = element.parentElement; currentElement; currentElement = currentElement.parentElement) {
+            const overflowX = getComputedStyle(currentElement).overflowX;
+            if (overflowX === "auto" || overflowX === "scroll") return true;
+          }
+          return false;
+        };
+        const overflowElements = [...document.body.querySelectorAll("*")]
+          .filter((element) => {
+            const rect = element.getBoundingClientRect();
+            return !isInsideHorizontalScroller(element) && (rect.left < -1 || rect.right > viewportWidth + 1);
+          })
+          .slice(0, 8)
+          .map((element) => ({
+            tag: element.tagName.toLowerCase(),
+            className: typeof element.className === "string" ? element.className : "",
+            text: element.textContent?.trim().slice(0, 80) || ""
+          }));
         return {
           horizontal: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+          overflowElements,
           navVisible: nav ? getComputedStyle(nav).display : "missing",
           currentNavVisible: !navRect || !currentRect ? false : currentRect.left >= navRect.left - 1 && currentRect.right <= navRect.right + 1,
           mobileToc: routeNeedsToc() ? Boolean(document.querySelector(".mobile-toc")) && getComputedStyle(document.querySelector(".mobile-toc")).display !== "none" : true

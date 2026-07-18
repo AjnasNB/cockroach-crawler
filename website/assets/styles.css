@@ -32,7 +32,7 @@ html {
 
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   background:
     linear-gradient(rgba(121, 242, 166, 0.025) 1px, transparent 1px),
     linear-gradient(90deg, rgba(121, 242, 166, 0.025) 1px, transparent 1px),
