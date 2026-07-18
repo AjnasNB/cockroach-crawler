@@ -28,10 +28,12 @@ for (const spec of specs) {
   if (Math.abs(duration - spec.expectedDuration) > 0.08) throw new Error(`${spec.base} duration ${duration} != ${spec.expectedDuration}.`);
   if (visual?.width !== spec.width || visual?.height !== spec.height) throw new Error(`${spec.base} is not ${spec.width}x${spec.height}.`);
   if (!audio) throw new Error(`${spec.base} has no narration audio stream.`);
-  for (const extension of ['srt', 'vtt', 'captions.json']) {
-    const captionPath = resolve(renders, `${spec.base}.${extension}`);
-    if (statSync(captionPath).size < 100) throw new Error(`${spec.base}.${extension} is empty.`);
+  for (const extension of ['srt', 'vtt']) {
+    const captionPath = resolve(renders, `captions-${spec.base}-en.${extension}`);
+    if (statSync(captionPath).size < 100) throw new Error(`captions-${spec.base}-en.${extension} is empty.`);
   }
+  const captionDataPath = resolve(renders, `${spec.base}.captions.json`);
+  if (statSync(captionDataPath).size < 100) throw new Error(`${spec.base}.captions.json is empty.`);
   const poster = probe(posterPath);
   const posterVisual = poster.streams.find((stream) => stream.codec_type === 'video');
   if (posterVisual?.width !== spec.width || posterVisual?.height !== spec.height) throw new Error(`${posterPath} is not ${spec.width}x${spec.height}.`);

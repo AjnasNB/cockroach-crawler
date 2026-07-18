@@ -10,32 +10,32 @@
         {
           "startFrame": 0,
           "durationFrames": 315,
-          "text": "Cockroach Crawler gives agent workflows a bounded path to public web evidence. It is not a browser free-for-all."
+          "text": "This is a real sixty-second Cockroach Crawler demo: install the package, run a deterministic crawl, verify the denial, and inspect the source record."
         },
         {
           "startFrame": 300,
           "durationFrames": 315,
-          "text": "The hardened Node CLI validates every seed, DNS answer, redirect, robots rule, and byte budget before network dispatch."
+          "text": "Install one package. It exposes the command line, JavaScript library, and strict agent adapter with no hosted account or signup."
         },
         {
           "startFrame": 600,
           "durationFrames": 315,
-          "text": "Source doctor reports what is actually available. Web and public GitHub are ready. YouTube is partial. X and Reddit need official credentials."
+          "text": "The captured command authorizes the offline fixture and fixes page, depth, request, per-page byte, total-byte, and delay ceilings before execution."
         },
         {
           "startFrame": 900,
           "durationFrames": 315,
-          "text": "A separate serverless Worker accepts only allowlisted HTTPS origins, requires a bearer secret, rate limits requests, and fails closed."
+          "text": "The real result contains two structured pages, status, depth, and content hashes. Removing the required network authority blocks dispatch and returns zero pages."
         },
         {
           "startFrame": 1200,
           "durationFrames": 315,
-          "text": "The complete local Node suite passes. A separate one hundred twenty page fixture checks regressions. It is not an industry or global benchmark."
+          "text": "The source adapter converts that crawl into a normalized evidence record with source identity, adapter version, provenance, metadata, warnings, and a separate record hash."
         },
         {
           "startFrame": 1500,
           "durationFrames": 300,
-          "text": "Use stable zero point two today, or review the zero point three alpha candidate in source. Understand the boundary before you trust the output."
+          "text": "Use it for documentation retrieval, content quality checks, and bounded agent research. Install locally, then review every limit at cockroachcrawler dot com."
         }
       ]
     },

@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "benchmark": "cockroach-crawler-local-regression",
+  "generatedAt": "2026-07-18T01:16:02.515Z",
+  "scope": {
+    "description": "Synthetic loopback HTTP crawl using the non-browser Node.js engine.",
+    "intendedUse": "Project-local performance regression and deterministic correctness checks."
+  },
+  "configuration": {
+    "pages": 120,
+    "concurrency": 8,
+    "warmupRuns": 2,
+    "measuredRuns": 7,
+    "includeSitemaps": true,
+    "obeyRobots": true,
+    "browserRendering": false,
+    "network": "IPv4 loopback only"
+  },
+  "environment": {
+    "node": "v24.15.0",
+    "platform": "linux",
+    "operatingSystem": "Linux 6.17.0-1020-azure",
+    "architecture": "x64",
+    "cpuModel": "AMD EPYC 7763 64-Core Processor",
+    "logicalCpuCount": 4
+  },
+  "source": {
+    "commit": "ad0f44311c5608498ffd855418d920168b4c35a2",
+    "dirty": false,
+    "fingerprint": {
+      "algorithm": "sha256",
+      "value": "7b68ef382c77dcb056a7538e640ddda8aea9c9ffa52d42b5f9a6a42b76869160"
+    }
+  },
+  "correctness": {
+    "status": "passed",
+    "assertionsPerRun": [
+      "exact expected URL set",
+      "no duplicate pages",
+      "exact page and request counts",
+      "zero crawl failures",
+      "title, h1, text, markdown, and content-hash extraction",
+      "one robots.txt and one sitemap request",
+      "sensitive path not requested"
+    ],
+    "policyProbes": {
+      "robotsDisallowedPathNotFetched": true,
+      "sensitiveSeedRejectedBeforeRequest": true
+    }
+  },
+  "results": {
+    "elapsedMs": {
+      "minimum": 131.09,
+      "median": 152.96,
+      "p95": 189.05,
+      "maximum": 189.05
+    },
+    "pagesPerSecond": {
+      "minimum": 634.75,
+      "median": 784.54,
+      "maximum": 915.4
+    },
+    "samples": [
+      { "iteration": 1, "elapsedMs": 188.38, "pagesPerSecond": 637.02, "pages": 120, "requests": 122, "correctness": "passed" },
+      { "iteration": 2, "elapsedMs": 189.05, "pagesPerSecond": 634.75, "pages": 120, "requests": 122, "correctness": "passed" },
+      { "iteration": 3, "elapsedMs": 165.76, "pagesPerSecond": 723.93, "pages": 120, "requests": 122, "correctness": "passed" },
+      { "iteration": 4, "elapsedMs": 144.59, "pagesPerSecond": 829.91, "pages": 120, "requests": 122, "correctness": "passed" },
+      { "iteration": 5, "elapsedMs": 152.96, "pagesPerSecond": 784.54, "pages": 120, "requests": 122, "correctness": "passed" },
+      { "iteration": 6, "elapsedMs": 131.09, "pagesPerSecond": 915.4, "pages": 120, "requests": 122, "correctness": "passed" },
+      { "iteration": 7, "elapsedMs": 133.25, "pagesPerSecond": 900.55, "pages": 120, "requests": 122, "correctness": "passed" }
+    ]
+  }
+}

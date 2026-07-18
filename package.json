@@ -45,7 +45,7 @@
     "worker/worker.js",
     "worker/wrangler.jsonc",
     "bench/local-benchmark.mjs",
-    "bench/results/local-regression.json",
+    "bench/results/ci-validated.json",
     "docs/RELEASE.md",
     "docs/DEPENDENCY_LICENSES.md",
     "docs/PROVENANCE.md",

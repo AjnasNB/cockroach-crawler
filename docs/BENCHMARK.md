@@ -60,10 +60,15 @@ compared as if they were equivalent.
 
 ## Publishing evidence
 
-The committed result is intentionally a development baseline. It cannot prove
-its own containing commit hash: adding a newly generated result would create a
-new commit. A result whose `source.dirty` field is `true` remains useful for
+Local output is intentionally a development baseline. It cannot prove its own
+containing commit hash: adding a newly generated result would create a new
+commit. A result whose `source.dirty` field is `true` remains useful for
 development regression tracking, but it is not clean-release evidence.
+
+The npm tarball includes `bench/results/ci-validated.json`, the clean exact-CI
+artifact named on the public benchmark page. Local runs still write
+`bench/results/local-regression.json` by default, so development measurements
+cannot silently replace the packaged evidence.
 
 For release evidence, use the `benchmark-evidence` artifact produced by CI after
 checking out the exact release commit. CI writes the JSON after checkout and

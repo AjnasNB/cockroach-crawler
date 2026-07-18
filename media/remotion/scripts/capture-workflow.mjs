@@ -190,7 +190,7 @@ try {
 
   const proofJson = `${JSON.stringify(proof, null, 2)}\n`;
   const rawAllowed = `${allowedRun.stdout.trimEnd()}\n`;
-  const rawDenied = `${deniedRun.stderr.trimEnd()}\n${deniedRun.stdout.trimEnd()}\n`;
+  const rawDenied = `${[deniedRun.stderr.trimEnd(), deniedRun.stdout.trimEnd()].filter(Boolean).join('\n')}\n`;
   const rawRecord = `${JSON.stringify(normalized, null, 2)}\n`;
   writeFileSync(resolve(generatedDirectory, 'workflow-evidence.json'), proofJson, 'utf8');
   writeFileSync(resolve(evidenceDirectory, 'workflow-cli-output.json'), rawAllowed, 'utf8');

@@ -69,15 +69,17 @@ for (const [name, composition] of Object.entries(config.compositions)) {
   };
   const base = bases[name];
   if (!base) throw new Error(`No release filename is configured for narration composition '${name}'.`);
+  const captionBase = `captions-${base}-en`;
   const srt = captions.map((caption, index) => `${index + 1}\n${timestamp(caption.startMs)} --> ${timestamp(caption.endMs)}\n${caption.text}\n`).join('\n');
   const vtt = `WEBVTT\n\n${captions.map((caption) => `${timestamp(caption.startMs, '.')} --> ${timestamp(caption.endMs, '.')}\n${caption.text}\n`).join('\n')}`;
-  writeFileSync(resolve(renders, `${base}.srt`), srt, 'utf8');
-  writeFileSync(resolve(renders, `${base}.vtt`), vtt, 'utf8');
+  writeFileSync(resolve(renders, `${captionBase}.srt`), srt, 'utf8');
+  writeFileSync(resolve(renders, `${captionBase}.vtt`), vtt, 'utf8');
   writeFileSync(resolve(renders, `${base}.captions.json`), `${JSON.stringify(captions, null, 2)}\n`, 'utf8');
   if (name === 'short') {
     const verticalBase = 'cockroach-crawler-vertical-short-30s';
-    writeFileSync(resolve(renders, `${verticalBase}.srt`), srt, 'utf8');
-    writeFileSync(resolve(renders, `${verticalBase}.vtt`), vtt, 'utf8');
+    const verticalCaptionBase = `captions-${verticalBase}-en`;
+    writeFileSync(resolve(renders, `${verticalCaptionBase}.srt`), srt, 'utf8');
+    writeFileSync(resolve(renders, `${verticalCaptionBase}.vtt`), vtt, 'utf8');
     writeFileSync(resolve(renders, `${verticalBase}.captions.json`), `${JSON.stringify(captions, null, 2)}\n`, 'utf8');
   }
   console.log(`Generated ${captions.length} caption cues for ${name}.`);

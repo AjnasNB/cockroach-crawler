@@ -1,0 +1,49 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:03.316
+This is a real sixty-second Cockroach Crawler demo: install the
+
+00:00:03.316 --> 00:00:06.131
+package, run a deterministic crawl, verify the denial, and inspect
+
+00:00:06.131 --> 00:00:08.947
+the source record.
+
+00:00:10.500 --> 00:00:14.234
+Install one package. It exposes the command line, JavaScript library,
+
+00:00:14.234 --> 00:00:17.967
+and strict agent adapter with no hosted account or signup.
+
+00:00:20.500 --> 00:00:25.047
+The captured command authorizes the offline fixture and fixes page,
+
+00:00:25.047 --> 00:00:29.593
+depth, request, per-page byte, total-byte, and delay ceilings before execution.
+
+00:00:30.500 --> 00:00:33.497
+The real result contains two structured pages, status, depth, and
+
+00:00:33.497 --> 00:00:36.493
+content hashes. Removing the required network authority blocks dispatch and
+
+00:00:36.493 --> 00:00:39.490
+returns zero pages.
+
+00:00:40.500 --> 00:00:43.310
+The source adapter converts that crawl into a normalized evidence
+
+00:00:43.310 --> 00:00:46.120
+record with source identity, adapter version, provenance, metadata, warnings, and
+
+00:00:46.120 --> 00:00:48.930
+a separate record hash.
+
+00:00:50.500 --> 00:00:53.588
+Use it for documentation retrieval, content quality checks, and bounded
+
+00:00:53.588 --> 00:00:56.677
+agent research. Install locally, then review every limit at cockroachcrawler
+
+00:00:56.677 --> 00:00:59.765
+dot com.

@@ -1,8 +1,8 @@
 {
-  "capturedAt": "2026-07-17T22:54:48.350Z",
+  "capturedAt": "2026-07-18T02:00:39.246Z",
   "fixture": {
     "mode": "offline-loopback",
-    "authority": "http://127.0.0.1:58324/",
+    "authority": "http://127.0.0.1:59101/",
     "externalNetworkRequests": 0,
     "credentialsUsed": false,
     "routes": [
@@ -12,7 +12,7 @@
     ]
   },
   "allowed": {
-    "command": "cockroach-crawl http://127.0.0.1:58324/ --allow-private-networks --max-pages 2 --max-depth 1 --max-requests 6 --max-bytes 65536 --max-total-bytes 131072 --delay 0",
+    "command": "cockroach-crawl http://127.0.0.1:59101/ --allow-private-networks --max-pages 2 --max-depth 1 --max-requests 6 --max-bytes 65536 --max-total-bytes 131072 --delay 0",
     "exitCode": 0,
     "pageCount": 2,
     "stats": {
@@ -30,21 +30,21 @@
       "failures": 0,
       "queued": 2,
       "seen": 2,
-      "durationMs": 78,
-      "startedAt": "2026-07-17T22:54:46.935Z",
-      "finishedAt": "2026-07-17T22:54:47.013Z"
+      "durationMs": 69,
+      "startedAt": "2026-07-18T02:00:38.138Z",
+      "finishedAt": "2026-07-18T02:00:38.207Z"
     },
     "pages": [
       {
         "title": "Offline Evidence Index",
-        "url": "http://127.0.0.1:58324/",
+        "url": "http://127.0.0.1:59101/",
         "depth": 0,
         "status": 200,
         "contentHash": "sha256:65cefce6a731c217f58676f21069cc58a96e361a7c1f3d8bee3fe46fb45900be"
       },
       {
         "title": "Bounded Evidence Record",
-        "url": "http://127.0.0.1:58324/evidence",
+        "url": "http://127.0.0.1:59101/evidence",
         "depth": 1,
         "status": 200,
         "contentHash": "sha256:2c3365dbefbde4d655a0e10ae2ca4b043c022986e08d1e197732bbff77825d62"
@@ -52,7 +52,7 @@
     ]
   },
   "denied": {
-    "command": "cockroach-crawl http://127.0.0.1:58324/ --max-pages 1 --max-requests 2 --delay 0",
+    "command": "cockroach-crawl http://127.0.0.1:59101/ --max-pages 1 --max-requests 2 --delay 0",
     "exitCode": 1,
     "pageCount": 0,
     "warning": "cockroach-crawl: Address range 'loopback' is not allowed for crawler requests."
@@ -116,8 +116,8 @@
     "id": "sha256:65cefce6a731c217f58676f21069cc58a96e361a7c1f3d8bee3fe46fb45900be",
     "type": "web_page",
     "title": "Offline Evidence Index",
-    "url": "http://127.0.0.1:58324/",
-    "contentHash": "sha256:268e32f4590b6695fb5ac1235b793ceee6389b4fc5c9dc2a3056055a8d1b6e33",
+    "url": "http://127.0.0.1:59101/",
+    "contentHash": "sha256:d884f981b521f5ddb310d60903445bb4027f3d06ea87ce81a7ea968977835877",
     "adapterVersion": "0.3.0-alpha.1",
     "warnings": [],
     "metadata": {
@@ -129,7 +129,7 @@
       "redirectChain": []
     },
     "provenance": {
-      "retrievedAt": "2026-07-17T22:54:48.350Z",
+      "retrievedAt": "2026-07-18T02:00:39.246Z",
       "method": "crawler",
       "authenticated": false,
       "credentialed": false

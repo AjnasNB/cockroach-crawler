@@ -1,7 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Cockroach Crawler mark">
   <rect width="64" height="64" rx="7" fill="#0e1916"/>
-  <path d="M15 18h12l5 7 5-7h12v28H38V33l-6 8-6-8v13H15z" fill="#eff3ed"/>
-  <path d="M12 13h17l3 4 3-4h17" fill="none" stroke="#79f2a6" stroke-width="3"/>
-  <circle cx="12" cy="13" r="3" fill="#79f2a6"/>
-  <circle cx="52" cy="13" r="3" fill="#79f2a6"/>
+  <g fill="none" stroke="#79f2a6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M27 18 18 9M37 18l9-9"/>
+    <path d="m24 27-10-5m9 12H11m14 8-9 8m24-23 10-5M41 34h12m-14 8 9 8"/>
+  </g>
+  <path d="M32 15c-5 0-8 4-8 9v2h16v-2c0-5-3-9-8-9Z" fill="#eff3ed"/>
+  <path d="M22 27h20v9c0 3-2 6-5 7H27c-3-1-5-4-5-7Z" fill="#eff3ed"/>
+  <path d="M26 43h12l-1 8c-.4 3-2.5 5-5 5s-4.6-2-5-5Z" fill="#eff3ed"/>
+  <path d="M25 32h14" stroke="#0e1916" stroke-width="3"/>
+  <path d="M28 45h8" stroke="#79f2a6" stroke-width="3" stroke-linecap="round"/>
 </svg>

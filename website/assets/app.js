@@ -35,9 +35,17 @@ document.addEventListener("click", async (event) => {
     button.textContent = "Copied";
     if (status) status.textContent = "Copied to clipboard.";
   } catch {
-    button.textContent = "Select";
-    if (status) status.textContent = "Copy failed. Select the code manually.";
-    target?.focus?.();
+    const pre = target?.closest("pre");
+    pre?.focus();
+    if (target && window.getSelection) {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(target);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
+    button.textContent = target ? "Selected" : "Select";
+    if (status) status.textContent = target ? "Copy failed. Code selected for manual copy." : "Copy failed. Select the command manually.";
   }
 
   window.setTimeout(() => {
@@ -49,3 +57,8 @@ document.addEventListener("click", (event) => {
   const openMenu = document.querySelector(".more-nav[open]");
   if (openMenu && !openMenu.contains(event.target)) openMenu.removeAttribute("open");
 });
+
+const currentMobileLink = document.querySelector('.mobile-nav [aria-current="page"]');
+if (currentMobileLink && window.matchMedia("(max-width: 1060px)").matches) {
+  currentMobileLink.scrollIntoView({ block: "nearest", inline: "center" });
+}

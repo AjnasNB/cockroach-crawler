@@ -1,106 +1,113 @@
 [
   {
-    "text": "Cockroach Crawler gives agent workflows a bounded path to public",
+    "text": "This is a real sixty-second Cockroach Crawler demo: install the",
     "startMs": 500,
-    "endMs": 3537,
+    "endMs": 3316,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "web evidence. It is not a browser free-for-all.",
-    "startMs": 3537,
-    "endMs": 6574,
+    "text": "package, run a deterministic crawl, verify the denial, and inspect",
+    "startMs": 3316,
+    "endMs": 6131,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "The hardened Node CLI validates every seed, DNS answer, redirect,",
+    "text": "the source record.",
+    "startMs": 6131,
+    "endMs": 8947,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Install one package. It exposes the command line, JavaScript library,",
     "startMs": 10500,
-    "endMs": 14354,
+    "endMs": 14234,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "robots rule, and byte budget before network dispatch.",
-    "startMs": 14354,
-    "endMs": 18209,
+    "text": "and strict agent adapter with no hosted account or signup.",
+    "startMs": 14234,
+    "endMs": 17967,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "Source doctor reports what is actually available. Web and public",
+    "text": "The captured command authorizes the offline fixture and fixes page,",
     "startMs": 20500,
-    "endMs": 23419,
+    "endMs": 25047,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "GitHub are ready. YouTube is partial. X and Reddit need",
-    "startMs": 23419,
-    "endMs": 26339,
+    "text": "depth, request, per-page byte, total-byte, and delay ceilings before execution.",
+    "startMs": 25047,
+    "endMs": 29593,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "official credentials.",
-    "startMs": 26339,
-    "endMs": 29258,
-    "timestampMs": null,
-    "confidence": null
-  },
-  {
-    "text": "A separate serverless Worker accepts only allowlisted HTTPS origins, requires",
+    "text": "The real result contains two structured pages, status, depth, and",
     "startMs": 30500,
-    "endMs": 34566,
+    "endMs": 33497,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "a bearer secret, rate limits requests, and fails closed.",
-    "startMs": 34566,
-    "endMs": 38632,
+    "text": "content hashes. Removing the required network authority blocks dispatch and",
+    "startMs": 33497,
+    "endMs": 36493,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "The complete local Node suite passes. A separate one hundred",
+    "text": "returns zero pages.",
+    "startMs": 36493,
+    "endMs": 39490,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The source adapter converts that crawl into a normalized evidence",
     "startMs": 40500,
-    "endMs": 43228,
+    "endMs": 43310,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "twenty page fixture checks regressions. It is not an industry",
-    "startMs": 43228,
-    "endMs": 45956,
+    "text": "record with source identity, adapter version, provenance, metadata, warnings, and",
+    "startMs": 43310,
+    "endMs": 46120,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "or global benchmark.",
-    "startMs": 45956,
-    "endMs": 48685,
+    "text": "a separate record hash.",
+    "startMs": 46120,
+    "endMs": 48930,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "Use stable zero point two today, or review the zero",
+    "text": "Use it for documentation retrieval, content quality checks, and bounded",
     "startMs": 50500,
-    "endMs": 53079,
+    "endMs": 53588,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "point three alpha candidate in source. Understand the boundary before",
-    "startMs": 53079,
-    "endMs": 55659,
+    "text": "agent research. Install locally, then review every limit at cockroachcrawler",
+    "startMs": 53588,
+    "endMs": 56677,
     "timestampMs": null,
     "confidence": null
   },
   {
-    "text": "you trust the output.",
-    "startMs": 55659,
-    "endMs": 58238,
+    "text": "dot com.",
+    "startMs": 56677,
+    "endMs": 59765,
     "timestampMs": null,
     "confidence": null
   }

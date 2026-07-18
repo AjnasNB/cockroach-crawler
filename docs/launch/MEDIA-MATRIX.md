@@ -107,9 +107,9 @@ cockroach-crawler-0.3.0-alpha.1-og-1200x630.png
 cockroach-crawler-0.3.0-alpha.1-github-1280x640.png
 cockroach-crawler-0.3.0-alpha.1-product-hunt-01-1270x760.png
 cockroach-crawler-main-60s.mp4
-cockroach-crawler-main-60s.vtt
+captions-cockroach-crawler-main-60s-en.vtt
 cockroach-crawler-workflow-proof-45s.mp4
-cockroach-crawler-workflow-proof-45s.vtt
+captions-cockroach-crawler-workflow-proof-45s-en.vtt
 cockroach-crawler-providers-serverless-30s.mp4
 cockroach-crawler-vertical-short-30s.mp4
 ```

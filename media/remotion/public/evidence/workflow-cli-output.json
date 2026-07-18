@@ -1,8 +1,8 @@
 {
   "pages": [
     {
-      "url": "http://127.0.0.1:58324/",
-      "canonical": "http://127.0.0.1:58324/",
+      "url": "http://127.0.0.1:59101/",
+      "canonical": "http://127.0.0.1:59101/",
       "title": "Offline Evidence Index",
       "description": "Deterministic loopback fixture",
       "h1": "Offline Evidence Index",
@@ -10,9 +10,9 @@
       "text": "Offline Evidence IndexLocal fixture content for a real crawler workflow proof.Evidence record",
       "markdown": "# Offline Evidence Index\n\nLocal fixture content for a real crawler workflow proof.\n\n[Evidence record](/evidence)",
       "links": [
-        "http://127.0.0.1:58324/evidence"
+        "http://127.0.0.1:59101/evidence"
       ],
-      "fetchedAt": "2026-07-17T22:54:47.003Z",
+      "fetchedAt": "2026-07-18T02:00:38.199Z",
       "status": 200,
       "contentType": "text/html; charset=utf-8",
       "bytes": 313,
@@ -25,8 +25,8 @@
       "robotsAllowed": true
     },
     {
-      "url": "http://127.0.0.1:58324/evidence",
-      "canonical": "http://127.0.0.1:58324/evidence",
+      "url": "http://127.0.0.1:59101/evidence",
+      "canonical": "http://127.0.0.1:59101/evidence",
       "title": "Bounded Evidence Record",
       "description": "",
       "h1": "Bounded Evidence Record",
@@ -34,13 +34,13 @@
       "text": "Bounded Evidence RecordCockroach Crawler reached this page through one explicit loopback authority and finite budgets.",
       "markdown": "# Bounded Evidence Record\n\nCockroach Crawler reached this page through one explicit loopback authority and finite budgets.",
       "links": [],
-      "fetchedAt": "2026-07-17T22:54:47.013Z",
+      "fetchedAt": "2026-07-18T02:00:38.207Z",
       "status": 200,
       "contentType": "text/html; charset=utf-8",
       "bytes": 255,
       "contentHash": "sha256:2c3365dbefbde4d655a0e10ae2ca4b043c022986e08d1e197732bbff77825d62",
       "depth": 1,
-      "discoveredFrom": "http://127.0.0.1:58324/",
+      "discoveredFrom": "http://127.0.0.1:59101/",
       "redirectChain": [],
       "etag": null,
       "lastModified": null,
@@ -62,8 +62,8 @@
     "failures": 0,
     "queued": 2,
     "seen": 2,
-    "durationMs": 78,
-    "startedAt": "2026-07-17T22:54:46.935Z",
-    "finishedAt": "2026-07-17T22:54:47.013Z"
+    "durationMs": 69,
+    "startedAt": "2026-07-18T02:00:38.138Z",
+    "finishedAt": "2026-07-18T02:00:38.207Z"
   }
 }
