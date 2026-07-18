@@ -18,6 +18,7 @@ Use this checklist from a clean, reviewed commit. Never publish from a worktree 
 
 1. Publish `0.3.0-alpha.1` through an npm trusted-publishing GitHub environment with provenance and `--tag next`; keep `latest` on stable `0.2.0`.
 2. The workflow must verify the approved package name, version, commit, tarball SHA-256, and integrity before its approval boundary. It must use `id-token: write`, no npm token secret, and an npm trusted-publisher mapping restricted to this repository/workflow/environment.
+   The required packed-consumer CI job retains the exact Ubuntu-built tarball for 90 days and records its byte size, SHA-256, npm integrity, commit, and npm CLI version for independent review.
 3. After publication, verify registry version, dist-tag, exact integrity, attestations, CLI bins, all exports/declarations, and a fresh registry-only install. The workflow publishes the reviewed tarball directly, so verification relies on its digest and Sigstore/SLSA provenance rather than npm's directory-publish-only `gitHead` field.
 4. Create an annotated `v0.3.0-alpha.1` tag only at the exact green published commit. Attach only release-owned assets and generate `SHA256SUMS.txt` from exactly those attachments.
 5. Mark the GitHub release as prerelease and list every unimplemented capability: no transcript adapter, no unofficial/session scraping, no hosted arbitrary-origin API, no distributed jobs, and no competitor-parity claim.

@@ -114,6 +114,10 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - name: Install release npm CLI
+        run: |
+          npm install --global npm@12.0.1 --ignore-scripts --no-audit --no-fund
+          test "$(npm --version)" = "12.0.1"
       - run: npm ci --ignore-scripts
       - run: npm run test:types
       - name: Install and execute the packed artifact
@@ -135,3 +139,14 @@ jobs:
           test "$(./node_modules/.bin/cockroach-crawl --version)" = "${installed_version}"
           ./node_modules/.bin/cockroach-sources doctor --json > "${RUNNER_TEMP}/doctor.json"
           node -e 'const fs=require("node:fs"); const report=JSON.parse(fs.readFileSync(process.argv[1], "utf8")); if (!Array.isArray(report) || !report.some((item) => item.id === "web")) process.exit(1)' "${RUNNER_TEMP}/doctor.json"
+          size="$(wc -c < "${tarball}" | tr -d '[:space:]')"
+          sha256="$(sha256sum "${tarball}" | awk '{print $1}')"
+          integrity="sha512-$(openssl dgst -sha512 -binary "${tarball}" | openssl base64 -A)"
+          printf '## Exact package artifact\n\n- Package: `cockroach-crawler@%s`\n- Commit: `%s`\n- Size: `%s` bytes\n- SHA-256: `%s`\n- Integrity: `%s`\n- npm CLI: `12.0.1`\n' "${installed_version}" "${GITHUB_SHA}" "${size}" "${sha256}" "${integrity}" >> "${GITHUB_STEP_SUMMARY}"
+      - name: Upload exact package artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: package-artifact-${{ github.sha }}
+          path: ${{ runner.temp }}/pack/*.tgz
+          if-no-files-found: error
+          retention-days: 90
