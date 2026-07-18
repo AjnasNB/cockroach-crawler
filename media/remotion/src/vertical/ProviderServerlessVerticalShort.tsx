@@ -119,7 +119,7 @@ const WorkerScene: React.FC = () => (
 );
 
 const ChoiceScene: React.FC = () => (
-  <VerticalFrame eyebrow="MAKE THE BOUNDARY EXPLICIT" title={<>Structured records.<br /><span style={{color: colors.green}}>No capability theatre.</span></>} body="Stable 0.2.0 is on npm. Provider adapters and the Worker remain the 0.3.0-alpha.1 source candidate.">
+  <VerticalFrame eyebrow="MAKE THE BOUNDARY EXPLICIT" title={<>Structured records.<br /><span style={{color: colors.green}}>No capability theatre.</span></>} body="Stable 0.2.0 is npm latest. Provider adapters and the Worker are published in 0.3.0-alpha.1 under npm next.">
     <div style={{position: 'absolute', top: 655, left: 72, right: 150, display: 'grid', gap: 16}}>
       <div style={{padding: '30px 32px', border: `2px solid ${colors.green}`, backgroundColor: colors.panelStrong}}>
         <div style={{fontFamily: mono, color: colors.green, fontSize: 19, marginBottom: 12}}>LOCAL / HARDENED</div>

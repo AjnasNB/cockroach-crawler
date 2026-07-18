@@ -1,6 +1,6 @@
 # Read-only source adapters
 
-The `0.3.0-alpha.1` source candidate adds a capability-aware registry. Check the installed package version before importing it.
+The capability-aware registry is published in the `0.3.0-alpha.1` prerelease under npm's `next` tag. It is not part of stable `0.2.0` under `latest`, so check the installed package version before importing it.
 
 Normalized records follow the published JSON Schema at
 `cockroach-crawler/schemas/source-record.json`. Every required field is shared

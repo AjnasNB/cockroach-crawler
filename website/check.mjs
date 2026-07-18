@@ -67,6 +67,26 @@ for (const file of htmlFiles) {
   }
 }
 
+const releaseTruthFiles = files.filter((file) =>
+  file.endsWith(".html") || file.endsWith("llms.txt") || file.endsWith("provider-map.svg")
+);
+for (const file of releaseTruthFiles) {
+  const copy = await readFile(file, "utf8");
+  const label = file.slice(dist.length).replaceAll("\\", "/");
+  if (/source candidate|not presented as published|until registry verification passes/i.test(copy)) {
+    errors.push(`${label}: contains pre-publication release wording`);
+  }
+}
+
+const homepage = await readFile(join(dist, "index.html"), "utf8");
+if (!homepage.includes("npm latest: stable 0.2.0") || !homepage.includes("Published prerelease · npm next")) {
+  errors.push("index.html: must distinguish stable 0.2.0 under latest from published 0.3.0-alpha.1 under next");
+}
+const providerMap = await readFile(join(dist, "assets", "provider-map.svg"), "utf8");
+if (!providerMap.includes("0.2.0 latest · 0.3.0-alpha.1 published under next")) {
+  errors.push("assets/provider-map.svg: missing exact latest/next release status");
+}
+
 const required = ["robots.txt", "sitemap.xml", "llms.txt", "site.webmanifest", "_headers", "_redirects", "assets/social-card.png"];
 for (const path of required) if (!await exists(join(dist, path))) errors.push(`missing ${path}`);
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);

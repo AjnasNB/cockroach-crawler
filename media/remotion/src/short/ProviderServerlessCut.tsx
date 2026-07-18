@@ -79,7 +79,7 @@ const ChoiceScene: React.FC = () => (
     <div style={{position: 'absolute', top: 140, left: 92, right: 92}}>
       <div style={{fontFamily: mono, color: colors.green, fontSize: 23, letterSpacing: 2.6, marginBottom: 22}}>MAKE THE BOUNDARY EXPLICIT</div>
       <div style={{fontSize: 84, fontWeight: 780, lineHeight: 1.01, letterSpacing: -3.8}}>Structured records.<br /><span style={{color: colors.green}}>No capability theatre.</span></div>
-      <div style={{fontSize: 31, lineHeight: 1.36, color: colors.muted, maxWidth: 1080, marginTop: 22}}>Stable 0.2.0 is on npm. Provider adapters and the Worker are in the 0.3.0-alpha.1 source candidate.</div>
+      <div style={{fontSize: 31, lineHeight: 1.36, color: colors.muted, maxWidth: 1080, marginTop: 22}}>Stable 0.2.0 is npm latest. Provider adapters and the Worker are published in 0.3.0-alpha.1 under npm next.</div>
     </div>
     <div style={{position: 'absolute', left: 92, right: 92, bottom: 190, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16}}>
       <Stat label="LOCAL" value="HARDENED" />

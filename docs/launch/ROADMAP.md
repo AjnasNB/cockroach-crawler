@@ -1,6 +1,6 @@
 # Public 30/60/90-day roadmap
 
-This roadmap is evidence-driven. Dates start when `0.3.0-alpha.1` is published from a reviewed commit. Items may move when provider APIs, security findings, or contributor capacity change. “Done” means the stated exit criteria are met, not that code merely exists on a branch.
+This roadmap is evidence-driven. Its alpha window started when `0.3.0-alpha.1` was published from a reviewed commit on 18 July 2026 under npm's `next` tag; stable `0.2.0` remains on `latest`. Items may move when provider APIs, security findings, or contributor capacity change. “Done” means the stated exit criteria are met, not that code merely exists on a branch.
 
 ## Contribute to the next evidence checkpoint
 
@@ -22,7 +22,7 @@ requests after the required checks pass.
 - npm trusted-publishing provenance and the approved tarball integrity are visible.
 - Node 20.18.1, 22, and 24 CI plus real Chromium tests pass at the tag.
 - Registry-only JavaScript, TypeScript, CLI, `/agent`, `/sources`, and `/serverless` smoke tests are recorded.
-- The site reports the exact published version and links to the release.
+- The site reports both npm mappings—`latest` / `0.2.0` and `next` / `0.3.0-alpha.1`—and links to the release.
 
 ### 2. Provider contract fixtures
 

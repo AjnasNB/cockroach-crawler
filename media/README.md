@@ -1,6 +1,6 @@
 # Cockroach Crawler release media
 
-This folder contains the editable Remotion project and locally rendered release assets for the `0.3.0-alpha.1` source candidate.
+This folder contains the editable Remotion project and locally rendered release assets for the published `0.3.0-alpha.1` prerelease. npm keeps stable `0.2.0` on `latest` and exposes this alpha through `next`.
 
 ## Videos
 

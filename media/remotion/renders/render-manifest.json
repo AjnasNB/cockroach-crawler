@@ -1,5 +1,5 @@
 {
-  "validatedAt": "2026-07-18T02:02:27.589Z",
+  "validatedAt": "2026-07-18T19:04:35.278Z",
   "assets": {
     "cockroach-crawler-main-60s": {
       "durationSeconds": 60,
@@ -16,8 +16,8 @@
       "height": 1080,
       "videoCodec": "h264",
       "audioCodec": "aac",
-      "sizeBytes": 3096713,
-      "sha256": "bf261f49888ad442711d4fa85c3c89fa8ff316880b7a7529835731cc6b79d7fb"
+      "sizeBytes": 3098018,
+      "sha256": "2c9e96a22c02a71362b5cd0030d29014308c27ce53c72b624c8a9a207c29d085"
     },
     "cockroach-crawler-workflow-proof-45s": {
       "durationSeconds": 45,
@@ -34,8 +34,8 @@
       "height": 1920,
       "videoCodec": "h264",
       "audioCodec": "aac",
-      "sizeBytes": 3445608,
-      "sha256": "c75dbffdb4b88def6a25e9d9509c6a183fb94bbb892ec2ae1fd4b02c77d71f6a"
+      "sizeBytes": 3449745,
+      "sha256": "f9e9e72d1603edc3a357b7231cbcbb7243e3ab5b2e2a51232df853a95b94c7e0"
     }
   }
 }

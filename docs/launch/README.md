@@ -1,6 +1,6 @@
 # Cockroach Crawler 0.3.0-alpha.1 launch kit
 
-This directory contains review-ready launch copy for the `0.3.0-alpha.1` candidate. It is a working kit, not evidence that the alpha has been published or deployed.
+This directory contains review-ready launch copy for the published `0.3.0-alpha.1` prerelease. npm keeps stable `0.2.0` on `latest` and exposes the alpha through `next`. This working kit is not evidence that the website or a reference Worker has been deployed.
 
 ## One-sentence definition
 
@@ -82,15 +82,14 @@ and [`help wanted`](https://github.com/AjnasNB/cockroach-crawler/issues?q=is%3Ai
 filters. Do not include credentials, private payloads, cookies, or account data
 in issues, fixtures, screenshots, recordings, or pull requests.
 
-## Required release order
+## Required launch order
 
-1. Review and merge the implementation through the repository's normal controls.
-2. Run the full release gate from a clean checkout, including the real Chromium suite and packed-consumer type check.
-3. Publish the exact reviewed artifact using npm trusted publishing and provenance.
-4. Verify registry integrity, trusted-publishing attestations, exports, CLI bins, and a registry-only install.
-5. Create the GitHub release at the same commit.
-6. Deploy and smoke-test the site, then replace launch variables.
-7. Publish the technical article before or with the launch so community posts can link to substance rather than a bare announcement.
-8. Submit Show HN only when a visitor can immediately install, inspect, and run the product without signup.
+1. Confirm npm still maps `latest` to `0.2.0` and `next` to `0.3.0-alpha.1`.
+2. Verify registry integrity, trusted-publishing attestations, exports, CLI bins, and a clean registry-only install of the exact prerelease.
+3. Confirm the Git tag and GitHub prerelease point to the reviewed publish commit.
+4. Run the full release gate from a clean checkout, including the real Chromium suite and packed-consumer type check.
+5. Deploy and smoke-test the site, then replace launch variables; publishing the npm prerelease does not prove the site or Worker is live.
+6. Publish the technical article before or with the launch so community posts can link to substance rather than a bare announcement.
+7. Submit Show HN only when a visitor can immediately install, inspect, and run the product without signup.
 
 Do not use a disclosed npm token. Revoke it and use the repository's trusted-publishing workflow.

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 560" role="img" aria-labelledby="title desc">
-  <title id="title">Provider coverage map</title><desc id="desc">Public HTTP pages and official read-only provider APIs feed the source candidate through explicit capability states.</desc>
+  <title id="title">Provider coverage map</title><desc id="desc">Stable 0.2.0 under npm latest supplies the crawler core; published prerelease 0.3.0-alpha.1 under npm next supplies the provider adapters with explicit capability states.</desc>
   <defs><linearGradient id="core" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#345a49"/><stop offset="1" stop-color="#0c1a16"/></linearGradient><pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" fill="none" stroke="#294139" opacity=".3"/></pattern></defs>
   <rect width="720" height="560" fill="#07100e"/><rect width="720" height="560" fill="url(#grid)"/>
   <g transform="translate(255 172)"><path d="m0 70 100-48 112 31-101 51z" fill="url(#core)" stroke="#79f2a6"/><path d="M0 70v154l111 32V104z" fill="#0a1713" stroke="#45675c"/><path d="M111 104v152l101-50V53z" fill="#0d211a" stroke="#45675c"/><circle cx="52" cy="109" r="11" fill="#79f2a6"/><path d="M75 108h67M31 141h112M31 168h75" stroke="#73948a" stroke-width="4"/><text x="28" y="207" fill="#c5d8d0" font-family="monospace" font-size="13" transform="skewY(16)">CRAWLER CORE</text></g>
@@ -13,5 +13,5 @@
     <g transform="translate(520 398)"><rect width="145" height="62" fill="#141b19" stroke="#ffb589"/><circle cx="24" cy="31" r="7" fill="#ffb589"/><text x="43" y="27" fill="#e8e0d9">X API V2</text><text x="43" y="44" fill="#9e958e">CREDENTIALS*</text></g>
   </g>
   <g fill="none" stroke-width="3"><path d="M200 182 265 225M200 276l65-17M200 370l65-77" stroke="#79f2a6"/><path d="M467 210 520 147M467 244l53-3" stroke="#8cd8e8"/><path d="M467 279l53 56M467 314l53 115" stroke="#ffb589" stroke-dasharray="7 7"/></g>
-  <text x="34" y="44" fill="#79f2a6" font-family="monospace" font-size="12" letter-spacing="2">PROVIDER SURFACE / EXACT STATUS</text><text x="34" y="69" fill="#8da19a" font-family="monospace" font-size="11">* 0.3.0-alpha.1 source candidate · not npm stable</text>
+  <text x="34" y="44" fill="#79f2a6" font-family="monospace" font-size="12" letter-spacing="2">PROVIDER SURFACE / EXACT STATUS</text><text x="34" y="69" fill="#8da19a" font-family="monospace" font-size="11">* 0.2.0 latest · 0.3.0-alpha.1 published under next</text>
 </svg>

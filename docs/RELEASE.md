@@ -2,7 +2,7 @@
 
 Use this checklist from a clean, reviewed commit. Never publish from a worktree containing unreviewed changes or credentials. Do not publish a stable `0.3.0` until the prerelease has received provider/security feedback.
 
-## Candidate gate
+## Release gate
 
 1. Confirm `git status --short` contains only intended release changes and no `.env`, `.npmrc`, browser state, generated Wrangler output, tokens, or downloaded third-party source.
 2. Confirm `package.json`, `package-lock.json`, and `src/version.js` use the same version. `test/sources.test.js` enforces the runtime/package pair.
@@ -16,12 +16,14 @@ Use this checklist from a clean, reviewed commit. Never publish from a worktree 
 
 ## Prerelease publication
 
-1. Publish `0.3.0-alpha.1` through an npm trusted-publishing GitHub environment with provenance and `--tag next`; keep `latest` on stable `0.2.0`.
+Current registry truth, last verified 19 July 2026: npm `latest` points to stable `0.2.0`, and npm `next` points to the already-published `0.3.0-alpha.1`. Never try to republish that immutable version. Use the steps below for a new, unused prerelease version.
+
+1. Publish the reviewed `<version>` through an npm trusted-publishing GitHub environment with provenance and `--tag next`; keep `latest` on stable `0.2.0` until a separately reviewed stable promotion.
 2. Download `package-artifact-<full-commit>` from the successful packed-consumer CI job for the exact reviewed `main` commit. Copy the full lowercase 40-character commit, byte size, SHA-256, and npm integrity from that job's summary, then independently verify the downloaded tarball before dispatching `publish-npm.yml`.
 3. The publish dispatch must receive those four exact values as `expected_git_commit`, `expected_size_bytes`, `expected_sha256`, and `expected_integrity`. The workflow fails unless the reviewed commit equals the immutable workflow commit and the freshly packed artifact matches every approved value both before and after the `npm-publish` environment approval.
 4. The workflow must verify the approved package name and version, use `id-token: write`, use no npm token secret, and have an npm trusted-publisher mapping restricted to `AjnasNB/cockroach-crawler`, `.github/workflows/publish-npm.yml`, and the `npm-publish` environment. The packed-consumer CI job retains the exact Ubuntu-built tarball for 90 days and records its byte size, SHA-256, npm integrity, commit, and npm CLI version for independent review.
 5. After publication, verify registry version, dist-tag, exact integrity, attestations, CLI bins, all exports/declarations, and a fresh registry-only install. The workflow publishes the reviewed tarball directly, so verification relies on its digest and Sigstore/SLSA provenance rather than npm's directory-publish-only `gitHead` field.
-6. Create an annotated `v0.3.0-alpha.1` tag only at the exact green published commit. Attach only release-owned assets and generate `SHA256SUMS.txt` from exactly those attachments.
+6. Create an annotated `v<version>` tag only at the exact green published commit. Attach only release-owned assets and generate `SHA256SUMS.txt` from exactly those attachments.
 7. Mark the GitHub release as prerelease and list every unimplemented capability: no transcript adapter, no unofficial/session scraping, no hosted arbitrary-origin API, no distributed jobs, and no competitor-parity claim.
 
 ## Stable promotion

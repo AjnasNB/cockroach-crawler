@@ -47,8 +47,8 @@ the HSTS lifetime or adding the preload directive.
 
 ## Content rules
 
-- Published npm capability and source-candidate capability must remain visibly
-  separate until registry verification passes.
+- Stable npm capability (`latest` / `0.2.0`) and published prerelease capability
+  (`next` / `0.3.0-alpha.1`) must remain visibly separate.
 - Local Node DNS pinning must never be attributed to the serverless profile.
 - Benchmark pages must name the workload, environment, sample distribution,
   exclusions, and dirty-source status.

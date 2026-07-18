@@ -162,6 +162,6 @@ The complete local Node suite passes. A separate one hundred twenty page fixture
 
 **50–60s**
 
-Use stable zero point two today, or review the zero point three alpha candidate in source. Understand the boundary before you trust the output.
+Use stable zero point two from npm latest, or explicitly install the published zero point three alpha from npm next. Understand the boundary before you trust the output.
 
 Do not synthesize terminal output. Record the actual commands against a deterministic fixture and mask all environment values.

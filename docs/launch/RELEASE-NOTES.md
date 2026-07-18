@@ -1,6 +1,6 @@
 # Release notes for 0.3.0-alpha.1
 
-This copy is prepared for a future reviewed alpha release. Do not paste “published” or “live” into public channels until npm, the Git tag, GitHub release, and registry-only verification all succeed at the same commit.
+This copy records the published alpha release. Registry truth last verified 19 July 2026: npm `latest` points to stable `0.2.0`, while npm `next` points to prerelease `0.3.0-alpha.1`. “Published prerelease” does not mean stable, and it does not prove that the product site or a reference Worker deployment is live.
 
 ## GitHub release title
 
@@ -50,16 +50,16 @@ It does **not** resolve, classify, or pin DNS answers; an allowlisted hostname c
 
 The built-in source adapters do not post, comment, like, follow, edit, or delete. The project does not extract browser cookies, bypass authentication, solve CAPTCHA, bypass paywalls, evade robots policy, or provide a universal search index.
 
-### Verification before release
+### Release evidence
 
-The working branch's complete local Node test command passed on 2026-07-18. This is not a substitute for the release gate. Before tagging, attach:
+The registry exposes `0.3.0-alpha.1` through `next` with trusted-publishing provenance; `latest` remains on `0.2.0`. Independently verify the exact artifact before relying on it:
 
-- [CI_URL] — Node 20.18.1, 22, and 24 jobs for the reviewed commit;
-- the real Chromium integration result;
-- packed external TypeScript consumer result;
-- production dependency audit and direct-license audit;
-- `npm pack --dry-run --json --ignore-scripts` inspection;
-- registry-only smoke test after publish.
+- inspect `npm view cockroach-crawler dist-tags --json`;
+- inspect version, integrity, and attestations for `0.3.0-alpha.1`;
+- confirm the Git tag and GitHub prerelease point to the reviewed publish commit;
+- run the real Chromium integration and packed external TypeScript consumer checks;
+- run the production dependency and direct-license audits;
+- test both CLI bins and all exports from a clean registry-only install.
 
 ### Install
 
@@ -84,7 +84,7 @@ cockroach-sources doctor
 
 ## npm release summary
 
-Use as the top of the README or npm announcement after publish:
+Use in prerelease-specific copy while `next` remains on `0.3.0-alpha.1`:
 
 > `cockroach-crawler@0.3.0-alpha.1` adds typed, read-only source adapters and a deliberately limited serverless crawler. Use `cockroach-sources doctor` to inspect exact GitHub, YouTube, X, Reddit, and web availability. The hardened local CLI remains the stronger network boundary; the serverless tier is allowlist-first and explicitly reports that DNS pinning and browser mode are absent.
 
