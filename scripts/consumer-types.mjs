@@ -20,8 +20,14 @@ try {
     "--pack-destination",
     temp
   ], { cwd: root, windowsHide: true, maxBuffer: 4 * 1024 * 1024 });
-  const packed = JSON.parse(stdout);
-  const tarball = path.join(temp, packed[0].filename);
+  const packOutput = JSON.parse(stdout);
+  const packed = Array.isArray(packOutput)
+    ? packOutput[0]
+    : packOutput[packageManifest.name] ?? Object.values(packOutput)[0];
+  if (!packed?.filename || typeof packed.filename !== "string") {
+    throw new Error("npm pack did not return a tarball filename.");
+  }
+  const tarball = path.join(temp, packed.filename);
 
   await writeFile(path.join(temp, "package.json"), JSON.stringify({
     private: true,
