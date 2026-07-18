@@ -20,9 +20,16 @@ async function waitForServer() {
 
 await mkdir(output, { recursive: true });
 await waitForServer();
+const captionResponse = await fetch(`${origin}/media/cockroach-crawler-main-60s.vtt`, { method: "HEAD" });
+const rangeResponse = await fetch(`${origin}/media/cockroach-crawler-main-60s.mp4`, { headers: { Range: "bytes=0-31" } });
+const rangeBody = await rangeResponse.arrayBuffer();
+const mediaServer = {
+  captions: captionResponse.status === 200 && captionResponse.headers.get("content-type")?.startsWith("text/vtt"),
+  range: rangeResponse.status === 206 && rangeResponse.headers.get("content-type") === "video/mp4" && rangeResponse.headers.get("content-range")?.startsWith("bytes 0-31/") && rangeBody.byteLength === 32
+};
 const browser = await chromium.launch({ headless: true });
+const routes = ["/", "/docs/", "/security/", "/providers/", "/benchmark/", "/media/", "/roadmap/", "/community/", "/release/"];
 try {
-  const routes = ["/", "/docs/", "/security/", "/providers/", "/benchmark/", "/roadmap/", "/community/", "/release/"];
   const results = [];
   for (const route of routes) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
@@ -30,14 +37,20 @@ try {
     page.on("console", (message) => {
       if (message.type() === "error") errors.push(`console: ${message.text()}`);
     });
-    page.on("requestfailed", (request) => errors.push(`request: ${request.url()} ${request.failure()?.errorText}`));
-    const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle" });
+    page.on("requestfailed", (request) => {
+      if (request.url().endsWith(".mp4") && request.failure()?.errorText === "net::ERR_ABORTED") return;
+      errors.push(`request: ${request.url()} ${request.failure()?.errorText}`);
+    });
+    const response = await page.goto(`${origin}${route}`, { waitUntil: "load" });
     const metrics = await page.evaluate(() => ({
       h1: document.querySelectorAll("h1").length,
       title: document.title,
       horizontal: document.documentElement.scrollWidth > document.documentElement.clientWidth,
       images: [...document.images].map((image) => ({ src: image.getAttribute("src"), ok: image.complete && image.naturalWidth > 0, alt: image.hasAttribute("alt") })),
-      main: document.querySelector("main")?.getAttribute("tabindex")
+      main: document.querySelector("main")?.getAttribute("tabindex"),
+      accessibleTables: [...document.querySelectorAll(".table-wrap")].every((region) => region.tabIndex === 0 && region.getAttribute("role") === "region" && region.hasAttribute("aria-label")),
+      accessibleCode: [...document.querySelectorAll("pre")].every((region) => region.tabIndex === 0 && region.hasAttribute("aria-label")),
+      videos: [...document.querySelectorAll("video")].map((video) => ({ controls: video.controls, autoplay: video.autoplay, poster: Boolean(video.poster), captions: Boolean(video.querySelector('track[kind="captions"]')) }))
     }));
     if (route === "/providers/") await page.screenshot({ path: `${output}/providers-desktop.png`, fullPage: true });
     if (route === "/release/") await page.screenshot({ path: `${output}/release-desktop.png`, fullPage: true });
@@ -47,7 +60,7 @@ try {
 
   const homeContext = await browser.newContext({ viewport: { width: 1440, height: 1000 }, permissions: ["clipboard-read", "clipboard-write"] });
   const home = await homeContext.newPage();
-  await home.goto(`${origin}/`, { waitUntil: "networkidle" });
+  await home.goto(`${origin}/`, { waitUntil: "load" });
   await home.screenshot({ path: `${output}/home-desktop.png`, fullPage: true });
   await home.keyboard.press("Tab");
   const firstFocus = await home.evaluate(() => ({ className: document.activeElement?.className, text: document.activeElement?.textContent?.trim() }));
@@ -58,20 +71,50 @@ try {
   const copyLabel = await home.locator(".copy-button").first().textContent();
   await homeContext.close();
 
-  const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
-  await mobile.goto(`${origin}/`, { waitUntil: "networkidle" });
-  const mobileMetrics = await mobile.evaluate(() => ({
-    horizontal: document.documentElement.scrollWidth > document.documentElement.clientWidth,
-    navVisible: getComputedStyle(document.querySelector(".mobile-nav")).display
-  }));
-  await mobile.screenshot({ path: `${output}/home-mobile.png`, fullPage: true });
-  await mobile.goto(`${origin}/docs/`, { waitUntil: "networkidle" });
-  await mobile.screenshot({ path: `${output}/docs-mobile.png`, fullPage: true });
-  await mobile.close();
+  const mobileResults = [];
+  for (const width of [320, 390]) {
+    const mobile = await browser.newPage({ viewport: { width, height: 844 }, deviceScaleFactor: 1 });
+    for (const route of routes) {
+      const errors = [];
+      mobile.removeAllListeners("console");
+      mobile.removeAllListeners("requestfailed");
+      mobile.on("console", (message) => {
+        if (message.type() === "error") errors.push(`console: ${message.text()}`);
+      });
+      mobile.on("requestfailed", (request) => {
+        if (request.url().endsWith(".mp4") && request.failure()?.errorText === "net::ERR_ABORTED") return;
+        errors.push(`request: ${request.url()} ${request.failure()?.errorText}`);
+      });
+      const response = await mobile.goto(`${origin}${route}`, { waitUntil: "load" });
+      const metrics = await mobile.evaluate(() => {
+        const nav = document.querySelector(".mobile-nav");
+        const current = nav?.querySelector('[aria-current="page"]');
+        const navRect = nav?.getBoundingClientRect();
+        const currentRect = current?.getBoundingClientRect();
+        return {
+          horizontal: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+          navVisible: nav ? getComputedStyle(nav).display : "missing",
+          currentNavVisible: !navRect || !currentRect ? false : currentRect.left >= navRect.left - 1 && currentRect.right <= navRect.right + 1,
+          mobileToc: routeNeedsToc() ? Boolean(document.querySelector(".mobile-toc")) && getComputedStyle(document.querySelector(".mobile-toc")).display !== "none" : true
+        };
 
-  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1");
-  console.log(JSON.stringify({ routes: results, keyboard: { firstFocus, afterSkip, copyLabel }, mobile: mobileMetrics }, null, 2));
-  if (failed.length || firstFocus.className !== "skip-link" || afterSkip.id !== "main" || copyLabel !== "Copied" || mobileMetrics.horizontal || mobileMetrics.navVisible === "none") {
+        function routeNeedsToc() {
+          return window.location.pathname === "/docs/";
+        }
+      });
+      mobileResults.push({ width, route, status: response?.status(), ...metrics, errors });
+      if (route === "/" || route === "/docs/" || route === "/media/") {
+        const name = route === "/" ? "home" : route.slice(1, -1);
+        await mobile.screenshot({ path: `${output}/${name}-${width}.png`, fullPage: true });
+      }
+    }
+    await mobile.close();
+  }
+
+  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions));
+  const mobileFailed = mobileResults.filter((result) => result.status !== 200 || result.horizontal || result.navVisible === "none" || !result.currentNavVisible || !result.mobileToc || result.errors.length);
+  console.log(JSON.stringify({ routes: results, keyboard: { firstFocus, afterSkip, copyLabel }, mediaServer, mobile: mobileResults }, null, 2));
+  if (failed.length || mobileFailed.length || !mediaServer.captions || !mediaServer.range || firstFocus.className !== "skip-link" || afterSkip.id !== "main" || copyLabel !== "Copied") {
     process.exitCode = 1;
   }
 } finally {
