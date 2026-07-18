@@ -1118,6 +1118,10 @@ tr:last-child td {
   background: var(--line-bright);
 }
 
+.benchmark-hero > * {
+  min-width: 0;
+}
+
 .benchmark-number {
   display: flex;
   flex-direction: column;
