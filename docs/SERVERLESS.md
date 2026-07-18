@@ -20,7 +20,17 @@ const result = await crawler.crawl({
 });
 ```
 
-The included `worker/` template exposes `POST /v1/crawl`, uses a Cloudflare secret for bearer authentication, and requires a Rate Limiting binding. The following commands run from a source checkout; package consumers can copy the included `worker/` template into their deployment repository first.
+The included `worker/` template exposes `POST /v1/crawl`, uses a Cloudflare secret for bearer authentication, and requires a Rate Limiting binding. It deliberately ships with an empty `CRAWLER_ALLOWED_ORIGINS` value, so the unconfigured template returns `503 SERVERLESS_ORIGINS_NOT_CONFIGURED`. Do not deploy the checked-in template unchanged.
+
+Before deployment, the operator must complete all of these gates:
+
+1. Set `CRAWLER_ALLOWED_ORIGINS` to one to 32 comma-separated, canonical HTTPS origins that the operator owns or independently trusts. Request input cannot add origins.
+2. Review the configured Rate Limiting binding and limits for the target Cloudflare account.
+3. Provision `CRAWLER_API_TOKEN` as a Cloudflare secret interactively; never place its value in config, command arguments, Git, screenshots, or logs.
+4. Review [the restricted threat model](SERVERLESS-THREAT-MODEL.md), including the lack of DNS answer classification or pinning and the need for infrastructure egress restrictions where internal networks are reachable.
+5. Run the dry-run bundle check and deployment-specific authentication, allowlist, rate-limit, robots, redirect, byte, and deadline probes.
+
+The following commands run from a source checkout; package consumers can copy the included `worker/` template into their deployment repository first. Run the deploy command only after every gate above is satisfied.
 
 ```bash
 npx wrangler secret put CRAWLER_API_TOKEN --config worker/wrangler.jsonc
@@ -29,8 +39,6 @@ npx wrangler deploy --config worker/wrangler.jsonc
 ```
 
 Direct uses of `createServerlessCrawler` do not create platform rate limiting or egress controls automatically. Custom deployments must supply both; the included Worker template demonstrates the rate-limit binding.
-
-Before deployment, replace the example `CRAWLER_ALLOWED_ORIGINS` value with origins you operate or independently trust. Never put the bearer token in `wrangler.jsonc`, a command argument, Git, screenshots, or logs.
 
 ## Boundary
 
