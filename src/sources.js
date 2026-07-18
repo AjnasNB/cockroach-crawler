@@ -234,6 +234,60 @@ function safeDate(value) {
   return Number.isFinite(timestamp) ? new Date(timestamp).toISOString() : null;
 }
 
+function isObjectRecord(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function invalidSuccessfulResponse(provider) {
+  return new SourceAccessError(
+    "SOURCE_INVALID_RESPONSE",
+    `${provider} returned an invalid successful response.`,
+    { provider }
+  );
+}
+
+function validGitHubId(value) {
+  return (typeof value === "number" && Number.isFinite(value))
+    || (typeof value === "string" && value.length > 0);
+}
+
+function githubSearchItems(data, kind) {
+  if (!isObjectRecord(data) || !Array.isArray(data.items)) {
+    throw invalidSuccessfulResponse("github");
+  }
+  for (const item of data.items) {
+    const commonValid = isObjectRecord(item)
+      && validGitHubId(item.id)
+      && typeof item.html_url === "string"
+      && item.html_url.length > 0
+      && typeof item.created_at === "string";
+    const kindValid = kind === "issues"
+      ? typeof item.title === "string"
+        && typeof item.repository_url === "string"
+        && item.repository_url.length > 0
+      : typeof item.full_name === "string" && item.full_name.length > 0;
+    if (!commonValid || !kindValid) {
+      throw invalidSuccessfulResponse("github");
+    }
+  }
+  return data.items;
+}
+
+function githubRepository(data) {
+  if (
+    !isObjectRecord(data)
+    || !validGitHubId(data.id)
+    || typeof data.full_name !== "string"
+    || !data.full_name
+    || typeof data.html_url !== "string"
+    || !data.html_url
+    || typeof data.created_at !== "string"
+  ) {
+    throw invalidSuccessfulResponse("github");
+  }
+  return data;
+}
+
 function record(provider, input) {
   const text = String(input.text || "");
   const url = String(input.url || "");
@@ -308,7 +362,7 @@ function createGitHubProvider(config, context) {
       url.searchParams.set("q", input.query);
       url.searchParams.set("per_page", String(input.maxResults));
       const { data } = await fetchJson(context, "github", url, { headers, signal: input.signal });
-      const items = Array.isArray(data?.items) ? data.items.slice(0, input.maxResults) : [];
+      const items = githubSearchItems(data, kind).slice(0, input.maxResults);
       return items.map((item) => record("github", kind === "issues" ? {
         id: item.id,
         type: item.pull_request ? "pull_request" : "issue",
@@ -354,24 +408,25 @@ function createGitHubProvider(config, context) {
           throw error;
         })
       ]);
+      const repository = githubRepository(data);
       return [record("github", {
-        id: data.id,
+        id: repository.id,
         type: "repository",
-        title: data.full_name,
-        url: data.html_url,
-        text: readme || data.description || "",
-        author: data.owner?.login,
-        publishedAt: data.created_at,
+        title: repository.full_name,
+        url: repository.html_url,
+        text: readme || repository.description || "",
+        author: repository.owner?.login,
+        publishedAt: repository.created_at,
         authenticated: Boolean(token),
         metadata: {
-          description: data.description,
-          stars: data.stargazers_count,
-          forks: data.forks_count,
-          openIssues: data.open_issues_count,
-          language: data.language,
-          license: data.license?.spdx_id || null,
-          defaultBranch: data.default_branch,
-          updatedAt: safeDate(data.updated_at)
+          description: repository.description,
+          stars: repository.stargazers_count,
+          forks: repository.forks_count,
+          openIssues: repository.open_issues_count,
+          language: repository.language,
+          license: repository.license?.spdx_id || null,
+          defaultBranch: repository.default_branch,
+          updatedAt: safeDate(repository.updated_at)
         }
       })];
     }

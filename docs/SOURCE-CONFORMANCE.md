@@ -26,8 +26,10 @@ The harness verifies status shape, boolean capabilities, explicit
 authentication and limitation text, immutable normalized records, required
 record fields, and secret-free records and errors. Adapter suites should add
 error cases for unsupported operations, policy denial, quota, malformed
-payloads, not found, cancellation, timeout, and response-size budgets whenever
-those cases apply.
+JSON, invalid successful-payload shapes, not found, cancellation, timeout, and
+response-size budgets whenever those cases apply. A syntactically valid
+response must not be treated as an empty result unless its documented
+collection field is present and empty.
 
 `status()` must report the exact access state. A provider that can read but not
 search should report `read: true` and `search: false`; it must not advertise a
