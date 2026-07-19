@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Replaced the end-of-life Node 20 baseline with explicit support and CI coverage for maintained Node 22 LTS, Node 24 LTS, and Node 26 Current release lines.
+
 ## 0.3.0-alpha.1 - 2026-07-18
 
 ### Added

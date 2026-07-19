@@ -35,7 +35,7 @@ body:
     attributes:
       label: Runtime and platform
       description: Include the Node.js version, operating system, and deployment runtime when applicable.
-      placeholder: Node 24.15.0 on Ubuntu 24.04 / Cloudflare Workers
+      placeholder: Node 24.18.0 on Ubuntu 24.04 / Cloudflare Workers
     validations:
       required: true
   - type: textarea
