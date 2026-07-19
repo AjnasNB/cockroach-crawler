@@ -3,10 +3,7 @@
   "version": "0.3.0-alpha.1",
   "description": "Bounded public-web crawling and read-only source adapters for Node.js agent workflows.",
   "license": "MIT",
-  "author": {
-    "name": "Ajnas NB",
-    "email": "ajnasnb@gmail.com"
-  },
+  "author": "Ajnas NB <ajnasnb@gmail.com>",
   "type": "module",
   "bin": {
     "cockroach-crawl": "bin/cockroach-crawl.js",
@@ -137,5 +134,9 @@
   "homepage": "https://cockroachcrawler.com",
   "publishConfig": {
     "access": "public"
+  },
+  "directories": {
+    "doc": "docs",
+    "test": "test"
   }
 }
