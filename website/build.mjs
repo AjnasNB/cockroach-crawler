@@ -45,7 +45,7 @@ const pages = [
           "@type": "SoftwareApplication",
           name: "Cockroach Crawler",
           applicationCategory: "DeveloperApplication",
-          operatingSystem: "Node.js 20.18.1 or newer",
+          operatingSystem: "Node.js >=20.18.1 (published 0.2.0 release)",
           softwareVersion: "0.2.0",
           license: "https://opensource.org/license/mit",
           codeRepository: repository,
@@ -179,7 +179,7 @@ function howToSchema() {
     name: "Run a bounded public-web crawl",
     description: "Install Cockroach Crawler and crawl a public documentation site with explicit budgets.",
     totalTime: "PT5M",
-    tool: [{ "@type": "HowToTool", name: "Node.js 20.18.1 or newer" }],
+    tool: [{ "@type": "HowToTool", name: "Node.js 22, 24, or 26" }],
     step: [
       { "@type": "HowToStep", name: "Install", text: "Run npm install --global cockroach-crawler." },
       { "@type": "HowToStep", name: "Run", text: "Run cockroach-crawl with a public URL and explicit page, request, and duration limits." },
@@ -305,7 +305,7 @@ function homePage() {
         <h1>Crawl the public web. Keep the boundary explicit.</h1>
         <p class="lede">A local CLI and JavaScript API that turns permitted HTTP(S) pages into Markdown, JSON, or JSONL—while enforcing robots, network policy, and exact resource budgets.</p>
         <div class="button-row"><a class="button primary" href="/docs/">Start in five minutes</a><a class="button secondary" href="${repository}">Inspect the source</a></div>
-        <ul class="signal-list" aria-label="Release facts"><li>npm stable 0.2.0</li><li>Node 20.18+</li><li>MIT</li><li>No signup</li></ul>
+        <ul class="signal-list" aria-label="Release facts"><li>npm stable 0.2.0</li><li>Source: Node 22 / 24 / 26</li><li>MIT</li><li>No signup</li></ul>
         <div class="candidate-note"><span>Source candidate</span><p><strong>0.3.0-alpha.1</strong> adds tested provider and serverless contracts. It is not presented as published until registry verification passes.</p></div>
       </div>
       <figure class="hero-visual">
@@ -399,7 +399,7 @@ function cliDocsPage() {
     "Documentation · CLI",
     "Install once. Put every crawl limit in the command.",
     "Use the CLI for repeatable exports, scheduled documentation snapshots, content inventories, and local evidence jobs.",
-    `<section><p class="eyebrow">01 · Install</p><h2>Use Node.js 20.18.1 or newer.</h2><p>Global installation exposes <code>cockroach-crawl</code>. A project-local install works with <code>npx</code> and pins the crawler in your lockfile.</p>${codeBlock("cli-install-global", "global", "npm install --global cockroach-crawler\ncockroach-crawl --version")}${codeBlock("cli-install-local", "project local", "npm install cockroach-crawler\nnpx cockroach-crawl --version")}</section>
+    `<section><p class="eyebrow">01 · Install</p><h2>Use maintained Node.js 22, 24, or 26.</h2><p>Global installation exposes <code>cockroach-crawl</code>. A project-local install works with <code>npx</code> and pins the crawler in your lockfile.</p>${codeBlock("cli-install-global", "global", "npm install --global cockroach-crawler\ncockroach-crawl --version")}${codeBlock("cli-install-local", "project local", "npm install cockroach-crawler\nnpx cockroach-crawl --version")}</section>
     <section><p class="eyebrow">02 · Run</p><h2>Start with one permitted origin.</h2><p>Same-origin traversal and robots enforcement are the defaults. These limits cap discovery, requests, decoded bytes, depth, and wall-clock time.</p>${codeBlock("cli-safe-run", "bounded crawl", "cockroach-crawl https://example.com/docs \\\n+  --max-pages 25 \\\n+  --max-requests 120 \\\n+  --max-depth 2 \\\n+  --max-total-bytes 10000000 \\\n+  --max-duration 60000 \\\n+  --jsonl \\\n+  --output crawl.jsonl")}</section>
     <section><p class="eyebrow">03 · Inspect</p><h2>Keep records and failures together.</h2><p>JSON is convenient for one bounded result. JSONL streams one page record per line. Each page includes its final URL, status, title, readable text, Markdown, links, content hash, redirect chain, and retrieval time.</p><div class="next-links"><a href="/docs/#output"><span>Output contract</span><strong>See the record shape →</strong></a><a href="/security/"><span>Before production</span><strong>Review the security boundary →</strong></a></div></section>`
   );
@@ -533,7 +533,7 @@ function docsPage() {
     <div class="docs-layout shell">
       <aside class="toc"><nav aria-label="On this page"><h2>On this page</h2>${tocLinks}</nav></aside>
       <div class="docs-content">
-        <section id="quickstart"><p class="eyebrow">01 · Quickstart</p><h2>Crawl a public documentation path.</h2><p>Requires Node.js 20.18.1 or newer. The CLI obeys robots by default and stays on the seed origin unless you explicitly allow more.</p>${codeBlock("install-cli", "terminal", "npm install --global cockroach-crawler\ncockroach-crawl https://example.com/docs \\\n  --max-pages 20 \\\n  --max-requests 80 \\\n  --max-duration 60000 \\\n  --jsonl \\\n  --output crawl.jsonl")}</section>
+        <section id="quickstart"><p class="eyebrow">01 · Quickstart</p><h2>Crawl a public documentation path.</h2><p>Requires a maintained Node.js 22, 24, or 26 release. The CLI obeys robots by default and stays on the seed origin unless you explicitly allow more.</p>${codeBlock("install-cli", "terminal", "npm install --global cockroach-crawler\ncockroach-crawl https://example.com/docs \\\n  --max-pages 20 \\\n  --max-requests 80 \\\n  --max-duration 60000 \\\n  --jsonl \\\n  --output crawl.jsonl")}</section>
         <section id="cli"><p class="eyebrow">02 · CLI</p><h2>Make policy visible in the command.</h2><p>A useful crawl names its page, request, byte, and duration ceilings. Cross-origin crawling requires every permitted origin to be listed.</p>${codeBlock("cli-cross", "cross-origin example", "cockroach-crawl https://example.com \\\n  --all-origins \\\n  --allow-origin https://example.com \\\n  --allow-origin https://docs.example.com \\\n  --max-pages 50 \\\n  --max-requests 200 \\\n  --output crawl.json")}
           <div class="callout warning"><strong>Trusted operator only</strong><p><code>--allow-private-networks</code> intentionally permits private and loopback targets. It never permits metadata or link-local targets and should not be exposed to untrusted input.</p></div>
         </section>

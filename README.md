@@ -50,7 +50,7 @@ Read [SECURITY.md](./SECURITY.md) before exposing crawling to model-generated or
 
 ## Install
 
-Requires Node.js `>=20.18.1`.
+Supports the maintained Node.js 22 LTS, 24 LTS, and 26 Current release lines.
 
 ```bash
 npm install cockroach-crawler
