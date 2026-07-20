@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are provided for the latest published stable minor release. npm `0.2.0` is the current stable release. The `0.3.0-alpha.1` source candidate adds provider and serverless surfaces and must remain on a prerelease tag until its release gate and independent review are complete.
+Security fixes are provided for the latest published stable minor release. npm `0.2.0` is the current stable release. npm `0.3.0-alpha.1` is published under the `next` dist-tag as a prerelease with provider and serverless surfaces; it is not a stable release.
 
 Report a suspected vulnerability privately through the GitHub repository's security-advisory form. Do not include credentials, session state, private page content, or cloud metadata in a public issue. If the advisory form is unavailable, contact `ajnasnb@gmail.com` with a minimal reproduction.
 
