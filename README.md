@@ -6,7 +6,7 @@
 
 **Cockroach Crawler gives an agent a bounded, read-only route to web evidence across explicit URLs and supported public source APIs.** It combines a hardened local Node.js crawler, normalized provider adapters, and a restricted self-hosted Worker for allowlisted sites.
 
-The stable npm release remains `0.2.0`. This branch is the `0.3.0-alpha.1` prerelease candidate. After registry verification, install the candidate through the `next` tag or its exact version; stable users are not moved automatically.
+The stable npm release remains `0.2.0`. The current prerelease is `0.3.0-alpha.2`. Install it through the `next` tag or its exact version; stable users are not moved automatically.
 
 The local crawler produces structured JSON/JSONL with readable text, Markdown, links, response metadata, redirect provenance, and content hashes for documentation indexing, RAG ingestion, content inventory, QA, research, and agent tools. The source adapters normalize GitHub, YouTube, X, and Reddit records when each provider's documented access requirements are met.
 

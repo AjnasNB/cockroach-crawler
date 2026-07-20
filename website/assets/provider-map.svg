@@ -13,5 +13,5 @@
     <g transform="translate(520 398)"><rect width="145" height="62" fill="#141b19" stroke="#ffb589"/><circle cx="24" cy="31" r="7" fill="#ffb589"/><text x="43" y="27" fill="#e8e0d9">X API V2</text><text x="43" y="44" fill="#9e958e">CREDENTIALS*</text></g>
   </g>
   <g fill="none" stroke-width="3"><path d="M200 182 265 225M200 276l65-17M200 370l65-77" stroke="#79f2a6"/><path d="M467 210 520 147M467 244l53-3" stroke="#8cd8e8"/><path d="M467 279l53 56M467 314l53 115" stroke="#ffb589" stroke-dasharray="7 7"/></g>
-  <text x="34" y="44" fill="#79f2a6" font-family="monospace" font-size="12" letter-spacing="2">PROVIDER SURFACE / EXACT STATUS</text><text x="34" y="69" fill="#8da19a" font-family="monospace" font-size="11">* 0.3.0-alpha.1 source candidate · not npm stable</text>
+  <text x="34" y="44" fill="#79f2a6" font-family="monospace" font-size="12" letter-spacing="2">PROVIDER SURFACE / EXACT STATUS</text><text x="34" y="69" fill="#8da19a" font-family="monospace" font-size="11">* npm next 0.3.0-alpha.2 · not npm stable</text>
 </svg>

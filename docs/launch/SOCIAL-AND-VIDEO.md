@@ -8,7 +8,7 @@
 
 It is destination access, crawl budget, browser authority, and provider credentials.
 
-Cockroach Crawler `0.3.0-alpha.1` makes those boundaries explicit. Open source, Node.js, local first. 🧵
+Cockroach Crawler `0.3.0-alpha.2` makes those boundaries explicit. Open source, Node.js, local first. 🧵
 
 **2/8**
 
@@ -61,7 +61,7 @@ Use the hardened local tier for address-level controls. Use the restricted serve
 
 Try the alpha after release:
 
-`npm i -g cockroach-crawler@0.3.0-alpha.1`
+`npm i -g cockroach-crawler@0.3.0-alpha.2`
 
 `cockroach-sources doctor`
 
@@ -71,7 +71,7 @@ Which missing contract fixture would you review or contribute?
 
 ## Single X post
 
-Cockroach Crawler `0.3.0-alpha.1`: bounded web reads for agent tools.
+Cockroach Crawler `0.3.0-alpha.2`: bounded web reads for agent tools.
 
 Hardened local crawling, an explicitly limited allowlist-first serverless tier, and read-only source adapters that report their real credential requirements.
 
@@ -95,7 +95,7 @@ This 60-second overview introduces three separate capabilities:
 2. a smaller allowlist-first serverless HTML crawler whose returned metadata names its weaker runtime boundary;
 3. official read-only source adapters with a `doctor` command for GitHub, YouTube, X, Reddit, and public web.
 
-What works without provider credentials in `0.3.0-alpha.1`:
+What works without provider credentials in `0.3.0-alpha.2`:
 
 - explicit public web URL crawling;
 - public GitHub REST search and repository reads at the unauthenticated limit;
@@ -106,7 +106,7 @@ YouTube search requires an API key. X requires an approved API v2 bearer token. 
 Install after release:
 
 ```bash
-npm install --global cockroach-crawler@0.3.0-alpha.1
+npm install --global cockroach-crawler@0.3.0-alpha.2
 cockroach-sources doctor
 cockroach-crawl https://example.com/docs --max-pages 10 --jsonl
 ```

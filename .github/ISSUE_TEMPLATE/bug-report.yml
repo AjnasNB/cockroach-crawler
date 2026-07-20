@@ -14,7 +14,7 @@ body:
     attributes:
       label: Version
       description: Paste the exact package version or commit SHA.
-      placeholder: 0.3.0-alpha.1
+      placeholder: 0.3.0-alpha.2
     validations:
       required: true
   - type: dropdown

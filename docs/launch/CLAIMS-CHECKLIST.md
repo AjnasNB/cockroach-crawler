@@ -5,7 +5,7 @@ Run this checklist against every release note, page, screenshot, video, article,
 ## Version and availability
 
 - [ ] The version shown in copy matches `package.json`, `package-lock.json`, `src/version.js`, the Git tag, GitHub release, and npm.
-- [ ] `npm view cockroach-crawler@0.3.0-alpha.1 version dist.integrity dist.attestations` resolves to the reviewed tarball and trusted-publishing provenance.
+- [ ] `npm view cockroach-crawler@0.3.0-alpha.2 version dist.integrity dist.attestations` resolves to the reviewed tarball and trusted-publishing provenance.
 - [ ] Install commands were tested from a clean registry-only directory.
 - [ ] Both CLI bins and all four exports were tested from the published package.
 - [ ] The site and demo load without authentication in a signed-out browser.
