@@ -33,6 +33,9 @@ jobs:
       - run: npm run test:types
       - run: npm run bench
       - run: npm run audit:licenses
+      - name: Generate Cloudflare Worker types
+        if: ${{ matrix.node == 24 }}
+        run: npm run worker:types
       - name: Dry-run Cloudflare Worker bundle
         if: ${{ matrix.node == 24 }}
         run: npm run worker:check

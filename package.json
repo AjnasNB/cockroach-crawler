@@ -3,10 +3,7 @@
   "version": "0.3.0-alpha.1",
   "description": "Bounded public-web crawling and read-only source adapters for Node.js agent workflows.",
   "license": "MIT",
-  "author": {
-    "name": "Ajnas NB",
-    "email": "ajnasnb@gmail.com"
-  },
+  "author": "Ajnas NB <ajnasnb@gmail.com>",
   "type": "module",
   "bin": {
     "cockroach-crawl": "bin/cockroach-crawl.js",
@@ -77,11 +74,11 @@
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
     "check": "npm test && npm run test:types && npm run bench && npm run audit:licenses",
-    "release:check": "npm run check && npm run test:browser && npm run worker:check && npm audit --omit=dev --audit-level=high && npm pack --dry-run --ignore-scripts",
+    "release:check": "npm run check && npm run test:browser && npm run worker:types && npm run worker:check && npm audit --omit=dev --audit-level=high && npm pack --dry-run --ignore-scripts",
     "prepublishOnly": "npm run release:check",
     "bench": "node bench/local-benchmark.mjs",
     "worker:check": "wrangler deploy --dry-run --outdir .wrangler-dist --config worker/wrangler.jsonc",
-    "worker:types": "wrangler types --config worker/wrangler.jsonc .wrangler/env.d.ts",
+    "worker:types": "wrangler types --config worker/wrangler.jsonc worker/env.d.ts",
     "crawl": "node bin/cockroach-crawl.js"
   },
   "keywords": [
@@ -137,5 +134,9 @@
   "homepage": "https://cockroachcrawler.com",
   "publishConfig": {
     "access": "public"
+  },
+  "directories": {
+    "doc": "docs",
+    "test": "test"
   }
 }
