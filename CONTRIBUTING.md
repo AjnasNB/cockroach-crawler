@@ -12,7 +12,7 @@ Thank you for helping improve the project. The most useful contributions make on
 ## Contribution flow
 
 1. Fork the repository and create a focused branch.
-2. Install with Node.js 20.18.1 or newer: `npm ci --ignore-scripts`.
+2. Install with a maintained Node.js 22, 24, or 26 release: `npm ci --ignore-scripts`.
 3. Add a failing test or deterministic fixture before changing security-sensitive behavior.
 4. Implement the smallest coherent change, including public types and documentation.
 5. Run `npm run release:check` for transport, packaging, browser, provider, or public API changes.

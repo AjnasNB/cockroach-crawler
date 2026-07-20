@@ -134,7 +134,7 @@ Create only the issues the maintainer is prepared to review. Each issue should h
 - Installs a packed tarball in a clean temporary project.
 - Exercises JavaScript and TypeScript imports for root, `/agent`, `/sources`, and `/serverless`.
 - Runs both CLI bins and verifies prerelease version output.
-- Runs on Node 20.18.1, 22, and 24.
+- Runs on maintained Node 22, 24, and 26 releases.
 
 ### 12. Documentation threat-model decision tree
 

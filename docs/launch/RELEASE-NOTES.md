@@ -54,7 +54,7 @@ The built-in source adapters do not post, comment, like, follow, edit, or delete
 
 The working branch's complete local Node test command passed on 2026-07-18. This is not a substitute for the release gate. Before tagging, attach:
 
-- [CI_URL] — Node 20.18.1, 22, and 24 jobs for the reviewed commit;
+- [CI_URL] — Node 22, 24, and 26 jobs for the reviewed commit;
 - the real Chromium integration result;
 - packed external TypeScript consumer result;
 - production dependency audit and direct-license audit;

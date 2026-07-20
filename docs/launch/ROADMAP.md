@@ -20,7 +20,7 @@ requests after the required checks pass.
 **Exit criteria:**
 
 - npm trusted-publishing provenance and the approved tarball integrity are visible.
-- Node 20.18.1, 22, and 24 CI plus real Chromium tests pass at the tag.
+- Node 22, 24, and 26 CI plus real Chromium tests pass at the tag.
 - Registry-only JavaScript, TypeScript, CLI, `/agent`, `/sources`, and `/serverless` smoke tests are recorded.
 - The site reports the exact published version and links to the release.
 

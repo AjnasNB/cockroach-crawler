@@ -12,7 +12,7 @@ Use this checklist from a clean, reviewed commit. Never publish from a worktree 
 6. Inspect `npm pack --dry-run --json --ignore-scripts`. It must not contain tests, `.env` files, `.npmrc`, browser auth state, generated Worker output/types, launch drafts, or website source.
 7. Review `cockroach-sources doctor --json`. Missing social credentials are valid capability states, not release failures. Do not use maintainer credentials merely to make a release claim.
 8. Review the Worker bundle output. The serverless entry must not import Node DNS/net/Playwright, must retain the origin allowlist, bearer secret, Cloudflare rate limiter, robots checks, redirect checks, and hard budgets.
-9. Require Node 20.18.1, 22, 24, Chromium, CodeQL, package, and Worker checks on the exact commit. Require an independent review for security-sensitive releases.
+9. Require Node 22, 24, 26, Chromium, CodeQL, package, and Worker checks on the exact commit. Require an independent review for security-sensitive releases.
 
 ## Prerelease publication
 
