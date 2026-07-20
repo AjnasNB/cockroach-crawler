@@ -14,6 +14,48 @@ It does not call an LLM, require a hosted account, or include stealth, CAPTCHA, 
 
 Documentation: [website](https://cockroachcrawler.com/docs/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [serverless profile](./docs/SERVERLESS.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
 
+## Check reach before you call a source
+
+The prerelease source registry reports what the current machine can use before an agent makes a request. This command reads configuration state only; it does not print secrets or contact a provider.
+
+```bash
+npx -y --package cockroach-crawler@0.3.0-alpha.2 cockroach-sources doctor
+```
+
+| Capability | No developer API key | Optional configuration | Honest boundary |
+| --- | --- | --- | --- |
+| Public web pages | Yes | None for normal public HTTP(S) | URL-directed crawling, not general web search |
+| Public GitHub repositories and issues | Yes | `GITHUB_TOKEN` or `GH_TOKEN` raises documented REST limits | Read-only REST operations |
+| Known YouTube video | Metadata only | `YOUTUBE_API_KEY` enables search and richer metadata | No transcript support in this package |
+| X and Reddit | No | Official provider credentials are required | No cookie extraction or session scraping |
+| RSS, available YouTube captions, and hosted-anonymous search | Available through a separately configured Maqam source adapter | The host supplies and governs the selected adapter | Not silently bundled into Cockroach Crawler |
+
+No-key does not mean no constraints. Provider terms, public rate limits, regional availability, robots policy, and network controls still apply.
+
+## One governed agent stack
+
+Cockroach Crawler is the reach layer, not the whole agent platform. The projects compose through explicit adapters so each security boundary remains inspectable.
+
+```mermaid
+flowchart LR
+  Agent["Agent host"] --> Loop["ProductLoop OS: orchestrate"]
+  Loop --> Context["Qarinah: compile context"]
+  Loop --> Maqam["Maqam: govern registered actions"]
+  Maqam --> Crawl["Cockroach Crawler: collect bounded public evidence"]
+  Crawl --> Evidence["Normalized records and provenance"]
+  Evidence --> Context
+  Maqam --> Evidence
+```
+
+| Layer | What it contributes | Public status |
+| --- | --- | --- |
+| [Cockroach Crawler](https://github.com/AjnasNB/cockroach-crawler) | Bounded web crawling, source capability checks, normalized records, and a restricted serverless profile | Stable crawler plus public provider/serverless prerelease |
+| [Maqam](https://github.com/AjnasNB/maqam) | Policy, exact one-use approvals, registered tool execution, browser-action contracts, traces, and evidence | Public npm package |
+| [ProductLoop OS](https://github.com/AjnasNB/productloop-os) | Workflow, policy, approval, connector, skill, evaluation, provenance, and research composition | Public npm package |
+| Qarinah | Local-first context ledger, deterministic graph/index, compact cited context packs, and Codex/Claude hooks | Private alpha; no public install claim yet |
+
+The stack does not ship a model, browser engine, proxy network, CAPTCHA bypass, hidden credential reuse, operating-system sandbox, or universal interception. A call is governed only when the host routes the real operation through its registered boundary.
+
 ## Two execution tiers
 
 | Tier | Best for | Boundary |
