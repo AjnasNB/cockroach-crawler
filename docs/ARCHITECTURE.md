@@ -7,19 +7,19 @@ explicit URL or provider request
               |
       creator-owned policy
               |
-   +----------+-----------+
-   |          |           |
-   v          v           v
-local Node   sources     serverless
-crawler      registry    HTML profile
-   |          |           |
-DNS pinning  official     operator HTTPS
-robots       read APIs    allowlist
-budgets      capability   no DNS pinning
-optional     doctor       no browser
-browser      normalized   small budgets
-   |          |           |
-   +----------+-----------+
+   +----------+----------------+-----------+
+   |          |                |           |
+   v          v                v           v
+local Node   sources       source router  serverless
+crawler      registry      ordered reads  HTML profile
+   |          |                |           |
+DNS pinning  official      explicit       operator HTTPS
+robots       read APIs     fallback        allowlist
+budgets      capability    route doctor    no DNS pinning
+optional     doctor        no actions      no browser
+browser      normalized    no auth drift   small budgets
+   |          |                |           |
+   +----------+----------------+-----------+
               |
       records + provenance
 ```
@@ -31,6 +31,10 @@ browser      normalized   small budgets
 ## Source registry
 
 `cockroach-crawler/sources` exposes a read-only registry with `doctor`, `search`, and `read`. Web requests delegate to the hardened crawler. GitHub, YouTube, X, and Reddit use their documented APIs and normalize results into immutable records. Capability status is explicit: missing credentials are not replaced with cookies or scraping fallbacks.
+
+## Source router
+
+`cockroach-crawler/source-router` maps a named read or search capability to an ordered list of registry providers. It skips providers whose doctor status says the requested capability is unavailable. A dispatched provider changes only after a route-creator-declared error code; authentication, invalid-response, cancellation, timeout, and response-size failures are permanently non-fallbackable. The router never executes browser actions or reuses login sessions.
 
 ## Serverless profile
 

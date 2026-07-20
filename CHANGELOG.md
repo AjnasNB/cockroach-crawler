@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Added
+
+- Added `cockroach-crawler/source-router` for named read/search capabilities backed by ordered built-in or host-supplied providers.
+- Added route-level doctor output, selected-provider reporting, bounded attempt diagnostics, strict TypeScript declarations, and packed-consumer coverage.
+
+### Security
+
+- Provider changes occur before dispatch when a capability is unavailable, or after dispatch only for an exact error code declared by the route creator.
+- Cancellation, authentication, invalid-response, oversized-response, and timeout failures cannot be configured as fallbacks.
+- Router configuration rejects inherited options, accessors, symbols, sparse arrays, duplicate providers, duplicate error codes, and unknown fields.
+
 ## 0.3.0-alpha.2 - 2026-07-20
 
 ### Changed

@@ -207,6 +207,42 @@ console.log(records[0]?.contentHash, records[0]?.provenance);
 
 Every normalized record includes `source`, `id`, `type`, `title`, `url`, `text`, author/time metadata, a content hash, adapter version, warnings, and request provenance. Credentials never appear in records or typed provider errors.
 
+### Ordered capability routes
+
+`cockroach-crawler/source-router` composes built-in and host-supplied providers behind named read or search capabilities. The router skips providers that the capability doctor reports as unavailable. A runtime failure changes provider only when that exact error code is declared in `fallbackOn`; authentication failures, invalid responses, and unexpected errors never silently switch transports.
+
+```js
+import { createSourceRegistry } from "cockroach-crawler/sources";
+import { createSourceRouter } from "cockroach-crawler/source-router";
+
+const registry = createSourceRegistry({
+  providers: [hostSuppliedCaptionProvider, hostSuppliedSearchProvider]
+});
+
+const reach = createSourceRouter({
+  registry,
+  routes: {
+    "video.transcript": {
+      operation: "read",
+      providers: [
+        { id: "host-captions", fallbackOn: ["SOURCE_NOT_FOUND"] },
+        { id: "youtube" }
+      ]
+    },
+    "web.search": {
+      operation: "search",
+      providers: [{ id: "host-search" }]
+    }
+  }
+});
+
+console.table(reach.doctor());
+const result = await reach.route("video.transcript", "https://youtu.be/VIDEO_ID");
+console.log(result.provider, result.records, result.attempts);
+```
+
+The source router is still read-only. Form filling, clicks, navigation across authenticated tabs, and other page actions belong behind a separately registered browser tool and Maqam policy/approval. See [the reach and browser architecture](docs/REACH-AND-BROWSER.md).
+
 ## Self-hosted serverless crawler
 
 The Worker is an allowlist-first deployment template, not a public hosted scraping service. Before deployment, replace the example origin in `worker/wrangler.jsonc` with origins you operate or are explicitly authorized to crawl. Store the API token as a Cloudflare secret, never in the config or repository. The following commands run from a source checkout; package consumers can copy the included `worker/` template into their deployment repository first.

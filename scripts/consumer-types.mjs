@@ -65,6 +65,11 @@ import {
   type SourceStatus
 } from "cockroach-crawler/sources";
 import {
+  createSourceRouter,
+  type SourceRouteResult,
+  type SourceRouteStatus
+} from "cockroach-crawler/source-router";
+import {
   runSourceProviderConformance,
   type SourceProviderConformanceReport
 } from "cockroach-crawler/source-conformance";
@@ -97,6 +102,18 @@ const sources = createSourceRegistry({ github: {} });
 sources.doctor() satisfies readonly SourceStatus[];
 const sourceResults = await sources.search("github", { query: "crawler", maxResults: 1 });
 sourceResults satisfies readonly SourceRecord[];
+const sourceRouter = createSourceRouter({
+  registry: sources,
+  routes: {
+    publicArticle: {
+      operation: "read",
+      providers: [{ id: "web" }]
+    }
+  }
+});
+sourceRouter.doctor() satisfies readonly SourceRouteStatus[];
+const routedSource = await sourceRouter.route("publicArticle", "https://example.com");
+routedSource satisfies SourceRouteResult;
 const conformance = await runSourceProviderConformance({
   registry: sources,
   providerId: "github"
@@ -121,7 +138,7 @@ void page;
   await exec(process.execPath, [
     "--input-type=module",
     "--eval",
-    "const root = await import('cockroach-crawler'); const agent = await import('cockroach-crawler/agent'); const sources = await import('cockroach-crawler/sources'); const conformance = await import('cockroach-crawler/source-conformance'); const serverless = await import('cockroach-crawler/serverless'); if (typeof root.crawl !== 'function' || typeof root.resolveUrlTarget !== 'function' || typeof agent.createCockroachCrawlerTool !== 'function' || typeof sources.createSourceRegistry !== 'function' || typeof conformance.runSourceProviderConformance !== 'function' || typeof serverless.createServerlessCrawler !== 'function') process.exit(1);"
+    "const root = await import('cockroach-crawler'); const agent = await import('cockroach-crawler/agent'); const sources = await import('cockroach-crawler/sources'); const router = await import('cockroach-crawler/source-router'); const conformance = await import('cockroach-crawler/source-conformance'); const serverless = await import('cockroach-crawler/serverless'); if (typeof root.crawl !== 'function' || typeof root.resolveUrlTarget !== 'function' || typeof agent.createCockroachCrawlerTool !== 'function' || typeof sources.createSourceRegistry !== 'function' || typeof router.createSourceRouter !== 'function' || typeof conformance.runSourceProviderConformance !== 'function' || typeof serverless.createServerlessCrawler !== 'function') process.exit(1);"
   ], { cwd: temp, windowsHide: true, maxBuffer: 4 * 1024 * 1024 });
   const installedCli = path.join(temp, "node_modules", "cockroach-crawler", "bin", "cockroach-crawl.js");
   const { stdout: versionOutput } = await exec(process.execPath, [installedCli, "--version"], {
