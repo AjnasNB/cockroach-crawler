@@ -8,7 +8,8 @@
   "bin": {
     "cockroach-crawl": "bin/cockroach-crawl.js",
     "cockroach-crawler": "bin/cockroach-crawl.js",
-    "cockroach-sources": "bin/cockroach-sources.js"
+    "cockroach-sources": "bin/cockroach-sources.js",
+    "cockroach-reach": "bin/cockroach-reach.js"
   },
   "main": "src/index.js",
   "types": "types/index.d.ts",
@@ -32,6 +33,16 @@
       "types": "./types/source-router.d.ts",
       "import": "./src/source-router.js",
       "default": "./src/source-router.js"
+    },
+    "./external-sources": {
+      "types": "./types/external-sources.d.ts",
+      "import": "./src/external-sources.js",
+      "default": "./src/external-sources.js"
+    },
+    "./browser-host": {
+      "types": "./types/browser-host.d.ts",
+      "import": "./src/browser-host.js",
+      "default": "./src/browser-host.js"
     },
     "./schemas/source-record.json": "./schemas/source-record.schema.json",
     "./source-conformance": {
@@ -60,6 +71,7 @@
     "docs/PROVENANCE.md",
     "docs/ARCHITECTURE.md",
     "docs/SOURCES.md",
+    "docs/EXTERNAL-SOURCES.md",
     "docs/REACH-AND-BROWSER.md",
     "docs/SOURCE-CONFORMANCE.md",
     "docs/SERVERLESS.md",
@@ -75,7 +87,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/cli.test.js test/crawler.test.js test/limits.test.js test/release-kit.test.js test/security.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
+    "test": "node --test test/browser-host.test.js test/cli.test.js test/crawler.test.js test/external-sources-cli.test.js test/external-sources.test.js test/limits.test.js test/release-kit.test.js test/security.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
     "test:browser": "node --test browser-test/integration.test.js",
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
@@ -100,8 +112,12 @@
     "research",
     "github-api",
     "youtube-api",
+    "youtube-search",
     "reddit-api",
     "x-api",
+    "browser-session",
+    "browser-agent",
+    "linkedin",
     "ssrf-protection",
     "cloudflare-workers",
     "serverless"

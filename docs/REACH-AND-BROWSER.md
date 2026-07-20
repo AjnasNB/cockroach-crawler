@@ -8,7 +8,8 @@ Cockroach Crawler should be easy to install as part of one agent product, but it
 | --- | --- | --- |
 | `cockroach-crawler` | Bounded public HTTP retrieval, extraction, normalized records, provider contracts | Reuse login sessions or submit mutations |
 | `cockroach-crawler/source-router` | Ordered read/search providers, capability diagnostics, explicit failure fallback | Turn an auth failure into an implicit cookie/session fallback |
-| Governed browser adapter | DOM observation, typed action proposals, optional multi-page execution | Dispatch mutating actions before policy and exact approval |
+| `cockroach-crawler/external-sources` | Explicit no-key and browser-session read providers, pinned setup plans | Expose upstream write commands or import browser cookies |
+| `cockroach-crawler/browser-host` | Stateful sessions, structural observations, previews, approved execution, deduplication | Issue approvals or claim a network boundary the injected runtime does not provide |
 | Maqam | Policy, exact input-bound approval, one-use consumption, replay rejection, traces and evidence | Claim control over tools that bypass its registered gateway |
 | Qarinah | Opt-in compact context, cited retrieval, deterministic index/graph and host hooks | Capture content without workspace consent |
 | ProductLoop OS | One installer, workflow composition and cross-layer receipts | Erase the package boundaries above |
@@ -22,20 +23,20 @@ The intended user experience is one setup command. The internal implementation r
 | Explicit public web URL | Built in | Retain hardened crawler and normalized record |
 | Public GitHub search/read | Built in | Add optional authenticated read-only profile |
 | Known YouTube metadata | Built in | Retain oEmbed no-key path |
-| YouTube captions | Available through a separately configured governed Maqam adapter | Register as an optional provider; never import browser cookies |
-| YouTube search | Official API key in crawler | Allow an explicitly configured alternate search provider without claiming universal no-key access |
+| YouTube captions | Available through a separately configured governed Maqam adapter | Move the reviewed caption path into a future crawler provider; never import browser cookies |
+| YouTube search | Official API key plus optional `youtube-no-key` provider | Keep official and yt-dlp routes explicit; never fall back after authentication failure |
 | RSS/Atom | Governed Maqam adapter and crawler issue | Add a built-in parser over the crawler transport |
 | Hosted web search | Governed Maqam MCP adapter | Register as an optional search provider with visible operator and data boundary |
 | X and Reddit official APIs | Built in with credentials | Retain as official adapters |
-| Login-session social reads | Not built in | Separate local browser-session connector with explicit per-provider consent and doctor state |
-| Additional regional/social providers | Not built in | Independent optional adapters with conformance fixtures, documented terms and ordered routing |
-| One-command install/update | Partial | ProductLoop installer registers CLI, MCP and Codex/Claude skills, then runs every doctor |
+| Login-session social reads | X, Reddit, Facebook, Instagram and LinkedIn through fixed OpenCLI read mappings | Add a stronger authenticated localhost broker and dedicated-profile guidance |
+| Additional regional/social providers | Xiaohongshu read mapping; Bilibili intentionally excluded | Add only reviewed adapters with conformance fixtures and documented terms |
+| One-command install/update | `cockroach-reach` dry-run plan and explicit pinned apply | Add signed manifest distribution, rollback and scheduled check integration |
 
 No-key means that a developer key is not required for that specific adapter. It does not mean anonymous access always works, that login state may be taken silently, or that provider terms and regional restrictions disappear.
 
 ## Page interaction target
 
-The browser layer should cover in-page copilots, form filling, accessibility commands, multi-page tasks and MCP control. It should use a structural DOM representation instead of screenshots when possible and permit bring-your-own-model configuration.
+The browser layer covers the Maqam-compatible structural contract for in-page copilots, form preparation, typed commits and multi-page identity. `cockroach-crawler/browser-host` now owns lifecycle, opaque element IDs, revisions, operation validation, value references and deduplication. It deliberately requires an injected trusted runtime. A production Playwright runtime must reuse the crawler's pinned transport and effect controls before it can be advertised as enforced browser isolation.
 
 Every proposed action is classified before dispatch:
 
@@ -64,3 +65,4 @@ Third-party code or packages must retain their licenses and required notices. Ca
 5. Packed consumers pass on Node 22, 24 and 26.
 6. An external security reviewer validates session handling, redirects, DOM target binding and evidence redaction.
 7. The one-command installer reports every optional dependency and asks before installing system software or enabling browser-session reuse.
+8. Browser-host capability output must remain explicit about the missing bundled Playwright/pinned-network runtime until that runtime passes the existing Chromium security suite.

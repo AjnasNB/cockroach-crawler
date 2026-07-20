@@ -14,3 +14,14 @@ This is the reviewed direct-dependency snapshot for the `0.3.0-alpha.2` lockfile
 | [wrangler](https://github.com/cloudflare/workers-sdk) | 4.112.0 | Development / Worker dry-run | MIT OR Apache-2.0 |
 
 This audit covers direct runtime, peer, and development packages only. Transitive dependencies remain governed by their own licenses. Compatible dependency ranges can resolve newer versions for downstream consumers, so license and provenance review must be repeated when the lockfile changes. This inventory is informational and is not legal advice.
+
+## Optional external tools
+
+These tools are not npm dependencies, are not bundled in the package tarball, and run only after an operator selects the external-source tier. `cockroach-reach` pins the reviewed version in its generated setup plan.
+
+| Tool | Reviewed version | Relationship | License |
+| --- | ---: | --- | --- |
+| [OpenCLI](https://github.com/jackwener/opencli) | 1.8.6 | Optional browser-session read connector | Apache-2.0 |
+| [yt-dlp](https://github.com/yt-dlp/yt-dlp) | 2025.5.22 | Optional no-key YouTube metadata/search executable | Unlicense for core; distributed artifacts may carry additional notices |
+
+The optional LinkedIn MCP alternative is manual and is not installed, imported, or dispatched by Cockroach Crawler. Bilibili integrations are intentionally excluded.
