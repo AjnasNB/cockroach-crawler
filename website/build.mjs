@@ -13,6 +13,7 @@ const goodFirstIssues = `${repository}/issues?q=is%3Aissue+is%3Aopen+label%3A%22
 const helpWantedIssues = `${repository}/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22`;
 const maqamRepository = "https://github.com/AjnasNB/maqam";
 const maqamDocs = "https://maqamagent.com/docs/";
+const productLoopRepository = "https://github.com/AjnasNB/productloop-os";
 const benchmarkRun = "https://github.com/AjnasNB/cockroach-crawler/actions/runs/29624859893";
 const assetVersion = createHash("sha256")
   .update(await readFile(join(root, "assets", "styles.css")))
@@ -45,8 +46,8 @@ const pages = [
           "@type": "SoftwareApplication",
           name: "Cockroach Crawler",
           applicationCategory: "DeveloperApplication",
-          operatingSystem: "Node.js >=20.18.1 (published 0.2.0 release)",
-          softwareVersion: "0.2.0",
+          operatingSystem: "Node.js 22, 24, or 26",
+          softwareVersion: "0.3.0-alpha.2",
           license: "https://opensource.org/license/mit",
           codeRepository: repository,
           downloadUrl: npmPackage,
@@ -59,6 +60,7 @@ const pages = [
           mainEntity: [
             faqSchema("Does Cockroach Crawler bypass logins or CAPTCHA?", "No. It does not include stealth, CAPTCHA, paywall, authentication, or authorization bypasses."),
             faqSchema("Can an agent expand its crawl permissions?", "No. The agent adapter treats creator-owned origins and limits as upper bounds and rejects undeclared policy overrides."),
+            faqSchema("Does Cockroach Crawler require an API key?", "Public web crawling and public GitHub reads work without a developer API key. A known YouTube URL provides public metadata. YouTube search, X, and Reddit require their documented provider credentials."),
             faqSchema("Is browser mode a sandbox?", "No. Browser mode constrains network behavior and resource use, but Chromium still requires process or container isolation for untrusted targets."),
             faqSchema("Does it provide GitHub, YouTube, X, or Reddit access?", "The stable 0.2.0 package does not. The published 0.3.0-alpha.2 prerelease adds a tested provider registry: public GitHub REST is ready, YouTube metadata reads work without a key while search needs a key, and X and Reddit require official operator credentials. YouTube transcripts are not implemented.")
           ]
@@ -122,6 +124,13 @@ const pages = [
     title: "Provider coverage — Cockroach Crawler",
     description: "A precise stable-versus-candidate status matrix for public HTTP, serverless crawling, GitHub, YouTube, Reddit, X, authentication, and transcripts.",
     body: providersPage()
+  },
+  {
+    slug: "stack",
+    nav: "Stack",
+    title: "Governed agent stack | Cockroach Crawler",
+    description: "See how Cockroach Crawler, Maqam, ProductLoop OS, and Qarinah compose as reach, governance, orchestration, and context layers.",
+    body: stackPage()
   },
   {
     slug: "benchmark",
@@ -197,7 +206,7 @@ function escapeHtml(value) {
 }
 
 function nav(active) {
-  const primary = pages.filter((page) => ["Home", "Docs", "Security", "Providers", "Benchmark"].includes(page.nav));
+  const primary = pages.filter((page) => ["Home", "Docs", "Providers", "Stack", "Security", "Benchmark"].includes(page.nav));
   const secondary = pages.filter((page) => ["Media", "Launch", "Roadmap", "Community", "Release"].includes(page.nav));
   const link = (page) => {
     const href = page.slug ? `/${page.slug}/` : "/";
@@ -232,7 +241,7 @@ function footer() {
           <a class="brand" href="/"><img src="/assets/mark.svg" width="28" height="28" alt="" /><span>Cockroach Crawler</span></a>
           <p>Bounded crawling for public or explicitly trusted HTTP(S) pages.</p>
         </div>
-        <div><h2>Use</h2><a href="/docs/">Documentation</a><a href="/providers/">Provider status</a><a href="/media/">Product demos</a><a href="${npmPackage}">npm package</a></div>
+        <div><h2>Use</h2><a href="/docs/">Documentation</a><a href="/providers/">Provider status</a><a href="/stack/">Governed stack</a><a href="${npmPackage}">npm package</a></div>
         <div><h2>Trust</h2><a href="/security/">Security model</a><a href="/benchmark/">Benchmark method</a><a href="${repository}/blob/main/SECURITY.md">Report privately</a></div>
         <div><h2>Project</h2><a href="/launch/">Launch kit</a><a href="/roadmap/">Roadmap</a><a href="/community/">Contribute</a><a href="${repository}">Source code</a><a href="${maqamDocs}">Govern with Maqam</a></div>
       </div>
@@ -319,6 +328,30 @@ function homePage() {
       <div><span class="metric-label">Output</span><strong>Markdown + JSONL</strong></div>
       <div><span class="metric-label">Policy</span><strong>Creator-owned limits</strong></div>
     </div></section>
+    <section class="section shell capability-section" aria-labelledby="capability-title">
+      <div class="capability-intro">
+        <p class="eyebrow">Status before request</p>
+        <h2 id="capability-title">Know what works without a key.</h2>
+        <p>Run the source doctor before an agent chooses a provider. The report reads local configuration state and never serializes credential values.</p>
+        ${codeBlock("home-doctor", "capability check", "npx -y --package cockroach-crawler@0.3.0-alpha.2 cockroach-sources doctor")}
+        <a class="text-link" href="/providers/">Inspect every provider boundary</a>
+      </div>
+      <div class="capability-board" role="list" aria-label="Credential-free and configured source capabilities">
+        <article role="listitem"><span class="status shipped">Ready</span><div><h3>Public web</h3><p>Read permitted URLs with robots, network, redirect, origin, and resource controls.</p></div><strong>No key</strong></article>
+        <article role="listitem"><span class="status shipped">Ready</span><div><h3>GitHub</h3><p>Search and read public repositories and issues at the unauthenticated REST limit.</p></div><strong>No key</strong></article>
+        <article role="listitem"><span class="status conditional">Partial</span><div><h3>YouTube</h3><p>Read metadata for a known public video. Search needs a YouTube API key.</p></div><strong>Metadata</strong></article>
+        <article role="listitem"><span class="status conditional">Configured</span><div><h3>X and Reddit</h3><p>Use only documented provider APIs with operator-supplied credentials.</p></div><strong>Official auth</strong></article>
+      </div>
+    </section>
+    <section class="section shell stack-preview" aria-labelledby="stack-preview-title">
+      <div>
+        <p class="eyebrow">One flow, explicit layers</p>
+        <h2 id="stack-preview-title">Reach is useful. Governed reach is the product.</h2>
+        <p>Cockroach Crawler gathers bounded public evidence. Maqam governs registered actions. ProductLoop composes workflows. Qarinah compiles the evidence and decisions into small cited context packs.</p>
+        <div class="button-row"><a class="button primary" href="/stack/">See the complete stack</a><a class="button secondary" href="/docs/agents/">Govern a crawler tool</a></div>
+      </div>
+      <figure><img src="/assets/provider-map.svg" width="720" height="560" alt="Five provider inputs entering a normalized read-only source record boundary" /><figcaption>Each layer stays replaceable. No direct call becomes governed merely because the packages are installed together.</figcaption></figure>
+    </section>
     <section class="section shell demo-section" aria-labelledby="home-demo-title">
       <div class="section-head"><div><p class="eyebrow">60-second product demo</p><h2 id="home-demo-title">What is Cockroach Crawler?</h2></div><p>See one URL enter an explicit crawl boundary, produce structured records, and stop at the limits its operator selected.</p></div>
       <figure class="video-stage">
@@ -656,6 +689,33 @@ function providersPage() {
     <section class="section shell"><div class="section-head"><div><p class="eyebrow">Adapter acceptance bar</p><h2>New reach must not erase the boundary.</h2></div><p>A provider adapter should be small, opt-in, provider-package-tested offline where possible, and explicit about authentication and missing guarantees.</p></div><ol class="process-grid"><li><span>01</span><h3>Public contract</h3><p>Use a documented API or permitted public surface with a pinned provider version.</p></li><li><span>02</span><h3>Creator authority</h3><p>Credentials, scopes, origins, and rate limits remain operator-owned.</p></li><li><span>03</span><h3>Offline fixture</h3><p>Prove allow and deny routing without accounts, live data, or side effects.</p></li><li><span>04</span><h3>Named limits</h3><p>Document what is not synchronized, discovered, authenticated, or certified.</p></li></ol></section>`;
 }
 
+function stackPage() {
+  return `
+    <section class="page-hero shell"><p class="eyebrow">Governed agent stack</p><h1>One agent stack. Four explicit controls.</h1><p class="lede">Reach, action, context, and evidence compose without pretending that installation alone governs every call.</p><div class="page-actions"><a class="button primary" href="/docs/agents/">Govern a crawler tool</a><a class="button secondary" href="${productLoopRepository}">Inspect ProductLoop OS</a></div></section>
+    <section class="section shell stack-flow" aria-labelledby="stack-flow-title">
+      <div class="stack-flow-copy"><p class="eyebrow">Execution model</p><h2 id="stack-flow-title">The host chooses the route. Each layer proves one job.</h2><p>ProductLoop coordinates the workflow. Qarinah compiles approved project context. Maqam decides whether a registered operation may execute. Cockroach Crawler collects bounded public evidence. Results return as records, receipts, and context references.</p></div>
+      <ol class="stack-path">
+        <li><span>01</span><div><h3>Compose</h3><strong>ProductLoop OS</strong><p>Workflow runtime, policies, approvals, connectors, skills, evaluations, provenance, and research plans.</p></div></li>
+        <li><span>02</span><div><h3>Contextualize</h3><strong>Qarinah</strong><p>Local event ledger, deterministic graph/index, and compact cited context packs. Private alpha today.</p></div></li>
+        <li><span>03</span><div><h3>Govern</h3><strong>Maqam</strong><p>Registered tool policy, exact one-use approvals, browser-action contracts, traces, and evidence.</p></div></li>
+        <li><span>04</span><div><h3>Reach</h3><strong>Cockroach Crawler</strong><p>Bounded public-web reads, provider capability checks, normalized source records, and serverless fetch policy.</p></div></li>
+      </ol>
+    </section>
+    <section class="section shell"><div class="section-head"><div><p class="eyebrow">Capability truth</p><h2>What the combined system can claim today.</h2></div><p>Every row names the component that provides the behavior and the boundary the deployment must still enforce.</p></div><div class="table-wrap" tabindex="0" role="region" aria-label="Governed agent stack capability table"><table><thead><tr><th>Capability</th><th>Component</th><th>Status</th><th>Deployment boundary</th></tr></thead><tbody>
+      <tr><td>Public URL crawl to Markdown or JSONL</td><td>Cockroach Crawler</td><td><span class="status shipped">Available</span></td><td>Explicit origin and resource policy; public network by default.</td></tr>
+      <tr><td>Public GitHub read/search without a developer key</td><td>Cockroach Crawler prerelease</td><td><span class="status shipped">Available</span></td><td>Unauthenticated REST limits; read-only operations.</td></tr>
+      <tr><td>Known-video metadata without a developer key</td><td>Cockroach Crawler prerelease</td><td><span class="status conditional">Partial</span></td><td>Public metadata only; search requires an API key.</td></tr>
+      <tr><td>RSS/Atom and available YouTube captions</td><td>Maqam source adapters</td><td><span class="status conditional">Configured</span></td><td>The host supplies and governs the selected reader or executable.</td></tr>
+      <tr><td>Natural-language browser actions</td><td>Maqam browser contract plus a host driver</td><td><span class="status conditional">Adapter-side</span></td><td>No browser engine or model provider is silently bundled.</td></tr>
+      <tr><td>Exact approval and replay rejection</td><td>Maqam</td><td><span class="status shipped">Available</span></td><td>The real side effect must pass through the registered gateway.</td></tr>
+      <tr><td>Durable compact project context</td><td>Qarinah</td><td><span class="status planned">Private alpha</span></td><td>Explicit workspace consent and machine-local trust are required.</td></tr>
+      <tr><td>Cross-package workflow and evaluation</td><td>ProductLoop OS</td><td><span class="status shipped">Available</span></td><td>External browsers, models, secrets, identity, and durable services remain deployment choices.</td></tr>
+    </tbody></table></div></section>
+    <section class="section shell feature-stage"><figure><img src="/assets/provider-map.svg" width="720" height="560" alt="Provider inputs crossing explicit access checks before becoming normalized source records" /><figcaption>Reach enters the system as untrusted source data. It becomes useful only after policy, provenance, and retrieval boundaries remain visible.</figcaption></figure><div><p class="eyebrow">Original composition</p><h2>Learn from strong tools without cloning their product.</h2><p>Broad capability installers demonstrate the value of one command and a useful doctor. In-page agents demonstrate low-friction browser control. Knowledge graphs demonstrate compact retrieval across project relationships. This stack keeps a different center: governed execution and evidence-linked context across replaceable adapters.</p><ul class="check-list"><li>No imported upstream branding or silent dependency</li><li>No claim that free access is unlimited or provider-approved</li><li>No browser-cookie extraction or login reuse</li><li>No claim that an in-process policy is an operating-system sandbox</li></ul></div></section>
+    <section class="section shell proof-section"><div><p class="eyebrow">Try the public layers</p><h2>Check capability, then prove exact approval.</h2><p>The commands are independent on purpose. The first reports source access. The second proves the governance boundary. ProductLoop can compose both, while Qarinah remains a private alpha until its launch gates are complete.</p></div>${codeBlock("stack-public-proof", "public proof", "npx -y --package cockroach-crawler@0.3.0-alpha.2 cockroach-sources doctor\nnpx -y maqam@0.3.2 demo approval")}</section>
+    <section class="section shell faq-section"><div><p class="eyebrow">Boundaries</p><h2>What one install cannot promise.</h2></div><div class="faq-list"><details><summary>Does the stack include a model or paid API?</summary><p>No. Model providers are deployment choices. Public web and GitHub reads can work without a developer key; other providers retain their own authentication and terms.</p></details><details><summary>Does Maqam automatically control every browser or shell?</summary><p>No. Only registered operations routed through the gateway are governed. Direct shell, browser, SDK, or provider calls bypass that boundary.</p></details><details><summary>Is Qarinah publicly installable?</summary><p>Not yet. It is a private, unlicensed alpha with explicit launch gates. The public stack must not advertise an install until those gates are complete.</p></details></div></section>`;
+}
+
 function benchmarkPage() {
   return `
     <section class="page-hero shell"><p class="eyebrow">CI-validated local regression benchmark</p><h1>Repeat the same workload. Catch the regression.</h1><p class="lede">A clean exact-commit CI run completed ${benchmarkMeasuredRuns} measured passes of the deterministic ${benchmarkPages}-page loopback fixture at a ${benchmarkElapsedMedian} ms median and ${benchmarkThroughputMedian} pages per second median. All correctness and policy probes passed.</p><div class="page-actions"><a class="button primary" href="#reproduce">Reproduce it</a><a class="button secondary" href="${benchmarkRun}">Open the CI run</a><a class="button secondary" href="${repository}/blob/main/docs/BENCHMARK.md">Read the method</a></div></section>
@@ -762,7 +822,7 @@ function releasePage() {
     <section class="page-hero shell"><p class="eyebrow">Release · 0.2.0 · 15 July 2026</p><h1>The hardened network and agent boundary release.</h1><p class="lede">Version 0.2.0 adds optional Chromium rendering, a strict agent adapter, TypeScript declarations, richer provenance, and a substantially expanded security and release gate.</p><div class="page-actions"><a class="button primary" href="${npmPackage}">Install from npm</a><a class="button secondary" href="${repository}/releases">GitHub releases</a></div></section>
     <section class="release-banner"><div class="shell"><span>Install</span><code>npm install cockroach-crawler@0.2.0</code><button type="button" class="copy-button" data-copy-value="npm install cockroach-crawler@0.2.0" aria-describedby="release-copy-status">Copy</button><span class="sr-only" id="release-copy-status" aria-live="polite"></span></div></section>
     <section class="section shell"><div class="section-head"><div><p class="eyebrow">What changed</p><h2>Authority is explicit from URL to output.</h2></div><p>See the repository changelog for the exhaustive list.</p></div><div class="fit-grid"><article class="fit-yes"><span>Added</span><h3>Optional Chromium mode</h3><p>Bounded waits and explicit clicks behind the DNS-validated, address-pinned transport.</p></article><article class="fit-yes"><span>Added</span><h3>Strict agent adapter</h3><p>Creator-owned limits, runtime validation, and browser opt-in.</p></article><article class="fit-yes"><span>Added</span><h3>Typed and traceable output</h3><p>Public declarations, hashes, redirect provenance, failures, stats, and AbortSignal support.</p></article></div></section>
-    <section class="section shell"><div class="table-wrap" tabindex="0" role="region" aria-label="Release facts table"><table><thead><tr><th>Release fact</th><th>0.2.0</th></tr></thead><tbody><tr><td>Runtime</td><td>Node.js ≥ 20.18.1</td></tr><tr><td>Package license</td><td>MIT</td></tr><tr><td>Optional browser peer</td><td>Playwright ≥ 1.48.0 and &lt; 2</td></tr><tr><td>Published package</td><td><a href="${npmPackage}">npmjs.com/package/cockroach-crawler</a></td></tr><tr><td>Source and issues</td><td><a href="${repository}">github.com/AjnasNB/cockroach-crawler</a></td></tr></tbody></table></div></section>
+    <section class="section shell"><div class="table-wrap" tabindex="0" role="region" aria-label="Release facts table"><table><thead><tr><th>Release fact</th><th>0.2.0</th></tr></thead><tbody><tr><td>Runtime status</td><td>Historical stable artifact; maintained source and the <code>next</code> line support Node.js 22, 24, and 26</td></tr><tr><td>Package license</td><td>MIT</td></tr><tr><td>Optional browser peer</td><td>Playwright ≥ 1.48.0 and &lt; 2</td></tr><tr><td>Published package</td><td><a href="${npmPackage}">npmjs.com/package/cockroach-crawler</a></td></tr><tr><td>Source and issues</td><td><a href="${repository}">github.com/AjnasNB/cockroach-crawler</a></td></tr></tbody></table></div></section>
     <section class="section shell candidate-release"><div><p class="eyebrow">Published npm prerelease</p><h2>0.3.0-alpha.2 expands the reading layer.</h2><p>The npm <code>next</code> release adds a provider registry, <code>cockroach-sources</code> doctor CLI, and a separate fetch-only Cloudflare Worker profile. Its trusted-publishing provenance and post-publish consumer checks are verified before this page is deployed.</p></div><div class="candidate-facts"><div><span>GitHub</span><strong>Public REST ready</strong></div><div><span>YouTube</span><strong>Metadata read; keyed search; no transcript</strong></div><div><span>X + Reddit</span><strong>Official credentials required</strong></div><div><span>Serverless</span><strong>Operator allowlist + token + rate limit; no DNS resolution/pinning</strong></div></div></section>
     <section class="section shell proof-section"><div><p class="eyebrow">Release gate</p><h2>Verify source, browser, audit, and tarball.</h2><p>The package's <code>prepublishOnly</code> script runs the same release check. Publishing remains a maintainer action.</p></div>${codeBlock("release-check", "terminal", "npm ci --ignore-scripts\nnpm run release:check")}</section>
     <section class="section shell card-grid"><article><p class="eyebrow">Upgrade note</p><h2>Review stricter failures.</h2><p>Cross-origin crawling now requires explicit allowed origins. Numeric strings and booleans are rejected instead of coerced. Robots and sensitive-path failures close earlier.</p></article><article><p class="eyebrow">Package provenance</p><h2>Inspect, do not infer.</h2><p>Review the npm package, committed workflow, lockfile, dependency-license snapshot, and packed tarball. This site does not claim certification.</p></article></section>`;
