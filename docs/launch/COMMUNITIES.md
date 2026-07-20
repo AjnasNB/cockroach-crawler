@@ -10,7 +10,7 @@ Each post should be submitted by a maintainer who can stay for questions. Read e
 
 I have been working on Cockroach Crawler, an MIT-licensed Node.js crawler for jobs where handing model input a raw `fetch` or browser feels too broad.
 
-The `0.3.0-alpha.1` candidate has three pieces:
+The `0.3.0-alpha.2` prerelease has three pieces:
 
 - a local CLI/API with public-network validation, DNS-pinned redirect hops, robots enforcement, exact resource limits, Markdown/JSONL output, and optional operator-enabled Playwright;
 - a smaller serverless HTML crawler for deployment-configured HTTPS origins that reports it has no DNS resolution/pinning or browser mode;

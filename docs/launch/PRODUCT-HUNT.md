@@ -22,7 +22,7 @@ Cockroach Crawler turns reading into an explicit boundary:
 
 It returns Markdown or JSON/JSONL with source URLs, retrieval provenance, redirect details, and content hashes. It does not require a model or hosted account, and it does not bypass logins, paywalls, CAPTCHA, robots policy, or provider access rules.
 
-`0.3.0-alpha.1` is an integration preview. Try it, inspect the limits, and tell us which contract fixture or failure mode should come next.
+`0.3.0-alpha.2` is an integration preview. Try it, inspect the limits, and tell us which contract fixture or failure mode should come next.
 
 ## Maker comment
 

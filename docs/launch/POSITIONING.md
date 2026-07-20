@@ -88,7 +88,7 @@ No. The built-in source adapters are read-only. They do not post, comment, like,
 
 ### Is the alpha production-ready?
 
-No universal production claim is appropriate. `0.3.0-alpha.1` is an integration preview. Operators must review the limits, run the release checks, and test against their own deployment and threat model.
+No universal production claim is appropriate. `0.3.0-alpha.2` is an integration preview. Operators must review the limits, run the release checks, and test against their own deployment and threat model.
 
 ## Approved short descriptions
 

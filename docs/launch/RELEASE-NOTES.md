@@ -1,14 +1,14 @@
-# Release notes for 0.3.0-alpha.1
+# Release notes for 0.3.0-alpha.2
 
 This copy is prepared for a future reviewed alpha release. Do not paste “published” or “live” into public channels until npm, the Git tag, GitHub release, and registry-only verification all succeed at the same commit.
 
 ## GitHub release title
 
-**Cockroach Crawler v0.3.0-alpha.1 — source adapters and allowlist-first serverless crawling**
+**Cockroach Crawler v0.3.0-alpha.2 — maintained Node releases and hardened provider responses**
 
 ## GitHub release body
 
-`0.3.0-alpha.1` is an integration preview that adds two new entry points while preserving the hardened local crawler as the stronger network boundary.
+`0.3.0-alpha.2` is an integration preview that retains the provider and serverless entry points, removes the end-of-life Node 20 baseline, and hardens successful provider-response validation while preserving the local crawler as the stronger network boundary.
 
 ### Added
 
@@ -64,7 +64,7 @@ The working branch's complete local Node test command passed on 2026-07-18. This
 ### Install
 
 ```bash
-npm install --global cockroach-crawler@0.3.0-alpha.1
+npm install --global cockroach-crawler@0.3.0-alpha.2
 cockroach-sources doctor
 ```
 
@@ -86,13 +86,13 @@ cockroach-sources doctor
 
 Use as the top of the README or npm announcement after publish:
 
-> `cockroach-crawler@0.3.0-alpha.1` adds typed, read-only source adapters and a deliberately limited serverless crawler. Use `cockroach-sources doctor` to inspect exact GitHub, YouTube, X, Reddit, and web availability. The hardened local CLI remains the stronger network boundary; the serverless tier is allowlist-first and explicitly reports that DNS pinning and browser mode are absent.
+> `cockroach-crawler@0.3.0-alpha.2` adds typed, read-only source adapters and a deliberately limited serverless crawler, supports maintained Node 22, 24, and 26 releases, and rejects incompatible successful provider payloads. Use `cockroach-sources doctor` to inspect exact GitHub, YouTube, X, Reddit, and web availability. The hardened local CLI remains the stronger network boundary; the serverless tier is allowlist-first and explicitly reports that DNS pinning and browser mode are absent.
 
 ## Verification commands
 
 ```bash
-npm view cockroach-crawler@0.3.0-alpha.1 version dist.integrity dist.attestations
-npm install --global cockroach-crawler@0.3.0-alpha.1
+npm view cockroach-crawler@0.3.0-alpha.2 version dist.integrity dist.attestations
+npm install --global cockroach-crawler@0.3.0-alpha.2
 cockroach-crawl --version
 cockroach-sources doctor --json
 ```

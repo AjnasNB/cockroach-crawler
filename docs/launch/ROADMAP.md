@@ -1,6 +1,6 @@
 # Public 30/60/90-day roadmap
 
-This roadmap is evidence-driven. Dates start when `0.3.0-alpha.1` is published from a reviewed commit. Items may move when provider APIs, security findings, or contributor capacity change. “Done” means the stated exit criteria are met, not that code merely exists on a branch.
+This roadmap is evidence-driven. Dates start when `0.3.0-alpha.2` is published from a reviewed commit. Items may move when provider APIs, security findings, or contributor capacity change. “Done” means the stated exit criteria are met, not that code merely exists on a branch.
 
 ## Contribute to the next evidence checkpoint
 

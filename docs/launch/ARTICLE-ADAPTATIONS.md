@@ -99,7 +99,7 @@ Use Medium's import/canonical feature rather than pasting an unlinked duplicate.
 > 3. Is browser execution isolated?
 > 4. Which provider credentials are available?
 >
-> I wrote up the two-tier design behind Cockroach Crawler `0.3.0-alpha.1`, including what the serverless tier deliberately does not claim.
+> I wrote up the two-tier design behind Cockroach Crawler `0.3.0-alpha.2`, including what the serverless tier deliberately does not claim.
 >
 > [CANONICAL_ARTICLE_URL]
 

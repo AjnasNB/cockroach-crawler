@@ -1,6 +1,6 @@
-# Cockroach Crawler 0.3.0-alpha.1 launch kit
+# Cockroach Crawler 0.3.0-alpha.2 launch kit
 
-This directory contains review-ready launch copy for the `0.3.0-alpha.1` candidate. It is a working kit, not evidence that the alpha has been published or deployed.
+This directory contains review-ready launch copy for the `0.3.0-alpha.2` prerelease. Publication claims must still be tied to the verified npm provenance and exact GitHub release commit.
 
 ## One-sentence definition
 

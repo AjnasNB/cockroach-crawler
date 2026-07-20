@@ -2,9 +2,13 @@
 
 ## Unreleased
 
+## 0.3.0-alpha.2 - 2026-07-20
+
 ### Changed
 
 - Replaced the end-of-life Node 20 baseline with explicit support and CI coverage for maintained Node 22 LTS, Node 24 LTS, and Node 26 Current release lines.
+- Hardened successful provider-response validation so malformed JSON and incompatible payload shapes fail explicitly instead of being normalized as empty results.
+- Hardened Cloudflare Worker release checks and npm package metadata, and refreshed the development-only AJV lockfile entry.
 
 ## 0.3.0-alpha.1 - 2026-07-18
 

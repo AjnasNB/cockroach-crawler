@@ -22,7 +22,7 @@ It is an MIT-licensed Node.js crawler with two intentionally different execution
 The new alpha also adds read-only source adapters with a `doctor` command. Public web and public GitHub reads work without credentials. A known YouTube URL returns public oEmbed metadata without a key; YouTube search needs an API key. X and Reddit require their official API credentials. No cookie extraction, stealth, login bypass, or write actions are included.
 
 ```bash
-npm install --global cockroach-crawler@0.3.0-alpha.1
+npm install --global cockroach-crawler@0.3.0-alpha.2
 cockroach-sources doctor
 cockroach-crawl https://example.com/docs --max-pages 10 --jsonl
 ```
