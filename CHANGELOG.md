@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+### Added
+
+- Added `cockroach-crawler/source-router` for named read/search capabilities backed by ordered built-in or host-supplied providers.
+- Added route-level doctor output, selected-provider reporting, bounded attempt diagnostics, strict TypeScript declarations, and packed-consumer coverage.
+- Added `cockroach-crawler/external-sources` with fixed read-only OpenCLI mappings for X, Reddit, Facebook, Instagram, LinkedIn, and Xiaohongshu, plus hardened no-key YouTube search/read through `yt-dlp`.
+- Added the `cockroach-reach` doctor and pinned setup/update planner. Plans are dry-run by default and require explicit `--apply`; browser extension and alternative LinkedIn MCP setup remain manual.
+- Added `cockroach-crawler/browser-host`, a Maqam-compatible stateful structural host with opaque element IDs, monotonic revisions, post-approval value resolution, operation deduplication, and honest runtime capability reporting.
+
+### Security
+
+- Provider changes occur before dispatch when a capability is unavailable, or after dispatch only for an exact error code declared by the route creator.
+- Cancellation, authentication, invalid-response, oversized-response, and timeout failures cannot be configured as fallbacks.
+- Router configuration rejects inherited options, accessors, symbols, sparse arrays, duplicate providers, duplicate error codes, and unknown fields.
+- External commands use `execFile` with `shell: false`, fixed command maps, reduced environments, abort/deadline/output bounds, no cookie/profile file import, and no exposed social write operations. Bilibili is excluded.
+- The YouTube executable path disables configuration, plugins, remote components, cookies, cache, watched-state changes, media downloads, and unbounded output before dispatch.
+- Browser mutations require Maqam-shaped execution authority, exact origin scope, consumed apply/submit approval, live revision and role compatibility, and all-false prohibited-effect attestation. Indeterminate post-dispatch failures remain bound to their operation ID and cannot be retried silently.
+
 ## 0.3.0-alpha.2 - 2026-07-20
 
 ### Changed

@@ -191,6 +191,17 @@ Current capability contract:
 | X | Unavailable | Recent search/read with an approved `X_BEARER_TOKEN` | Official X API v2 only; no cookie scraping |
 | Reddit | Unavailable | Search/read with `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET`, and `COCKROACH_REDDIT_USER_AGENT` | Application-only OAuth; comply with Reddit data terms |
 
+Optional reach providers live in a separate authority tier:
+
+```bash
+npx cockroach-reach doctor
+npx cockroach-reach setup --channels youtube,reddit,x,facebook,instagram,linkedin,xiaohongshu
+# Review the dry-run plan first, then opt in:
+npx cockroach-reach setup --channels youtube,reddit --apply
+```
+
+`youtube-no-key` supplies bounded YouTube search and metadata through a hardened, separately installed `yt-dlp`. The session providers `x-session`, `reddit-session`, `facebook-session`, `instagram-session`, `linkedin-session`, and `xiaohongshu-session` expose only fixed read commands through OpenCLI. They require explicit browser login state, never read cookie/profile files themselves, and are never implicit fallbacks from official providers. Bilibili is intentionally excluded. Setup and update are dry-run by default and apply only versions audited by this release. See [optional reach providers](docs/EXTERNAL-SOURCES.md).
+
 ```js
 import { createSourceRegistryFromEnv } from "cockroach-crawler/sources";
 
@@ -206,6 +217,63 @@ console.log(records[0]?.contentHash, records[0]?.provenance);
 ```
 
 Every normalized record includes `source`, `id`, `type`, `title`, `url`, `text`, author/time metadata, a content hash, adapter version, warnings, and request provenance. Credentials never appear in records or typed provider errors.
+
+### Ordered capability routes
+
+`cockroach-crawler/source-router` composes built-in and host-supplied providers behind named read or search capabilities. The router skips providers that the capability doctor reports as unavailable. A runtime failure changes provider only when that exact error code is declared in `fallbackOn`; authentication failures, invalid responses, and unexpected errors never silently switch transports.
+
+```js
+import { createSourceRegistry } from "cockroach-crawler/sources";
+import { createSourceRouter } from "cockroach-crawler/source-router";
+
+const registry = createSourceRegistry({
+  providers: [hostSuppliedCaptionProvider, hostSuppliedSearchProvider]
+});
+
+const reach = createSourceRouter({
+  registry,
+  routes: {
+    "video.transcript": {
+      operation: "read",
+      providers: [
+        { id: "host-captions", fallbackOn: ["SOURCE_NOT_FOUND"] },
+        { id: "youtube" }
+      ]
+    },
+    "web.search": {
+      operation: "search",
+      providers: [{ id: "host-search" }]
+    }
+  }
+});
+
+console.table(reach.doctor());
+const result = await reach.route("video.transcript", "https://youtu.be/VIDEO_ID");
+console.log(result.provider, result.records, result.attempts);
+```
+
+The source router is still read-only. Form filling, clicks, navigation across authenticated tabs, and other page actions belong behind a separately registered browser tool and Maqam policy/approval.
+
+### Crawler-owned browser host
+
+`cockroach-crawler/browser-host` supplies the stateful structural driver contract used by Maqam's governed browser adapter. It provides trusted session/page lifecycle, opaque element identities, monotonic revisions, stale-target rejection, role-compatible preview, post-approval value resolution, operation deduplication, and explicit prohibited-effect attestations.
+
+```js
+import { createBrowserHost } from "cockroach-crawler/browser-host";
+import { registerGovernedBrowserTools } from "maqam";
+
+const host = createBrowserHost({
+  runtime: trustedBrowserRuntime,
+  resolveValueRef: (reference, context) => vault.resolve(reference, context)
+});
+
+registerGovernedBrowserTools(gateway, {
+  driver: host,
+  allowedOrigins: ["https://app.example"]
+});
+```
+
+Maqam remains the governance boundary: policy, exact input-bound approval, one-use consumption, replay rejection, and evidence stay there. The current crawler host intentionally requires an injected trusted runtime; it does not yet bundle an interactive Playwright runtime with the crawler's DNS-pinned network transport. Inspect `host.capabilityReport()` before enabling an integration. See [the reach and browser architecture](docs/REACH-AND-BROWSER.md).
 
 ## Self-hosted serverless crawler
 
