@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.3.0-alpha.3 - 2026-07-21
+
 ### Added
 
 - Added `cockroach-crawler/source-router` for named read/search capabilities backed by ordered built-in or host-supplied providers.
