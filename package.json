@@ -1,6 +1,6 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.3.0-alpha.2",
+  "version": "0.3.0-alpha.3",
   "description": "Bounded public-web crawling and read-only source adapters for Node.js agent workflows.",
   "license": "MIT",
   "author": "Ajnas NB <ajnasnb@gmail.com>",
