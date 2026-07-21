@@ -9,7 +9,7 @@
     "author": null,
     "publishedAt": null,
     "contentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
-    "adapterVersion": "0.3.0-alpha.3",
+    "adapterVersion": "0.3.0",
     "warnings": [],
     "metadata": { "depth": 0 },
     "provenance": { "retrievedAt": "2026-07-18T00:00:00.000Z", "method": "crawler", "authenticated": false, "credentialed": false }
@@ -24,7 +24,7 @@
     "author": "example",
     "publishedAt": "2025-01-02T03:04:05.000Z",
     "contentHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
-    "adapterVersion": "0.3.0-alpha.3",
+    "adapterVersion": "0.3.0",
     "warnings": [],
     "metadata": { "stars": 7, "license": "MIT" },
     "provenance": { "retrievedAt": "2026-07-18T00:00:00.000Z", "method": "api", "authenticated": false, "credentialed": false }
@@ -39,7 +39,7 @@
     "author": "Fixture channel",
     "publishedAt": null,
     "contentHash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
-    "adapterVersion": "0.3.0-alpha.3",
+    "adapterVersion": "0.3.0",
     "warnings": [],
     "metadata": { "metadataOnly": true, "transcriptAvailable": false },
     "provenance": { "retrievedAt": "2026-07-18T00:00:00.000Z", "method": "api", "authenticated": false, "credentialed": false }
@@ -54,7 +54,7 @@
     "author": "fixture",
     "publishedAt": "2025-06-07T08:09:10.000Z",
     "contentHash": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
-    "adapterVersion": "0.3.0-alpha.3",
+    "adapterVersion": "0.3.0",
     "warnings": [],
     "metadata": { "metrics": { "like_count": 8 } },
     "provenance": { "retrievedAt": "2026-07-18T00:00:00.000Z", "method": "api", "authenticated": true, "credentialed": true }
@@ -69,7 +69,7 @@
     "author": "tester",
     "publishedAt": "2025-01-01T00:00:00.000Z",
     "contentHash": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
-    "adapterVersion": "0.3.0-alpha.3",
+    "adapterVersion": "0.3.0",
     "warnings": [],
     "metadata": { "subreddit": "testing", "commentsSample": [] },
     "provenance": { "retrievedAt": "2026-07-18T00:00:00.000Z", "method": "api", "authenticated": true, "credentialed": true }
