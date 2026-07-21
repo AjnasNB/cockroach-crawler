@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 0.3.0 - 2026-07-21
+
+### Added
+
+- Promoted the capability-aware source registry, ordered source routing, optional read-only reach providers, governed browser-host contract, normalized source records, and restricted self-hosted Worker profile to the stable package line.
+- Added maintained Node.js 22, 24, and 26 support across the stable CI and package contract.
+
+### Security
+
+- Preserved explicit provider selection, typed capability/error reporting, bounded fallback rules, creator-owned crawl budgets, DNS-pinned local requests, exact Maqam-shaped browser authority, and fail-closed handling for indeterminate mutations.
+- Kept optional external commands behind fixed read-only command maps, reduced environments, output/deadline bounds, explicit installation, and no-shell execution.
+- Kept the Worker as a separately documented allowlist-first transport without local DNS pinning, browser mode, social providers, or arbitrary-origin claims.
+
 ## 0.3.0-alpha.3 - 2026-07-21
 
 ### Added

@@ -6,7 +6,7 @@
 
 **Cockroach Crawler gives an agent a bounded, read-only route to web evidence across explicit URLs and supported public source APIs.** It combines a hardened local Node.js crawler, normalized provider adapters, and a restricted self-hosted Worker for allowlisted sites.
 
-The stable npm release remains `0.2.0`. The current prerelease is `0.3.0-alpha.3`. Install it through the `next` tag or its exact version; stable users are not moved automatically.
+Version `0.3.0` is the stable package line prepared for the npm `latest` tag. Verify registry state with `npm view cockroach-crawler version dist-tags` before relying on a mutable dist-tag.
 
 The local crawler produces structured JSON/JSONL with readable text, Markdown, links, response metadata, redirect provenance, and content hashes for documentation indexing, RAG ingestion, content inventory, QA, research, and agent tools. The source adapters normalize GitHub, YouTube, X, and Reddit records when each provider's documented access requirements are met.
 
@@ -16,10 +16,10 @@ Documentation: [website](https://cockroachcrawler.com/docs/) · [architecture](.
 
 ## Check reach before you call a source
 
-The prerelease source registry reports what the current machine can use before an agent makes a request. This command reads configuration state only; it does not print secrets or contact a provider.
+The source registry reports what the current machine can use before an agent makes a request. This command reads configuration state only; it does not print secrets or contact a provider.
 
 ```bash
-npx -y --package cockroach-crawler@0.3.0-alpha.3 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.3.0 cockroach-sources doctor
 ```
 
 | Capability | No developer API key | Optional configuration | Honest boundary |
@@ -49,7 +49,7 @@ flowchart LR
 
 | Layer | What it contributes | Public status |
 | --- | --- | --- |
-| [Cockroach Crawler](https://github.com/AjnasNB/cockroach-crawler) | Bounded web crawling, source capability checks, normalized records, and a restricted serverless profile | Stable crawler plus public provider/serverless prerelease |
+| [Cockroach Crawler](https://github.com/AjnasNB/cockroach-crawler) | Bounded web crawling, source capability checks, normalized records, and a restricted serverless profile | Stable local, provider, browser-host, reach, and serverless package surfaces |
 | [Maqam](https://github.com/AjnasNB/maqam) | Policy, exact one-use approvals, registered tool execution, browser-action contracts, traces, and evidence | Public npm package |
 | [ProductLoop OS](https://github.com/AjnasNB/productloop-os) | Workflow, policy, approval, connector, skill, evaluation, provenance, and research composition | Public npm package |
 | Qarinah | Local-first context ledger, deterministic graph/index, compact cited context packs, and Codex/Claude hooks | Private alpha; no public install claim yet |
@@ -98,10 +98,10 @@ Supports the maintained Node.js 22 LTS, 24 LTS, and 26 Current release lines.
 npm install cockroach-crawler
 ```
 
-Install the prerelease explicitly rather than moving stable users automatically:
+Pin the exact stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@next
+npm install cockroach-crawler@0.3.0
 ```
 
 For the stable crawler CLI:

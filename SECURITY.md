@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are provided for the latest published stable minor release. npm `0.2.0` is the current stable release. npm `0.3.0-alpha.3` is published under the `next` dist-tag as a prerelease with provider, optional reach, browser-host, and serverless surfaces; it is not a stable release.
+Security fixes are provided for the latest published stable minor release. Version `0.3.0` is the stable package line for the local crawler, provider registry, optional reach providers, browser-host contract, and restricted serverless profile. Verify the current registry tag with `npm view cockroach-crawler version dist-tags`.
 
 Report a suspected vulnerability privately through the GitHub repository's security-advisory form. Do not include credentials, session state, private page content, or cloud metadata in a public issue. If the advisory form is unavailable, contact `ajnasnb@gmail.com` with a minimal reproduction.
 
