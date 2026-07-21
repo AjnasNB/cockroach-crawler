@@ -60,7 +60,6 @@
       "?? .github/pull_request_template.md",
       "?? .github/release.yml",
       "?? .github/workflows/codeql.yml",
-      "?? .github/workflows/deploy-site.yml",
       "?? .github/workflows/publish-npm.yml",
       "?? CODE_OF_CONDUCT.md",
       "?? CONTRIBUTING.md",
@@ -235,7 +234,6 @@
       "?? website/package.json",
       "?? website/render-social.mjs",
       "?? website/serve.mjs",
-      "?? website/wrangler.jsonc",
       "?? worker/worker.js",
       "?? worker/wrangler.jsonc"
     ],
