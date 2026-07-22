@@ -1,78 +1,48 @@
-# Show HN launch package
+# Show HN fact sheet
 
-Submit only after the alpha package, tag, release, site, and demo all resolve from a signed-out browser.
+Hacker News asks users not to post generated or AI-edited text. Do not paste this file as a submission or comment. The maintainer must write the final title and discussion personally from the verified facts below.
 
-## Recommended title
+## Preconditions
 
-**Show HN: Cockroach Crawler – bounded web reads for agent tools**
+- `cockroach-crawler@0.3.0` resolves from npm `latest` and matches the reviewed GitHub tag;
+- the repository and website work without signup;
+- the two-command proof works from a clean install;
+- the maintainer is available for the discussion; and
+- nobody is asked to upvote, comment, or coordinate attention.
 
-Alternate:
+## Facts to explain in your own words
 
-**Show HN: A local-first crawler with explicit network limits for agents**
+- You built it because “give the agent a browser” hides several different trust decisions.
+- The local crawler admits public destinations, pins each accepted redirect hop, enforces robots, and spends exact resource budgets.
+- A provider doctor shows which public, keyed, credentialed, no-key, or session-backed read route is actually available.
+- Optional reach providers are separate, read-only, operator-selected, and never silent fallbacks.
+- The serverless profile accepts only deployment-configured HTTPS origins and explicitly reports that it lacks local DNS pinning.
+- The output is Markdown/JSON/JSONL plus source URLs, hashes, warnings, and retrieval provenance.
+- It does not include a model, proxy network, stealth, CAPTCHA/paywall/login bypass, cookie extraction, or write actions.
 
-## Submission body
+## Runnable proof
 
-Hi HN — I built Cockroach Crawler because giving an agent a raw URL fetcher or general browser felt like too much ambient authority for many research and indexing jobs.
-
-It is an MIT-licensed Node.js crawler with two intentionally different execution tiers:
-
-- a hardened local CLI/API that validates complete DNS answers, pins each redirect hop to a validated address, fails closed when robots policy cannot be verified, and applies exact page/request/byte/depth/time limits;
-- a smaller serverless crawler for 1–32 deployment-configured HTTPS origins. It checks robots at every redirect target, but reports that it has no DNS resolution/pinning, browser mode, authenticated source providers, or request-selected arbitrary-origin crawling.
-
-The new alpha also adds read-only source adapters with a `doctor` command. Public web and public GitHub reads work without credentials. A known YouTube URL returns public oEmbed metadata without a key; YouTube search needs an API key. X and Reddit require their official API credentials. No cookie extraction, stealth, login bypass, or write actions are included.
-
-```bash
-npm install --global cockroach-crawler@0.3.0-alpha.2
-cockroach-sources doctor
-cockroach-crawl https://example.com/docs --max-pages 10 --jsonl
+```sh
+npx -y --package cockroach-crawler@0.3.0 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.3.0 cockroach-crawl https://example.com --max-pages 3 --jsonl
 ```
 
-I would especially value feedback on three things:
+## Possible factual title to rewrite
 
-1. Is the local/serverless boundary explained clearly enough?
-2. Which read-only provider should receive the next offline contract fixture?
-3. Which failure mode or budget would you want before placing this behind an agent?
+`Show HN: Cockroach Crawler - bounded web access for AI agents`
 
-Code: <https://github.com/AjnasNB/cockroach-crawler>
+## Questions worth asking
 
-Demo: [DEMO_URL]
+1. Which provider or site-policy failure should become the next offline fixture?
+2. Is the local/serverless security difference visible enough in the API and docs?
+3. Which real workflow needs the browser-host contract instead of a general-purpose browser tool?
 
-The release is an alpha, not a claim of complete internet coverage or a replacement for distributed crawlers and hosted extraction services.
+## Response facts
 
-## First comment
+**Why not a larger crawler?** Use a managed or distributed platform for proxy fleets, queues, hosted extraction, and large-scale orchestration. Cockroach Crawler is a compact local boundary with explicit authority and portable records.
 
-Some details that did not fit in the post:
+**Can it read YouTube without a developer key?** The optional pinned `youtube-no-key` provider uses a separately installed `yt-dlp` for bounded search and metadata. It does not promise that every video exposes captions, and official API access remains a separate route.
 
-- The web adapter is a crawler for explicit URLs, not a search index.
-- Source records include provider, source ID, URL, author, retrieval time, adapter version, content hash, warnings, metadata, and whether retrieval was authenticated.
-- The agent adapter snapshots creator policy and rejects inherited/accessor/unknown input. Model-supplied limits may narrow authority but cannot expand creator limits.
-- Optional Playwright mode is behind creator opt-in. It routes HTTP(S) through the validated transport and blocks several browser egress paths, but it is still not a process sandbox.
-- The complete local Node test command passed on 2026-07-18. I will link the tagged CI run here before submitting: [CI_URL].
+**Can it read X or Reddit without developer credentials?** Only through optional operator-controlled, read-only session providers. Those require an explicit browser login and separate OpenCLI installation. No cookies are extracted or returned.
 
-I chose to label the serverless tier's missing DNS pinning in its returned runtime metadata rather than imply it has the same security properties as the local crawler. If you have experience making this boundary clearer, I would appreciate the critique.
-
-## Response bank
-
-### “When should I use a larger crawling platform?”
-
-Use a larger platform when you need managed extraction, distributed queues, proxy infrastructure, or advanced browser orchestration. Cockroach Crawler is a compact Node boundary with explicit origins, strict budgets, read-only provider adapters, and portable records.
-
-### “Can it read X or Reddit without credentials?”
-
-No. The built-in adapters use the official APIs. X requires a bearer token; Reddit uses application-only OAuth plus a contact-aware user agent. `cockroach-sources doctor` reports those providers as unavailable until configured.
-
-### “Is serverless SSRF-safe?”
-
-It rejects IP literals and accepts only an explicit list of operator-owned or independently trusted HTTPS origins, validates every redirect against that list, re-checks robots for redirect targets, and fails closed on robots errors. It does not resolve, classify, or pin DNS answers, so an allowlisted hostname can resolve internally. Deployment isolation and egress controls still matter.
-
-### “Why robots fail closed?”
-
-If policy cannot be checked because the robots endpoint is failing, proceeding would turn an infrastructure error into permission. True absence (`404`/`410`) is handled differently from server failure.
-
-### “Can it log in or bypass CAPTCHA?”
-
-No. It intentionally excludes stealth, CAPTCHA, paywall, authentication, and authorization bypasses. Browser storage state is a trusted-operator input, not something the crawler discovers or steals.
-
-### “What is the business model?”
-
-The current project is MIT licensed and local-first. There is no required hosted account. The immediate goal is to make the open-source boundary useful and well tested; any hosted offering would need a separate, explicit scope and threat model.
+**Is it SSRF-proof?** No universal claim. The local transport validates and pins admitted addresses. The serverless profile has a weaker allowlist-only DNS boundary that still needs trusted origins and infrastructure egress controls.

@@ -54,7 +54,7 @@ Set the original URL to the canonical project article.
 
 **Ending:**
 
-> The alpha is open source. The most useful response is not a clap; it is a concrete URL, failure mode, or provider contract that the current tests miss.
+> The stable package is open source. The most useful response is not a clap; it is a concrete URL, failure mode, or provider contract that the current tests miss.
 
 Use Medium's import/canonical feature rather than pasting an unlinked duplicate.
 
@@ -82,7 +82,7 @@ Use Medium's import/canonical feature rather than pasting an unlinked duplicate.
 
 > Teams often ask whether an agent can browse. The more useful question is: which destinations can it contact, how much work can one request cause, what browser state can it access, and which provider credentials can it use?
 
-> I built Cockroach Crawler as a narrow, open-source answer for Node.js workflows. The important part of the alpha is not broader reach. It is that the local crawler, serverless crawler, and source adapters state different capabilities.
+> I built Cockroach Crawler as a narrow, open-source answer for Node.js workflows. The important part of the release is not broader reach. It is that the local crawler, serverless profile, official providers, and optional reach providers state different capabilities.
 
 **LinkedIn closing:**
 
@@ -99,7 +99,7 @@ Use Medium's import/canonical feature rather than pasting an unlinked duplicate.
 > 3. Is browser execution isolated?
 > 4. Which provider credentials are available?
 >
-> I wrote up the two-tier design behind Cockroach Crawler `0.3.0-alpha.2`, including what the serverless tier deliberately does not claim.
+> I wrote up the two-tier design behind Cockroach Crawler `0.3.0`, including what the serverless tier deliberately does not claim.
 >
 > [CANONICAL_ARTICLE_URL]
 

@@ -5,7 +5,7 @@
     "height": 640,
     "motif": "composite",
     "hook": "GitHub repository preview",
-    "alt": "Crawling with a boundary. Hardened local crawling, a restricted serverless tier, and read-only source adapters."
+    "alt": "Let agents see. Keep network control. Crawl, search, and normalize evidence without exposing an unrestricted browser."
   },
   {
     "id": "product-hunt-01-two-tiers",
@@ -20,8 +20,8 @@
     "width": 1270,
     "height": 760,
     "motif": "doctor",
-    "hook": "No cookie scraping. Missing credentials stay visible.",
-    "alt": "Know which sources are ready. Run one local doctor command before a workflow touches the public web or a provider API."
+    "hook": "No cookie extraction. Authority stays visible.",
+    "alt": "Know which sources are ready. Run one local doctor command before a workflow touches the web, an API, or an optional read session."
   },
   {
     "id": "product-hunt-03-budgets",
@@ -45,7 +45,7 @@
     "height": 900,
     "motif": "local",
     "hook": "Read-only by default. Evidence stays attributable.",
-    "alt": "Give agents reach— with boundaries. The local tier validates DNS answers, pins the admitted address, and re-checks every redirect hop."
+    "alt": "Give agents eyes— with boundaries. The local tier validates DNS answers, pins the admitted address, and re-checks every redirect hop."
   },
   {
     "id": "x-square",
@@ -53,7 +53,7 @@
     "height": 1080,
     "motif": "budgets",
     "hook": "Open source • Node.js • MIT",
-    "alt": "Crawl wider. Stay bounded. Put hard limits around every discovery path."
+    "alt": "See the web. Stay bounded. Put hard limits around every read and discovery path."
   },
   {
     "id": "linkedin",
@@ -61,7 +61,7 @@
     "height": 627,
     "motif": "records",
     "hook": "For developers building evidence-aware agent workflows.",
-    "alt": "Reach that names its boundary. Normalize public pages and read-only provider results into records a workflow can inspect and cite."
+    "alt": "Web evidence that names its boundary. Normalize public pages and read-only provider results into records a workflow can inspect and cite."
   },
   {
     "id": "reddit",
@@ -117,6 +117,6 @@
     "height": 900,
     "motif": "composite",
     "hook": "Open source • Node.js • MIT",
-    "alt": "Bound the crawl. Keep the evidence. A policy-aware crawl path for public pages plus read-only adapters for GitHub, YouTube, X, and Reddit."
+    "alt": "Bound the crawl. Keep the evidence. A policy-aware crawl path plus public, official, no-key, and session-backed read routes."
   }
 ]
