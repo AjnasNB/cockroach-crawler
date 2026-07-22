@@ -1,6 +1,6 @@
 # Public 30/60/90-day roadmap
 
-This roadmap is evidence-driven. Dates start when `0.3.0-alpha.2` is published from a reviewed commit. Items may move when provider APIs, security findings, or contributor capacity change. “Done” means the stated exit criteria are met, not that code merely exists on a branch.
+This roadmap is evidence-driven. Dates start from the stable `0.3.0` release on 2026-07-21. Items may move when provider APIs, security findings, or contributor capacity change. “Done” means the stated exit criteria are met, not that code merely exists on a branch.
 
 ## Contribute to the next evidence checkpoint
 
@@ -11,7 +11,7 @@ no account, key, live request, or external side effect. Contributors should
 work from a fork and a focused branch; maintainers review and merge pull
 requests after the required checks pass.
 
-## First 30 days: make the alpha observable
+## First 30 days: make the stable release observable
 
 ### 1. Release and install verification
 

@@ -1,7 +1,7 @@
 {
   "name": "cockroach-crawler",
   "version": "0.3.0",
-  "description": "Bounded public-web crawling and read-only source adapters for Node.js agent workflows.",
+  "description": "Give AI agents bounded eyes on the public web: crawl, search, and normalize evidence without exposing an unrestricted browser.",
   "license": "MIT",
   "author": "Ajnas NB <ajnasnb@gmail.com>",
   "type": "module",

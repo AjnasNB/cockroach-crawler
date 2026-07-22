@@ -18,7 +18,7 @@ Provider marks, terminal text, version numbers, and factual labels should be add
 | X landscape | 1600×900 | Central 1400×760 | “Ask the environment before the source” | Real doctor status matrix |
 | X square | 1080×1080 | 90 px edge safe area | “Model input can narrow, never widen” | Creator limit ring around request |
 | LinkedIn landscape | 1200×627 | 70 px edge safe area | “Web access is four permissions” | Destination, budget, browser, credentials |
-| Reddit image | 1200×900 | 60 px edge safe area | “What the alpha actually supports” | Exact provider capability matrix |
+| Reddit image | 1200×900 | 60 px edge safe area | “What the stable release actually supports” | Exact provider capability matrix |
 | Dev.to cover | 1000×420 | Title inside central 760×300 | “Two network boundaries, not one” | Local vs serverless split |
 | Hashnode cover | 1600×840 | 100 px edge safe area | Same as canonical article | Local vs serverless split |
 | Medium cover | 1400×788 | 100 px edge safe area | “Your agent's web tool is a boundary” | One controlled request entering a gate |
@@ -73,7 +73,7 @@ A retrieved page becomes a transparent record cartridge with five physical facet
 | 00:20 | Captured credential-free source-doctor states |
 | 00:30 | Restricted serverless allowlist, secret, rate limit, and no-DNS-pinning boundary |
 | 00:40 | Complete local Node suite plus project-local 120-page regression disclaimer |
-| 00:50 | Stable-versus-alpha install and review call to action |
+| 00:50 | Stable install and optional-provider review call to action |
 
 This is a product overview built from captured repository evidence. It is not the end-to-end command proof and does not claim live authenticated provider calls.
 
@@ -102,10 +102,10 @@ Both use the same truthful provider/serverless narration. The vertical render is
 ## Export names
 
 ```text
-cockroach-crawler-0.3.0-alpha.1-hero-1600x1000.webp
-cockroach-crawler-0.3.0-alpha.1-og-1200x630.png
-cockroach-crawler-0.3.0-alpha.1-github-1280x640.png
-cockroach-crawler-0.3.0-alpha.1-product-hunt-01-1270x760.png
+cockroach-crawler-0.3.0-hero-1600x1000.webp
+cockroach-crawler-0.3.0-og-1200x630.png
+cockroach-crawler-0.3.0-github-1280x640.png
+cockroach-crawler-0.3.0-product-hunt-01-1270x760.png
 cockroach-crawler-main-60s.mp4
 captions-cockroach-crawler-main-60s-en.vtt
 cockroach-crawler-workflow-proof-45s.mp4

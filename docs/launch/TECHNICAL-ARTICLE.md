@@ -6,7 +6,7 @@ A crawler that runs on a developer machine can inspect DNS answers, pin a connec
 
 Treating both environments as equivalent creates a dangerous documentation problem: the convenient tier inherits the security reputation of the hardened tier without inheriting its controls.
 
-Cockroach Crawler `0.3.0-alpha.2` takes the opposite approach. It exposes two tiers, returns their capabilities, and keeps official source adapters separate from both.
+Cockroach Crawler `0.3.0` takes the opposite approach. It exposes two crawler tiers, returns their capabilities, and keeps official and optional read-only source providers separate from both.
 
 ## The first boundary: what may be contacted?
 
@@ -60,18 +60,18 @@ If a deployment needs stronger destination control, the correct answer is to use
 
 Reading a website and reading a provider API have different rules. Cockroach Crawler's source registry exposes them through a shared record format without pretending their availability is identical.
 
-After installing the alpha CLI globally, run:
+After installing the stable CLI globally, run:
 
 ```bash
-npm install --global cockroach-crawler@0.3.0-alpha.2
+npm install --global cockroach-crawler@0.3.0
 cockroach-sources doctor
 ```
 
-In an environment with no credentials, the current alpha reports:
+In an environment with no provider credentials, the stable package reports the built-in routes separately from optional installed reach providers:
 
 - public web: explicit URL crawling is ready;
 - GitHub: public search and repository reads are ready at the unauthenticated REST rate limit;
-- YouTube: known-video oEmbed metadata is available, while search requires an API key and transcripts are not implemented;
+- YouTube: the official route supports known-video metadata and keyed search, while the optional audited `youtube-no-key` route uses a separately installed `yt-dlp` for bounded search and available metadata/captions;
 - X: search and read require an approved API v2 bearer token;
 - Reddit: search and read require application-only OAuth and a contact-aware user agent.
 
@@ -123,12 +123,12 @@ provider-specific search/read/authentication capabilities
 
 Cockroach Crawler is designed for a common agent integration: an explicit read request enters a creator-owned boundary, consumes a known budget, and returns a record with enough provenance to audit what happened. Distributed queues, proxy infrastructure, hosted search indexes, and large-scale browser orchestration belong in a separate deployment layer.
 
-## Try the alpha
+## Try the stable release
 
-After the reviewed alpha is published:
+From npm `latest`:
 
 ```bash
-npm install --global cockroach-crawler@0.3.0-alpha.2
+npm install --global cockroach-crawler@0.3.0
 cockroach-sources doctor
 cockroach-crawl https://example.com/docs --max-pages 10 --jsonl
 ```

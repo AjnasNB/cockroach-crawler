@@ -2,98 +2,76 @@
 
 ## Plain-language explanation
 
-An agent can decide *what* it wants to read, but somebody still has to control *where the request goes, how far the crawl expands, how much data it can consume, and what happens when a site's rules cannot be checked*. Cockroach Crawler is that controlled reading layer.
+An agent needs eyes on the web, but it should not receive an unrestricted browser or raw network client. Cockroach Crawler is the controlled reading layer: the creator decides which routes exist and how much work they may perform; the agent receives normalized records with source identity and retrieval provenance.
 
-It is not an agent framework. It does not choose goals, call a model, or take actions on social accounts. It accepts an explicit read request, applies creator-owned network and resource limits, returns normalized records, and exposes provenance such as the source URL, retrieval time, adapter version, and content hash.
+## Primary promise
 
-## Message hierarchy
+> Give your AI agent eyes on the web - without giving it the keys to your network.
 
-### Primary promise
+## Proof points
 
-Give an agent a bounded way to read public sources without handing model input an unrestricted browser or network client.
+- hardened local HTTP crawling with public-network admission and per-hop address pinning;
+- robots, redirect, sensitive-path, origin, page, request, byte, depth, queue, concurrency, and deadline controls;
+- public GitHub reads and explicit official-provider credential states;
+- optional reviewed no-developer-key YouTube search/metadata through separately installed `yt-dlp`;
+- optional fixed read-only session providers for X, Reddit, Facebook, Instagram, LinkedIn, and Xiaohongshu through operator-controlled browser login state;
+- ordered source routes that fall back only on declared error codes;
+- normalized records with source URL, adapter identity, content hash, warnings, and retrieval provenance;
+- a separately restricted serverless profile and a structural browser-host contract; and
+- local-first MIT code with no required Cockroach Crawler account or model provider.
 
-### Proof points
+## Boundary statement
 
-- Explicit web destinations and provider capabilities that are visible before a workflow runs.
-- Public-network checks and DNS-pinned hops in the hardened local crawler.
-- Robots, redirect, sensitive-path, request, byte, page, depth, queue, concurrency, and deadline limits.
-- Read-only official adapters for GitHub, YouTube, X, and Reddit with capability reporting.
-- Immutable normalized records with content hashes and retrieval provenance.
-- A smaller serverless API for operator-owned allowlisted HTTPS sites that names its weaker boundary.
-- Local-first, MIT licensed, no hosted account, and no model dependency.
-
-### Boundary statement
-
-Cockroach Crawler does not bypass logins, paywalls, CAPTCHA, robots policy, access controls, provider approval, or API pricing. It is not a distributed crawl queue, proxy-rotation service, universal search index, credential broker, or browser sandbox.
-
-## Two-tier selection guide
-
-| Choose | When | Strongest property | Important limitation |
-| --- | --- | --- | --- |
-| Hardened local CLI/API | Model-generated URLs, local batch jobs, stronger SSRF controls, optional rendering | Complete DNS-answer validation and per-hop address pinning | You operate Node and, for browser mode, isolate Chromium |
-| Serverless API | A small hosted endpoint for known documentation or owned sites | Origin allowlist plus strict page/depth/request/byte/time budgets | No DNS resolution/classification, pinning, browser, or source-provider auth; infrastructure egress policy still matters |
-| Source registry | You want consistent records from explicit web URLs or official provider APIs | Capability doctor, read-only operations, provenance, content hashes | Provider credentials, quotas, terms, and endpoint coverage still apply |
+Cockroach Crawler does not bypass login, paywall, CAPTCHA, robots policy, access control, provider terms, or rate limits. It does not extract browser cookies, expose social write operations, supply a model, or become a process sandbox. Optional providers are separately installed, explicit, read-only, and never silent fallbacks from official routes.
 
 ## Who it is for
 
-- Agent-tool authors who need a small crawler with creator-owned limits.
-- Security-conscious Node.js teams that do not want model input to control raw `fetch` or a general browser.
-- Documentation, RAG, QA, and research pipelines that need Markdown/JSONL plus source provenance.
-- Self-hosters who prefer a local CLI or a narrowly allowlisted serverless endpoint.
-- Open-source maintainers who want an inspectable boundary rather than a hosted black box.
+- agent-tool authors who need creator-owned network and resource limits;
+- Node.js teams building research, indexing, RAG, QA, or documentation workflows;
+- security-conscious teams that want provider and serverless limitations returned instead of hidden;
+- self-hosters who prefer a local CLI/API and a small restricted Worker option; and
+- maintainers who want inspectable normalized records rather than an opaque hosted result.
 
-## Real examples
+## Product vocabulary
 
-### Documentation assistant
-
-An internal assistant can read only `https://docs.example.com`, crawl at most 50 pages and two levels, stop after 60 seconds, and return Markdown with content hashes. It cannot silently follow a link to another origin unless that origin was explicitly allowed.
-
-### Release research
-
-A release-note workflow can search public GitHub repositories and issues, read known YouTube video metadata, and crawl linked public documentation. X or Reddit results appear only when the operator configured approved official credentials.
-
-### Support-site index
-
-A small Worker-style endpoint can expose bounded HTML extraction for the company's own support origin. The deployment token stays in the environment; requests cannot supply or override it. This is a convenience tier, not the hardened crawler's network boundary.
-
-### Agent tool
-
-The creator configures allowed origins and maximum pages when constructing the crawler tool. Model input may narrow those values but cannot expand them, disable robots, turn on private networks, or enable browser mode unless the creator opted in.
+| Say | Meaning |
+| --- | --- |
+| bounded eyes | permitted read-only reach with explicit budgets |
+| source doctor | local capability and credential-state inspection before dispatch |
+| optional reach | separately installed no-key or session-backed read providers |
+| normalized evidence record | source identity, content, hashes, warnings, and provenance in one shape |
+| governed browser host | structural action contract that a governance layer can approve; not the browser driver |
 
 ## FAQ
 
-### Which sources are ready today?
+### What works without a developer API key?
 
-Explicit public web pages and public GitHub search/read work without provider credentials. Known YouTube video metadata works without a key; YouTube search uses an API key. X search/read uses an approved bearer token, and Reddit search/read uses application OAuth. `cockroach-sources doctor` reports the exact current state for every adapter.
+Explicit public web crawling and public GitHub reads work without provider credentials. The optional audited `youtube-no-key` route uses a separately installed `yt-dlp` for bounded YouTube search and metadata. Optional social session providers do not need developer keys but do require explicit operator-controlled browser login state and OpenCLI. Provider terms, availability, and rate limits still apply.
 
-### Is it a search engine?
+### Does it read social sites automatically?
 
-No. The web provider crawls explicit URLs. GitHub, YouTube, X, and Reddit search use their official APIs when the required access is available.
+No. Official routes remain closed until their credentials exist. Session routes are separate, read-only providers that the operator installs and selects explicitly. The package never reads cookie/profile files and never silently swaps an official provider for a browser session.
 
-### Does it scrape social sites without credentials?
+### Is the web adapter a search engine?
 
-No. X requires an approved bearer token. Reddit requires application-only OAuth credentials and a contact-aware user agent. YouTube search requires an API key; only known-video oEmbed metadata is public in the no-key path.
-
-### Why two crawler tiers?
-
-The hardened local crawler can validate and pin DNS results before contact. A portable serverless fetch runtime generally cannot provide the same address-level control, so the serverless tier accepts only deployment-configured HTTPS origins, reports that DNS pinning is absent, and requires operator-owned/trusted hostnames plus infrastructure egress controls when internal destinations are reachable.
+No. The hardened crawler follows explicit seed URLs. Search exists only through an explicitly selected source provider.
 
 ### Is browser mode safe for hostile pages?
 
-It reduces network exposure with a deny-by-default proxy and strict request controls, but it is not a process or JavaScript sandbox. Untrusted browser targets still need container or process isolation and restricted host egress.
+It reduces network authority and applies budgets, but Chromium remains untrusted code. Use process or container isolation and restricted host egress for hostile targets.
 
-### Does it write to providers?
+### Is the serverless profile equivalent to the local crawler?
 
-No. The built-in source adapters are read-only. They do not post, comment, like, follow, edit, or delete.
+No. It enforces an HTTPS origin allowlist and strict budgets but cannot provide the local engine's DNS classification and address pinning. Use it only for operator-owned or independently trusted origins with suitable infrastructure controls.
 
-### Is the alpha production-ready?
+### Does it write to a provider?
 
-No universal production claim is appropriate. `0.3.0-alpha.2` is an integration preview. Operators must review the limits, run the release checks, and test against their own deployment and threat model.
+No built-in or optional provider in `0.3.0` posts, comments, likes, follows, edits, submits, or deletes.
 
-## Approved short descriptions
+## Approved descriptions
 
-**20 words:** Bounded public-web crawling and official read-only source adapters for local-first Node.js agent workflows.
+**Short:** Give AI agents bounded eyes on the public web: crawl, search, and normalize evidence without exposing an unrestricted browser.
 
-**40 words:** Cockroach Crawler gives Node.js agents bounded public-web reads, normalized source records, and explicit provenance. Use the hardened local crawler for stronger network controls or a smaller allowlist-first serverless tier for operator-owned HTTPS origins.
+**Medium:** Cockroach Crawler gives Node.js agents bounded read-only reach across public pages and explicit source providers. Creator-owned policy limits the network and workload; normalized records keep source identity and retrieval provenance attached.
 
-**Boilerplate:** Cockroach Crawler is an MIT-licensed Node.js crawler for agent workflows. It combines a hardened local CLI/API, a capability-aware read-only source registry, and a deliberately limited serverless crawler. It does not bypass authentication, owner policy, or provider access rules.
+**Boilerplate:** Cockroach Crawler is an MIT-licensed Node.js reading layer for agent workflows. It combines a hardened local crawler, capability-aware source routing, optional explicit reach providers, a governed browser-host contract, and a deliberately restricted serverless profile. It does not bypass authentication or hide provider authority.

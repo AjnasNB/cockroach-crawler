@@ -4,7 +4,9 @@
 
 # Cockroach Crawler
 
-**Cockroach Crawler gives an agent a bounded, read-only route to web evidence across explicit URLs and supported public source APIs.** It combines a hardened local Node.js crawler, normalized provider adapters, and a restricted self-hosted Worker for allowlisted sites.
+**Give your AI agent eyes on the web - without giving it the keys to your network.** Cockroach Crawler turns explicit public URLs and supported read-only sources into normalized evidence records behind creator-owned network and resource limits.
+
+Use the hardened local crawler for bounded public-web collection, the source router for explicit provider capabilities, optional reach providers for reviewed no-developer-key or session-backed reads, and the restricted self-hosted Worker only for allowlisted sites you operate or trust.
 
 Version `0.3.0` is the stable package line prepared for the npm `latest` tag. Verify registry state with `npm view cockroach-crawler version dist-tags` before relying on a mutable dist-tag.
 
@@ -26,9 +28,10 @@ npx -y --package cockroach-crawler@0.3.0 cockroach-sources doctor
 | --- | --- | --- | --- |
 | Public web pages | Yes | None for normal public HTTP(S) | URL-directed crawling, not general web search |
 | Public GitHub repositories and issues | Yes | `GITHUB_TOKEN` or `GH_TOKEN` raises documented REST limits | Read-only REST operations |
-| Known YouTube video | Metadata only | `YOUTUBE_API_KEY` enables search and richer metadata | No transcript support in this package |
-| X and Reddit | No | Official provider credentials are required | No cookie extraction or session scraping |
-| RSS, available YouTube captions, and hosted-anonymous search | Available through a separately configured Maqam source adapter | The host supplies and governs the selected adapter | Not silently bundled into Cockroach Crawler |
+| YouTube search and known videos | Yes, through the optional audited `youtube-no-key` route | Official `YOUTUBE_API_KEY` remains available for richer API metadata | Requires separately installed `yt-dlp`; no claim that every video exposes captions |
+| X and Reddit reads | Official APIs: no. Optional session routes: no developer key | Official credentials or explicit operator-controlled browser login state | Fixed read commands only; no cookie extraction and no silent fallback |
+| Facebook, Instagram, LinkedIn, Xiaohongshu reads | Yes, only through optional session providers | Explicit OpenCLI install plus operator-controlled browser login state | Read-only, separately installed, dry-run setup by default; Bilibili excluded |
+| RSS, available YouTube captions, and hosted-anonymous search | Some capabilities are available through optional reach providers or a separately governed Maqam adapter | The operator selects and governs the provider | Availability, terms, regional limits, and source-specific boundaries remain visible |
 
 No-key does not mean no constraints. Provider terms, public rate limits, regional availability, robots policy, and network controls still apply.
 
