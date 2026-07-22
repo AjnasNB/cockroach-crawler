@@ -1,12 +1,24 @@
-<p align="center">
-  <img src="./assets/readme-proof-still.svg" alt="Cockroach Crawler system map: a public URL and read-only APIs pass through explicit policy and budget gates into normalized evidence records" width="960">
-</p>
-
 # Cockroach Crawler
+
+[![npm version](https://img.shields.io/npm/v/cockroach-crawler.svg)](https://www.npmjs.com/package/cockroach-crawler)
+[![CI](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml)
+[![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
 
 **Give your AI agent eyes on the web - without giving it the keys to your network.** Cockroach Crawler turns explicit public URLs and supported read-only sources into normalized evidence records behind creator-owned network and resource limits.
 
 Use the hardened local crawler for bounded public-web collection, the source router for explicit provider capabilities, optional reach providers for reviewed no-developer-key or session-backed reads, and the restricted self-hosted Worker only for allowlisted sites you operate or trust.
+
+## What an agent can ask it to do
+
+- Crawl an explicit public documentation site with hard page, byte, depth, redirect, concurrency, and time budgets.
+- Read public GitHub repository and issue data through a normalized, read-only adapter.
+- Search YouTube without a developer API key through the optional reviewed `yt-dlp` route, or use the official API when configured.
+- Read X, Reddit, Facebook, Instagram, LinkedIn, or Xiaohongshu only through an explicitly selected official or operator-controlled read-only route.
+- Render JavaScript pages through an opt-in bounded Chromium mode and expose structural browser actions through a host contract that Maqam can govern.
+- Return Markdown, JSON, or JSONL records with source identity, retrieval metadata, warnings, hashes, redirects, and provenance.
+
+It does **not** extract cookies, reuse hidden credentials, bypass logins, CAPTCHA, paywalls, robots policy, or access controls, and it exposes no social write actions.
 
 Version `0.3.0` is the stable package line prepared for the npm `latest` tag. Verify registry state with `npm view cockroach-crawler version dist-tags` before relying on a mutable dist-tag.
 
