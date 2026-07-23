@@ -37,7 +37,7 @@ Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compa
 
 It does **not** extract cookies, reuse hidden credentials, bypass logins, CAPTCHA, paywalls, robots policy, or access controls, and it exposes no social write actions.
 
-Version `0.3.0` remains the immutable stable npm release while the source-backed `0.4.0` capability line is reviewed. Verify registry state with `npm view cockroach-crawler version dist-tags` before relying on a mutable dist-tag.
+Version `0.4.1` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.4.1 version gitHead dist.integrity`.
 
 The local crawler produces structured JSON/JSONL with readable text, Markdown, links, response metadata, redirect provenance, and content hashes for documentation indexing, RAG ingestion, content inventory, QA, research, and agent tools. The source adapters normalize GitHub, YouTube, X, and Reddit records when each provider's documented access requirements are met.
 
@@ -50,7 +50,7 @@ Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [advanced cap
 The source registry reports what the current machine can use before an agent makes a request. This command reads configuration state only; it does not print secrets or contact a provider.
 
 ```bash
-npx -y --package cockroach-crawler@0.3.0 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.4.1 cockroach-sources doctor
 ```
 
 | Capability | No developer API key | Optional configuration | Honest boundary |
@@ -136,10 +136,10 @@ npm install cockroach-crawler
 Pin the exact stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@0.3.0
+npm install cockroach-crawler@0.4.1
 ```
 
-The reviewed `0.4.0` source line adds advanced package subpaths:
+The stable `0.4.x` line includes advanced package subpaths:
 
 ```js
 import { crawl } from "cockroach-crawler";
@@ -172,7 +172,7 @@ const pages = await crawl({
 });
 ```
 
-The source line includes:
+The stable package includes:
 
 - BFS, DFS, best-first, and adaptive/relevance traversal;
 - persistent hash-verified, TTL-bounded disk crawl cache;

@@ -96,6 +96,14 @@ if (!llms.includes("AI crawler comparison: https://cockroachcrawler.com/compare/
 const packageReadme = await readFile(join(dist, "..", "..", "README.md"), "utf8");
 if (/assets\/readme-proof-still/i.test(packageReadme)) errors.push("npm README must not restore the oversized proof banner");
 if (!packageReadme.includes("Give your AI agents web superpowers")) errors.push("npm README must lead with the AI web crawler benefit");
+const docsHtml = await readFile(join(dist, "docs", "index.html"), "utf8");
+if (!docsHtml.includes("Cockroach Crawler 0.4.1 documentation")) errors.push("docs must identify stable 0.4.1");
+if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
+if ((docsHtml.match(/data-feature-entry/g) ?? []).length !== 46) errors.push("docs must expose all 46 indexed capabilities");
+if (!docsHtml.includes("data-feature-search")) errors.push("docs must retain the searchable feature index");
+const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
+if (!releaseHtml.includes("npm install cockroach-crawler@0.4.1")) errors.push("release page must install stable 0.4.1");
+if (releaseHtml.includes("Release · 0.3.0")) errors.push("release page must not advertise 0.3.0 as current");
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);
 const headerPolicy = await readFile(join(dist, "_headers"), "utf8");
 if (/\bimmutable\b/.test(headerPolicy)) errors.push("unversioned site assets must remain revalidatable");

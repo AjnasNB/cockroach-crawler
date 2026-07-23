@@ -1,6 +1,6 @@
 # Direct dependency licenses
 
-This is the reviewed direct-dependency snapshot for the `0.4.0` candidate lockfile. From a source checkout, run `npm run audit:licenses` after `npm ci` to verify that installed package versions and SPDX license identifiers still match the lockfile and the project's permissive-license allowlist.
+This is the reviewed direct-dependency snapshot for the stable `0.4.1` lockfile. From a source checkout, run `npm run audit:licenses` after `npm ci` to verify that installed package versions and SPDX license identifiers still match the lockfile and the project's permissive-license allowlist.
 
 | Package | Resolved version | Relationship | SPDX license |
 | --- | ---: | --- | --- |

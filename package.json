@@ -1,6 +1,6 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Give AI agents superpowers on the web: crawl, render, map, extract, and verify evidence through one governed Node.js crawler.",
   "license": "MIT",
   "author": "Ajnas NB <ajnasnb@gmail.com>",

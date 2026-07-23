@@ -62,3 +62,35 @@ const currentMobileLink = document.querySelector('.mobile-nav [aria-current="pag
 if (currentMobileLink && window.matchMedia("(max-width: 1060px)").matches) {
   currentMobileLink.scrollIntoView({ block: "nearest", inline: "center" });
 }
+
+const featureSearch = document.querySelector("[data-feature-search]");
+const featureEntries = [...document.querySelectorAll("[data-feature-entry]")];
+const featureCategoryButtons = [...document.querySelectorAll("[data-feature-category]")];
+const featureCount = document.querySelector("[data-feature-count]");
+let activeFeatureCategory = "all";
+
+function updateFeatureCatalog() {
+  if (!featureEntries.length) return;
+  const query = featureSearch?.value.trim().toLowerCase() ?? "";
+  let visible = 0;
+
+  for (const entry of featureEntries) {
+    const matchesCategory = activeFeatureCategory === "all" || entry.dataset.category === activeFeatureCategory;
+    const matchesQuery = !query || entry.dataset.search?.includes(query);
+    entry.hidden = !(matchesCategory && matchesQuery);
+    if (!entry.hidden) visible += 1;
+  }
+
+  if (featureCount) featureCount.textContent = `${visible} ${visible === 1 ? "capability" : "capabilities"} shown`;
+}
+
+featureSearch?.addEventListener("input", updateFeatureCatalog);
+for (const button of featureCategoryButtons) {
+  button.addEventListener("click", () => {
+    activeFeatureCategory = button.dataset.featureCategory ?? "all";
+    for (const peer of featureCategoryButtons) {
+      peer.setAttribute("aria-pressed", String(peer === button));
+    }
+    updateFeatureCatalog();
+  });
+}
