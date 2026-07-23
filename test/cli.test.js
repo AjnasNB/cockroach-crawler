@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import os from "node:os";
 import path from "node:path";
@@ -102,6 +102,55 @@ test("CLI writes JSONL when requested", async () => {
   assert.equal(lines.length, 1);
   const page = JSON.parse(lines[0]);
   assert.equal(page.title, "CLI Home");
+});
+
+test("CLI emits compact map records", async () => {
+  const result = await runCli([
+    baseUrl,
+    "--allow-private-networks",
+    "--max-pages",
+    "2",
+    "--delay",
+    "0",
+    "--map"
+  ]);
+  assert.equal(result.code, 0, result.stderr);
+
+  const parsed = JSON.parse(result.stdout);
+  assert.equal(parsed.entries.length, 2);
+  assert.equal(Object.hasOwn(parsed.entries[0], "markdown"), false);
+  assert.equal(parsed.stats.pages, 2);
+});
+
+test("CLI applies a bounded extraction schema from JSON", async () => {
+  const schema = path.join(tempDir, "extract.json");
+  await writeFile(schema, JSON.stringify({
+    fields: {
+      heading: "h1",
+      urls: {
+        selector: "a[href]",
+        source: "attribute",
+        attribute: "href",
+        resolveUrl: true,
+        multiple: true
+      }
+    }
+  }));
+  const result = await runCli([
+    baseUrl,
+    "--allow-private-networks",
+    "--max-pages",
+    "1",
+    "--delay",
+    "0",
+    "--extract",
+    schema
+  ]);
+  assert.equal(result.code, 0, result.stderr);
+
+  const parsed = JSON.parse(result.stdout);
+  assert.equal(parsed.pages[0].structured.heading, "CLI Home");
+  assert.ok(parsed.pages[0].structured.urls.includes(`${baseUrl}/about`));
 });
 
 test("CLI validates browser options before launching Playwright", async () => {

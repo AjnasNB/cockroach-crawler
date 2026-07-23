@@ -31,6 +31,26 @@ for (const file of htmlFiles) {
   if (h1Count !== 1) errors.push(`${label}: expected one h1, found ${h1Count}`);
   if (!/<meta name="description"/.test(html) && !label.endsWith("404.html")) errors.push(`${label}: missing description`);
   if (!/<link rel="canonical"/.test(html) && !label.endsWith("404.html")) errors.push(`${label}: missing canonical`);
+  if (!label.endsWith("404.html")) {
+    for (const [pattern, name] of [
+      [/<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">/, "indexing policy"],
+      [/<meta property="og:title" content="[^"]+">/, "Open Graph title"],
+      [/<meta property="og:description" content="[^"]+">/, "Open Graph description"],
+      [/<meta property="og:url" content="https:\/\/cockroachcrawler\.com\/[^"]*">/, "Open Graph URL"],
+      [/<meta property="og:image" content="https:\/\/cockroachcrawler\.com\/assets\/social-card\.png">/, "Open Graph image"],
+      [/<meta name="twitter:card" content="summary_large_image">/, "Twitter card"],
+      [/<meta name="twitter:title" content="[^"]+">/, "Twitter title"],
+      [/<meta name="twitter:description" content="[^"]+">/, "Twitter description"],
+      [/<meta name="twitter:image" content="https:\/\/cockroachcrawler\.com\/assets\/social-card\.png">/, "Twitter image"]
+    ]) {
+      if (!pattern.test(html)) errors.push(`${label}: missing ${name}`);
+    }
+    const jsonLd = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+    if (!jsonLd.length) errors.push(`${label}: missing JSON-LD`);
+    for (const [, source] of jsonLd) {
+      try { JSON.parse(source); } catch { errors.push(`${label}: invalid JSON-LD`); }
+    }
+  }
   if (!/<link rel="stylesheet" href="\/assets\/styles\.css\?v=[a-f0-9]{12}"/.test(html)) errors.push(`${label}: stylesheet URL is not content-versioned`);
   if (!label.endsWith("404.html") && !/<script src="\/assets\/app\.js\?v=[a-f0-9]{12}" defer><\/script>/.test(html)) errors.push(`${label}: application script URL is not content-versioned`);
   if (label === "/media/index.html" && (html.match(/"@type":"VideoObject"/g) ?? []).length !== 4) errors.push(`${label}: expected four VideoObject records`);
@@ -69,6 +89,13 @@ for (const file of htmlFiles) {
 
 const required = ["robots.txt", "sitemap.xml", "llms.txt", "site.webmanifest", "_headers", "_redirects", "assets/social-card.png"];
 for (const path of required) if (!await exists(join(dist, path))) errors.push(`missing ${path}`);
+const sitemap = await readFile(join(dist, "sitemap.xml"), "utf8");
+if (!sitemap.includes("<loc>https://cockroachcrawler.com/compare/</loc>")) errors.push("sitemap must include the AI crawler comparison");
+const llms = await readFile(join(dist, "llms.txt"), "utf8");
+if (!llms.includes("AI crawler comparison: https://cockroachcrawler.com/compare/")) errors.push("llms.txt must link the factual crawler comparison");
+const packageReadme = await readFile(join(dist, "..", "..", "README.md"), "utf8");
+if (/assets\/readme-proof-still/i.test(packageReadme)) errors.push("npm README must not restore the oversized proof banner");
+if (!packageReadme.includes("Give your AI agents eyes on the web")) errors.push("npm README must lead with the AI web crawler benefit");
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);
 const headerPolicy = await readFile(join(dist, "_headers"), "utf8");
 if (/\bimmutable\b/.test(headerPolicy)) errors.push("unversioned site assets must remain revalidatable");

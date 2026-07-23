@@ -1,0 +1,126 @@
+# Capability contract
+
+Cockroach Crawler is a local, evidence-first crawler and read-only source
+router for agents. Its differentiator is not an unlimited scrape claim. It is
+that every fetch, redirect, provider choice, browser request, output record,
+and optional authority tier keeps a reviewable boundary.
+
+This document separates current source behavior, stable `0.3.0` behavior,
+optional adapters, planned work, and deliberate exclusions. A capability
+becomes a release claim only after its code, tests, package artifact, public
+types, and documentation ship together.
+
+## Public-web crawl
+
+| Capability | Status | Contract |
+| --- | --- | --- |
+| Static HTTP(S) crawl | Stable `0.3.0` | Same-origin by default, public network by default, robots enforced, manual validated redirects |
+| Sitemap discovery | Stable `0.3.0` | Bounded robots-declared or conventional sitemap traversal with origin and URL policy |
+| Markdown, text, links, JSON, JSONL | Stable `0.3.0` | Cleaned readable page records with hashes and retrieval metadata |
+| Compact site map | Current source | `mapSite` / `--map` returns fetch-validated URL metadata without page bodies |
+| Deterministic CSS extraction | Current source | Text, cleaned inner HTML, or attributes with independent output ceilings |
+| JavaScript rendering | Stable `0.3.0`, optional | Playwright peer dependency behind the crawler's deny-by-default request proxy |
+| Deep crawl | Stable `0.3.0` | Breadth-first link traversal with depth, queue, page, request, origin, and filter limits |
+| Adaptive or relevance-driven crawl | Planned adapter | A scorer may narrow traversal, but may not expand creator-owned network or resource authority |
+| Persistent crawl cache | Planned | Must preserve validators, policy identity, expiry, content hashes, and credential separation |
+| PDF/media document parsing | Planned separate module | Opt-in parsers with MIME, byte, decompression, and process-isolation controls |
+
+`mapSite` is deliberately a fetch-validated map. Entries identify pages that
+passed transport and content policy; it does not claim the completeness of a
+search-engine index.
+
+## Structured extraction
+
+The source build supports:
+
+- CSS selectors for visible text, cleaned inner HTML, or a named attribute;
+- single or multiple values;
+- relative HTTP(S) URL resolution for attribute fields;
+- input-character, field-count, item-count, per-value-length, total-value, and
+  total-character ceilings;
+- deterministic truncation warnings;
+- rejection of unknown options, getters/setters, inherited options,
+  prototype-sensitive field names, invalid selectors, and incompatible
+  attribute settings;
+- identical extraction through `extractStructured`, the crawl `extract`
+  option, and CLI `--extract`.
+
+It does not run JavaScript from the extraction schema, evaluate arbitrary
+expressions, or call a model. Model-assisted extraction belongs behind a
+host-supplied, separately governed adapter so model identity, data disclosure,
+cost, schema validation, and retry policy remain explicit.
+
+HTML field values are untrusted markup, not sanitized application UI. Do not
+insert them into a browser DOM.
+
+## Provider reach
+
+| Surface | Public/no-key route | Optional authority | Boundary |
+| --- | --- | --- | --- |
+| Public web | Hardened local HTTP(S) crawler | Explicit private/loopback opt-in or browser mode | No login, paywall, CAPTCHA, or access-control bypass |
+| GitHub | Public REST read/search | Operator token for documented rate limits | Read only |
+| YouTube | Public metadata plus reviewed pinned no-key route | Official API key for official search | No universal transcript claim |
+| X and Reddit | No official credential-free API route | Official credentials or separately installed operator session route | Fixed read commands; no cookie extraction or writes |
+| Facebook, Instagram, LinkedIn, Xiaohongshu | None in core | Separately installed operator session route | Fixed read commands; dry-run setup by default |
+
+Run both doctors in the actual deployment:
+
+```bash
+npx cockroach-sources doctor --json
+npx cockroach-reach doctor --json
+```
+
+No provider is silently substituted after authentication failure, malformed
+data, or an unexpected runtime error.
+
+## Runtime tiers
+
+| Tier | Best fit | Security boundary |
+| --- | --- | --- |
+| Hardened Node crawler | Model-selected public URLs, CI, local research, indexing | DNS classification and pinning, manual redirects, robots, strict budgets |
+| Restricted self-hosted Worker | Small crawls of deployment-owned fixed HTTPS origins | Bearer auth, deployment rate limit, configured origin allowlist, hard small budgets |
+| Browser rendering | Authorized JavaScript pages where static HTTP is insufficient | Crawler-routed GET/HEAD requests plus required process/container isolation |
+| Browser host contract | Maqam-governed structural actions | Host-injected runtime, opaque targets, revisions, preview/apply phases |
+
+The Worker tier has no DNS resolution or address pinning and must not be
+presented as equivalent to the Node transport.
+
+## Platform-scale work
+
+These are not core-package claims:
+
+- distributed durable job queues, job cancellation, and crash recovery;
+- hosted proxy pools, residential routing, or geo-routing;
+- multi-tenant billing, quotas, and API-key management;
+- hosted search-engine aggregation;
+- webhook delivery and replay infrastructure;
+- persistent remote browser sessions and live-view streaming;
+- LLM extraction or research agents;
+- universal provider access.
+
+They can be built as services around the package. Keeping them outside core
+lets a local install remain small, auditable, self-hostable, and free of
+implicit third-party data disclosure.
+
+## Deliberate exclusions
+
+Cockroach Crawler will not add:
+
+- CAPTCHA, paywall, authentication, authorization, or robots bypass;
+- hidden cookie/profile extraction or silent credential reuse;
+- social posting, liking, following, messaging, deleting, or purchasing;
+- stealth fingerprints advertised as access-control evasion;
+- arbitrary model-generated shell commands;
+- a claim that browser request control is an operating-system sandbox.
+
+## Definition of done for a new capability
+
+1. The public contract names inputs, outputs, errors, and authority.
+2. Runtime validation fails closed and is stronger than schema metadata alone.
+3. Resource growth has explicit independent ceilings.
+4. Adversarial tests cover malformed objects, redirects, network scope, and
+   cancellation where applicable.
+5. Strict packed-consumer TypeScript compilation passes.
+6. Security, browser, Worker, license, audit, and tarball gates pass as
+   applicable.
+7. README, website, changelog, types, and release notes agree on status.

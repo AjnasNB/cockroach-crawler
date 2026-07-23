@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { after, before, test } from "node:test";
-import { crawl, discoverSitemapUrls, extractPage } from "../src/index.js";
+import {
+  crawl,
+  discoverSitemapUrls,
+  extractPage,
+  extractStructured,
+  mapSite
+} from "../src/index.js";
 import { createCockroachCrawlerTool, runCockroachCrawlerTool } from "../src/agent.js";
 
 let server;
@@ -65,6 +71,96 @@ test("extractPage returns agent-friendly fields", () => {
   assert.match(page.text, /World/);
 });
 
+test("extractStructured returns bounded deterministic CSS fields", () => {
+  const result = extractStructured(`
+    <html><body><main>
+      <h1>Example catalog</h1>
+      <a class="item" href="/first"> First </a>
+      <a class="item" href="https://example.com/second#details">Second</a>
+      <script>window.secret = true</script>
+    </main></body></html>
+  `, "https://example.com/catalog", {
+    fields: {
+      heading: "h1",
+      itemNames: { selector: ".item", multiple: true, limit: 2 },
+      itemUrls: {
+        selector: ".item",
+        source: "attribute",
+        attribute: "href",
+        resolveUrl: true,
+        multiple: true,
+        limit: 2
+      },
+      scripts: { selector: "script", source: "html", multiple: true }
+    }
+  });
+
+  assert.equal(result.data.heading, "Example catalog");
+  assert.deepEqual(result.data.itemNames, ["First", "Second"]);
+  assert.deepEqual(result.data.itemUrls, [
+    "https://example.com/first",
+    "https://example.com/second"
+  ]);
+  assert.deepEqual(result.data.scripts, []);
+  assert.ok(result.warnings.some((warning) => warning.includes("untrusted markup")));
+});
+
+test("extractStructured rejects active properties and invalid selectors without invoking them", () => {
+  let accessed = false;
+  const fields = {};
+  Object.defineProperty(fields, "unsafe", {
+    enumerable: true,
+    get() {
+      accessed = true;
+      return "h1";
+    }
+  });
+
+  assert.throws(
+    () => extractStructured("<h1>Test</h1>", "https://example.com", { fields }),
+    /must be an own enumerable data property/
+  );
+  assert.equal(accessed, false);
+  assert.throws(
+    () => extractStructured("<h1>Test</h1>", "https://example.com", {
+      fields: { broken: { selector: "[" } }
+    }),
+    /not a valid CSS selector/
+  );
+});
+
+test("extractStructured reports deterministic output truncation", () => {
+  const result = extractStructured(
+    "<main><p>123456789</p><p>abcdefghi</p></main>",
+    "https://example.com",
+    {
+      fields: {
+        values: { selector: "p", multiple: true }
+      },
+      maxValueLength: 5,
+      maxTotalCharacters: 8
+    }
+  );
+
+  assert.deepEqual(result.data.values, ["12345", "abc"]);
+  assert.ok(result.warnings.some((warning) => warning.includes("value truncated")));
+  assert.ok(result.warnings.some((warning) => warning.includes("maxTotalCharacters")));
+});
+
+test("extractStructured rejects standalone HTML above the configured input ceiling", () => {
+  assert.throws(
+    () => extractStructured(
+      `<p>${"x".repeat(1_100)}</p>`,
+      "https://example.com",
+      {
+        fields: { value: "p" },
+        maxInputCharacters: 1_024
+      }
+    ),
+    /exceeds extract\.maxInputCharacters/
+  );
+});
+
 test("crawler respects robots.txt and extracts linked pages", async () => {
   const pages = await crawl({
     seeds: [`${baseUrl}/`],
@@ -89,6 +185,40 @@ test("crawler can discover sitemap URLs", async () => {
   });
 
   assert.ok(pages.some((page) => page.url.endsWith("/about")));
+});
+
+test("crawler attaches bounded structured extraction and mapSite emits compact entries", async () => {
+  const pages = await crawl({
+    seeds: [`${baseUrl}/`],
+    maxPages: 2,
+    delayMs: 0,
+    allowPrivateNetworks: true,
+    extract: {
+      fields: {
+        heading: "h1",
+        linkedUrls: {
+          selector: "a[href]",
+          source: "attribute",
+          attribute: "href",
+          resolveUrl: true,
+          multiple: true
+        }
+      }
+    }
+  });
+  assert.equal(pages[0].structured.heading, "Home page");
+  assert.ok(pages[0].structured.linkedUrls.includes(`${baseUrl}/about`));
+
+  const result = await mapSite({
+    seeds: [`${baseUrl}/`],
+    maxPages: 2,
+    delayMs: 0,
+    allowPrivateNetworks: true
+  });
+  assert.equal(result.entries.length, 2);
+  assert.equal(Object.hasOwn(result.entries[0], "markdown"), false);
+  assert.equal(typeof result.entries[0].linkCount, "number");
+  assert.equal(result.stats.pages, 2);
 });
 
 test("discoverSitemapUrls follows sitemap indexes", async () => {
@@ -156,4 +286,28 @@ test("agent adapter can run directly", async () => {
   });
 
   assert.equal(result.pages[0].h1, "Home page");
+});
+
+test("agent adapter accepts creator-owned extraction without exposing schema authority to input", async () => {
+  const tool = createCockroachCrawlerTool({
+    maxPages: 1,
+    delayMs: 0,
+    allowPrivateNetworks: true,
+    extract: {
+      fields: {
+        heading: "h1"
+      },
+      maxTotalValues: 5
+    }
+  });
+
+  const result = await tool.execute({ urls: [`${baseUrl}/`] });
+  assert.equal(result.pages[0].structured.heading, "Home page");
+  await assert.rejects(
+    () => tool.execute({
+      urls: [`${baseUrl}/`],
+      extract: { fields: { secret: "script" } }
+    }),
+    /Unknown agent tool field/
+  );
 });

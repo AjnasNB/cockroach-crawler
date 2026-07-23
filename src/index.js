@@ -15,6 +15,24 @@ const DEFAULT_USER_AGENT = `CockroachCrawler/${PACKAGE_VERSION} (+https://github
 const DEFAULT_MAX_BYTES = 3 * 1024 * 1024;
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
 const BROWSER_WAIT_STATES = new Set(["load", "domcontentloaded", "networkidle", "commit"]);
+const EXTRACTION_SOURCES = new Set(["text", "html", "attribute"]);
+const EXTRACTION_KEYS = new Set([
+  "fields",
+  "maxFields",
+  "maxItemsPerField",
+  "maxInputCharacters",
+  "maxValueLength",
+  "maxTotalValues",
+  "maxTotalCharacters"
+]);
+const EXTRACTION_FIELD_KEYS = new Set([
+  "selector",
+  "source",
+  "attribute",
+  "multiple",
+  "limit",
+  "resolveUrl"
+]);
 const SENSITIVE_PATH_PATTERN = /(?:login|logout|signin|sign-in|signup|auth|account|admin|dashboard|checkout|cart|billing|private|session|password|reset|wp-admin)/i;
 const MAX_SENSITIVE_DECODE_PASSES = 8;
 const BROWSER_KEYS = new Set([
@@ -61,6 +79,7 @@ const CRAWL_OPTION_KEYS = new Set([
   "retryDelayMs",
   "browser",
   "rendered",
+  "extract",
   "onPage",
   "onError",
   "signal",
@@ -146,6 +165,36 @@ function snapshotArrayValues(value, label) {
     }
   }
   return values;
+}
+
+function snapshotNamedDataRecord(value, label, maximumProperties) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new TypeError(`${label} must be an object.`);
+  }
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  const snapshot = Object.create(null);
+  let count = 0;
+  for (const key of Reflect.ownKeys(descriptors)) {
+    if (typeof key !== "string") {
+      throw new TypeError(`${label} contains an unsupported symbol property.`);
+    }
+    if (!/^[A-Za-z_][A-Za-z0-9_.-]{0,127}$/.test(key)
+      || key === "__proto__"
+      || key === "constructor"
+      || key === "prototype") {
+      throw new TypeError(`${label} contains invalid field name '${key}'.`);
+    }
+    const descriptor = descriptors[key];
+    if (!descriptor.enumerable || !Object.hasOwn(descriptor, "value")) {
+      throw new TypeError(`${label}.${key} must be an own enumerable data property.`);
+    }
+    count += 1;
+    if (count > maximumProperties) {
+      throw new TypeError(`${label} exceeds maxFields (${count} > ${maximumProperties}).`);
+    }
+    snapshot[key] = descriptor.value;
+  }
+  return snapshot;
 }
 
 function abortError(signal) {
@@ -384,6 +433,114 @@ function normalizeBrowserOptions(value, timeoutMs) {
   };
 }
 
+function normalizeExtractionOptions(value) {
+  if (value === undefined || value === null || value === false) return null;
+  const extraction = snapshotOptionRecord(value, "extract", EXTRACTION_KEYS);
+  const maxFields = integerOption(extraction.maxFields, "extract.maxFields", 32, 1, 128);
+  const maxItemsPerField = integerOption(
+    extraction.maxItemsPerField,
+    "extract.maxItemsPerField",
+    50,
+    1,
+    1_000
+  );
+  const maxInputCharacters = integerOption(
+    extraction.maxInputCharacters,
+    "extract.maxInputCharacters",
+    5 * 1024 * 1024,
+    1_024,
+    50 * 1024 * 1024
+  );
+  const maxValueLength = integerOption(
+    extraction.maxValueLength,
+    "extract.maxValueLength",
+    16_384,
+    1,
+    262_144
+  );
+  const maxTotalValues = integerOption(
+    extraction.maxTotalValues,
+    "extract.maxTotalValues",
+    500,
+    1,
+    10_000
+  );
+  const maxTotalCharacters = integerOption(
+    extraction.maxTotalCharacters,
+    "extract.maxTotalCharacters",
+    262_144,
+    1,
+    4 * 1024 * 1024
+  );
+  const rawFields = snapshotNamedDataRecord(extraction.fields, "extract.fields", maxFields);
+  if (!Object.keys(rawFields).length) throw new TypeError("extract.fields must contain at least one field.");
+
+  const selectorValidator = cheerio.load("<html><body></body></html>");
+  const fields = Object.create(null);
+  for (const [name, rawField] of Object.entries(rawFields)) {
+    const field = typeof rawField === "string"
+      ? { selector: rawField }
+      : snapshotOptionRecord(rawField, `extract.fields.${name}`, EXTRACTION_FIELD_KEYS);
+    const selector = stringOption(field.selector, `extract.fields.${name}.selector`, 2_048);
+    try {
+      selectorValidator(selector);
+    } catch (cause) {
+      const error = new TypeError(`extract.fields.${name}.selector is not a valid CSS selector.`);
+      error.cause = cause;
+      throw error;
+    }
+    const source = field.source ?? "text";
+    if (!EXTRACTION_SOURCES.has(source)) {
+      throw new TypeError(
+        `extract.fields.${name}.source must be one of: ${[...EXTRACTION_SOURCES].join(", ")}.`
+      );
+    }
+    if (field.multiple !== undefined && typeof field.multiple !== "boolean") {
+      throw new TypeError(`extract.fields.${name}.multiple must be a boolean.`);
+    }
+    if (field.resolveUrl !== undefined && typeof field.resolveUrl !== "boolean") {
+      throw new TypeError(`extract.fields.${name}.resolveUrl must be a boolean.`);
+    }
+    const attribute = source === "attribute"
+      ? stringOption(field.attribute, `extract.fields.${name}.attribute`, 256)
+      : undefined;
+    if (source !== "attribute" && field.attribute !== undefined) {
+      throw new TypeError(`extract.fields.${name}.attribute requires source='attribute'.`);
+    }
+    if (field.resolveUrl === true && source !== "attribute") {
+      throw new TypeError(`extract.fields.${name}.resolveUrl requires source='attribute'.`);
+    }
+    if (attribute && !/^[A-Za-z_:][A-Za-z0-9_.:-]*$/.test(attribute)) {
+      throw new TypeError(`extract.fields.${name}.attribute is not a valid HTML attribute name.`);
+    }
+    const multiple = field.multiple === true;
+    fields[name] = Object.freeze({
+      selector,
+      source,
+      attribute,
+      multiple,
+      limit: integerOption(
+        field.limit,
+        `extract.fields.${name}.limit`,
+        multiple ? maxItemsPerField : 1,
+        1,
+        maxItemsPerField
+      ),
+      resolveUrl: field.resolveUrl === true
+    });
+  }
+
+  return Object.freeze({
+    fields: Object.freeze(fields),
+    maxFields,
+    maxItemsPerField,
+    maxInputCharacters,
+    maxValueLength,
+    maxTotalValues,
+    maxTotalCharacters
+  });
+}
+
 function normalizeOptions(input, seedCount) {
   input = snapshotOptionRecord(input, "crawl", CRAWL_OPTION_KEYS);
   const maxPages = integerOption(input.maxPages, "maxPages", 50, 1, 10_000);
@@ -437,6 +594,7 @@ function normalizeOptions(input, seedCount) {
     maxRetries: integerOption(input.maxRetries, "maxRetries", 1, 0, 5),
     retryDelayMs: integerOption(input.retryDelayMs, "retryDelayMs", 250, 0, 30_000),
     browser: normalizeBrowserOptions(input.browser || input.rendered, timeoutMs),
+    extract: normalizeExtractionOptions(input.extract),
     onPage: typeof input.onPage === "function" ? input.onPage : null,
     onError: typeof input.onError === "function" ? input.onError : null,
     signal: input.signal || null,
@@ -683,6 +841,104 @@ function cleanForExtraction($) {
   $("[hidden], [aria-hidden='true']").remove();
 }
 
+function boundedExtractValue($, element, field, url, limits, state, fieldName) {
+  let value;
+  if (field.source === "html") {
+    value = $(element).html() ?? "";
+  } else if (field.source === "attribute") {
+    value = $(element).attr(field.attribute) ?? "";
+    if (field.resolveUrl && value) {
+      const resolved = toUrl(value, url);
+      if (!resolved || !isHttpUrl(resolved)) {
+        state.warnings.add(`${fieldName}: ignored a non-HTTP(S) or invalid URL attribute.`);
+        value = "";
+      } else {
+        try {
+          value = normalizeUrl(resolved);
+        } catch {
+          state.warnings.add(`${fieldName}: ignored an invalid or overlong URL attribute.`);
+          value = "";
+        }
+      }
+    }
+  } else {
+    value = $(element).text().replace(/\s+/g, " ").trim();
+  }
+
+  if (value.length > limits.maxValueLength) {
+    value = value.slice(0, limits.maxValueLength);
+    state.warnings.add(`${fieldName}: value truncated at ${limits.maxValueLength} characters.`);
+  }
+  const remainingCharacters = limits.maxTotalCharacters - state.characters;
+  if (remainingCharacters <= 0) {
+    state.warnings.add(`Extraction stopped at maxTotalCharacters (${limits.maxTotalCharacters}).`);
+    return null;
+  }
+  if (value.length > remainingCharacters) {
+    value = value.slice(0, remainingCharacters);
+    state.warnings.add(`Extraction stopped at maxTotalCharacters (${limits.maxTotalCharacters}).`);
+  }
+  state.characters += value.length;
+  state.values += 1;
+  return value;
+}
+
+function extractStructuredFromDocument($, url, extraction) {
+  const data = Object.create(null);
+  const state = {
+    characters: 0,
+    values: 0,
+    warnings: new Set()
+  };
+
+  for (const [name, field] of Object.entries(extraction.fields)) {
+    if (field.source === "html") {
+      state.warnings.add(
+        `${name}: HTML output is untrusted markup and is not safe for direct DOM insertion.`
+      );
+    }
+    if (state.values >= extraction.maxTotalValues) {
+      state.warnings.add(`Extraction stopped at maxTotalValues (${extraction.maxTotalValues}).`);
+      data[name] = field.multiple ? [] : null;
+      continue;
+    }
+    const elements = $(field.selector).slice(0, field.limit).toArray();
+    const values = [];
+    for (const element of elements) {
+      if (state.values >= extraction.maxTotalValues) {
+        state.warnings.add(`Extraction stopped at maxTotalValues (${extraction.maxTotalValues}).`);
+        break;
+      }
+      const value = boundedExtractValue($, element, field, url, extraction, state, name);
+      if (value === null) break;
+      values.push(value);
+    }
+    data[name] = field.multiple ? values : (values[0] ?? null);
+  }
+
+  return {
+    data,
+    warnings: [...state.warnings]
+  };
+}
+
+export function extractStructured(html, url, input = {}) {
+  if (typeof html !== "string") throw new TypeError("html must be a string.");
+  if (typeof url !== "string" || !isHttpUrl(url)) {
+    throw new TypeError("url must be an absolute HTTP(S) URL.");
+  }
+  const extraction = normalizeExtractionOptions(input);
+  if (!extraction) throw new TypeError("extract options are required.");
+  if (html.length > extraction.maxInputCharacters) {
+    throw new TypeError(
+      `html exceeds extract.maxInputCharacters (${html.length} > ${extraction.maxInputCharacters}).`
+    );
+  }
+  const $ = cheerio.load(html);
+  cleanForExtraction($);
+  return extractStructuredFromDocument($, normalizeUrl(url), extraction);
+}
+
 export function extractPage(html, url, options = {}) {
   const maxLinksPerPage = integerOption(options.maxLinksPerPage, "maxLinksPerPage", 2_000, 1, 20_000);
   const maxUrlLength = integerOption(options.maxUrlLength, "maxUrlLength", 4_096, 256, 32_768);
@@ -713,7 +969,7 @@ export function extractPage(html, url, options = {}) {
   });
   const markdown = turndown.turndown(htmlFragment).replace(/\n{3,}/g, "\n\n").trim();
 
-  return {
+  const page = {
     url,
     canonical,
     title,
@@ -725,6 +981,18 @@ export function extractPage(html, url, options = {}) {
     links,
     fetchedAt: new Date().toISOString()
   };
+  const extraction = normalizeExtractionOptions(options.extract);
+  if (extraction) {
+    if (html.length > extraction.maxInputCharacters) {
+      throw new TypeError(
+        `html exceeds extract.maxInputCharacters (${html.length} > ${extraction.maxInputCharacters}).`
+      );
+    }
+    const result = extractStructuredFromDocument($, url, extraction);
+    page.structured = result.data;
+    page.extractionWarnings = result.warnings;
+  }
+  return page;
 }
 
 class CrawlQueue {
@@ -2004,7 +2272,8 @@ export async function crawlDetailed(input = {}) {
 
           const page = extractPage(result.text, result.finalUrl, {
             maxLinksPerPage: options.maxLinksPerPage,
-            maxUrlLength: options.maxUrlLength
+            maxUrlLength: options.maxUrlLength,
+            extract: options.extract
           });
           page.status = result.status;
           page.contentType = result.contentType;
@@ -2091,6 +2360,27 @@ export async function crawl(input = {}) {
     enumerable: false
   });
   return result.pages;
+}
+
+export async function mapSite(input = {}) {
+  const result = await crawlDetailed(input);
+  return {
+    entries: result.pages.map((page) => ({
+      url: page.url,
+      canonical: page.canonical,
+      title: page.title,
+      description: page.description,
+      status: page.status,
+      contentType: page.contentType,
+      depth: page.depth,
+      discoveredFrom: page.discoveredFrom,
+      contentHash: page.contentHash,
+      linkCount: page.links.length,
+      fetchedAt: page.fetchedAt
+    })),
+    failures: result.failures,
+    stats: result.stats
+  };
 }
 
 export async function discoverSitemapUrls(sitemapUrl, inputOptions = {}) {

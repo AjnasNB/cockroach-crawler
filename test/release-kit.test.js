@@ -7,6 +7,33 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+test("the packed feature inventory stays complete and release-honest", async () => {
+  const manifest = JSON.parse(await readFile(path.join(ROOT, "package.json"), "utf8"));
+  const readme = await readFile(path.join(ROOT, "README.md"), "utf8");
+  const features = await readFile(path.join(ROOT, "docs", "FEATURES.md"), "utf8");
+
+  assert.ok(manifest.files.includes("docs/FEATURES.md"));
+  assert.match(readme, /complete feature inventory/i);
+  for (const section of [
+    "Public-web crawl and discovery",
+    "Page extraction and output",
+    "Network and SSRF boundary",
+    "Optional Playwright browser rendering",
+    "Built-in read-only source registry",
+    "Provider routing and plug-in contracts",
+    "Optional Agent-Reach-style channel layer",
+    "Maqam-compatible structural browser host",
+    "Restricted serverless Worker tier",
+    "Verification and supply-chain features",
+    "What the latest branch adds",
+    "Crawl4AI parity matrix"
+  ]) {
+    assert.match(features, new RegExp(`^## ${section}$`, "m"), section);
+  }
+  assert.match(features, /Not implemented/);
+  assert.match(features, /Do not\s+claim those features/);
+});
+
 test("alpha release checksums match every named release source asset", async () => {
   const attributes = await readFile(path.join(ROOT, ".gitattributes"), "utf8");
   assert.match(attributes, /^\*\.vtt text eol=lf$/m, "release captions must have canonical LF bytes");
