@@ -95,7 +95,7 @@ const llms = await readFile(join(dist, "llms.txt"), "utf8");
 if (!llms.includes("AI crawler comparison: https://cockroachcrawler.com/compare/")) errors.push("llms.txt must link the factual crawler comparison");
 const packageReadme = await readFile(join(dist, "..", "..", "README.md"), "utf8");
 if (/assets\/readme-proof-still/i.test(packageReadme)) errors.push("npm README must not restore the oversized proof banner");
-if (!packageReadme.includes("Give your AI agents eyes on the web")) errors.push("npm README must lead with the AI web crawler benefit");
+if (!packageReadme.includes("Give your AI agents web superpowers")) errors.push("npm README must lead with the AI web crawler benefit");
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);
 const headerPolicy = await readFile(join(dist, "_headers"), "utf8");
 if (/\bimmutable\b/.test(headerPolicy)) errors.push("unversioned site assets must remain revalidatable");
