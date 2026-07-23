@@ -56,6 +56,34 @@ export interface CrawlPage {
   etag?: string | null;
   lastModified?: string | null;
   robotsAllowed?: boolean;
+  structured?: Record<string, string | string[] | null>;
+  extractionWarnings?: string[];
+}
+
+export type StructuredExtractionSource = "text" | "html" | "attribute";
+
+export interface StructuredExtractionField {
+  selector: string;
+  source?: StructuredExtractionSource;
+  attribute?: string;
+  multiple?: boolean;
+  limit?: number;
+  resolveUrl?: boolean;
+}
+
+export interface StructuredExtractionOptions {
+  fields: Record<string, string | StructuredExtractionField>;
+  maxFields?: number;
+  maxItemsPerField?: number;
+  maxInputCharacters?: number;
+  maxValueLength?: number;
+  maxTotalValues?: number;
+  maxTotalCharacters?: number;
+}
+
+export interface StructuredExtractionResult {
+  data: Record<string, string | string[] | null>;
+  warnings: string[];
 }
 
 export interface CrawlStats {
@@ -117,6 +145,7 @@ export interface CrawlOptions {
   retryDelayMs?: number;
   browser?: true | BrowserOptions;
   rendered?: true | BrowserOptions;
+  extract?: StructuredExtractionOptions;
   signal?: AbortSignal;
   dnsLookup?: DnsLookup;
   onPage?: (page: CrawlPage) => void | Promise<void>;
@@ -125,6 +154,26 @@ export interface CrawlOptions {
 
 export interface CrawlDetailedResult {
   pages: CrawlPage[];
+  failures: CrawlFailure[];
+  stats: CrawlStats;
+}
+
+export interface SiteMapEntry {
+  url: string;
+  canonical: string | null;
+  title: string;
+  description: string;
+  status?: number;
+  contentType?: string;
+  depth?: number;
+  discoveredFrom?: string | null;
+  contentHash?: `sha256:${string}`;
+  linkCount: number;
+  fetchedAt: string;
+}
+
+export interface SiteMapResult {
+  entries: SiteMapEntry[];
   failures: CrawlFailure[];
   stats: CrawlStats;
 }
@@ -152,11 +201,17 @@ export interface UrlSecurityOptions {
 
 export function crawl(options?: CrawlOptions): Promise<CrawlPages>;
 export function crawlDetailed(options?: CrawlOptions): Promise<CrawlDetailedResult>;
+export function mapSite(options?: CrawlOptions): Promise<SiteMapResult>;
 export function discoverSitemapUrls(sitemapUrl: string, options?: CrawlOptions): Promise<string[]>;
+export function extractStructured(
+  html: string,
+  url: string,
+  options: StructuredExtractionOptions
+): StructuredExtractionResult;
 export function extractPage(
   html: string,
   url: string,
-  options?: Pick<CrawlOptions, "maxLinksPerPage" | "maxUrlLength">
+  options?: Pick<CrawlOptions, "maxLinksPerPage" | "maxUrlLength" | "extract">
 ): CrawlPage;
 export function normalizeUrl(value: string | URL, maxLength?: number): string;
 export function classifyIpAddress(value: string): IpClassification;

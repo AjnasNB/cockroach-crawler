@@ -91,6 +91,13 @@ const pages = [
     body: javascriptDocsPage()
   },
   {
+    slug: "docs/map-and-extract",
+    active: "Docs",
+    title: "Map and structured extraction guide — Cockroach Crawler",
+    description: "Build compact fetch-validated site maps and extract bounded deterministic CSS fields with Cockroach Crawler.",
+    body: mapAndExtractDocsPage()
+  },
+  {
     slug: "docs/agents",
     active: "Docs",
     title: "Agent and Maqam integration — Cockroach Crawler",
@@ -409,6 +416,7 @@ function docsTopicNav() {
   const topics = [
     ["Install and run the CLI", "Copy one bounded crawl command, choose JSON or JSONL output, and inspect failures.", "/docs/cli/", "Open CLI guide"],
     ["Embed the Node.js API", "Call crawlDetailed with typed limits, cancellation, page records, and crawl statistics.", "/docs/javascript/", "Open API guide"],
+    ["Map and extract fields", "Return compact fetch-validated URL entries or bounded deterministic CSS fields.", "/docs/map-and-extract/", "Open map and extraction guide"],
     ["Expose a bounded agent tool", "Keep origins and budgets owned by the host, then optionally route the call through Maqam.", "/docs/agents/", "Open agent guide"],
     ["Read supported providers", "See which GitHub, YouTube, X, and Reddit reads work and which official credentials are required.", "/docs/providers/", "Open provider guide"],
     ["Deploy the fixed-origin Worker", "Run a token-authenticated, rate-limited fetch profile for deployment-owned HTTPS origins.", "/docs/serverless/", "Open Worker guide"],
@@ -463,6 +471,69 @@ console.log(result.pages);
 console.log(result.failures);
 console.log(result.stats);`, "javascript")}</section>
     <section><p class="eyebrow">03 · Handle</p><h2>Treat a partial crawl as an explicit state.</h2><p>Inspect <code>failures</code> and <code>stats</code> before indexing. Keep page URLs and hashes beside derived chunks, and keep crawled text in a data channel because page content is untrusted.</p><div class="next-links"><a href="/docs/agents/"><span>Agent use</span><strong>Bind creator-owned ceilings →</strong></a><a href="${repository}/blob/main/types/index.d.ts"><span>Types</span><strong>Read the public declarations →</strong></a></div></section>`
+  );
+}
+
+function mapAndExtractDocsPage() {
+  return focusedDocsPage(
+    "Documentation · Current source",
+    "Map a site or select exact fields without an extraction service.",
+    "The current source build adds compact fetch-validated maps and deterministic CSS extraction while retaining every existing network and resource boundary.",
+    `<section><p class="eyebrow">01 · Compact map</p><h2>Return URL evidence without page bodies.</h2><p><code>mapSite</code> uses the normal crawler transport. Every entry passed robots, origin, redirect, DNS, sensitive-path, request, byte, queue, and duration policy before it was returned.</p>${codeBlock("map-cli-guide", "CLI", `cockroach-crawl https://example.com/docs \\
+  --map \\
+  --sitemaps \\
+  --max-pages 200 \\
+  --max-requests 800 \\
+  --output map.json`)}${codeBlock("map-api-guide", "map.mjs", `import { mapSite } from "cockroach-crawler";
+
+const result = await mapSite({
+  seeds: ["https://example.com/docs"],
+  includeSitemaps: true,
+  maxPages: 200,
+  maxRequests: 800,
+  maxDurationMs: 120_000
+});
+
+console.log(result.entries);
+console.log(result.failures, result.stats);`, "javascript")}</section>
+    <section><p class="eyebrow">02 · Extraction schema</p><h2>Name fields and cap every output dimension.</h2><p>Selectors read visible text by default. A field may instead read cleaned inner HTML or one named attribute. Relative URL attributes can resolve against the fetched page.</p>${codeBlock("extract-schema-guide", "extraction.json", `{
+  "fields": {
+    "heading": "h1",
+    "productNames": {
+      "selector": ".product h2",
+      "multiple": true,
+      "limit": 100
+    },
+    "productUrls": {
+      "selector": ".product a[href]",
+      "source": "attribute",
+      "attribute": "href",
+      "resolveUrl": true,
+      "multiple": true,
+      "limit": 100
+    }
+  },
+  "maxTotalValues": 250,
+  "maxTotalCharacters": 100000
+}`, "json")}${codeBlock("extract-cli-guide", "CLI", `cockroach-crawl https://example.com/catalog \\
+  --extract extraction.json \\
+  --max-pages 10 \\
+  --output products.json`)}</section>
+    <section><p class="eyebrow">03 · Direct API</p><h2>Use the same contract on HTML already in memory.</h2>${codeBlock("extract-api-guide", "extract.mjs", `import { extractStructured } from "cockroach-crawler";
+
+const result = extractStructured(html, "https://example.com/catalog", {
+  fields: {
+    heading: "h1",
+    prices: { selector: ".price", multiple: true, limit: 100 }
+  },
+  maxValueLength: 4096,
+  maxTotalValues: 200,
+  maxTotalCharacters: 100_000
+});
+
+console.log(result.data);
+console.log(result.warnings);`, "javascript")}<div class="callout warning"><strong>Deterministic, not semantic</strong><p>This extractor does not run page scripts, arbitrary expressions, or an LLM. Model-assisted extraction belongs in a separately governed host adapter with explicit data disclosure, model identity, cost, retries, and schema validation.</p></div></section>
+    <section><p class="eyebrow">04 · Limits</p><h2>Fail closed before crawling.</h2><p>The extractor rejects unknown options, getters and setters, inherited options, prototype-sensitive field names, invalid selectors, invalid attribute names, and incompatible settings. Scripts, styles, templates, embedded documents, SVG/canvas content, and hidden nodes are removed before selection.</p><div class="next-links"><a href="${repository}/blob/main/docs/CAPABILITIES.md"><span>Capability truth</span><strong>Review shipped, planned, and excluded work →</strong></a><a href="/security/"><span>Transport policy</span><strong>Review the crawl boundary →</strong></a></div></section>`
   );
 }
 
@@ -868,6 +939,6 @@ await writeFile(
 );
 await writeFile(join(dist, "site.webmanifest"), JSON.stringify({ name: "Cockroach Crawler", short_name: "Crawler", start_url: "/", display: "standalone", background_color: "#07100e", theme_color: "#07100e", icons: [{ src: "/assets/mark.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }] }, null, 2), "utf8");
 await writeFile(join(dist, "_headers"), `/*\n  Cache-Control: public, max-age=300, no-transform\n  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()\n\n/assets/*\n  Cache-Control: public, max-age=300, must-revalidate, no-transform\n\n/media/*\n  Cache-Control: public, max-age=3600, must-revalidate, no-transform\n`, "utf8");
-await writeFile(join(dist, "_redirects"), `/docs /docs/ 301\n/docs/cli /docs/cli/ 301\n/docs/javascript /docs/javascript/ 301\n/docs/agents /docs/agents/ 301\n/docs/providers /docs/providers/ 301\n/docs/serverless /docs/serverless/ 301\n/security /security/ 301\n/providers /providers/ 301\n/benchmark /benchmark/ 301\n/media /media/ 301\n/launch /launch/ 301\n/roadmap /roadmap/ 301\n/community /community/ 301\n/release /release/ 301\n`, "utf8");
-await writeFile(join(dist, "llms.txt"), `# Cockroach Crawler\n\nnpm stable 0.3.0 is a local Node.js crawler for public or explicitly trusted HTTP(S) pages. It enforces robots, explicit origin policy, public-network defaults, DNS-pinned requests, validated redirects, and resource budgets. It outputs readable text, Markdown, links, hashes, metadata, failures, and crawl stats.\n\nStable 0.3.0 includes a tested provider registry, ordered source routing, optional read-only reach providers, a Maqam-compatible browser-host contract, and a separate serverless profile. Public GitHub REST works with an optional token. The pinned yt-dlp route supports no-key YouTube reads without loading configuration, plugins, cookies, watched state, or media downloads. Optional OpenCLI session providers expose fixed read-only routes for X, Reddit, Facebook, Instagram, LinkedIn, and Xiaohongshu and never expose social writes or browser-cookie extraction. The serverless tier is self-hosted, token-authenticated, rate-limited, and restricted to deployment-configured HTTPS origins. It does not resolve, classify, or pin DNS answers. Browser runtimes remain separately isolated host responsibilities.\n\n- Documentation overview: ${siteUrl}/docs/\n- CLI guide: ${siteUrl}/docs/cli/\n- JavaScript guide: ${siteUrl}/docs/javascript/\n- Agent and Maqam guide: ${siteUrl}/docs/agents/\n- Provider guide: ${siteUrl}/docs/providers/\n- Serverless guide: ${siteUrl}/docs/serverless/\n- Security: ${siteUrl}/security/\n- Provider status: ${siteUrl}/providers/\n- Benchmark method and clean CI result: ${siteUrl}/benchmark/\n- Launch kit, campaign assets, and product directions: ${siteUrl}/launch/\n- Maqam governance documentation: ${maqamDocs}\n- Source: ${repository}\n- npm: ${npmPackage}\n`, "utf8");
+await writeFile(join(dist, "_redirects"), `/docs /docs/ 301\n/docs/cli /docs/cli/ 301\n/docs/javascript /docs/javascript/ 301\n/docs/map-and-extract /docs/map-and-extract/ 301\n/docs/agents /docs/agents/ 301\n/docs/providers /docs/providers/ 301\n/docs/serverless /docs/serverless/ 301\n/security /security/ 301\n/providers /providers/ 301\n/benchmark /benchmark/ 301\n/media /media/ 301\n/launch /launch/ 301\n/roadmap /roadmap/ 301\n/community /community/ 301\n/release /release/ 301\n`, "utf8");
+await writeFile(join(dist, "llms.txt"), `# Cockroach Crawler\n\nnpm stable 0.3.0 is a local Node.js crawler for public or explicitly trusted HTTP(S) pages. It enforces robots, explicit origin policy, public-network defaults, DNS-pinned requests, validated redirects, and resource budgets. It outputs readable text, Markdown, links, hashes, metadata, failures, and crawl stats.\n\nStable 0.3.0 includes a tested provider registry, ordered source routing, optional read-only reach providers, a Maqam-compatible browser-host contract, and a separate serverless profile. Public GitHub REST works with an optional token. The pinned yt-dlp route supports no-key YouTube reads without loading configuration, plugins, cookies, watched state, or media downloads. Optional OpenCLI session providers expose fixed read-only routes for X, Reddit, Facebook, Instagram, LinkedIn, and Xiaohongshu and never expose social writes or browser-cookie extraction. The serverless tier is self-hosted, token-authenticated, rate-limited, and restricted to deployment-configured HTTPS origins. It does not resolve, classify, or pin DNS answers. Browser runtimes remain separately isolated host responsibilities.\n\nThe current source build adds compact fetch-validated mapping and bounded deterministic CSS extraction. These are not stable npm claims until a release containing the exact commit is published.\n\n- Documentation overview: ${siteUrl}/docs/\n- CLI guide: ${siteUrl}/docs/cli/\n- JavaScript guide: ${siteUrl}/docs/javascript/\n- Map and extraction guide: ${siteUrl}/docs/map-and-extract/\n- Agent and Maqam guide: ${siteUrl}/docs/agents/\n- Provider guide: ${siteUrl}/docs/providers/\n- Serverless guide: ${siteUrl}/docs/serverless/\n- Security: ${siteUrl}/security/\n- Provider status: ${siteUrl}/providers/\n- Benchmark method and clean CI result: ${siteUrl}/benchmark/\n- Launch kit, campaign assets, and product directions: ${siteUrl}/launch/\n- Maqam governance documentation: ${maqamDocs}\n- Source: ${repository}\n- npm: ${npmPackage}\n`, "utf8");
 console.log(`Built ${pages.length} pages in ${dist}`);

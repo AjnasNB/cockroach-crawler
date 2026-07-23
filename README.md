@@ -101,6 +101,8 @@ Read [SECURITY.md](./SECURITY.md) before exposing crawling to model-generated or
 | --- | --- |
 | Public documentation, blogs, help centers, and marketing pages | Strong |
 | JSONL/Markdown records for RAG and indexing | Strong |
+| Compact fetch-validated site maps | Source build; bounded by the same crawl policy |
+| Deterministic CSS field extraction | Source build; text, sanitized HTML fragments, and attributes with exact output ceilings |
 | Bounded local crawling from Node.js or a CLI | Strong |
 | A strictly limited crawler tool inside an agent runtime | Strong, with creator-owned origin and resource policy |
 | JavaScript-rendered pages with bounded explicit clicks | Optional Chromium mode; isolate it for untrusted targets |
@@ -151,6 +153,44 @@ cockroach-crawl https://example.com/docs/ \
   --output docs.json
 ```
 
+Compact mapping keeps URL metadata and hashes while omitting page bodies:
+
+```bash
+cockroach-crawl https://example.com/docs/ \
+  --map \
+  --sitemaps \
+  --max-pages 200 \
+  --output map.json
+```
+
+Deterministic extraction uses a local JSON schema. It does not call a model or
+send page content to an extraction service:
+
+```json
+{
+  "fields": {
+    "heading": "h1",
+    "links": {
+      "selector": "main a[href]",
+      "source": "attribute",
+      "attribute": "href",
+      "resolveUrl": true,
+      "multiple": true,
+      "limit": 50
+    }
+  },
+  "maxTotalValues": 200,
+  "maxTotalCharacters": 100000
+}
+```
+
+```bash
+cockroach-crawl https://example.com/docs/ \
+  --extract extraction.json \
+  --max-pages 25 \
+  --output extracted.json
+```
+
 Cross-origin crawling must enumerate every permitted origin, including the seed origin:
 
 ```bash
@@ -177,6 +217,8 @@ Important options:
 - `--max-redirects <n>`: manually validated redirect-hop limit.
 - `--concurrency <n>` / `--delay <ms>` / `--timeout <ms>`: scheduling controls.
 - `--sitemaps`: bounded robots and `/sitemap.xml` discovery.
+- `--map`: compact fetch-validated URL metadata instead of full page bodies.
+- `--extract <json-file>`: bounded CSS field extraction from the cleaned document.
 - `--all-origins` plus repeated `--allow-origin <origin>`: explicit cross-origin policy.
 - `--allow-private-networks`: trusted private/loopback opt-in; never metadata/link-local.
 - `--include <regex>` / `--exclude <regex>`: bounded trusted CLI regex filters.
@@ -355,6 +397,80 @@ console.log(pages.failures);
 
 `crawlDetailed(options)` returns `{ pages, failures, stats }`. `AbortSignal`, custom DNS lookup for controlled testing, allowed origins, retry controls, and every resource budget are declared in the included TypeScript definitions.
 
+### Compact map
+
+`mapSite` uses the normal crawler transport and returns only fetched URL
+metadata. It is not a search-engine index or an unvalidated sitemap dump:
+robots, origin rules, sensitive-path filtering, DNS policy, redirects, request
+budgets, and byte budgets still run before an entry is returned.
+
+```js
+import { mapSite } from "cockroach-crawler";
+
+const map = await mapSite({
+  seeds: ["https://example.com/docs"],
+  includeSitemaps: true,
+  maxPages: 200,
+  maxRequests: 800,
+  maxDurationMs: 120_000
+});
+
+console.log(map.entries);
+console.log(map.failures, map.stats);
+```
+
+### Deterministic structured extraction
+
+Use `extract` when an application needs selected fields instead of an
+unbounded model prompt. Each field names a CSS selector and reads visible text,
+cleaned inner HTML, or one attribute. Attribute URLs can be resolved against
+the fetched page.
+
+```js
+import { crawlDetailed, extractStructured } from "cockroach-crawler";
+
+const oneDocument = extractStructured(html, "https://example.com/catalog", {
+  fields: {
+    title: "h1",
+    productNames: { selector: ".product h2", multiple: true, limit: 100 },
+    productUrls: {
+      selector: ".product a[href]",
+      source: "attribute",
+      attribute: "href",
+      resolveUrl: true,
+      multiple: true,
+      limit: 100
+    }
+  }
+});
+
+const crawlResult = await crawlDetailed({
+  seeds: ["https://example.com/catalog"],
+  maxPages: 10,
+  extract: {
+    fields: {
+      title: "h1",
+      prices: { selector: ".price", multiple: true, limit: 100 }
+    },
+    maxTotalValues: 200,
+    maxTotalCharacters: 100_000
+  }
+});
+
+console.log(oneDocument.data, oneDocument.warnings);
+console.log(crawlResult.pages[0]?.structured);
+```
+
+Scripts, styles, templates, embedded documents, SVG/canvas content, and hidden
+nodes are removed before selection. HTML field values remain untrusted markup
+and must not be inserted into a DOM. Input characters, field count, items per
+field, value length, total values, and total characters have independent limits. The extractor
+rejects unknown options, accessors, inherited options, unsafe field names, bad
+selectors, and incompatible attribute settings before a crawl begins.
+
+See the [capability contract and roadmap](docs/CAPABILITIES.md) for the exact
+line between shipped core behavior, optional adapters, and hosted-platform work.
+
 ## Agent adapter
 
 ```js
@@ -433,6 +549,11 @@ Each page includes core extraction fields plus crawl provenance:
   "contentHash": "sha256:...",
   "redirectChain": [],
   "robotsAllowed": true,
+  "structured": {
+    "heading": "Example",
+    "links": ["https://example.com/about"]
+  },
+  "extractionWarnings": [],
   "fetchedAt": "2026-07-15T00:00:00.000Z"
 }
 ```
@@ -445,6 +566,7 @@ Each page includes core extraction fields plus crawl provenance:
 | Restricted serverless API | A small authenticated endpoint with deployment-owned HTTPS origins and exact limits | Owned documentation, support sites, and narrowly scoped hosted reads |
 | Source registry | One read-only record format for web, GitHub, YouTube, X, and Reddit | Provider-aware search, metadata collection, and capability diagnostics |
 | Evidence records | Content hashes, retrieval time, source URL, adapter version, warnings, and authentication state | Auditable pipelines, deduplication, QA, and reproducible research |
+| Compact maps and bounded selectors | Fetch-validated URL inventories and deterministic fields with exact output ceilings | Documentation inventories, migration planning, monitoring, and non-LLM extraction |
 
 The two crawler tiers intentionally share records rather than network authority: choose the hardened local runtime when model-generated destinations need address-level controls, or the restricted serverless runtime when a deployment owns a small fixed origin set.
 

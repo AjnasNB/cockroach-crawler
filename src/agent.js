@@ -51,6 +51,7 @@ const AGENT_DEFAULT_KEYS = new Set([
   "maxRedirects",
   "maxRetries",
   "retryDelayMs",
+  "extract",
   "allowBrowser",
   "browser",
   "signal",
@@ -202,6 +203,32 @@ function snapshotArrayValues(value, label) {
   return values;
 }
 
+function snapshotPlainData(value, label, depth = 0) {
+  if (depth > 6) throw new TypeError(`${label} exceeds the supported nesting depth.`);
+  if (value === null || ["string", "number", "boolean"].includes(typeof value)) return value;
+  if (Array.isArray(value)) {
+    return Object.freeze(snapshotArrayValues(value, label).map((entry, index) => (
+      snapshotPlainData(entry, `${label}[${index}]`, depth + 1)
+    )));
+  }
+  if (!value || typeof value !== "object") {
+    throw new TypeError(`${label} must contain only JSON-like data values.`);
+  }
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  const snapshot = Object.create(null);
+  for (const key of Reflect.ownKeys(descriptors)) {
+    if (typeof key !== "string" || ["__proto__", "constructor", "prototype"].includes(key)) {
+      throw new TypeError(`${label} contains unsupported property '${String(key)}'.`);
+    }
+    const descriptor = descriptors[key];
+    if (!descriptor.enumerable || !Object.hasOwn(descriptor, "value")) {
+      throw new TypeError(`${label}.${key} must be an own enumerable data property.`);
+    }
+    snapshot[key] = snapshotPlainData(descriptor.value, `${label}.${key}`, depth + 1);
+  }
+  return Object.freeze(snapshot);
+}
+
 function snapshotAllowedOrigins(value) {
   const values = snapshotArrayValues(value, "defaults.allowedOrigins");
   return Object.freeze([...new Set(values.map((entry) => {
@@ -275,6 +302,9 @@ function snapshotDefaults(defaults) {
       }));
     }
     snapshot.browser = Object.freeze(browser);
+  }
+  if (source.extract !== undefined) {
+    snapshot.extract = snapshotPlainData(source.extract, "defaults.extract");
   }
   return Object.freeze(snapshot);
 }
@@ -428,6 +458,7 @@ export function createCockroachCrawlerTool(defaults = {}) {
         maxRetries: trustedDefaults.maxRetries ?? 1,
         retryDelayMs: trustedDefaults.retryDelayMs ?? 250,
         browser: validated.browser,
+        extract: trustedDefaults.extract,
         signal: trustedDefaults.signal,
         dnsLookup: trustedDefaults.dnsLookup,
         onPage: trustedDefaults.onPage,

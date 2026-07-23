@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+### Added
+
+- Added `mapSite(options)` and CLI `--map` for compact, fetch-validated URL
+  inventories that retain hashes, discovery metadata, failures, and crawl
+  statistics without returning page bodies.
+- Added `extractStructured(html, url, options)`, the crawl-level `extract`
+  option, and CLI `--extract <json-file>` for deterministic CSS text, HTML, and
+  attribute extraction.
+- Added strict field, item, value, total-value, and total-character ceilings,
+  URL resolution, truncation warnings, and TypeScript declarations for
+  structured extraction.
+
+### Security
+
+- Structured extraction rejects accessors, inherited or unknown options,
+  prototype-sensitive field names, invalid selectors, and incompatible field
+  settings before crawl dispatch.
+- Map and extraction operations retain the crawler's robots, origin, redirect,
+  DNS, sensitive-path, request, byte, queue, and duration boundaries.
+
 ## 0.3.0 - 2026-07-21
 
 ### Added

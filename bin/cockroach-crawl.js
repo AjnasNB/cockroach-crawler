@@ -3,7 +3,7 @@ import { createWriteStream } from "node:fs";
 import { mkdir, readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import path from "node:path";
-import { crawl } from "../src/index.js";
+import { crawl, mapSite } from "../src/index.js";
 
 const require = createRequire(import.meta.url);
 const { version } = require("../package.json");
@@ -28,6 +28,8 @@ Options:
   --delay <ms>            Minimum delay per origin. Default: 250
   --timeout <ms>          Request timeout. Default: 15000
   --sitemaps              Discover URLs from robots.txt sitemaps and /sitemap.xml
+  --map                   Emit compact fetch-validated URL map entries
+  --extract <json-file>   Apply bounded deterministic CSS extraction fields
   --all-origins           Use the explicit --allow-origin allowlist across origins
   --allow-origin <origin> Permit an HTTP(S) origin. Can be repeated
   --allow-private-networks
@@ -84,6 +86,19 @@ async function urlsFromFile(file) {
     .filter((line) => line && !line.startsWith("#"));
 }
 
+async function extractionFromFile(file) {
+  if (!file) throw new Error("Missing value for --extract.");
+  let value;
+  try {
+    value = JSON.parse(await readFile(file, "utf8"));
+  } catch (cause) {
+    const error = new Error(`Could not read --extract JSON file '${file}'.`);
+    error.cause = cause;
+    throw error;
+  }
+  return value;
+}
+
 async function readArgs(argv) {
   const urls = [];
   const include = [];
@@ -100,6 +115,8 @@ async function readArgs(argv) {
     delayMs: 250,
     timeoutMs: 15_000,
     includeSitemaps: false,
+    map: false,
+    extract: null,
     sameOrigin: true,
     allowedOrigins: [],
     allowPrivateNetworks: false,
@@ -157,6 +174,11 @@ async function readArgs(argv) {
       i += 1;
     } else if (arg === "--sitemaps") {
       options.includeSitemaps = true;
+    } else if (arg === "--map") {
+      options.map = true;
+    } else if (arg === "--extract") {
+      options.extract = await extractionFromFile(readValue(argv, i, "--extract"));
+      i += 1;
     } else if (arg === "--all-origins") {
       options.sameOrigin = false;
     } else if (arg === "--allow-origin") {
@@ -226,10 +248,17 @@ async function readArgs(argv) {
   return { urls, options };
 }
 
-async function writeOutput(pages, options) {
+async function writeOutput(result, options) {
+  const records = options.map ? result.entries : result;
   const body = options.jsonl
-    ? pages.map((page) => JSON.stringify(page)).join("\n") + "\n"
-    : JSON.stringify({ pages, stats: pages.stats || null }, null, 2) + "\n";
+    ? records.map((record) => JSON.stringify(record)).join("\n") + "\n"
+    : JSON.stringify(
+        options.map
+          ? result
+          : { pages: result, failures: result.failures || [], stats: result.stats || null },
+        null,
+        2
+      ) + "\n";
 
   if (!options.output) {
     process.stdout.write(body);
@@ -260,7 +289,7 @@ async function main() {
     return;
   }
 
-  const pages = await crawl({
+  const crawlOptions = {
     seeds: urls,
     maxPages: options.maxPages,
     maxDepth: options.maxDepth,
@@ -281,12 +310,16 @@ async function main() {
     exclude: options.exclude,
     userAgent: options.userAgent,
     browser: options.browser,
+    extract: options.extract,
     onError: (failure) => {
       process.stderr.write(`crawl warning: ${failure.url}: ${failure.error}\n`);
     }
-  });
+  };
+  const result = options.map
+    ? await mapSite(crawlOptions)
+    : await crawl(crawlOptions);
 
-  await writeOutput(pages, options);
+  await writeOutput(result, options);
 }
 
 main().catch((error) => {
