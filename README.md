@@ -5,11 +5,21 @@
 [![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
 
-**Give your AI agent web superpowers - crawl, search, read, render, and return evidence - without giving it unrestricted network access.**
+**Give your AI agents eyes on the web: crawl complete sites, map URLs, render JavaScript, search supported sources, extract structured fields, and return LLM-ready evidence without handing them an unrestricted browser or network client.**
 
-Cockroach Crawler turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to collect whole documentation sections, search YouTube without a developer API key through the optional reviewed route, read supported public or operator-authorized sources, render JavaScript pages, and preserve source identity, redirects, hashes, warnings, and provenance.
+Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to crawl documentation sections, build fetch-validated site maps, extract bounded CSS fields, search YouTube without a developer API key through the optional reviewed route, render JavaScript pages, and preserve source identity, redirects, hashes, warnings, and provenance.
 
 Every capability stays behind creator-owned origin, request, byte, redirect, concurrency, and time limits. Use the hardened local crawler for bounded public-web collection, the source router for explicit provider capabilities, optional reach providers for reviewed no-developer-key or session-backed reads, and the restricted self-hosted Worker only for allowlisted sites you operate or trust.
+
+## Why developers choose Cockroach Crawler
+
+- **One install, several evidence paths:** crawl, map, render, extract, inspect provider availability, and export Markdown, JSON, or JSONL.
+- **Agent-ready without ambient authority:** model input can narrow a crawl but cannot expand creator-owned origins, private-network access, browser authority, or resource ceilings.
+- **Local-first and open source:** normal public crawling needs no hosted account or crawler API key.
+- **Proof travels with the content:** canonical URLs, redirect history, content hashes, retrieval metadata, failures, warnings, and provenance stay attached to results.
+- **No-key routes are explicit:** public GitHub reads and an optional reviewed YouTube route work without developer API credentials; session-backed providers remain separately installed and operator controlled.
+
+Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [factual comparison with Firecrawl and Crawl4AI](https://cockroachcrawler.com/compare/) before choosing a crawler.
 
 ## Web superpowers, bounded by you
 
@@ -28,7 +38,7 @@ The local crawler produces structured JSON/JSONL with readable text, Markdown, l
 
 It does not call an LLM, require a hosted account, or include stealth, CAPTCHA, paywall, authentication, or authorization bypasses.
 
-Documentation: [website](https://cockroachcrawler.com/docs/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [serverless profile](./docs/SERVERLESS.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
+Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [comparison](https://cockroachcrawler.com/compare/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [serverless profile](./docs/SERVERLESS.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
 
 ## Check reach before you call a source
 

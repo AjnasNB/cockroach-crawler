@@ -8,6 +8,10 @@ const dist = join(root, "dist");
 const siteUrl = "https://cockroachcrawler.com";
 const repository = "https://github.com/AjnasNB/cockroach-crawler";
 const npmPackage = "https://www.npmjs.com/package/cockroach-crawler";
+const firecrawlRepository = "https://github.com/firecrawl/firecrawl";
+const firecrawlDocs = "https://docs.firecrawl.dev/";
+const crawl4aiRepository = "https://github.com/unclecode/crawl4ai";
+const crawl4aiDocs = "https://docs.crawl4ai.com/";
 const contributorTestIssue = `${repository}/issues/20`;
 const goodFirstIssues = `${repository}/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22`;
 const helpWantedIssues = `${repository}/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22`;
@@ -35,9 +39,9 @@ const pages = [
   {
     slug: "",
     nav: "Home",
-    title: "Cockroach Crawler - bounded eyes on the public web for AI agents",
+    title: "AI web crawler for governed agents | Cockroach Crawler",
     description:
-      "Give AI agents bounded eyes on public sources: crawl, search, and normalize evidence without exposing an unrestricted browser or network client.",
+      "Open-source AI web crawler for agents: crawl, map, render, and extract public web data into LLM-ready evidence with explicit network and resource limits.",
     body: homePage(),
     schema: {
       "@context": "https://schema.org",
@@ -51,9 +55,35 @@ const pages = [
           license: "https://opensource.org/license/mit",
           codeRepository: repository,
           downloadUrl: npmPackage,
+          sameAs: [repository, npmPackage],
+          isAccessibleForFree: true,
+          featureList: [
+            "Bounded public-web crawling",
+            "Fetch-validated site mapping",
+            "Deterministic structured extraction",
+            "JavaScript rendering",
+            "Markdown, JSON, and JSONL output",
+            "Read-only source adapters",
+            "Evidence hashes and provenance"
+          ],
           description:
-            "Bounded public-web crawling and read-only source routing for AI agents, with explicit network policy, resource budgets, and normalized evidence records.",
+            "Open-source AI web crawling and read-only source routing for agents, with explicit network policy, resource budgets, structured extraction, and normalized evidence records.",
           offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }
+        },
+        {
+          "@type": "WebSite",
+          name: "Cockroach Crawler",
+          url: siteUrl,
+          description: "Documentation for the Cockroach Crawler open-source AI web crawler."
+        },
+        {
+          "@type": "SoftwareSourceCode",
+          name: "Cockroach Crawler source code",
+          codeRepository: repository,
+          codeSampleType: "full solution",
+          programmingLanguage: ["JavaScript", "TypeScript"],
+          license: "https://opensource.org/license/mit",
+          runtimePlatform: "Node.js 22, 24, or 26"
         },
         {
           "@type": "FAQPage",
@@ -133,6 +163,15 @@ const pages = [
     body: providersPage()
   },
   {
+    slug: "compare",
+    nav: "Compare",
+    title: "Cockroach Crawler vs Firecrawl vs Crawl4AI | AI crawler comparison",
+    description: "Compare Cockroach Crawler, Firecrawl, and Crawl4AI across crawling, mapping, extraction, browser rendering, hosted scale, evidence, and network governance.",
+    body: comparePage(),
+    schema: comparisonSchema(),
+    ogType: "article"
+  },
+  {
     slug: "stack",
     nav: "Stack",
     title: "Governed agent stack | Cockroach Crawler",
@@ -204,6 +243,38 @@ function howToSchema() {
   };
 }
 
+function comparisonSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        headline: "Cockroach Crawler vs Firecrawl vs Crawl4AI",
+        description: "A factual AI web crawler comparison across product scope, crawling, mapping, extraction, browser rendering, hosted scale, evidence, and network governance.",
+        datePublished: "2026-07-23",
+        dateModified: "2026-07-23",
+        author: { "@type": "Person", name: "Ajnas N B" },
+        publisher: { "@type": "Organization", name: "Cockroach Crawler", url: siteUrl },
+        mainEntityOfPage: `${siteUrl}/compare/`,
+        about: [
+          { "@type": "SoftwareApplication", name: "Cockroach Crawler", url: siteUrl },
+          { "@type": "SoftwareApplication", name: "Firecrawl", url: firecrawlRepository },
+          { "@type": "SoftwareApplication", name: "Crawl4AI", url: crawl4aiRepository }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          faqSchema("What is the best AI web crawler for agents?", "The best crawler is the smallest tested contract that meets the deployment. Cockroach Crawler fits governed local evidence, Firecrawl fits managed web-data infrastructure, and Crawl4AI fits broad self-hosted Python crawling workflows."),
+          faqSchema("Is Cockroach Crawler better than Firecrawl?", "It is stronger for local, evidence-first crawling where explicit network and resource boundaries matter. Firecrawl is broader for hosted crawling, search, proxy infrastructure, asynchronous jobs, and managed scale."),
+          faqSchema("Is Cockroach Crawler better than Crawl4AI?", "It is stronger for an inspectable agent network boundary and normalized provenance. Crawl4AI is broader for adaptive crawling, browser sessions, extraction strategies, document processing, caching, and Python workflows."),
+          faqSchema("Which crawler should I choose for an AI agent?", "Choose the smallest product whose tested contract matches the job. Use Cockroach Crawler for governed local evidence, Firecrawl for a managed web-data API, and Crawl4AI for a broad self-hosted Python crawling toolkit.")
+        ]
+      }
+    ]
+  };
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -214,7 +285,7 @@ function escapeHtml(value) {
 
 function nav(active) {
   const primary = pages.filter((page) => ["Home", "Docs", "Providers", "Stack", "Security", "Benchmark"].includes(page.nav));
-  const secondary = pages.filter((page) => ["Media", "Launch", "Roadmap", "Community", "Release"].includes(page.nav));
+  const secondary = pages.filter((page) => ["Compare", "Media", "Launch", "Roadmap", "Community", "Release"].includes(page.nav));
   const link = (page) => {
     const href = page.slug ? `/${page.slug}/` : "/";
     const current = page.nav === active ? ' aria-current="page"' : "";
@@ -248,11 +319,11 @@ function footer() {
           <a class="brand" href="/"><img src="/assets/mark.svg" width="28" height="28" alt="" /><span>Cockroach Crawler</span></a>
           <p>Bounded crawling for public or explicitly trusted HTTP(S) pages.</p>
         </div>
-        <div><h2>Use</h2><a href="/docs/">Documentation</a><a href="/providers/">Provider status</a><a href="/stack/">Governed stack</a><a href="${npmPackage}">npm package</a></div>
+        <div><h2>Use</h2><a href="/docs/">Documentation</a><a href="/providers/">Provider status</a><a href="/compare/">Crawler comparison</a><a href="/stack/">Governed stack</a><a href="${npmPackage}">npm package</a></div>
         <div><h2>Trust</h2><a href="/security/">Security model</a><a href="/benchmark/">Benchmark method</a><a href="${repository}/blob/main/SECURITY.md">Report privately</a></div>
         <div><h2>Project</h2><a href="/launch/">Launch kit</a><a href="/roadmap/">Roadmap</a><a href="/community/">Contribute</a><a href="${repository}">Source code</a><a href="${maqamDocs}">Govern with Maqam</a></div>
       </div>
-      <div class="shell legal"><span>MIT · npm stable 0.3.0 · Node.js 22 / 24 / 26</span><span>Site content last reviewed 21 July 2026</span></div>
+      <div class="shell legal"><span>MIT · npm stable 0.3.0 · Node.js 22 / 24 / 26</span><span>Site content last reviewed 23 July 2026</span></div>
     </footer>`;
 }
 
@@ -282,12 +353,16 @@ function pageTemplate(page) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${escapeHtml(page.title)}</title>
   <meta name="description" content="${escapeHtml(page.description)}" />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+  <meta name="author" content="Ajnas N B" />
+  <meta name="application-name" content="Cockroach Crawler" />
   <meta name="theme-color" content="#07100e" />
   <meta name="color-scheme" content="dark" />
   <link rel="canonical" href="${canonical}" />
   <link rel="icon" href="/assets/mark.svg" type="image/svg+xml" />
   <link rel="manifest" href="/site.webmanifest" />
-  <meta property="og:type" content="website" />
+  <meta property="og:type" content="${page.ogType ?? "website"}" />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:site_name" content="Cockroach Crawler" />
   <meta property="og:title" content="${escapeHtml(page.title)}" />
   <meta property="og:description" content="${escapeHtml(page.description)}" />
@@ -300,6 +375,7 @@ function pageTemplate(page) {
   <meta name="twitter:title" content="${escapeHtml(page.title)}" />
   <meta name="twitter:description" content="${escapeHtml(page.description)}" />
   <meta name="twitter:image" content="${siteUrl}/assets/social-card.png" />
+  <meta name="twitter:image:alt" content="Cockroach Crawler bounded public-web crawl diagram" />
   <link rel="stylesheet" href="/assets/styles.css?v=${assetVersion}" />
   <script type="application/ld+json">${JSON.stringify(schema).replaceAll("<", "\\u003c")}</script>
   <script src="/assets/app.js?v=${assetVersion}" defer></script>
@@ -317,10 +393,10 @@ function homePage() {
   return `
     <section class="hero shell">
       <div class="hero-copy">
-        <p class="eyebrow">Bounded eyes on the public web</p>
-        <h1>Let agents see the web. Keep control of the network.</h1>
-        <p class="lede">Crawl, search, and normalize permitted public sources into Markdown, JSON, or JSONL while creator-owned policy limits origins, redirects, robots, requests, bytes, depth, and time.</p>
-        <div class="button-row"><a class="button primary" href="/docs/">Start in five minutes</a><a class="button secondary" href="${repository}">Inspect the source</a></div>
+        <p class="eyebrow">Open-source AI web crawler for governed agents</p>
+        <h1>Give your AI agents the web. Keep the keys.</h1>
+        <p class="lede">Crawl sites, map URLs, render JavaScript, extract structured fields, and turn permitted public sources into LLM-ready Markdown, JSON, or JSONL while creator-owned policy limits origins, redirects, robots, requests, bytes, depth, and time.</p>
+        <div class="button-row"><a class="button primary" href="/docs/">Start in five minutes</a><a class="button secondary" href="/compare/">Compare AI crawlers</a><a class="button secondary" href="${repository}">Inspect the source</a></div>
         <ul class="signal-list" aria-label="Release facts"><li>npm stable 0.3.0</li><li>Node.js 22 / 24 / 26</li><li>MIT</li><li>No signup</li></ul>
         <div class="candidate-note"><span>Stable release</span><p><strong>0.3.0</strong> combines bounded web crawling with ordered source routing, optional read-only reach providers, a governed browser-host contract, and a separate restricted serverless profile under npm <code>latest</code>.</p></div>
       </div>
@@ -372,7 +448,7 @@ function homePage() {
       <div class="button-row demo-actions"><a class="button secondary" href="/media/">Watch every release cut</a><a class="button secondary" href="${repository}/tree/main/media/remotion">Inspect the video source</a></div>
     </section>
     <section class="section shell split-intro">
-      <div><p class="eyebrow">Choose the smallest mode that works</p><h2>One boundary. Three entry points.</h2><p>Use the CLI for repeatable exports, the library inside a Node service, or the strict adapter inside an agent runtime. Optional Chromium rendering stays behind the same URL and budget policy.</p></div>
+      <div><p class="eyebrow">Choose the smallest mode that works</p><h2>One install. Crawl, map, render, extract.</h2><p>Use the CLI for repeatable exports, the library inside a Node service, or the strict adapter inside an agent runtime. Optional Chromium rendering stays behind the same URL and budget policy.</p></div>
       <div class="mode-list">
         <article><span>01</span><div><h3>CLI</h3><p>Bounded crawl jobs with JSON or JSONL output and explicit flags.</p><a href="/docs/cli/">Copy the command →</a></div></article>
         <article><span>02</span><div><h3>JavaScript API</h3><p>Typed options, callbacks, abort signals, failures, and crawl statistics.</p><a href="/docs/javascript/">See the API →</a></div></article>
@@ -393,7 +469,7 @@ function homePage() {
       <div><p class="eyebrow">Optional browser mode</p><h2>Render JavaScript without opening an unreviewed egress path.</h2><p>Playwright is optional. Context-wide routing applies origin, robots, redirect, byte, request, and duration policy before responses are fulfilled into Chromium.</p><ul class="check-list"><li>State-changing methods are denied</li><li>WebSockets and WebRTC are blocked</li><li>Cookies follow conservative host, path, Secure, and SameSite checks</li><li>Process isolation is still required for hostile pages</li></ul><a class="text-link" href="/security/">Read the complete boundary →</a></div>
     </section>
     <section class="section shell">
-      <div class="section-head"><div><p class="eyebrow">Where it fits</p><h2>Built for evidence pipelines, not access-control workarounds.</h2></div><p>The product deliberately stays smaller than distributed crawler platforms.</p></div>
+      <div class="section-head"><div><p class="eyebrow">Where it fits</p><h2>Built for evidence pipelines, not access-control workarounds.</h2></div><p>Choose it when an inspectable agent boundary matters more than a managed proxy fleet. <a href="/compare/">Compare Firecrawl and Crawl4AI directly.</a></p></div>
       <div class="fit-grid">
         <article class="fit-yes"><span>Strong fit</span><h3>Documentation and RAG inputs</h3><p>Turn public documentation, help centers, blogs, and owned sites into source-linked records.</p></article>
         <article class="fit-yes"><span>Strong fit</span><h3>Content inventory and QA</h3><p>Capture titles, canonical URLs, response metadata, hashes, links, and readable content.</p></article>
@@ -760,6 +836,66 @@ function providersPage() {
     <section class="section shell"><div class="section-head"><div><p class="eyebrow">Adapter acceptance bar</p><h2>New reach must not erase the boundary.</h2></div><p>A provider adapter should be small, opt-in, provider-package-tested offline where possible, and explicit about authentication and missing guarantees.</p></div><ol class="process-grid"><li><span>01</span><h3>Public contract</h3><p>Use a documented API or permitted public surface with a pinned provider version.</p></li><li><span>02</span><h3>Creator authority</h3><p>Credentials, scopes, origins, and rate limits remain operator-owned.</p></li><li><span>03</span><h3>Offline fixture</h3><p>Prove allow and deny routing without accounts, live data, or side effects.</p></li><li><span>04</span><h3>Named limits</h3><p>Document what is not synchronized, discovered, authenticated, or certified.</p></li></ol></section>`;
 }
 
+function comparePage() {
+  return `
+    <section class="page-hero shell">
+      <p class="eyebrow">Open-source AI web crawler comparison · reviewed 23 July 2026</p>
+      <h1>Cockroach Crawler vs Firecrawl vs Crawl4AI</h1>
+      <p class="lede">There is no honest universal “best crawler.” Choose by deployment model, extraction depth, hosted scale, language ecosystem, and the amount of network authority an agent should receive.</p>
+      <div class="page-actions"><a class="button primary" href="/docs/">Try Cockroach Crawler</a><a class="button secondary" href="#matrix">Compare capabilities</a></div>
+    </section>
+    <section class="section shell">
+      <div class="section-head"><div><p class="eyebrow">Short answer</p><h2>Three products, three different centers.</h2></div><p>This comparison uses public documentation and repository evidence. It is not a paid ranking or a claim that one product replaces every other crawler.</p></div>
+      <div class="fit-grid">
+        <article class="fit-yes"><span>Choose for governed local evidence</span><h3>Cockroach Crawler</h3><p>Best fit when agents need local crawling, mapping, rendering, deterministic extraction, normalized evidence, and creator-owned network ceilings in one small Node.js package.</p></article>
+        <article><span>Choose for managed scale</span><h3>Firecrawl</h3><p>Best fit when a hosted API, managed search, proxy infrastructure, asynchronous jobs, browser interaction, and multi-format document handling matter more than a compact local boundary.</p></article>
+        <article><span>Choose for broad Python control</span><h3>Crawl4AI</h3><p>Best fit when Python workflows need adaptive or deep crawling, browser sessions, caching, dispatchers, multiple extraction strategies, and extensive self-hosted configuration.</p></article>
+      </div>
+    </section>
+    <section class="section shell" id="matrix">
+      <div class="section-head"><div><p class="eyebrow">Capability matrix</p><h2>Compare the contract, not the tagline.</h2></div><p>“Source build” means the reviewed Cockroach Crawler branch that adds mapping and deterministic extraction; npm stable remains 0.3.0 until a newer exact artifact is published.</p></div>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Cockroach Crawler, Firecrawl, and Crawl4AI comparison table">
+        <table class="status-table">
+          <thead><tr><th>Capability</th><th>Cockroach Crawler</th><th>Firecrawl</th><th>Crawl4AI</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Primary product</th><td>Local evidence-first crawler and source router for governed agents</td><td>Hosted and self-hostable web-data API</td><td>Self-hosted Python crawler and extraction toolkit</td></tr>
+            <tr><th scope="row">Public-site crawl</th><td><span class="status shipped">Stable</span> bounded local crawl with robots, sitemaps, redirects, and budgets</td><td><span class="status shipped">Available</span> managed crawl jobs and self-hosted components</td><td><span class="status shipped">Available</span> async, deep, and adaptive crawl strategies</td></tr>
+            <tr><th scope="row">Site mapping</th><td><span class="status conditional">Source build</span> fetch-validated compact entries</td><td><span class="status shipped">Available</span> dedicated map endpoint with optional search</td><td><span class="status shipped">Available</span> URL seeding and domain discovery workflows</td></tr>
+            <tr><th scope="row">Structured extraction</th><td><span class="status conditional">Source build</span> deterministic CSS text, cleaned HTML, and attributes with hard output ceilings</td><td><span class="status shipped">Available</span> structured JSON and agent-driven extraction</td><td><span class="status shipped">Available</span> CSS, XPath, regex, schema, and model-assisted strategies</td></tr>
+            <tr><th scope="row">JavaScript pages</th><td>Optional Chromium with explicit reviewed clicks and bounded HTTP(S) routing</td><td>Managed browser actions and interaction APIs</td><td>Browser sessions, hooks, JavaScript execution, and interaction configuration</td></tr>
+            <tr><th scope="row">Hosted queues and proxies</th><td><span class="status denied">Not included</span></td><td><span class="status shipped">Core strength</span></td><td>Self-hosted orchestration; deployment supplies infrastructure</td></tr>
+            <tr><th scope="row">Agent authority boundary</th><td><span class="status shipped">Core strength</span> creator-owned origins, network policy, request and byte budgets, immutable agent ceilings</td><td>API and deployment controls; review the selected hosted or self-hosted contract</td><td>Application-configured crawler and browser controls</td></tr>
+            <tr><th scope="row">Evidence records</th><td><span class="status shipped">Core strength</span> canonical URL, redirect chain, content hash, warnings, failures, timestamps, and provenance</td><td>Content plus page metadata and source URLs</td><td>Crawl results, metadata, links, and extraction output</td></tr>
+            <tr><th scope="row">Local use without hosted signup</th><td>Yes for public web and documented optional public routes</td><td>Self-hosting is available; managed API features use credentials</td><td>Yes</td></tr>
+            <tr><th scope="row">License</th><td><a href="${repository}/blob/main/LICENSE">MIT</a></td><td><a href="${firecrawlRepository}/blob/main/LICENSE">AGPL-3.0</a></td><td><a href="${crawl4aiRepository}/blob/main/LICENSE">Apache-2.0</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="section shell feature-stage reverse">
+      <figure><img src="/assets/security-boundary.svg" width="720" height="560" alt="Public web requests crossing DNS, redirect, origin, robots, and resource checks before extraction" /><figcaption>Cockroach Crawler competes on what an agent is allowed to reach and what evidence returns, not on a universal page-coverage claim.</figcaption></figure>
+      <div><p class="eyebrow">Where Cockroach Crawler is different</p><h2>Security and provenance are part of the return type.</h2><p>The Node transport validates the complete DNS answer set, pins a public address for each hop, rechecks redirects and robots, and applies exact traversal and byte budgets. The strict agent adapter cannot expand the limits selected by its creator.</p><ul class="check-list"><li>No hosted crawler account required for normal public URLs</li><li>No model call required for deterministic extraction</li><li>No cookie extraction or silent credential reuse</li><li>No CAPTCHA, paywall, login, or authorization bypass</li></ul></div>
+    </section>
+    <section class="section shell">
+      <div class="section-head"><div><p class="eyebrow">Where broader platforms win</p><h2>Use the specialist when its larger surface is the job.</h2></div><p>Cockroach Crawler should earn adoption through a precise contract, not by hiding capabilities it has not shipped.</p></div>
+      <div class="card-grid">
+        <article><h3>Choose Firecrawl for managed operations</h3><p>Hosted search, proxy and anti-block infrastructure, large asynchronous jobs, managed browser interaction, document parsing, and operational scale remain outside Cockroach Crawler’s compact package.</p><a class="text-link" href="${firecrawlDocs}">Read Firecrawl documentation →</a></article>
+        <article><h3>Choose Crawl4AI for broad Python workflows</h3><p>Adaptive crawling, session-rich browser control, policy-aware caching, PDF and media processing, multiple extraction strategies, and Python-native orchestration are broader in Crawl4AI today.</p><a class="text-link" href="${crawl4aiDocs}">Read Crawl4AI documentation →</a></article>
+      </div>
+    </section>
+    <section class="section shell proof-section">
+      <div><p class="eyebrow">Verify before choosing</p><h2>Run the crawler and inspect its boundaries.</h2><p>Install the stable package for production behavior. Mapping and deterministic extraction become stable only when an npm release contains their exact reviewed commit.</p><div class="button-row"><a class="button primary" href="/docs/">Run the quickstart</a><a class="button secondary" href="/security/">Audit the security model</a></div></div>
+      ${codeBlock("compare-proof", "local verification", "npm install cockroach-crawler@0.3.0\nnpx cockroach-sources doctor --json\nnpx cockroach-crawl https://example.com/docs --max-pages 20 --jsonl")}
+    </section>
+    <section class="section shell faq-section"><div><p class="eyebrow">Crawler selection FAQ</p><h2>Choose the smallest trustworthy surface.</h2></div><div class="faq-list">
+      <details><summary>What is the best AI web crawler for agents?</summary><p>The best crawler is the smallest tested contract that meets the deployment. Cockroach Crawler fits governed local evidence, Firecrawl fits managed web-data infrastructure, and Crawl4AI fits broad self-hosted Python crawling workflows.</p></details>
+      <details><summary>Is Cockroach Crawler better than Firecrawl?</summary><p>It is a stronger fit for local, evidence-first crawling where explicit agent network and resource boundaries matter. Firecrawl is broader for hosted search, proxy infrastructure, asynchronous jobs, managed interaction, document formats, and production scale.</p></details>
+      <details><summary>Is Cockroach Crawler better than Crawl4AI?</summary><p>It is a stronger fit for a compact Node.js agent boundary and normalized provenance. Crawl4AI is broader for adaptive crawling, browser sessions, extraction strategies, caching, document processing, and Python workflows.</p></details>
+      <details><summary>Can I replace either product without testing?</summary><p>No. Match URL sets, rendering mode, output fields, robots policy, retries, concurrency, network conditions, and deployment requirements before migrating.</p></details>
+      <details><summary>Where did the comparison data come from?</summary><p>Product claims were reviewed against the public <a href="${firecrawlRepository}">Firecrawl repository</a>, <a href="${firecrawlDocs}">Firecrawl documentation</a>, <a href="${crawl4aiRepository}">Crawl4AI repository</a>, and <a href="${crawl4aiDocs}">Crawl4AI documentation</a> on 23 July 2026.</p></details>
+    </div></section>`;
+}
+
 function stackPage() {
   return `
     <section class="page-hero shell"><p class="eyebrow">Governed agent stack</p><h1>One agent stack. Four explicit controls.</h1><p class="lede">Reach, action, context, and evidence compose without pretending that installation alone governs every call.</p><div class="page-actions"><a class="button primary" href="/docs/agents/">Govern a crawler tool</a><a class="button secondary" href="${productLoopRepository}">Inspect ProductLoop OS</a></div></section>
@@ -934,11 +1070,11 @@ await writeFile(join(dist, "404.html"), notFound, "utf8");
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`, "utf8");
 await writeFile(
   join(dist, "sitemap.xml"),
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.map((page) => `  <url><loc>${siteUrl}${page.slug ? `/${page.slug}/` : "/"}</loc><lastmod>2026-07-21</lastmod></url>`).join("\n")}\n</urlset>\n`,
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.map((page) => `  <url><loc>${siteUrl}${page.slug ? `/${page.slug}/` : "/"}</loc><lastmod>2026-07-23</lastmod></url>`).join("\n")}\n</urlset>\n`,
   "utf8"
 );
 await writeFile(join(dist, "site.webmanifest"), JSON.stringify({ name: "Cockroach Crawler", short_name: "Crawler", start_url: "/", display: "standalone", background_color: "#07100e", theme_color: "#07100e", icons: [{ src: "/assets/mark.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }] }, null, 2), "utf8");
 await writeFile(join(dist, "_headers"), `/*\n  Cache-Control: public, max-age=300, no-transform\n  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()\n\n/assets/*\n  Cache-Control: public, max-age=300, must-revalidate, no-transform\n\n/media/*\n  Cache-Control: public, max-age=3600, must-revalidate, no-transform\n`, "utf8");
-await writeFile(join(dist, "_redirects"), `/docs /docs/ 301\n/docs/cli /docs/cli/ 301\n/docs/javascript /docs/javascript/ 301\n/docs/map-and-extract /docs/map-and-extract/ 301\n/docs/agents /docs/agents/ 301\n/docs/providers /docs/providers/ 301\n/docs/serverless /docs/serverless/ 301\n/security /security/ 301\n/providers /providers/ 301\n/benchmark /benchmark/ 301\n/media /media/ 301\n/launch /launch/ 301\n/roadmap /roadmap/ 301\n/community /community/ 301\n/release /release/ 301\n`, "utf8");
-await writeFile(join(dist, "llms.txt"), `# Cockroach Crawler\n\nnpm stable 0.3.0 is a local Node.js crawler for public or explicitly trusted HTTP(S) pages. It enforces robots, explicit origin policy, public-network defaults, DNS-pinned requests, validated redirects, and resource budgets. It outputs readable text, Markdown, links, hashes, metadata, failures, and crawl stats.\n\nStable 0.3.0 includes a tested provider registry, ordered source routing, optional read-only reach providers, a Maqam-compatible browser-host contract, and a separate serverless profile. Public GitHub REST works with an optional token. The pinned yt-dlp route supports no-key YouTube reads without loading configuration, plugins, cookies, watched state, or media downloads. Optional OpenCLI session providers expose fixed read-only routes for X, Reddit, Facebook, Instagram, LinkedIn, and Xiaohongshu and never expose social writes or browser-cookie extraction. The serverless tier is self-hosted, token-authenticated, rate-limited, and restricted to deployment-configured HTTPS origins. It does not resolve, classify, or pin DNS answers. Browser runtimes remain separately isolated host responsibilities.\n\nThe current source build adds compact fetch-validated mapping and bounded deterministic CSS extraction. These are not stable npm claims until a release containing the exact commit is published.\n\n- Documentation overview: ${siteUrl}/docs/\n- CLI guide: ${siteUrl}/docs/cli/\n- JavaScript guide: ${siteUrl}/docs/javascript/\n- Map and extraction guide: ${siteUrl}/docs/map-and-extract/\n- Agent and Maqam guide: ${siteUrl}/docs/agents/\n- Provider guide: ${siteUrl}/docs/providers/\n- Serverless guide: ${siteUrl}/docs/serverless/\n- Security: ${siteUrl}/security/\n- Provider status: ${siteUrl}/providers/\n- Benchmark method and clean CI result: ${siteUrl}/benchmark/\n- Launch kit, campaign assets, and product directions: ${siteUrl}/launch/\n- Maqam governance documentation: ${maqamDocs}\n- Source: ${repository}\n- npm: ${npmPackage}\n`, "utf8");
+await writeFile(join(dist, "_redirects"), `/docs /docs/ 301\n/docs/cli /docs/cli/ 301\n/docs/javascript /docs/javascript/ 301\n/docs/map-and-extract /docs/map-and-extract/ 301\n/docs/agents /docs/agents/ 301\n/docs/providers /docs/providers/ 301\n/docs/serverless /docs/serverless/ 301\n/security /security/ 301\n/providers /providers/ 301\n/compare /compare/ 301\n/benchmark /benchmark/ 301\n/media /media/ 301\n/launch /launch/ 301\n/roadmap /roadmap/ 301\n/community /community/ 301\n/release /release/ 301\n`, "utf8");
+await writeFile(join(dist, "llms.txt"), `# Cockroach Crawler\n\nCockroach Crawler is an open-source AI web crawler for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It crawls permitted public sites and emits LLM-ready Markdown, JSON, or JSONL with canonical URLs, redirect history, content hashes, retrieval metadata, failures, warnings, and provenance.\n\nnpm stable 0.3.0 is a local Node.js crawler for public or explicitly trusted HTTP(S) pages. It enforces robots, explicit origin policy, public-network defaults, DNS-pinned requests, validated redirects, and resource budgets. It outputs readable text, Markdown, links, hashes, metadata, failures, and crawl stats.\n\nStable 0.3.0 includes a tested provider registry, ordered source routing, optional read-only reach providers, a Maqam-compatible browser-host contract, and a separate serverless profile. Public GitHub REST works with an optional token. The pinned yt-dlp route supports no-key YouTube reads without loading configuration, plugins, cookies, watched state, or media downloads. Optional OpenCLI session providers expose fixed read-only routes for X, Reddit, Facebook, Instagram, LinkedIn, and Xiaohongshu and never expose social writes or browser-cookie extraction. The serverless tier is self-hosted, token-authenticated, rate-limited, and restricted to deployment-configured HTTPS origins. It does not resolve, classify, or pin DNS answers. Browser runtimes remain separately isolated host responsibilities.\n\nThe current source build adds compact fetch-validated mapping and bounded deterministic CSS extraction. These are not stable npm claims until a release containing the exact commit is published.\n\nCockroach Crawler is strongest when an AI agent needs a local, inspectable network boundary and evidence-linked output. Firecrawl remains broader for managed web-data APIs, hosted search, proxies, asynchronous jobs, and managed scale. Crawl4AI remains broader for adaptive crawling, browser sessions, caching, document processing, extraction strategies, and Python workflows. The dated comparison links the public sources behind those statements.\n\n- Documentation overview: ${siteUrl}/docs/\n- AI crawler comparison: ${siteUrl}/compare/\n- CLI guide: ${siteUrl}/docs/cli/\n- JavaScript guide: ${siteUrl}/docs/javascript/\n- Map and extraction guide: ${siteUrl}/docs/map-and-extract/\n- Agent and Maqam guide: ${siteUrl}/docs/agents/\n- Provider guide: ${siteUrl}/docs/providers/\n- Serverless guide: ${siteUrl}/docs/serverless/\n- Security: ${siteUrl}/security/\n- Provider status: ${siteUrl}/providers/\n- Benchmark method and clean CI result: ${siteUrl}/benchmark/\n- Launch kit, campaign assets, and product directions: ${siteUrl}/launch/\n- Maqam governance documentation: ${maqamDocs}\n- Source: ${repository}\n- npm: ${npmPackage}\n`, "utf8");
 console.log(`Built ${pages.length} pages in ${dist}`);

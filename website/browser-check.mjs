@@ -39,6 +39,7 @@ const routes = [
   "/docs/serverless/",
   "/security/",
   "/providers/",
+  "/compare/",
   "/stack/",
   "/benchmark/",
   "/media/",
@@ -81,6 +82,7 @@ try {
     }));
     if (route === "/docs/") await page.screenshot({ path: `${output}/docs-desktop.png`, fullPage: true });
     if (route === "/providers/") await page.screenshot({ path: `${output}/providers-desktop.png`, fullPage: true });
+    if (route === "/compare/") await page.screenshot({ path: `${output}/compare-desktop.png`, fullPage: true });
     if (route === "/stack/") await page.screenshot({ path: `${output}/stack-desktop.png`, fullPage: true });
     if (route === "/release/") await page.screenshot({ path: `${output}/release-desktop.png`, fullPage: true });
     results.push({ route, status: response?.status(), ...metrics, badImages: metrics.images.filter((image) => !image.ok || !image.alt), errors });
