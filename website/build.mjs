@@ -490,6 +490,7 @@ function homePage() {
 
 function docsTopicNav() {
   const topics = [
+    ["Audit every feature and gap", "See stable npm behavior, next-release code, optional integrations, explicit non-goals, and the Crawl4AI parity matrix.", `${repository}/blob/main/docs/FEATURES.md`, "Open complete inventory"],
     ["Install and run the CLI", "Copy one bounded crawl command, choose JSON or JSONL output, and inspect failures.", "/docs/cli/", "Open CLI guide"],
     ["Embed the Node.js API", "Call crawlDetailed with typed limits, cancellation, page records, and crawl statistics.", "/docs/javascript/", "Open API guide"],
     ["Map and extract fields", "Return compact fetch-validated URL entries or bounded deterministic CSS fields.", "/docs/map-and-extract/", "Open map and extraction guide"],

@@ -162,7 +162,7 @@ try {
     await mobile.close();
   }
 
-  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions || video.captionsDefault) || (result.route === "/docs/" && (result.docsDirectory?.display !== "grid" || result.docsDirectory.cards !== 7)));
+  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions || video.captionsDefault) || (result.route === "/docs/" && (result.docsDirectory?.display !== "grid" || result.docsDirectory.cards !== 8)));
   const mobileFailed = mobileResults.filter((result) => result.status !== 200 || result.horizontal || result.navVisible === "none" || !result.currentNavVisible || !result.mobileToc || result.errors.length);
   console.log(JSON.stringify({ routes: results, keyboard: { firstFocus, afterSkip, copyLabel }, mediaServer, mobile: mobileResults }, null, 2));
   if (failed.length || mobileFailed.length || !mediaServer.captions || !mediaServer.range || firstFocus.className !== "skip-link" || afterSkip.id !== "main" || copyLabel !== "Copied") {

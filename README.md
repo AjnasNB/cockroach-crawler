@@ -478,8 +478,10 @@ field, value length, total values, and total characters have independent limits.
 rejects unknown options, accessors, inherited options, unsafe field names, bad
 selectors, and incompatible attribute settings before a crawl begins.
 
-See the [capability contract and roadmap](docs/CAPABILITIES.md) for the exact
-line between shipped core behavior, optional adapters, and hosted-platform work.
+See the [complete feature inventory](docs/FEATURES.md) and
+[capability contract and roadmap](docs/CAPABILITIES.md) for the exact line
+between stable npm behavior, next-release source behavior, optional adapters,
+explicit gaps, and hosted-platform work.
 
 ## Agent adapter
 
