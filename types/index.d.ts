@@ -20,6 +20,21 @@ export interface BrowserOptions {
   waitUntil?: "load" | "domcontentloaded" | "networkidle" | "commit";
   waitFor?: string | number;
   click?: string | string[];
+  scroll?: true | import("./browser.js").ScrollOptions;
+  flattenShadowDom?: boolean;
+  flattenIframes?: boolean;
+  /**
+   * Trusted operator functions evaluated in the page. Agent/model input must
+   * never populate this field.
+   */
+  hooks?: Array<(context: { index: number }) => unknown>;
+  allowPageJavaScript?: boolean;
+  artifactDirectory?: string;
+  maxArtifactBytes?: number;
+  screenshot?: boolean | import("./browser.js").ScreenshotOptions;
+  pdf?: boolean | import("./browser.js").PdfCaptureOptions;
+  profileDirectory?: string;
+  allowPersistentProfile?: boolean;
 }
 
 export interface CrawlFailure {
@@ -58,6 +73,21 @@ export interface CrawlPage {
   robotsAllowed?: boolean;
   structured?: Record<string, string | string[] | null>;
   extractionWarnings?: string[];
+  artifacts?: {
+    screenshot?: import("./browser.js").BrowserArtifact;
+    pdf?: import("./browser.js").BrowserArtifact;
+  };
+  browserDetails?: {
+    hooks: unknown[];
+    scroll: { steps: number; stableIterations: number; finalHeight: number } | null;
+    flattened: {
+      shadowRoots: number;
+      frames: number;
+      clonedNodes: number;
+      warnings: string[];
+    } | null;
+    persistentProfile: boolean;
+  };
 }
 
 export type StructuredExtractionSource = "text" | "html" | "attribute";
@@ -104,6 +134,7 @@ export interface CrawlStats {
   durationMs: number;
   startedAt: string;
   finishedAt: string;
+  traversal: import("./strategies.js").TraversalMode;
 }
 
 export interface CrawlPages extends Array<CrawlPage> {
@@ -146,6 +177,7 @@ export interface CrawlOptions {
   browser?: true | BrowserOptions;
   rendered?: true | BrowserOptions;
   extract?: StructuredExtractionOptions;
+  traversal?: import("./strategies.js").TraversalOptions | import("./strategies.js").TraversalMode;
   signal?: AbortSignal;
   dnsLookup?: DnsLookup;
   onPage?: (page: CrawlPage) => void | Promise<void>;

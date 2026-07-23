@@ -20,10 +20,13 @@ types, and documentation ship together.
 | Compact site map | Current source | `mapSite` / `--map` returns fetch-validated URL metadata without page bodies |
 | Deterministic CSS extraction | Current source | Text, cleaned inner HTML, or attributes with independent output ceilings |
 | JavaScript rendering | Stable `0.3.0`, optional | Playwright peer dependency behind the crawler's deny-by-default request proxy |
-| Deep crawl | Stable `0.3.0` | Breadth-first link traversal with depth, queue, page, request, origin, and filter limits |
-| Adaptive or relevance-driven crawl | Planned adapter | A scorer may narrow traversal, but may not expand creator-owned network or resource authority |
-| Persistent crawl cache | Planned | Must preserve validators, policy identity, expiry, content hashes, and credential separation |
-| PDF/media document parsing | Planned separate module | Opt-in parsers with MIME, byte, decompression, and process-isolation controls |
+| Deep crawl | Stable BFS in `0.3.0`; BFS/DFS/best-first/adaptive in current `0.4` source | Queue order changes under fixed depth, queue, page, request, origin, and filter limits |
+| Adaptive or relevance-driven crawl | Current `0.4` source | A bounded scorer prioritizes already-admitted URLs and cannot expand creator-owned network or resource authority |
+| Persistent crawl cache | Current `0.4` source | Explicit namespace, policy-bearing input key, expiry, content digest, entry, and byte limits |
+| PDF document parsing | Current `0.4` source | Explicit local bytes, signature check, byte/page/text ceilings, no URL fetch or embedded-script execution |
+| Browser screenshots and PDF | Current `0.4` source | Explicit artifact directory, byte limit, media type, and SHA-256 |
+| Shadow DOM, iframe, and virtual scroll | Current `0.4` source | Open/readable DOM only, bounded cloning and scroll work |
+| Docker API, playground, and MCP | Current `0.4` source | Deployment-owned origins and budgets; caller input can only narrow |
 
 `mapSite` is deliberately a fetch-validated map. Entries identify pages that
 passed transport and content policy; it does not claim the completeness of a
@@ -45,10 +48,10 @@ The source build supports:
 - identical extraction through `extractStructured`, the crawl `extract`
   option, and CLI `--extract`.
 
-It does not run JavaScript from the extraction schema, evaluate arbitrary
-expressions, or call a model. Model-assisted extraction belongs behind a
-host-supplied, separately governed adapter so model identity, data disclosure,
-cost, schema validation, and retry policy remain explicit.
+CSS and XPath extraction do not run JavaScript from the extraction schema.
+Current `0.4` source also exposes a host-supplied model adapter with bounded
+input/output and mandatory JSON Schema validation so model identity, data
+disclosure, cost, credentials, and retry policy remain explicit.
 
 HTML field values are untrusted markup, not sanitized application UI. Do not
 insert them into a browser DOM.
@@ -90,12 +93,13 @@ presented as equivalent to the Node transport.
 These are not core-package claims:
 
 - distributed durable job queues, job cancellation, and crash recovery;
-- hosted proxy pools, residential routing, or geo-routing;
+- bundled or hosted proxy pools, residential routing, or geo-routing (an
+  operator may compose explicit provider transports locally);
 - multi-tenant billing, quotas, and API-key management;
 - hosted search-engine aggregation;
 - webhook delivery and replay infrastructure;
 - persistent remote browser sessions and live-view streaming;
-- LLM extraction or research agents;
+- bundled models or autonomous research agents;
 - universal provider access.
 
 They can be built as services around the package. Keeping them outside core
