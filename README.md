@@ -5,15 +5,20 @@
 [![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
 
-**Give your AI agents eyes on the web: crawl complete sites, map URLs, render JavaScript, search supported sources, extract structured fields, and return LLM-ready evidence without handing them an unrestricted browser or network client.**
+**Give your AI agents web superpowers: crawl complete sites, render JavaScript, follow relevance, map URLs, extract structured data, parse PDFs, and return evidence without handing a model an unrestricted browser or network client.**
 
-Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to crawl documentation sections, build fetch-validated site maps, extract bounded CSS fields, search YouTube without a developer API key through the optional reviewed route, render JavaScript pages, and preserve source identity, redirects, hashes, warnings, and provenance.
+Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to run BFS, DFS, best-first, or adaptive traversal, build fetch-validated site maps, extract bounded CSS or XPath fields, search YouTube without a developer API key through the optional reviewed route, render JavaScript pages, and preserve source identity, redirects, hashes, warnings, artifacts, and provenance.
+
+It is built to be **the best AI crawler for governed agents** that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus—not a claim that it replaces every distributed scraping cloud or bypasses site controls.
 
 Every capability stays behind creator-owned origin, request, byte, redirect, concurrency, and time limits. Use the hardened local crawler for bounded public-web collection, the source router for explicit provider capabilities, optional reach providers for reviewed no-developer-key or session-backed reads, and the restricted self-hosted Worker only for allowlisted sites you operate or trust.
 
 ## Why developers choose Cockroach Crawler
 
 - **One install, several evidence paths:** crawl, map, render, extract, inspect provider availability, and export Markdown, JSON, or JSONL.
+- **Deep-crawl strategies that fit the task:** BFS, DFS, best-first relevance, or adaptive priority under the same hard crawl budgets.
+- **Browser and document evidence:** bounded screenshots, PDF generation and parsing, open Shadow DOM and readable iframe flattening, virtual-scroll helpers, and explicit persistent profiles.
+- **Deploy it where agents already run:** local API, CLI, native MCP server, authenticated Docker API, and browser playground.
 - **Agent-ready without ambient authority:** model input can narrow a crawl but cannot expand creator-owned origins, private-network access, browser authority, or resource ceilings.
 - **Local-first and open source:** normal public crawling needs no hosted account or crawler API key.
 - **Proof travels with the content:** canonical URLs, redirect history, content hashes, retrieval metadata, failures, warnings, and provenance stay attached to results.
@@ -32,13 +37,13 @@ Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compa
 
 It does **not** extract cookies, reuse hidden credentials, bypass logins, CAPTCHA, paywalls, robots policy, or access controls, and it exposes no social write actions.
 
-Version `0.3.0` is the stable package line prepared for the npm `latest` tag. Verify registry state with `npm view cockroach-crawler version dist-tags` before relying on a mutable dist-tag.
+Version `0.3.0` remains the immutable stable npm release while the source-backed `0.4.0` capability line is reviewed. Verify registry state with `npm view cockroach-crawler version dist-tags` before relying on a mutable dist-tag.
 
 The local crawler produces structured JSON/JSONL with readable text, Markdown, links, response metadata, redirect provenance, and content hashes for documentation indexing, RAG ingestion, content inventory, QA, research, and agent tools. The source adapters normalize GitHub, YouTube, X, and Reddit records when each provider's documented access requirements are met.
 
-It does not call an LLM, require a hosted account, or include stealth, CAPTCHA, paywall, authentication, or authorization bypasses.
+It does not bundle a model, model key, hosted account, stealth layer, CAPTCHA bypass, paywall bypass, or authorization bypass. Optional LLM extraction runs only through a host-supplied adapter and validates its output against the caller's JSON Schema.
 
-Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [comparison](https://cockroachcrawler.com/compare/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [serverless profile](./docs/SERVERLESS.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
+Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [advanced capabilities](./docs/ADVANCED.md) · [complete feature inventory](./docs/FEATURES.md) · [comparison](https://cockroachcrawler.com/compare/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
 
 ## Check reach before you call a source
 
@@ -116,7 +121,8 @@ Read [SECURITY.md](./SECURITY.md) before exposing crawling to model-generated or
 | Bounded local crawling from Node.js or a CLI | Strong |
 | A strictly limited crawler tool inside an agent runtime | Strong, with creator-owned origin and resource policy |
 | JavaScript-rendered pages with bounded explicit clicks | Optional Chromium mode; isolate it for untrusted targets |
-| Large distributed queues, proxy rotation, or hosted extraction APIs | Outside this compact single-process boundary; use a distributed or managed platform |
+| Explicit local provider/proxy rotation | Supported through operator-configured escalation providers; no bundled proxy fleet |
+| Large distributed queues or a multi-tenant hosted scraping cloud | Outside this compact single-process package |
 | Bypass paywalls, CAPTCHA, login walls, owner policy, or access control | Not supported |
 
 ## Install
@@ -132,6 +138,56 @@ Pin the exact stable release when reproducibility matters:
 ```bash
 npm install cockroach-crawler@0.3.0
 ```
+
+The reviewed `0.4.0` source line adds advanced package subpaths:
+
+```js
+import { crawl } from "cockroach-crawler";
+import { FileCrawlCache, createCachedCrawler } from "cockroach-crawler/cache";
+import { parsePdf } from "cockroach-crawler/documents";
+import { extractWithXPath, extractWithLlm } from "cockroach-crawler/extractors";
+```
+
+## Advanced AI crawler capabilities
+
+One bounded browser crawl can render, scroll, flatten, capture, and retain an explicitly authorized profile:
+
+```js
+const pages = await crawl({
+  seeds: ["https://docs.example.com"],
+  maxPages: 50,
+  traversal: {
+    mode: "adaptive",
+    query: "authentication migration"
+  },
+  browser: {
+    waitUntil: "networkidle",
+    scroll: { maxSteps: 20, stableIterations: 3 },
+    flattenShadowDom: true,
+    flattenIframes: true,
+    screenshot: true,
+    pdf: true,
+    artifactDirectory: ".cockroach-artifacts"
+  }
+});
+```
+
+The source line includes:
+
+- BFS, DFS, best-first, and adaptive/relevance traversal;
+- persistent hash-verified, TTL-bounded disk crawl cache;
+- screenshot capture, PDF generation, and byte/page/text-bounded PDF parsing;
+- open Shadow DOM and readable same-origin iframe flattening;
+- bounded infinite/virtual-scroll helpers;
+- trusted operator page hooks and arbitrary JavaScript, never exposed to model input by default;
+- deterministic CSS and XPath extraction;
+- optional host-supplied LLM schema extraction with input/output ceilings and JSON Schema validation;
+- operator-configured provider/proxy rotation and challenge detection without CAPTCHA or authorization bypass;
+- an authenticated Docker crawler API with a responsive playground;
+- a native MCP server whose tools cannot widen deployment-owned origins or budgets;
+- explicitly authorized persistent Chromium profile directories.
+
+See [Advanced capabilities](./docs/ADVANCED.md) for the authority model and complete examples.
 
 For the stable crawler CLI:
 

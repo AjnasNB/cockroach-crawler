@@ -1,7 +1,7 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.3.0",
-  "description": "Open-source AI web crawler for agents: crawl, map, render, and extract public web data into evidence with explicit network and resource limits.",
+  "version": "0.4.0",
+  "description": "Give AI agents superpowers on the web: crawl, render, map, extract, and verify evidence through one governed Node.js crawler.",
   "license": "MIT",
   "author": "Ajnas NB <ajnasnb@gmail.com>",
   "type": "module",
@@ -9,7 +9,10 @@
     "cockroach-crawl": "bin/cockroach-crawl.js",
     "cockroach-crawler": "bin/cockroach-crawl.js",
     "cockroach-sources": "bin/cockroach-sources.js",
-    "cockroach-reach": "bin/cockroach-reach.js"
+    "cockroach-reach": "bin/cockroach-reach.js",
+    "cockroach-documents": "bin/cockroach-documents.js",
+    "cockroach-mcp": "bin/cockroach-mcp.js",
+    "cockroach-server": "bin/cockroach-server.js"
   },
   "main": "src/index.js",
   "types": "types/index.d.ts",
@@ -54,6 +57,46 @@
       "types": "./types/serverless.d.ts",
       "import": "./src/serverless.js",
       "default": "./src/serverless.js"
+    },
+    "./strategies": {
+      "types": "./types/strategies.d.ts",
+      "import": "./src/strategies.js",
+      "default": "./src/strategies.js"
+    },
+    "./cache": {
+      "types": "./types/cache.d.ts",
+      "import": "./src/cache.js",
+      "default": "./src/cache.js"
+    },
+    "./documents": {
+      "types": "./types/documents.d.ts",
+      "import": "./src/documents.js",
+      "default": "./src/documents.js"
+    },
+    "./extractors": {
+      "types": "./types/extractors.d.ts",
+      "import": "./src/extractors.js",
+      "default": "./src/extractors.js"
+    },
+    "./browser": {
+      "types": "./types/browser.d.ts",
+      "import": "./src/browser.js",
+      "default": "./src/browser.js"
+    },
+    "./providers": {
+      "types": "./types/providers.d.ts",
+      "import": "./src/providers.js",
+      "default": "./src/providers.js"
+    },
+    "./mcp": {
+      "types": "./types/mcp.d.ts",
+      "import": "./src/mcp.js",
+      "default": "./src/mcp.js"
+    },
+    "./server": {
+      "types": "./types/server.d.ts",
+      "import": "./src/server.js",
+      "default": "./src/server.js"
     }
   },
   "files": [
@@ -79,6 +122,8 @@
     "docs/BENCHMARK.md",
     "docs/CAPABILITIES.md",
     "docs/FEATURES.md",
+    "docs/ADVANCED.md",
+    "Dockerfile",
     "README.md",
     "SECURITY.md",
     "CONTRIBUTING.md",
@@ -89,7 +134,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/browser-host.test.js test/cli.test.js test/crawler.test.js test/external-sources-cli.test.js test/external-sources.test.js test/limits.test.js test/release-kit.test.js test/security.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
+    "test": "node --test test/advanced.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/external-sources-cli.test.js test/external-sources.test.js test/limits.test.js test/release-kit.test.js test/security.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
     "test:browser": "node --test browser-test/integration.test.js",
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
@@ -99,7 +144,9 @@
     "bench": "node bench/local-benchmark.mjs",
     "worker:check": "wrangler deploy --dry-run --outdir .wrangler-dist --config worker/wrangler.jsonc",
     "worker:types": "wrangler types --config worker/wrangler.jsonc worker/env.d.ts",
-    "crawl": "node bin/cockroach-crawl.js"
+    "crawl": "node bin/cockroach-crawl.js",
+    "mcp": "node bin/cockroach-mcp.js",
+    "serve": "node bin/cockroach-server.js"
   },
   "keywords": [
     "crawler",
@@ -125,17 +172,29 @@
     "x-api",
     "browser-session",
     "browser-agent",
+    "adaptive-crawling",
+    "depth-first-crawl",
+    "pdf-extraction",
+    "xpath",
+    "mcp-server",
+    "docker-crawler",
     "linkedin",
     "ssrf-protection",
     "cloudflare-workers",
     "serverless"
   ],
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@xmldom/xmldom": "^0.9.10",
+    "ajv": "^8.18.0",
     "cheerio": "^1.0.0",
+    "fontoxpath": "^3.34.0",
     "ipaddr.js": "^2.4.0",
+    "pdf-parse": "^2.4.5",
     "robots-parser": "^3.0.1",
     "turndown": "^7.2.0",
-    "undici": "^7.28.0"
+    "undici": "^7.28.0",
+    "zod": "^4.4.3"
   },
   "peerDependencies": {
     "playwright": ">=1.48.0 <2"
@@ -146,12 +205,12 @@
     }
   },
   "devDependencies": {
-    "ajv": "^8.18.0",
     "playwright": "^1.61.1",
     "typescript": "^7.0.2",
     "wrangler": "^4.83.0"
   },
   "overrides": {
+    "@hono/node-server": "2.0.11",
     "sharp": "0.35.0"
   },
   "engines": {

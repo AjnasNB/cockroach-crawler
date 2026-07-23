@@ -4,12 +4,20 @@ import * as cheerio from "cheerio";
 import robotsParser from "robots-parser";
 import TurndownService from "turndown";
 import { getSetCookies } from "undici";
+import {
+  capturePageArtifacts,
+  flattenPageDom,
+  normalizeScrollOptions,
+  runPageHooks,
+  scrollPage
+} from "./browser.js";
 import { PACKAGE_VERSION } from "./version.js";
 import {
   createCrawlerSecurityError,
   resolveUrlTarget,
   withPinnedFetch
 } from "./security.js";
+import { createTraversalQueue, normalizeTraversalOptions } from "./strategies.js";
 
 const DEFAULT_USER_AGENT = `CockroachCrawler/${PACKAGE_VERSION} (+https://github.com/AjnasNB/cockroach-crawler)`;
 const DEFAULT_MAX_BYTES = 3 * 1024 * 1024;
@@ -44,8 +52,22 @@ const BROWSER_KEYS = new Set([
   "saveStorageState",
   "waitUntil",
   "waitFor",
-  "click"
+  "click",
+  "scroll",
+  "flattenShadowDom",
+  "flattenIframes",
+  "hooks",
+  "allowPageJavaScript",
+  "artifactDirectory",
+  "maxArtifactBytes",
+  "screenshot",
+  "pdf",
+  "profileDirectory",
+  "allowPersistentProfile"
 ]);
+const BROWSER_SCROLL_KEYS = new Set(["maxSteps", "stepPixels", "delayMs", "stableIterations"]);
+const BROWSER_SCREENSHOT_KEYS = new Set(["format", "quality", "fullPage"]);
+const BROWSER_PDF_KEYS = new Set(["format", "landscape", "printBackground", "preferCSSPageSize"]);
 const CRAWL_OPTION_KEYS = new Set([
   "seeds",
   "urls",
@@ -80,6 +102,7 @@ const CRAWL_OPTION_KEYS = new Set([
   "browser",
   "rendered",
   "extract",
+  "traversal",
   "onPage",
   "onError",
   "signal",
@@ -384,6 +407,46 @@ function stringOption(value, name, maximum = 4_096) {
   return value;
 }
 
+function optionalBoolean(value, name, fallback = false) {
+  if (value === undefined) return fallback;
+  if (typeof value !== "boolean") throw new TypeError(`${name} must be a boolean.`);
+  return value;
+}
+
+function normalizeScreenshotOptions(value) {
+  if (!value) return null;
+  const screenshot = value === true
+    ? Object.create(null)
+    : snapshotOptionRecord(value, "browser.screenshot", BROWSER_SCREENSHOT_KEYS);
+  const format = screenshot.format ?? "png";
+  if (!["png", "jpeg"].includes(format)) {
+    throw new TypeError("browser.screenshot.format must be png or jpeg.");
+  }
+  if (format !== "jpeg" && screenshot.quality !== undefined) {
+    throw new TypeError("browser.screenshot.quality requires format='jpeg'.");
+  }
+  return Object.freeze({
+    format,
+    quality: format === "jpeg"
+      ? integerOption(screenshot.quality, "browser.screenshot.quality", 85, 1, 100)
+      : undefined,
+    fullPage: optionalBoolean(screenshot.fullPage, "browser.screenshot.fullPage", true)
+  });
+}
+
+function normalizePdfOptions(value) {
+  if (!value) return null;
+  const pdf = value === true
+    ? Object.create(null)
+    : snapshotOptionRecord(value, "browser.pdf", BROWSER_PDF_KEYS);
+  return Object.freeze({
+    format: stringOption(pdf.format ?? "A4", "browser.pdf.format", 32),
+    landscape: optionalBoolean(pdf.landscape, "browser.pdf.landscape"),
+    printBackground: optionalBoolean(pdf.printBackground, "browser.pdf.printBackground", true),
+    preferCSSPageSize: optionalBoolean(pdf.preferCSSPageSize, "browser.pdf.preferCSSPageSize")
+  });
+}
+
 function normalizeBrowserOptions(value, timeoutMs) {
   if (!value) return null;
   const browser = value === true
@@ -420,8 +483,62 @@ function normalizeBrowserOptions(value, timeoutMs) {
   const click = asList(browser.click);
   if (click.length > 10) throw new TypeError("browser.click accepts at most 10 selectors.");
   const selectors = click.map((selector) => stringOption(selector, "browser.click selector", 2_048));
+  let scroll = null;
+  if (browser.scroll) {
+    const rawScroll = browser.scroll === true
+      ? Object.create(null)
+      : snapshotOptionRecord(browser.scroll, "browser.scroll", BROWSER_SCROLL_KEYS);
+    scroll = normalizeScrollOptions(rawScroll);
+  }
+  const hooks = browser.hooks === undefined ? [] : snapshotArrayValues(browser.hooks, "browser.hooks");
+  if (hooks.length > 10) throw new TypeError("browser.hooks accepts at most 10 trusted functions.");
+  for (let index = 0; index < hooks.length; index += 1) {
+    if (typeof hooks[index] !== "function") {
+      throw new TypeError(`browser.hooks[${index}] must be a trusted function.`);
+    }
+  }
+  const allowPageJavaScript = optionalBoolean(
+    browser.allowPageJavaScript,
+    "browser.allowPageJavaScript"
+  );
+  if (hooks.length && !allowPageJavaScript) {
+    throw new TypeError("browser.hooks requires browser.allowPageJavaScript=true.");
+  }
+  const flattenShadowDom = optionalBoolean(
+    browser.flattenShadowDom,
+    "browser.flattenShadowDom"
+  );
+  const flattenIframes = optionalBoolean(browser.flattenIframes, "browser.flattenIframes");
+  const screenshot = normalizeScreenshotOptions(browser.screenshot);
+  const pdf = normalizePdfOptions(browser.pdf);
+  const artifactDirectory = screenshot || pdf
+    ? stringOption(
+        browser.artifactDirectory ?? ".cockroach-artifacts",
+        "browser.artifactDirectory",
+        4_096
+      )
+    : undefined;
+  const profileDirectory = stringOption(
+    browser.profileDirectory,
+    "browser.profileDirectory",
+    4_096
+  );
+  const allowPersistentProfile = optionalBoolean(
+    browser.allowPersistentProfile,
+    "browser.allowPersistentProfile"
+  );
+  if (profileDirectory && !allowPersistentProfile) {
+    throw new TypeError(
+      "browser.profileDirectory requires browser.allowPersistentProfile=true."
+    );
+  }
+  if (profileDirectory && (browser.storageState || browser.saveStorageState)) {
+    throw new TypeError(
+      "browser.profileDirectory cannot be combined with storageState or saveStorageState."
+    );
+  }
 
-  return {
+  return Object.freeze({
     headless: browser.headless ?? !browser.headed,
     channel: stringOption(browser.channel, "browser.channel", 128),
     executablePath: stringOption(browser.executablePath, "browser.executablePath", 4_096),
@@ -429,8 +546,25 @@ function normalizeBrowserOptions(value, timeoutMs) {
     saveStorageState: stringOption(browser.saveStorageState, "browser.saveStorageState", 4_096),
     waitUntil,
     waitFor,
-    click: selectors
-  };
+    click: Object.freeze(selectors),
+    scroll,
+    flattenShadowDom,
+    flattenIframes,
+    hooks: Object.freeze(hooks),
+    allowPageJavaScript,
+    artifactDirectory,
+    maxArtifactBytes: integerOption(
+      browser.maxArtifactBytes,
+      "browser.maxArtifactBytes",
+      25 * 1024 * 1024,
+      1_024,
+      100 * 1024 * 1024
+    ),
+    screenshot,
+    pdf,
+    profileDirectory,
+    allowPersistentProfile
+  });
 }
 
 function normalizeExtractionOptions(value) {
@@ -595,6 +729,7 @@ function normalizeOptions(input, seedCount) {
     retryDelayMs: integerOption(input.retryDelayMs, "retryDelayMs", 250, 0, 30_000),
     browser: normalizeBrowserOptions(input.browser || input.rendered, timeoutMs),
     extract: normalizeExtractionOptions(input.extract),
+    traversal: normalizeTraversalOptions(input.traversal || {}),
     onPage: typeof input.onPage === "function" ? input.onPage : null,
     onError: typeof input.onError === "function" ? input.onError : null,
     signal: input.signal || null,
@@ -993,32 +1128,6 @@ export function extractPage(html, url, options = {}) {
     page.extractionWarnings = result.warnings;
   }
   return page;
-}
-
-class CrawlQueue {
-  constructor() {
-    this.items = [];
-    this.offset = 0;
-  }
-
-  push(item) {
-    this.items.push(item);
-  }
-
-  shift() {
-    if (this.offset >= this.items.length) return null;
-    const value = this.items[this.offset];
-    this.offset += 1;
-    if (this.offset > 1_000 && this.offset * 2 > this.items.length) {
-      this.items = this.items.slice(this.offset);
-      this.offset = 0;
-    }
-    return value;
-  }
-
-  get length() {
-    return this.items.length - this.offset;
-  }
 }
 
 function retryDelay(error, attempt, options) {
@@ -1479,7 +1588,7 @@ async function createBrowserFetcher(options, hooks) {
         { transport: "browser-proxy-sink" }
       ));
     });
-    browser = await chromium.launch({
+    const launchOptions = {
       headless: options.browser.headless,
       channel: options.browser.channel,
       executablePath: options.browser.executablePath,
@@ -1499,14 +1608,26 @@ async function createBrowserFetcher(options, hooks) {
         "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
         "--no-first-run"
       ]
-    });
-    if (options.signal?.aborted) throw abortError(options.signal);
-    context = await browser.newContext({
+    };
+    const contextOptions = {
       userAgent: options.userAgent,
-      storageState: options.browser.storageState,
       serviceWorkers: "block",
       acceptDownloads: false
-    });
+    };
+    if (options.browser.profileDirectory) {
+      context = await chromium.launchPersistentContext(
+        options.browser.profileDirectory,
+        { ...launchOptions, ...contextOptions }
+      );
+    } else {
+      browser = await chromium.launch(launchOptions);
+      if (options.signal?.aborted) throw abortError(options.signal);
+      context = await browser.newContext({
+        ...contextOptions,
+        storageState: options.browser.storageState
+      });
+    }
+    if (options.signal?.aborted) throw abortError(options.signal);
     proxyHooks = {
       ...hooks,
       async cookieHeader(url, requestContext) {
@@ -1877,6 +1998,48 @@ async function createBrowserFetcher(options, hooks) {
         if (session.blockedError) throw session.blockedError;
         await completeMainReplay();
 
+        let hookResults = [];
+        if (options.browser.hooks.length) {
+          hookResults = await runPageHooks(page, options.browser.hooks, {
+            maxHooks: 10,
+            timeoutMs: remainingBrowserTimeout(options),
+            maxResultCharacters: 32_768
+          });
+          await drainRoutes();
+          if (options.signal?.aborted) throw abortError(options.signal);
+          if (session.blockedError) throw session.blockedError;
+          await completeMainReplay();
+        }
+
+        let scrollResult = null;
+        if (options.browser.scroll) {
+          scrollResult = await scrollPage(page, options.browser.scroll);
+          await drainRoutes();
+          if (options.signal?.aborted) throw abortError(options.signal);
+          if (session.blockedError) throw session.blockedError;
+          await completeMainReplay();
+        }
+
+        const finalUrl = normalizeUrl(page.url(), options.maxUrlLength);
+        await hooks.validateFinalUrl(finalUrl);
+        const artifacts = options.browser.screenshot || options.browser.pdf
+          ? await capturePageArtifacts(page, finalUrl, {
+              directory: options.browser.artifactDirectory,
+              maxArtifactBytes: options.browser.maxArtifactBytes,
+              screenshot: options.browser.screenshot,
+              pdf: options.browser.pdf
+            })
+          : {};
+        const flattened = options.browser.flattenShadowDom || options.browser.flattenIframes
+          ? await flattenPageDom(page, {
+              shadowDom: options.browser.flattenShadowDom,
+              iframes: options.browser.flattenIframes
+            })
+          : null;
+        await drainRoutes();
+        if (options.signal?.aborted) throw abortError(options.signal);
+        if (session.blockedError) throw session.blockedError;
+
         // Freeze the session before the final snapshot. New routes are aborted
         // without proxying, while routes that already began are drained and
         // checked before page state is accepted.
@@ -1884,8 +2047,6 @@ async function createBrowserFetcher(options, hooks) {
         await drainRoutes();
         if (options.signal?.aborted) throw abortError(options.signal);
         if (session.blockedError) throw session.blockedError;
-        const finalUrl = normalizeUrl(page.url(), options.maxUrlLength);
-        await hooks.validateFinalUrl(finalUrl);
         const text = await page.content();
         const bytes = Buffer.byteLength(text, "utf8");
         if (bytes > options.maxBytes) {
@@ -1902,7 +2063,14 @@ async function createBrowserFetcher(options, hooks) {
           contentType: main?.contentType || "text/html; charset=utf-8",
           retryAfter: main?.retryAfter || null,
           etag: main?.etag || null,
-          lastModified: main?.lastModified || null
+          lastModified: main?.lastModified || null,
+          artifacts,
+          browserDetails: {
+            hooks: hookResults,
+            scroll: scrollResult,
+            flattened,
+            persistentProfile: Boolean(options.browser.profileDirectory)
+          }
         };
       } catch (error) {
         if (options.signal?.aborted) throw abortError(options.signal);
@@ -1943,9 +2111,9 @@ async function createBrowserFetcher(options, hooks) {
         options.signal?.removeEventListener("abort", emergencyClose);
         const cleanup = Promise.allSettled([
           context.close(),
-          browser.close(),
+          browser?.close(),
           sink.close()
-        ]);
+        ].filter(Boolean));
         await awaitWithSignal(cleanup, options.signal).catch(() => {});
       }
     }
@@ -1974,7 +2142,7 @@ export async function crawlDetailed(input = {}) {
     : deadlineController.signal;
   options.signal = operationSignal;
 
-  const queue = new CrawlQueue();
+  const queue = createTraversalQueue(options.traversal);
   const seen = new Set();
   const seenFinal = new Set();
   const enqueued = new Set();
@@ -2056,7 +2224,7 @@ export async function crawlDetailed(input = {}) {
     stats.bytes += bytes;
   };
 
-  const enqueue = (url, depth = 0, discoveredFrom = null, isSeed = false) => {
+  const enqueue = (url, depth = 0, discoveredFrom = null, isSeed = false, scoreContext = null) => {
     let normalized;
     try {
       normalized = normalizeUrl(url, options.maxUrlLength);
@@ -2078,8 +2246,14 @@ export async function crawlDetailed(input = {}) {
       stats.queueDropped += 1;
       return false;
     }
+    const accepted = queue.push({
+      url: normalized,
+      depth,
+      discoveredFrom,
+      scoreContext: scoreContext ? { ...scoreContext, url: normalized } : { url: normalized }
+    });
+    if (!accepted) return false;
     enqueued.add(normalized);
-    queue.push({ url: normalized, depth, discoveredFrom });
     return true;
   };
 
@@ -2285,6 +2459,10 @@ export async function crawlDetailed(input = {}) {
           page.etag = result.etag || null;
           page.lastModified = result.lastModified || null;
           page.robotsAllowed = options.obeyRobots;
+          if (result.artifacts && Object.keys(result.artifacts).length) {
+            page.artifacts = result.artifacts;
+          }
+          if (result.browserDetails) page.browserDetails = result.browserDetails;
           return page;
         } catch (error) {
           if (operationSignal.aborted) throw abortError(operationSignal);
@@ -2316,7 +2494,13 @@ export async function crawlDetailed(input = {}) {
         pages.push(page);
         await runBoundedCallback(options.onPage, { ...page, links: [...page.links] }, operationSignal);
         if (page.depth < options.maxDepth) {
-          for (const link of page.links) enqueue(link, page.depth + 1, page.url);
+          for (const link of page.links) {
+            enqueue(link, page.depth + 1, page.url, false, {
+              title: page.title,
+              description: page.description,
+              text: page.text
+            });
+          }
         }
       }
     }
@@ -2335,7 +2519,8 @@ export async function crawlDetailed(input = {}) {
         seen: seen.size,
         durationMs: finishedAtMs - startedAtMs,
         startedAt: new Date(startedAtMs).toISOString(),
-        finishedAt: new Date(finishedAtMs).toISOString()
+        finishedAt: new Date(finishedAtMs).toISOString(),
+        traversal: options.traversal.mode
       }
     };
   } finally {

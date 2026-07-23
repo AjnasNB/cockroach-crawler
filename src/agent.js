@@ -21,7 +21,16 @@ const TRUSTED_BROWSER_KEYS = new Set([
   "saveStorageState",
   "waitUntil",
   "waitFor",
-  "click"
+  "click",
+  "scroll",
+  "flattenShadowDom",
+  "flattenIframes",
+  "artifactDirectory",
+  "maxArtifactBytes",
+  "screenshot",
+  "pdf",
+  "profileDirectory",
+  "allowPersistentProfile"
 ]);
 const AGENT_DEFAULT_KEYS = new Set([
   "maxPages",
@@ -52,6 +61,7 @@ const AGENT_DEFAULT_KEYS = new Set([
   "maxRetries",
   "retryDelayMs",
   "extract",
+  "traversal",
   "allowBrowser",
   "browser",
   "signal",
@@ -301,10 +311,20 @@ function snapshotDefaults(defaults) {
         return entry;
       }));
     }
+    for (const key of ["scroll", "screenshot", "pdf"]) {
+      if (browserSource[key] && browserSource[key] !== true) {
+        browser[key] = snapshotPlainData(browserSource[key], `defaults.browser.${key}`);
+      }
+    }
     snapshot.browser = Object.freeze(browser);
   }
   if (source.extract !== undefined) {
     snapshot.extract = snapshotPlainData(source.extract, "defaults.extract");
+  }
+  if (source.traversal !== undefined) {
+    snapshot.traversal = typeof source.traversal === "string"
+      ? source.traversal
+      : snapshotPlainData(source.traversal, "defaults.traversal");
   }
   return Object.freeze(snapshot);
 }
@@ -459,6 +479,7 @@ export function createCockroachCrawlerTool(defaults = {}) {
         retryDelayMs: trustedDefaults.retryDelayMs ?? 250,
         browser: validated.browser,
         extract: trustedDefaults.extract,
+        traversal: trustedDefaults.traversal,
         signal: trustedDefaults.signal,
         dnsLookup: trustedDefaults.dnsLookup,
         onPage: trustedDefaults.onPage,

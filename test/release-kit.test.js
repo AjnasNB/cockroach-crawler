@@ -24,14 +24,31 @@ test("the packed feature inventory stays complete and release-honest", async () 
     "Optional Agent-Reach-style channel layer",
     "Maqam-compatible structural browser host",
     "Restricted serverless Worker tier",
+    "Advanced deep-crawl, browser, extraction, and deployment modules",
     "Verification and supply-chain features",
     "What the latest branch adds",
     "Crawl4AI parity matrix"
   ]) {
     assert.match(features, new RegExp(`^## ${section}$`, "m"), section);
   }
-  assert.match(features, /Not implemented/);
-  assert.match(features, /Do not\s+claim those features/);
+  for (const capability of [
+    "BFS, DFS, best-first, and adaptive/relevance",
+    "Hash-verified persistent JSON crawl cache",
+    "Full-page PNG/JPEG screenshot",
+    "Local PDF parsing",
+    "Open Shadow DOM flattening",
+    "Readable same-origin iframe flattening",
+    "Bounded infinite/virtual-scroll",
+    "Trusted operator page hooks",
+    "XPath extraction",
+    "Optional host-supplied LLM extraction",
+    "Explicit provider/proxy rotation",
+    "Native MCP tools",
+    "Authenticated Node/Docker API"
+  ]) {
+    assert.match(features, new RegExp(capability.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"));
+  }
+  assert.doesNotMatch(features, /DFS and relevance\/adaptive strategies \| Not implemented/);
 });
 
 test("alpha release checksums match every named release source asset", async () => {

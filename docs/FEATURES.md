@@ -1,17 +1,18 @@
 # Cockroach Crawler Feature Inventory
 
-This is the source-backed inventory for the `feature/bounded-map-extraction`
-branch that is proposed for the next release. Stable npm remains `0.3.0` until
-the reviewed branch is merged and a new immutable artifact is published.
+This is the source-backed inventory for the `0.4.0` capability candidate.
+Stable npm remains `0.3.0` until this candidate is reviewed and a new immutable
+artifact is published.
 
 Status terms:
 
 - **Stable 0.3.0** means the feature exists in the current npm package.
-- **Next release** means the implementation, public types, tests, and docs exist
-  on the reviewed source branch but are not in npm `0.3.0`.
+- **Current 0.4 source** means the implementation, public types, tests, and
+  docs exist on the reviewed source branch but are not in npm `0.3.0`.
 - **Optional** means the feature requires an explicitly installed peer,
   credential, executable, browser session, or deployment component.
-- **Not implemented** means Cockroach Crawler must not advertise the feature.
+- **Excluded** means Cockroach Crawler deliberately does not advertise or
+  implement the capability.
 
 ## Installation and integration surfaces
 
@@ -38,7 +39,8 @@ Status terms:
 
 - Multiple seed URLs and seed loading from a text file.
 - Static HTTP and HTTPS crawling.
-- Breadth-first link traversal with a creator-owned maximum depth.
+- Breadth-first, depth-first, best-first, and adaptive/relevance link
+  traversal with a creator-owned maximum depth.
 - Same-origin traversal by default.
 - Explicit cross-origin mode limited to a normalized origin allowlist.
 - Include and exclude URL filters.
@@ -64,7 +66,7 @@ Status terms:
   decoded-byte growth.
 - Async `onPage` and `onError` callbacks with detached, frozen records and
   deadline enforcement.
-- **Next release:** fetch-validated compact site maps through `mapSite()` and
+- **Current 0.4 source:** fetch-validated compact site maps through `mapSite()` and
   CLI `--map`.
 
 ## Page extraction and output
@@ -85,17 +87,17 @@ Status terms:
 - JSON output.
 - JSON Lines output.
 - Atomic file output to explicit nested paths.
-- **Next release:** deterministic CSS extraction from visible text, cleaned
+- **Current 0.4 source:** deterministic CSS extraction from visible text, cleaned
   inner HTML, or a named attribute.
-- **Next release:** single and multiple extraction values.
-- **Next release:** per-field item limits.
-- **Next release:** relative HTTP(S) URL resolution for attribute values.
-- **Next release:** independent maximum field, input-character, item,
+- **Current 0.4 source:** single and multiple extraction values.
+- **Current 0.4 source:** per-field item limits.
+- **Current 0.4 source:** relative HTTP(S) URL resolution for attribute values.
+- **Current 0.4 source:** independent maximum field, input-character, item,
   per-value, total-value, and total-character limits.
-- **Next release:** deterministic extraction truncation warnings.
-- **Next release:** extraction through `extractStructured`, crawl option
+- **Current 0.4 source:** deterministic extraction truncation warnings.
+- **Current 0.4 source:** extraction through `extractStructured`, crawl option
   `extract`, agent creator defaults, and CLI `--extract`.
-- **Next release:** rejection of unknown/inherited options, accessors,
+- **Current 0.4 source:** rejection of unknown/inherited options, accessors,
   prototype-sensitive field names, invalid selectors, invalid attributes,
   active content, and incompatible settings before crawl dispatch.
 
@@ -250,11 +252,52 @@ The Worker runtime does not provide Node DNS classification or pinning, browser
 rendering, authenticated providers, session-backed social reads, or arbitrary
 request-selected origins.
 
+## Advanced deep-crawl, browser, extraction, and deployment modules
+
+- BFS, DFS, best-first, and adaptive/relevance queue strategies.
+- Bounded built-in keyword relevance scoring plus an operator-only custom
+  scorer contract.
+- Hash-verified persistent JSON crawl cache with explicit directory,
+  namespace, TTL, entry count, and byte limits.
+- Full-page PNG/JPEG screenshot evidence with artifact size and SHA-256.
+- Browser PDF generation with format, background, landscape, and CSS-page
+  controls plus artifact size and SHA-256.
+- Local PDF parsing from explicit bytes with signature, byte, page, and text
+  ceilings; no URL fetching or embedded-script execution.
+- Open Shadow DOM flattening with bounded root and cloned-node counts.
+- Readable same-origin iframe flattening with bounded frame and cloned-node
+  counts; cross-origin frames stay inaccessible.
+- Bounded infinite/virtual-scroll helper with step, pixel, delay, and
+  stability controls.
+- Trusted operator page hooks with explicit enablement, hook count, time, and
+  serialized-result limits.
+- Persistent browser profiles only from an explicit operator directory and
+  explicit `allowPersistentProfile` authorization.
+- XPath extraction from inactive markup with field, input, item, value, and
+  total output ceilings.
+- Optional host-supplied LLM extraction with bounded content disclosure,
+  bounded output, JSON parsing, and mandatory JSON Schema validation.
+- Explicit provider/proxy rotation with attempt provenance and fixed
+  escalation statuses.
+- Access-challenge detection that stops by default and never adds CAPTCHA,
+  login, paywall, robots, or authorization bypass.
+- Native MCP tools for crawl, compact map, and deterministic extraction plus a
+  machine-readable capability resource.
+- MCP input can lower but cannot raise deployment-owned page, depth, origin,
+  private-network, browser, or credential authority.
+- Authenticated Node/Docker API with fixed deployment crawl policy, bounded
+  request and response bodies, health endpoint, and responsive playground.
+- Dedicated CLIs for crawl, source routing, optional reach, local PDF parsing,
+  MCP stdio, and the authenticated crawler server.
+
+The detailed API and authority contract is in
+[ADVANCED.md](./ADVANCED.md).
+
 ## Verification and supply-chain features
 
-- 173 core, source, security, Worker, browser-host, CLI, and release tests on
+- 184 core, advanced, source, security, Worker, browser-host, CLI, MCP-transport, and release tests on
   the proposed branch.
-- 26 real Chromium integration tests.
+- 28 real Chromium integration tests.
 - Node 22, 24, and 26 CI.
 - Packed JavaScript and strict TypeScript consumer tests.
 - Project-local loopback performance/correctness benchmark.
@@ -269,22 +312,16 @@ request-selected origins.
 
 ## What the latest branch adds
 
-1. `mapSite()` and CLI `--map`.
-2. `extractStructured()`, crawl-level extraction, CLI `--extract`, and
-   creator-owned agent extraction.
-3. Complete public TypeScript contracts for mapping and extraction.
-4. Adversarial extraction and packed-consumer tests.
-5. A map-and-extract website guide.
-6. A benefit-first npm README without the oversized hero image.
-7. Search-oriented package metadata.
-8. Site-wide canonical, robots, Open Graph, Twitter, and JSON-LD metadata.
-9. Updated sitemap and `llms.txt`.
-10. A dated, factual comparison page for Cockroach Crawler, Firecrawl, and
-    Crawl4AI.
-11. Website regression checks for metadata, README drift, responsive layout,
-    accessibility, internal links, and browser errors.
-12. A Sharp 0.35 development override that resolves the known libvips
-    vulnerability on the proposed branch.
+1. BFS, DFS, best-first, and adaptive/relevance traversal.
+2. Persistent bounded cache.
+3. Browser screenshots, PDF generation, PDF parsing, Shadow DOM and iframe
+   flattening, virtual scroll, trusted hooks, and persistent profiles.
+4. XPath and optional schema-validated host LLM extraction.
+5. Explicit provider/proxy escalation with challenge-safe defaults.
+6. Authenticated Docker API, dashboard, playground, and native MCP.
+7. Public JavaScript exports, TypeScript declarations, CLIs, documentation,
+   and executable regression coverage for every added surface.
+8. A benefit-first npm README without an oversized hero image.
 
 ## Crawl4AI parity matrix
 
@@ -295,27 +332,25 @@ products overlap, but their complete surfaces are different.
 | --- | --- | --- |
 | Static and JavaScript crawling | Implemented | Implemented |
 | Breadth-first deep crawl | Implemented | Implemented |
-| DFS and relevance/adaptive strategies | Not implemented | Implemented |
-| Fetch-validated site map | Next release | Domain mapping implemented |
-| Deterministic CSS extraction | Next release | Implemented, including wider CSS/XPath strategies |
-| LLM extraction and schema generation | Not implemented in core | Implemented as optional model-backed strategies |
+| DFS and relevance/adaptive strategies | Current 0.4 source | Implemented |
+| Fetch-validated site map | Current 0.4 source | Domain mapping implemented |
+| Deterministic CSS and XPath extraction | Current 0.4 source | Implemented |
+| LLM extraction and schema generation | Current 0.4 source through a host-supplied validated adapter | Implemented as optional model-backed strategies |
 | Markdown | Implemented | Implemented with additional fit/BM25/citation strategies |
-| Screenshots and PDF generation/parsing | Not implemented | Implemented |
-| Shadow DOM and iframe flattening | Not implemented | Implemented |
-| Infinite-scroll and virtual-scroll helpers | Not implemented | Implemented |
-| Hooks and arbitrary page JavaScript | Deliberately not exposed in core | Implemented |
-| Persistent crawl cache | Not implemented | Implemented |
-| Proxy rotation and anti-bot escalation | Deliberately not implemented | Implemented |
-| Session/browser profile features | Explicit storage state only | Wider session and managed-browser surface |
-| Docker API, dashboard, playground, JWT, MCP | Not implemented | Implemented |
+| Screenshots and PDF generation/parsing | Current 0.4 source | Implemented |
+| Shadow DOM and iframe flattening | Current 0.4 source | Implemented |
+| Infinite-scroll and virtual-scroll helpers | Current 0.4 source | Implemented |
+| Hooks and arbitrary page JavaScript | Current 0.4 source, trusted operator API only | Implemented |
+| Persistent crawl cache | Current 0.4 source | Implemented |
+| Proxy rotation and anti-bot escalation | Current 0.4 source; explicit providers, no CAPTCHA bypass | Implemented with a different authority model |
+| Session/browser profile features | Current 0.4 source; explicit dedicated profile directory | Wider session and managed-browser surface |
+| Docker API, dashboard, playground, MCP | Current 0.4 source; bearer auth rather than JWT | Implemented |
 | Public source/social provider routing | Implemented | Not the primary product surface |
 | DNS classification and pinning | Implemented in Node transport | Different transport boundary |
 | Exact redirect/origin/resource evidence | Implemented | Different evidence model |
 | Maqam exact one-use human approval composition | Implemented as a separate governed layer | Not the primary product surface |
 | npm/TypeScript-native integration | Implemented | Python package and service APIs |
 
-For adaptive crawling, caching, screenshots/PDF, Shadow DOM, iframe flattening,
-virtual scroll, proxy escalation, Docker API/MCP, and optional model extraction,
-use a separate reviewed implementation or contribute a bounded module. Do not
-claim those features before code, tests, public types, docs, and a published
-artifact exist.
+The `Current 0.4 source` rows become stable npm claims only after the reviewed
+commit, immutable npm artifact, matching GitHub tag, and registry integrity
+record all agree.

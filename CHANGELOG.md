@@ -1,9 +1,21 @@
 # Changelog
 
-## Unreleased
+## 0.4.0 - 2026-07-23
 
 ### Added
 
+- Added BFS, DFS, best-first, and adaptive/relevance traversal strategies under
+  the existing crawl authority and resource limits.
+- Added hash-verified, TTL-bounded persistent crawl caching.
+- Added browser screenshots, PDF generation, PDF parsing, open Shadow DOM and
+  readable iframe flattening, bounded virtual scroll, trusted page hooks, and
+  explicitly authorized persistent profiles.
+- Added bounded XPath extraction and optional host-supplied LLM extraction
+  with mandatory JSON Schema validation.
+- Added explicit provider/proxy escalation with attempt provenance and
+  access-challenge detection.
+- Added an authenticated Node/Docker API, responsive playground, native MCP
+  tools/resource, and dedicated document, MCP, and server CLIs.
 - Added `mapSite(options)` and CLI `--map` for compact, fetch-validated URL
   inventories that retain hashes, discovery metadata, failures, and crawl
   statistics without returning page bodies.
@@ -21,6 +33,11 @@
   settings before crawl dispatch.
 - Map and extraction operations retain the crawler's robots, origin, redirect,
   DNS, sensitive-path, request, byte, queue, and duration boundaries.
+- Advanced browser, MCP, server, cache, extraction, and provider inputs cannot
+  silently expand deployment-owned origins, credentials, private-network
+  access, page hooks, profiles, or resource ceilings.
+- Access challenges stop by default. The release adds no CAPTCHA, paywall,
+  login, robots, or authorization bypass.
 
 ## 0.3.0 - 2026-07-21
 

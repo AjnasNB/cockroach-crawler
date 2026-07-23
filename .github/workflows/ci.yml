@@ -137,9 +137,10 @@ jobs:
           cd "${consumer_dir}"
           npm init --yes >/dev/null
           npm install "${tarball}" --ignore-scripts --no-audit --no-fund
-          node --input-type=module -e "await import('cockroach-crawler'); await import('cockroach-crawler/agent'); await import('cockroach-crawler/sources'); await import('cockroach-crawler/serverless')"
+          node --input-type=module -e "await Promise.all(['cockroach-crawler','cockroach-crawler/agent','cockroach-crawler/sources','cockroach-crawler/serverless','cockroach-crawler/strategies','cockroach-crawler/cache','cockroach-crawler/documents','cockroach-crawler/extractors','cockroach-crawler/browser','cockroach-crawler/providers','cockroach-crawler/mcp','cockroach-crawler/server'].map((name)=>import(name)))"
           installed_version="$(node -e 'const fs=require("node:fs"); const manifest=JSON.parse(fs.readFileSync("node_modules/cockroach-crawler/package.json", "utf8")); process.stdout.write(manifest.version)')"
           test "$(./node_modules/.bin/cockroach-crawl --version)" = "${installed_version}"
+          ./node_modules/.bin/cockroach-documents --help >/dev/null
           ./node_modules/.bin/cockroach-sources doctor --json > "${RUNNER_TEMP}/doctor.json"
           node -e 'const fs=require("node:fs"); const report=JSON.parse(fs.readFileSync(process.argv[1], "utf8")); if (!Array.isArray(report) || !report.some((item) => item.id === "web")) process.exit(1)' "${RUNNER_TEMP}/doctor.json"
           size="$(wc -c < "${tarball}" | tr -d '[:space:]')"
@@ -153,3 +154,35 @@ jobs:
           path: ${{ runner.temp }}/pack/*.tgz
           if-no-files-found: error
           retention-days: 90
+
+  container:
+    name: Docker API
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Build image
+        run: docker build --tag cockroach-crawler:${{ github.sha }} .
+      - name: Verify authenticated API
+        shell: bash
+        run: |
+          set -euo pipefail
+          container_id="$(
+            docker run --detach --rm \
+              --publish 127.0.0.1:3878:3878 \
+              --env COCKROACH_API_TOKEN=release-candidate-token \
+              --env COCKROACH_ALLOWED_ORIGINS=https://example.com \
+              cockroach-crawler:${GITHUB_SHA}
+          )"
+          trap 'docker stop "${container_id}" >/dev/null 2>&1 || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3878/health > "${RUNNER_TEMP}/health.json"; then
+              break
+            fi
+            sleep 1
+          done
+          node -e 'const fs=require("node:fs"); const body=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); if (body.ok !== true || body.service !== "cockroach-crawler") process.exit(1)' "${RUNNER_TEMP}/health.json"
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST -H 'content-type: application/json' --data '{"seeds":["https://example.com"]}' http://127.0.0.1:3878/v1/crawl)" = "401"

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createSocket } from "node:dgram";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { createServer as createHttpsServer } from "node:https";
 import { tmpdir } from "node:os";
@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { afterEach, test } from "node:test";
 import { chromium } from "playwright";
 import coreBundle from "playwright-core/lib/coreBundle";
+import { parsePdf } from "../src/documents.js";
 import { crawl } from "../src/index.js";
 
 const servers = new Set();
@@ -89,6 +90,107 @@ test("browser mode renders JavaScript and performs bounded explicit clicks", asy
   assert.equal(pages.length, 1);
   assert.equal(pages[0].h1, "Rendered");
   assert.match(pages[0].text, /JavaScript content/);
+});
+
+test("advanced browser mode scrolls, runs trusted hooks, flattens DOM, and records artifacts", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "cockroach-browser-artifacts-"));
+  const baseUrl = await listen((request, response) => {
+    if (request.url === "/robots.txt") {
+      response.end("User-agent: *\nAllow: /\n");
+      return;
+    }
+    response.setHeader("content-type", "text/html");
+    response.end(`<!doctype html><body style="min-height:3000px"><main><h1>Before hook</h1>
+      <agent-card></agent-card>
+      <iframe srcdoc="<p>Iframe evidence</p>"></iframe>
+    </main><script>
+      const host = document.querySelector('agent-card');
+      host.attachShadow({mode:'open'}).innerHTML = '<p>Shadow evidence</p>';
+      addEventListener('scroll', () => {
+        if (!document.querySelector('.scrolled')) {
+          const item = document.createElement('p');
+          item.className = 'scrolled';
+          item.textContent = 'Virtual scroll evidence';
+          document.querySelector('main').append(item);
+        }
+      }, {once:true});
+    </script>`);
+  });
+
+  try {
+    const pages = await crawl({
+      seeds: [baseUrl],
+      maxPages: 1,
+      delayMs: 0,
+      allowPrivateNetworks: true,
+      browser: {
+        waitUntil: "load",
+        scroll: { maxSteps: 3, stableIterations: 1, delayMs: 10 },
+        hooks: [() => {
+          document.querySelector("h1").textContent = "Trusted hook";
+          return { changed: true };
+        }],
+        allowPageJavaScript: true,
+        flattenShadowDom: true,
+        flattenIframes: true,
+        artifactDirectory: directory,
+        screenshot: true,
+        pdf: true
+      }
+    });
+    assert.equal(pages[0].h1, "Trusted hook");
+    assert.match(pages[0].text, /Virtual scroll evidence/);
+    assert.match(pages[0].text, /Shadow evidence/);
+    assert.match(pages[0].text, /Iframe evidence/);
+    assert.deepEqual(pages[0].browserDetails.hooks, [{ changed: true }]);
+    assert.ok(pages[0].browserDetails.scroll.steps >= 1);
+    assert.ok(pages[0].browserDetails.flattened.shadowRoots >= 1);
+    assert.ok(pages[0].browserDetails.flattened.frames >= 1);
+    assert.equal((await readFile(pages[0].artifacts.screenshot.path)).subarray(1, 4).toString(), "PNG");
+    const pdf = await parsePdf(await readFile(pages[0].artifacts.pdf.path), {
+      maxPages: 5,
+      maxTextCharacters: 100_000
+    });
+    assert.ok(pdf.pageCount >= 1 && pdf.pageCount <= 5);
+    assert.match(pdf.text, /Trusted hook/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("explicit persistent browser profiles retain authorized site state", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "cockroach-profile-"));
+  const baseUrl = await listen((request, response) => {
+    if (request.url === "/robots.txt") {
+      response.end("User-agent: *\nAllow: /\n");
+      return;
+    }
+    response.setHeader("content-type", "text/html");
+    response.end(`<main><h1>Profile</h1><p id="state"></p></main><script>
+      document.querySelector('#state').textContent = localStorage.getItem('evidence') || 'empty';
+      localStorage.setItem('evidence', 'retained');
+    </script>`);
+  });
+  try {
+    const options = {
+      seeds: [baseUrl],
+      maxPages: 1,
+      delayMs: 0,
+      allowPrivateNetworks: true,
+      browser: {
+        waitUntil: "load",
+        profileDirectory: directory,
+        allowPersistentProfile: true
+      }
+    };
+    const first = await crawl(options);
+    const second = await crawl(options);
+    assert.match(first[0].text, /empty/);
+    assert.match(second[0].text, /retained/);
+    assert.equal(second[0].browserDetails.persistentProfile, true);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("browser mode blocks cross-origin subrequests before they reach the target", async () => {

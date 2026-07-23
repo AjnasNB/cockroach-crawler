@@ -19,6 +19,8 @@ Options:
   --url-file <file>       Read seed URLs from a text file, one URL per line
   --max-pages <n>         Maximum pages to return. Default: 50
   --max-depth <n>         Maximum link depth from seeds. Default: 2
+  --strategy <mode>       Traversal: bfs, dfs, best-first, or adaptive
+  --query <text>          Relevance query for best-first/adaptive traversal
   --max-requests <n>      Total network-request budget. Default: derived from max-pages
   --max-duration <ms>     Total crawl deadline. Default: 600000
   --max-bytes <n>         Maximum decoded bytes per page. Default: 3145728
@@ -46,6 +48,13 @@ Options:
   --wait-until <state>    Browser wait state: load, domcontentloaded, networkidle, commit
   --wait-for <target>     Wait for selector or ms:<number> in browser mode
   --click <selector>      Click selector in browser mode. Can be repeated
+  --scroll                Bounded infinite/virtual-scroll helper
+  --flatten-shadow-dom    Copy open shadow-root content into the final snapshot
+  --flatten-iframes       Copy readable same-origin iframe content into the snapshot
+  --screenshot            Save a full-page PNG evidence artifact
+  --pdf                   Save a PDF evidence artifact
+  --artifact-dir <path>   Artifact directory. Default: .cockroach-artifacts
+  --profile-dir <path>    Use an explicitly authorized persistent browser profile
   --storage-state <file>  Load Playwright storage state for authorized sessions
   --save-storage-state <file>
                           Save Playwright storage state after the crawl
@@ -106,6 +115,7 @@ async function readArgs(argv) {
   const options = {
     maxPages: 50,
     maxDepth: 2,
+    traversal: { mode: "bfs" },
     maxRequests: undefined,
     maxDurationMs: 600_000,
     maxBytes: 3 * 1024 * 1024,
@@ -147,6 +157,12 @@ async function readArgs(argv) {
       i += 1;
     } else if (arg === "--max-depth") {
       options.maxDepth = parseInteger(readValue(argv, i, "--max-depth"), "--max-depth", 0);
+      i += 1;
+    } else if (arg === "--strategy") {
+      options.traversal.mode = readValue(argv, i, "--strategy");
+      i += 1;
+    } else if (arg === "--query") {
+      options.traversal.query = readValue(argv, i, "--query");
       i += 1;
     } else if (arg === "--max-requests") {
       options.maxRequests = parseInteger(readValue(argv, i, "--max-requests"), "--max-requests", 1);
@@ -220,6 +236,24 @@ async function readArgs(argv) {
       const browser = ensureBrowser();
       browser.click ||= [];
       browser.click.push(readValue(argv, i, "--click"));
+      i += 1;
+    } else if (arg === "--scroll") {
+      ensureBrowser().scroll = true;
+    } else if (arg === "--flatten-shadow-dom") {
+      ensureBrowser().flattenShadowDom = true;
+    } else if (arg === "--flatten-iframes") {
+      ensureBrowser().flattenIframes = true;
+    } else if (arg === "--screenshot") {
+      ensureBrowser().screenshot = true;
+    } else if (arg === "--pdf") {
+      ensureBrowser().pdf = true;
+    } else if (arg === "--artifact-dir") {
+      ensureBrowser().artifactDirectory = readValue(argv, i, "--artifact-dir");
+      i += 1;
+    } else if (arg === "--profile-dir") {
+      const browser = ensureBrowser();
+      browser.profileDirectory = readValue(argv, i, "--profile-dir");
+      browser.allowPersistentProfile = true;
       i += 1;
     } else if (arg === "--storage-state") {
       ensureBrowser().storageState = readValue(argv, i, "--storage-state");
@@ -311,6 +345,7 @@ async function main() {
     userAgent: options.userAgent,
     browser: options.browser,
     extract: options.extract,
+    traversal: options.traversal,
     onError: (failure) => {
       process.stderr.write(`crawl warning: ${failure.url}: ${failure.error}\n`);
     }
