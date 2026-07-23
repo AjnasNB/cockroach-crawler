@@ -5,8 +5,8 @@ router for agents. Its differentiator is not an unlimited scrape claim. It is
 that every fetch, redirect, provider choice, browser request, output record,
 and optional authority tier keeps a reviewable boundary.
 
-This document separates current source behavior, stable `0.3.0` behavior,
-optional adapters, planned work, and deliberate exclusions. A capability
+This document separates stable `0.4.x` behavior, optional adapters, planned
+work, and deliberate exclusions. A capability
 becomes a release claim only after its code, tests, package artifact, public
 types, and documentation ship together.
 
@@ -14,19 +14,19 @@ types, and documentation ship together.
 
 | Capability | Status | Contract |
 | --- | --- | --- |
-| Static HTTP(S) crawl | Stable `0.3.0` | Same-origin by default, public network by default, robots enforced, manual validated redirects |
-| Sitemap discovery | Stable `0.3.0` | Bounded robots-declared or conventional sitemap traversal with origin and URL policy |
-| Markdown, text, links, JSON, JSONL | Stable `0.3.0` | Cleaned readable page records with hashes and retrieval metadata |
-| Compact site map | Current source | `mapSite` / `--map` returns fetch-validated URL metadata without page bodies |
-| Deterministic CSS extraction | Current source | Text, cleaned inner HTML, or attributes with independent output ceilings |
-| JavaScript rendering | Stable `0.3.0`, optional | Playwright peer dependency behind the crawler's deny-by-default request proxy |
-| Deep crawl | Stable BFS in `0.3.0`; BFS/DFS/best-first/adaptive in current `0.4` source | Queue order changes under fixed depth, queue, page, request, origin, and filter limits |
-| Adaptive or relevance-driven crawl | Current `0.4` source | A bounded scorer prioritizes already-admitted URLs and cannot expand creator-owned network or resource authority |
-| Persistent crawl cache | Current `0.4` source | Explicit namespace, policy-bearing input key, expiry, content digest, entry, and byte limits |
-| PDF document parsing | Current `0.4` source | Explicit local bytes, signature check, byte/page/text ceilings, no URL fetch or embedded-script execution |
-| Browser screenshots and PDF | Current `0.4` source | Explicit artifact directory, byte limit, media type, and SHA-256 |
-| Shadow DOM, iframe, and virtual scroll | Current `0.4` source | Open/readable DOM only, bounded cloning and scroll work |
-| Docker API, playground, and MCP | Current `0.4` source | Deployment-owned origins and budgets; caller input can only narrow |
+| Static HTTP(S) crawl | Stable `0.4.x` | Same-origin by default, public network by default, robots enforced, manual validated redirects |
+| Sitemap discovery | Stable `0.4.x` | Bounded robots-declared or conventional sitemap traversal with origin and URL policy |
+| Markdown, text, links, JSON, JSONL | Stable `0.4.x` | Cleaned readable page records with hashes and retrieval metadata |
+| Compact site map | Stable `0.4.x` | `mapSite` / `--map` returns fetch-validated URL metadata without page bodies |
+| Deterministic CSS extraction | Stable `0.4.x` | Text, cleaned inner HTML, or attributes with independent output ceilings |
+| JavaScript rendering | Stable `0.4.x`, optional | Playwright peer dependency behind the crawler's deny-by-default request proxy |
+| Deep crawl | Stable `0.4.x` | BFS, DFS, best-first, and adaptive queue order under fixed depth, page, request, origin, and filter limits |
+| Adaptive or relevance-driven crawl | Stable `0.4.x` | A bounded scorer prioritizes already-admitted URLs and cannot expand creator-owned network or resource authority |
+| Persistent crawl cache | Stable `0.4.x` | Explicit namespace, policy-bearing input key, expiry, content digest, entry, and byte limits |
+| PDF document parsing | Stable `0.4.x` | Explicit local bytes, signature check, byte/page/text ceilings, no URL fetch or embedded-script execution |
+| Browser screenshots and PDF | Stable `0.4.x` | Explicit artifact directory, byte limit, media type, and SHA-256 |
+| Shadow DOM, iframe, and virtual scroll | Stable `0.4.x` | Open/readable DOM only, bounded cloning and scroll work |
+| Docker API, playground, and MCP | Stable `0.4.x` | Deployment-owned origins and budgets; caller input can only narrow |
 
 `mapSite` is deliberately a fetch-validated map. Entries identify pages that
 passed transport and content policy; it does not claim the completeness of a
@@ -34,7 +34,7 @@ search-engine index.
 
 ## Structured extraction
 
-The source build supports:
+The stable package supports:
 
 - CSS selectors for visible text, cleaned inner HTML, or a named attribute;
 - single or multiple values;
@@ -49,7 +49,7 @@ The source build supports:
   option, and CLI `--extract`.
 
 CSS and XPath extraction do not run JavaScript from the extraction schema.
-Current `0.4` source also exposes a host-supplied model adapter with bounded
+Stable `0.4.x` also exposes a host-supplied model adapter with bounded
 input/output and mandatory JSON Schema validation so model identity, data
 disclosure, cost, credentials, and retry policy remain explicit.
 

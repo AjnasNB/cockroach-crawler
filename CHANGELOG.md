@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.1 - 2026-07-23
+
+- Replaced the npm README's obsolete `0.3.0` candidate notice with the stable
+  `0.4.1` install, registry-integrity command, and current capability links.
+- Rebuilt the public documentation as a searchable 46-capability portal with
+  runnable deep-crawl, browser, extraction, MCP, Docker, provider, and
+  deployment examples.
+- Updated the homepage, provider matrix, roadmap, comparison, release page,
+  structured metadata, `llms.txt`, and regression checks to the stable `0.4`
+  capability line.
+- Kept the npm README image-free so the registry page leads with install and
+  product capability instead of the obsolete oversized proof banner.
+
 ## 0.4.0 - 2026-07-23
 
 ### Added

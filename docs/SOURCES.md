@@ -1,6 +1,6 @@
 # Read-only source adapters
 
-The stable `0.3.0` package includes the capability-aware registry, ordered source routing, and optional read-only reach providers. Check the installed package version before importing it.
+The stable `0.4.1` package includes the capability-aware registry, ordered source routing, and optional read-only reach providers. Check the installed package version before importing it.
 
 Normalized records follow the published JSON Schema at
 `cockroach-crawler/schemas/source-record.json`. Every required field is shared
@@ -8,7 +8,7 @@ across providers; `metadata` is intentionally provider-specific and consumers
 must feature-detect its keys.
 
 ```bash
-npm install cockroach-crawler@0.3.0
+npm install cockroach-crawler@0.4.1
 npx cockroach-sources doctor --json
 npx cockroach-sources search github "topic:web-crawler language:javascript" --max-results 5 --json
 npx cockroach-sources read youtube "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --json

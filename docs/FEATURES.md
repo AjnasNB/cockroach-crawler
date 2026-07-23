@@ -1,14 +1,11 @@
 # Cockroach Crawler Feature Inventory
 
-This is the source-backed inventory for the `0.4.0` capability candidate.
-Stable npm remains `0.3.0` until this candidate is reviewed and a new immutable
-artifact is published.
+This is the source-backed inventory for the stable `0.4.x` capability line.
+The public package, declarations, tests, and documentation ship together.
 
 Status terms:
 
-- **Stable 0.3.0** means the feature exists in the current npm package.
-- **Current 0.4 source** means the implementation, public types, tests, and
-  docs exist on the reviewed source branch but are not in npm `0.3.0`.
+- **Stable 0.4.x** means the feature exists in the current npm package.
 - **Optional** means the feature requires an explicitly installed peer,
   credential, executable, browser session, or deployment component.
 - **Excluded** means Cockroach Crawler deliberately does not advertise or
@@ -66,7 +63,7 @@ Status terms:
   decoded-byte growth.
 - Async `onPage` and `onError` callbacks with detached, frozen records and
   deadline enforcement.
-- **Current 0.4 source:** fetch-validated compact site maps through `mapSite()` and
+- **Stable 0.4.x:** fetch-validated compact site maps through `mapSite()` and
   CLI `--map`.
 
 ## Page extraction and output
@@ -87,17 +84,17 @@ Status terms:
 - JSON output.
 - JSON Lines output.
 - Atomic file output to explicit nested paths.
-- **Current 0.4 source:** deterministic CSS extraction from visible text, cleaned
+- **Stable 0.4.x:** deterministic CSS extraction from visible text, cleaned
   inner HTML, or a named attribute.
-- **Current 0.4 source:** single and multiple extraction values.
-- **Current 0.4 source:** per-field item limits.
-- **Current 0.4 source:** relative HTTP(S) URL resolution for attribute values.
-- **Current 0.4 source:** independent maximum field, input-character, item,
+- **Stable 0.4.x:** single and multiple extraction values.
+- **Stable 0.4.x:** per-field item limits.
+- **Stable 0.4.x:** relative HTTP(S) URL resolution for attribute values.
+- **Stable 0.4.x:** independent maximum field, input-character, item,
   per-value, total-value, and total-character limits.
-- **Current 0.4 source:** deterministic extraction truncation warnings.
-- **Current 0.4 source:** extraction through `extractStructured`, crawl option
+- **Stable 0.4.x:** deterministic extraction truncation warnings.
+- **Stable 0.4.x:** extraction through `extractStructured`, crawl option
   `extract`, agent creator defaults, and CLI `--extract`.
-- **Current 0.4 source:** rejection of unknown/inherited options, accessors,
+- **Stable 0.4.x:** rejection of unknown/inherited options, accessors,
   prototype-sensitive field names, invalid selectors, invalid attributes,
   active content, and incompatible settings before crawl dispatch.
 
@@ -332,25 +329,24 @@ products overlap, but their complete surfaces are different.
 | --- | --- | --- |
 | Static and JavaScript crawling | Implemented | Implemented |
 | Breadth-first deep crawl | Implemented | Implemented |
-| DFS and relevance/adaptive strategies | Current 0.4 source | Implemented |
-| Fetch-validated site map | Current 0.4 source | Domain mapping implemented |
-| Deterministic CSS and XPath extraction | Current 0.4 source | Implemented |
-| LLM extraction and schema generation | Current 0.4 source through a host-supplied validated adapter | Implemented as optional model-backed strategies |
+| DFS and relevance/adaptive strategies | Stable 0.4.x | Implemented |
+| Fetch-validated site map | Stable 0.4.x | Domain mapping implemented |
+| Deterministic CSS and XPath extraction | Stable 0.4.x | Implemented |
+| LLM extraction and schema generation | Stable 0.4.x through a host-supplied validated adapter | Implemented as optional model-backed strategies |
 | Markdown | Implemented | Implemented with additional fit/BM25/citation strategies |
-| Screenshots and PDF generation/parsing | Current 0.4 source | Implemented |
-| Shadow DOM and iframe flattening | Current 0.4 source | Implemented |
-| Infinite-scroll and virtual-scroll helpers | Current 0.4 source | Implemented |
-| Hooks and arbitrary page JavaScript | Current 0.4 source, trusted operator API only | Implemented |
-| Persistent crawl cache | Current 0.4 source | Implemented |
-| Proxy rotation and anti-bot escalation | Current 0.4 source; explicit providers, no CAPTCHA bypass | Implemented with a different authority model |
-| Session/browser profile features | Current 0.4 source; explicit dedicated profile directory | Wider session and managed-browser surface |
-| Docker API, dashboard, playground, MCP | Current 0.4 source; bearer auth rather than JWT | Implemented |
+| Screenshots and PDF generation/parsing | Stable 0.4.x | Implemented |
+| Shadow DOM and iframe flattening | Stable 0.4.x | Implemented |
+| Infinite-scroll and virtual-scroll helpers | Stable 0.4.x | Implemented |
+| Hooks and arbitrary page JavaScript | Stable 0.4.x, trusted operator API only | Implemented |
+| Persistent crawl cache | Stable 0.4.x | Implemented |
+| Proxy rotation and anti-bot escalation | Stable 0.4.x; explicit providers, no CAPTCHA bypass | Implemented with a different authority model |
+| Session/browser profile features | Stable 0.4.x; explicit dedicated profile directory | Wider session and managed-browser surface |
+| Docker API, dashboard, playground, MCP | Stable 0.4.x; bearer auth rather than JWT | Implemented |
 | Public source/social provider routing | Implemented | Not the primary product surface |
 | DNS classification and pinning | Implemented in Node transport | Different transport boundary |
 | Exact redirect/origin/resource evidence | Implemented | Different evidence model |
 | Maqam exact one-use human approval composition | Implemented as a separate governed layer | Not the primary product surface |
 | npm/TypeScript-native integration | Implemented | Python package and service APIs |
 
-The `Current 0.4 source` rows become stable npm claims only after the reviewed
-commit, immutable npm artifact, matching GitHub tag, and registry integrity
-record all agree.
+The stable rows are backed by the reviewed commit, immutable npm artifact,
+matching GitHub tag, and registry integrity record.
