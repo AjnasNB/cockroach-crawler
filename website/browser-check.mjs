@@ -85,7 +85,8 @@ try {
     const metrics = await page.evaluate(() => ({
       h1: document.querySelectorAll("h1").length,
       title: document.title,
-      horizontal: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      horizontalOverflow: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
+      horizontal: document.documentElement.scrollWidth - document.documentElement.clientWidth > 1,
       images: [...document.images].map((image) => ({ src: image.getAttribute("src"), ok: image.complete && image.naturalWidth > 0, alt: image.hasAttribute("alt") })),
       main: document.querySelector("main")?.getAttribute("tabindex"),
       accessibleTables: [...document.querySelectorAll(".table-wrap")].every((region) => region.tabIndex === 0 && region.getAttribute("role") === "region" && region.hasAttribute("aria-label")),
@@ -179,8 +180,10 @@ try {
             className: typeof element.className === "string" ? element.className : "",
             text: element.textContent?.trim().slice(0, 80) || ""
           }));
+        const horizontalOverflow = Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth);
         return {
-          horizontal: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+          horizontalOverflow,
+          horizontal: horizontalOverflow > 1,
           overflowElements,
           navVisible: nav ? getComputedStyle(nav).display : "missing",
           currentNavVisible: !navRect || !currentRect ? false : currentRect.left >= navRect.left - 1 && currentRect.right <= navRect.right + 1,
