@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import siteWorker from "./site-worker.js";
 
 const dist = fileURLToPath(new URL("./dist/", import.meta.url));
+const wranglerConfigPath = fileURLToPath(new URL("./wrangler.jsonc", import.meta.url));
 const errors = [];
 
 async function walk(folder) {
@@ -23,6 +24,13 @@ async function exists(path) {
 
 const files = await walk(dist);
 const htmlFiles = files.filter((file) => file.endsWith(".html"));
+const wranglerConfig = JSON.parse(await readFile(wranglerConfigPath, "utf8"));
+if (wranglerConfig.main !== "./site-worker.js" || wranglerConfig.assets?.directory !== "./dist" || wranglerConfig.assets?.binding !== "ASSETS") {
+  errors.push("website Wrangler config must bind the reviewed site Worker to the built static assets");
+}
+if (wranglerConfig.assets?.run_worker_first !== true || wranglerConfig.assets?.not_found_handling !== "404-page") {
+  errors.push("website Wrangler config must run cache/security middleware first and serve the custom 404 page");
+}
 let videoCount = 0;
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
