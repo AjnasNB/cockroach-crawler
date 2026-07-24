@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.2 - 2026-07-24
+
+- Expanded the public documentation into task-focused crawling, browser,
+  extraction, MCP, Docker, and complete-reference manuals.
+- Added persistent grouped documentation navigation, per-page tables of
+  contents, copyable stable API examples, and mobile/desktop regression checks
+  for every new route.
+- Added the complete documentation map to the package README so npm users can
+  move directly from installation to each stable feature surface.
+
 ## 0.4.1 - 2026-07-23
 
 - Replaced the npm README's obsolete `0.3.0` candidate notice with the stable

@@ -37,7 +37,7 @@ Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compa
 
 It does **not** extract cookies, reuse hidden credentials, bypass logins, CAPTCHA, paywalls, robots policy, or access controls, and it exposes no social write actions.
 
-Version `0.4.1` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.4.1 version gitHead dist.integrity`.
+Version `0.4.2` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.4.2 version gitHead dist.integrity`.
 
 The local crawler produces structured JSON/JSONL with readable text, Markdown, links, response metadata, redirect provenance, and content hashes for documentation indexing, RAG ingestion, content inventory, QA, research, and agent tools. The source adapters normalize GitHub, YouTube, X, and Reddit records when each provider's documented access requirements are met.
 
@@ -45,12 +45,34 @@ It does not bundle a model, model key, hosted account, stealth layer, CAPTCHA by
 
 Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [advanced capabilities](./docs/ADVANCED.md) · [complete feature inventory](./docs/FEATURES.md) · [comparison](https://cockroachcrawler.com/compare/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
 
+## Complete documentation
+
+The website is organized as a task manual plus a typed reference. Every guide
+uses stable public exports and copyable examples from this package.
+
+| Need | Guide |
+| --- | --- |
+| Install and run one bounded crawl | [Documentation overview](https://cockroachcrawler.com/docs/) |
+| Use every CLI flag | [CLI guide](https://cockroachcrawler.com/docs/cli/) |
+| Embed the typed Node.js API | [JavaScript API](https://cockroachcrawler.com/docs/javascript/) |
+| Configure BFS, DFS, best-first, adaptive traversal, sitemaps, callbacks, and cache | [Crawling and cache](https://cockroachcrawler.com/docs/crawling/) |
+| Render JavaScript, click, scroll, flatten DOM, capture screenshots and PDFs, and use explicit profiles | [Browser rendering and evidence](https://cockroachcrawler.com/docs/browser/) |
+| Generate Markdown or extract with CSS, XPath, local PDF parsing, or a host-supplied model adapter | [Extraction manual](https://cockroachcrawler.com/docs/extraction/) |
+| Create compact site maps and deterministic CSS records | [Map and extract](https://cockroachcrawler.com/docs/map-and-extract/) |
+| Give a model a creator-bounded tool or route it through Maqam | [Agent integration](https://cockroachcrawler.com/docs/agents/) |
+| Connect Codex, Claude Code, or another MCP client over stdio | [Native MCP](https://cockroachcrawler.com/docs/mcp/) |
+| Inspect public, official, no-key, and session-backed read routes | [Provider guide](https://cockroachcrawler.com/docs/providers/) |
+| Run the authenticated API, dashboard, and playground | [Docker and Node API](https://cockroachcrawler.com/docs/docker/) |
+| Deploy the fixed-origin fetch-only Worker profile | [Cloudflare Worker](https://cockroachcrawler.com/docs/serverless/) |
+| Look up every package subpath, crawl option, page field, statistic, and executable | [Complete reference](https://cockroachcrawler.com/docs/reference/) |
+| Audit network, browser, provider, and deployment authority | [Security model](https://cockroachcrawler.com/security/) |
+
 ## Check reach before you call a source
 
 The source registry reports what the current machine can use before an agent makes a request. This command reads configuration state only; it does not print secrets or contact a provider.
 
 ```bash
-npx -y --package cockroach-crawler@0.4.1 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.4.2 cockroach-sources doctor
 ```
 
 | Capability | No developer API key | Optional configuration | Honest boundary |
@@ -136,7 +158,7 @@ npm install cockroach-crawler
 Pin the exact stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@0.4.1
+npm install cockroach-crawler@0.4.2
 ```
 
 The stable `0.4.x` line includes advanced package subpaths:
