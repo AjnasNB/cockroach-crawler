@@ -19,7 +19,8 @@
     "version": "0.4.2",
     "source": {
       "algorithm": "sha256",
-      "value": "47bdfe1e45604fd3930aa33887ed9e86ad5b407bfc0cc1fcd844a219dd426444",
+      "normalization": "utf8-lf",
+      "value": "c313b5f7f4e248cc658ef88ae8a7aa59d87cabb06abcae163cdcf1c1a50f1d65",
       "inputs": [
         "src/index.js",
         "package.json",

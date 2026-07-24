@@ -36,10 +36,11 @@ async function sourceFingerprint() {
   for (const relative of inputs) {
     hash.update(relative);
     hash.update("\0");
-    hash.update(await readFile(path.join(root, relative)));
+    const text = await readFile(path.join(root, relative), "utf8");
+    hash.update(text.replace(/\r\n?/g, "\n"));
     hash.update("\0");
   }
-  return { algorithm: "sha256", value: hash.digest("hex"), inputs };
+  return { algorithm: "sha256", normalization: "utf8-lf", value: hash.digest("hex"), inputs };
 }
 
 function escapeAttribute(value) {
