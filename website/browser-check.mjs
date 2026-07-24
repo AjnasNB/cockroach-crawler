@@ -33,10 +33,16 @@ const routes = [
   "/docs/",
   "/docs/cli/",
   "/docs/javascript/",
+  "/docs/crawling/",
+  "/docs/browser/",
+  "/docs/extraction/",
   "/docs/map-and-extract/",
   "/docs/agents/",
+  "/docs/mcp/",
+  "/docs/docker/",
   "/docs/providers/",
   "/docs/serverless/",
+  "/docs/reference/",
   "/security/",
   "/providers/",
   "/compare/",
@@ -81,6 +87,9 @@ try {
       })()
     }));
     if (route === "/docs/") await page.screenshot({ path: `${output}/docs-desktop.png`, fullPage: true });
+    if (route === "/docs/crawling/") await page.screenshot({ path: `${output}/docs-crawling-desktop.png`, fullPage: true });
+    if (route === "/docs/browser/") await page.screenshot({ path: `${output}/docs-browser-desktop.png`, fullPage: true });
+    if (route === "/docs/reference/") await page.screenshot({ path: `${output}/docs-reference-desktop.png`, fullPage: true });
     if (route === "/providers/") await page.screenshot({ path: `${output}/providers-desktop.png`, fullPage: true });
     if (route === "/compare/") await page.screenshot({ path: `${output}/compare-desktop.png`, fullPage: true });
     if (route === "/stack/") await page.screenshot({ path: `${output}/stack-desktop.png`, fullPage: true });
@@ -150,7 +159,7 @@ try {
         };
 
         function routeNeedsToc() {
-          return window.location.pathname === "/docs/";
+          return window.location.pathname === "/docs/" || Boolean(document.querySelector(".docs-manual-toc"));
         }
       });
       mobileResults.push({ width, route, status: response?.status(), ...metrics, errors });

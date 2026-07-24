@@ -13,6 +13,11 @@ test("the packed feature inventory stays complete and release-honest", async () 
   const features = await readFile(path.join(ROOT, "docs", "FEATURES.md"), "utf8");
 
   assert.ok(manifest.files.includes("docs/FEATURES.md"));
+  assert.ok(
+    !manifest.files.some((entry) => entry === "assets/" || entry.startsWith("assets/")),
+    "the npm package must not ship unused README or website artwork"
+  );
+  assert.doesNotMatch(readme, /assets\/readme-proof-still/i);
   assert.match(readme, /complete feature inventory/i);
   for (const section of [
     "Public-web crawl and discovery",

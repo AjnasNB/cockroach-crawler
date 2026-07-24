@@ -331,7 +331,7 @@ credentials, or expand deployment budgets.
 Build:
 
 ```bash
-docker build -t cockroach-crawler:0.4.1 .
+docker build -t cockroach-crawler:0.4.2 .
 ```
 
 Run with an API token and fixed origins:
@@ -341,7 +341,7 @@ docker run --rm -p 3878:3878 \
   -e COCKROACH_API_TOKEN="replace-with-a-long-random-secret" \
   -e COCKROACH_ALLOWED_ORIGINS="https://docs.example.com" \
   -e COCKROACH_MAX_PAGES=20 \
-  cockroach-crawler:0.4.1
+  cockroach-crawler:0.4.2
 ```
 
 Endpoints:

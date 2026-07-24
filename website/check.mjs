@@ -91,18 +91,39 @@ const required = ["robots.txt", "sitemap.xml", "llms.txt", "site.webmanifest", "
 for (const path of required) if (!await exists(join(dist, path))) errors.push(`missing ${path}`);
 const sitemap = await readFile(join(dist, "sitemap.xml"), "utf8");
 if (!sitemap.includes("<loc>https://cockroachcrawler.com/compare/</loc>")) errors.push("sitemap must include the AI crawler comparison");
+for (const route of ["crawling", "browser", "extraction", "mcp", "docker", "reference"]) {
+  if (!sitemap.includes(`<loc>https://cockroachcrawler.com/docs/${route}/</loc>`)) {
+    errors.push(`sitemap must include the ${route} documentation`);
+  }
+}
 const llms = await readFile(join(dist, "llms.txt"), "utf8");
 if (!llms.includes("AI crawler comparison: https://cockroachcrawler.com/compare/")) errors.push("llms.txt must link the factual crawler comparison");
+if (!llms.includes("Complete JavaScript and CLI reference: https://cockroachcrawler.com/docs/reference/")) errors.push("llms.txt must link the complete reference");
 const packageReadme = await readFile(join(dist, "..", "..", "README.md"), "utf8");
 if (/assets\/readme-proof-still/i.test(packageReadme)) errors.push("npm README must not restore the oversized proof banner");
 if (!packageReadme.includes("Give your AI agents web superpowers")) errors.push("npm README must lead with the AI web crawler benefit");
+if (!packageReadme.includes("Look up every package subpath, crawl option, page field, statistic, and executable")) {
+  errors.push("npm README must retain the complete-reference documentation row");
+}
 const docsHtml = await readFile(join(dist, "docs", "index.html"), "utf8");
-if (!docsHtml.includes("Cockroach Crawler 0.4.1 documentation")) errors.push("docs must identify stable 0.4.1");
+if (!docsHtml.includes("Cockroach Crawler 0.4.2 documentation")) errors.push("docs must identify stable 0.4.2");
 if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
 if ((docsHtml.match(/data-feature-entry/g) ?? []).length !== 46) errors.push("docs must expose all 46 indexed capabilities");
 if (!docsHtml.includes("data-feature-search")) errors.push("docs must retain the searchable feature index");
+for (const [route, proof] of [
+  ["crawling", "Reuse only a policy-identical crawl."],
+  ["browser", "Render the page. Keep the evidence."],
+  ["extraction", "From page bytes to model-ready records."],
+  ["mcp", "cockroach://capabilities"],
+  ["docker", "COCKROACH_API_TOKEN"],
+  ["reference", "Every stable top-level crawl option."]
+]) {
+  const html = await readFile(join(dist, "docs", route, "index.html"), "utf8");
+  if (!html.includes("docs-sidebar-nav")) errors.push(`${route} docs must include grouped documentation navigation`);
+  if (!html.includes(proof)) errors.push(`${route} docs are missing their reference proof`);
+}
 const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
-if (!releaseHtml.includes("npm install cockroach-crawler@0.4.1")) errors.push("release page must install stable 0.4.1");
+if (!releaseHtml.includes("npm install cockroach-crawler@0.4.2")) errors.push("release page must install stable 0.4.2");
 if (releaseHtml.includes("Release · 0.3.0")) errors.push("release page must not advertise 0.3.0 as current");
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);
 const headerPolicy = await readFile(join(dist, "_headers"), "utf8");
