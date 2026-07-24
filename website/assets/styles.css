@@ -915,8 +915,11 @@ code {
 }
 
 .code-panel pre {
+  width: 100%;
+  min-width: 0;
   max-width: 100%;
   overflow: auto;
+  contain: inline-size;
   padding: 24px;
   margin: 0;
   color: #dce6e1;
@@ -933,6 +936,9 @@ code {
 }
 
 .code-panel code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
   color: inherit;
 }
 
