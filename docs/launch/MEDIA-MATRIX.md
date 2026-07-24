@@ -36,7 +36,7 @@ Platform specifications can change. Recheck each upload surface before final exp
 
 ### Hero: dual-path inspection gate
 
-A dark graphite inspection machine receives one luminous document token. The left path passes through three visible rings—DNS, origin, and budget—before reaching a green output tray. The right path passes through a smaller transparent HTTPS allowlist gate and terminates before the DNS ring. Every mechanical element has a product meaning. No text is baked into the render.
+A dark graphite inspection machine receives one luminous document token. The left path passes through three visible rings - DNS, origin, and budget - before reaching a green output tray. The right path passes through a smaller transparent HTTPS allowlist gate and terminates before the DNS ring. Every mechanical element has a product meaning. No text is baked into the render.
 
 **Overlay labels:** Hardened local / Allowlist serverless / Validated destination / Exact budget / Normalized record.
 

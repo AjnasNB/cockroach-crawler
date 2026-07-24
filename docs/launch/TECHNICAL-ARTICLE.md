@@ -6,11 +6,11 @@ A crawler that runs on a developer machine can inspect DNS answers, pin a connec
 
 Treating both environments as equivalent creates a dangerous documentation problem: the convenient tier inherits the security reputation of the hardened tier without inheriting its controls.
 
-Cockroach Crawler `0.5.1` takes the opposite approach. It exposes two crawler tiers, returns their capabilities, and keeps official and optional read-only source providers separate from both.
+Cockroach Crawler `0.5.2` takes the opposite approach. It exposes two crawler tiers, returns their capabilities, and keeps official and optional read-only source providers separate from both.
 
 ## The first boundary: what may be contacted?
 
-An agent-generated URL is untrusted input. The obvious checks—`http` or `https`, no embedded password, no localhost—are only the beginning.
+An agent-generated URL is untrusted input. The obvious checks - `http` or `https`, no embedded password, no localhost - are only the beginning.
 
 A public hostname can resolve to a private address. It can return multiple answers, some public and some private. A redirect can leave the approved origin. A DNS answer can change between validation and connection. IPv4 can be represented through mapped IPv6 or alternate numeric forms. Cloud providers expose metadata and platform endpoints that must remain blocked even when a general private-network exception is enabled.
 
@@ -54,7 +54,7 @@ Those are not missing marketing bullets. They are the reason the serverless tier
 }
 ```
 
-If a deployment needs stronger destination control, the correct answer is to use the hardened local tier or add infrastructure-level egress controls—not to rename an origin allowlist “DNS protection.”
+If a deployment needs stronger destination control, the correct answer is to use the hardened local tier or add infrastructure-level egress controls - not to rename an origin allowlist “DNS protection.”
 
 ## Source access is a third concern
 
@@ -63,7 +63,7 @@ Reading a website and reading a provider API have different rules. Cockroach Cra
 After installing the stable CLI globally, run:
 
 ```bash
-npm install --global cockroach-crawler@0.5.1
+npm install --global cockroach-crawler@0.5.2
 cockroach-sources doctor
 ```
 
@@ -128,7 +128,7 @@ Cockroach Crawler is designed for a common agent integration: an explicit read r
 From npm `latest`:
 
 ```bash
-npm install --global cockroach-crawler@0.5.1
+npm install --global cockroach-crawler@0.5.2
 cockroach-sources doctor
 cockroach-crawl https://example.com/docs --max-pages 10 --jsonl
 ```

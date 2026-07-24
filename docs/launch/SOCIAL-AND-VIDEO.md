@@ -6,7 +6,7 @@
 2. The hardened local crawler validates public destinations, pins each admitted redirect hop, enforces robots, and spends creator-owned limits for pages, requests, bytes, depth, concurrency, and time.
 3. `cockroach-sources doctor` shows which public, keyed, credentialed, no-key, or session-backed route is actually available before an agent dispatches.
 4. Optional YouTube and social-session routes are separately installed, fixed read-only commands. No cookie extraction, stealth, login bypass, or silent fallback.
-5. The output is Markdown/JSON/JSONL plus source URLs, hashes, warnings, and retrieval provenance. Reproduce it: `npx -y --package cockroach-crawler@0.5.1 cockroach-crawl https://example.com --max-pages 3 --jsonl`
+5. The output is Markdown/JSON/JSONL plus source URLs, hashes, warnings, and retrieval provenance. Reproduce it: `npx -y --package cockroach-crawler@0.5.2 cockroach-crawl https://example.com --max-pages 3 --jsonl`
 6. Source, docs, and explicit limitations: https://cockroachcrawler.com/
 
 ## LinkedIn
@@ -17,24 +17,24 @@ Cockroach Crawler turns those decisions into a bounded reading layer. The local 
 
 It does not supply a model, proxy fleet, process sandbox, cookie extractor, or access-control bypass. The restricted serverless profile also states plainly that it lacks the local DNS boundary.
 
-Version `0.5.1` is MIT licensed and available on npm. I am looking for one reproducible provider, robots, redirect, SSRF, browser, or resource-budget failure that should become the next fixture.
+Version `0.5.2` is MIT licensed and available on npm. I am looking for one reproducible provider, robots, redirect, SSRF, browser, or resource-budget failure that should become the next fixture.
 
 ## Short launch post
 
 Give your AI agent eyes on the web - without giving it the keys to your network.
 
-Cockroach Crawler `0.5.1` is a local-first Node.js reading layer with bounded public-web crawling, explicit provider diagnostics, optional read-only reach providers, normalized evidence records, a governed browser-host contract, and a restricted Worker profile.
+Cockroach Crawler `0.5.2` is a local-first Node.js reading layer with bounded public-web crawling, explicit provider diagnostics, optional read-only reach providers, normalized evidence records, a governed browser-host contract, and a restricted Worker profile.
 
 Try the two-command proof:
 
 ```sh
-npx -y --package cockroach-crawler@0.5.1 cockroach-sources doctor
-npx -y --package cockroach-crawler@0.5.1 cockroach-crawl https://example.com --max-pages 3 --jsonl
+npx -y --package cockroach-crawler@0.5.2 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.5.2 cockroach-crawl https://example.com --max-pages 3 --jsonl
 ```
 
 ## YouTube
 
-**Title:** Give AI agents eyes on the web - with boundaries | Cockroach Crawler 0.5.1
+**Title:** Give AI agents eyes on the web - with boundaries | Cockroach Crawler 0.5.2
 
 **Description:** See a real source doctor, bounded crawl, and normalized evidence record. Cockroach Crawler is an open-source Node.js reading layer with creator-owned network and resource limits, optional explicit no-key or session-backed providers, and no cookie extraction or write actions. Reproduce the demo from npm: https://cockroachcrawler.com/docs/
 

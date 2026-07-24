@@ -78,7 +78,7 @@ No. It enforces an HTTPS origin allowlist and strict budgets but cannot provide 
 
 ### Does it write to a provider?
 
-No built-in or optional provider in `0.5.1` posts, comments, likes, follows, edits, submits, or deletes.
+No built-in or optional provider in `0.5.2` posts, comments, likes, follows, edits, submits, or deletes.
 
 ## Approved descriptions
 

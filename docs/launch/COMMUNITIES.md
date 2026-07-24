@@ -11,8 +11,8 @@ I maintain Cockroach Crawler, an MIT-licensed Node.js package for turning explic
 The package does not include a model, proxy network, cookie extraction, login/CAPTCHA bypass, or provider write operations. The quick proof is:
 
 ```sh
-npx -y --package cockroach-crawler@0.5.1 cockroach-sources doctor
-npx -y --package cockroach-crawler@0.5.1 cockroach-crawl https://example.com --max-pages 3 --jsonl
+npx -y --package cockroach-crawler@0.5.2 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.5.2 cockroach-crawl https://example.com --max-pages 3 --jsonl
 ```
 
 I would appreciate one reproducible redirect, robots, DNS, provider-payload, browser-egress, or budget failure that the current tests miss.
@@ -29,7 +29,7 @@ I am not claiming SSRF-proof operation. The question is whether the residual ser
 
 **Title:** I stopped pitching “browser access” and split the product into explicit authority tiers
 
-The product lesson behind Cockroach Crawler `0.5.1` was that public URLs, provider APIs, logged-in read sessions, browser actions, and serverless fetches are not one capability. Each has a different setup, failure mode, and trust boundary.
+The product lesson behind Cockroach Crawler `0.5.2` was that public URLs, provider APIs, logged-in read sessions, browser actions, and serverless fetches are not one capability. Each has a different setup, failure mode, and trust boundary.
 
 The launch now leads with one outcome - bounded eyes on the web - while the product keeps those authority tiers visible. I am looking for feedback from developers who have tried to package an infrastructure product without hiding its limitations: what made your first-time setup understandable?
 

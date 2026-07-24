@@ -9,7 +9,7 @@
 
 Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to run BFS, DFS, best-first, or adaptive traversal, build searchable fetch-validated site maps, extract bounded CSS, XPath, or restricted-regex fields, search YouTube without a developer API key through the optional reviewed route, render JavaScript pages, run bounded self-hosted jobs, and preserve source identity, redirects, hashes, warnings, artifacts, and provenance.
 
-It is built to be **the best AI crawler for governed agents** that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus—not a claim that it replaces every distributed scraping cloud or bypasses site controls.
+It is built to be **the best AI crawler for governed agents** that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus - not a claim that it replaces every distributed scraping cloud or bypasses site controls.
 
 Every capability stays behind creator-owned origin, request, byte, redirect, concurrency, and time limits. Use the hardened local crawler for bounded public-web collection, the source router for explicit provider capabilities, optional reach providers for reviewed no-developer-key or session-backed reads, and the restricted self-hosted Worker only for allowlisted sites you operate or trust.
 
@@ -31,7 +31,7 @@ Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compa
 Every item below has a public API, command, output contract, test, or dedicated
 documentation page in the stable `0.5.x` line.
 
-### Crawl and discover — 15
+### Crawl and discover - 15
 
 1. Static HTTP crawling
 2. Multiple seeds
@@ -49,7 +49,7 @@ documentation page in the stable `0.5.x` line.
 14. Compact fetch-validated site maps
 15. Searchable fetch-validated site maps
 
-### Render and capture — 9
+### Render and capture - 9
 
 1. JavaScript rendering
 2. Selector waits and bounded clicks
@@ -61,7 +61,7 @@ documentation page in the stable `0.5.x` line.
 8. Trusted operator page hooks
 9. Explicit persistent browser profiles
 
-### Extract agent-ready data — 8
+### Extract agent-ready data - 8
 
 1. Readable Markdown
 2. CSS schema extraction
@@ -72,7 +72,7 @@ documentation page in the stable `0.5.x` line.
 7. Links and page metadata
 8. Evidence hashes and retrieval provenance
 
-### Reach public sources — 6
+### Reach public sources - 6
 
 1. Public GitHub repository and issue reads
 2. YouTube search and metadata without a developer API key through the optional reviewed route
@@ -81,20 +81,20 @@ documentation page in the stable `0.5.x` line.
 5. Offline RSS and Atom parsing
 6. Provider doctor, capability reporting, and deterministic routing
 
-### Connect agents — 3
+### Connect agents - 3
 
 1. Strict creator-bounded agent tool
 2. Native MCP stdio server
 3. Optional Maqam policy, approval, trace, and evidence integration
 
-### Deploy and operate — 4
+### Deploy and operate - 4
 
 1. Authenticated Node.js and Docker API
 2. Responsive dashboard and browser playground
 3. Bounded process-local asynchronous jobs
 4. Fixed-origin Cloudflare Worker profile
 
-### Keep authority bounded — 5
+### Keep authority bounded - 5
 
 1. Public-network admission and SSRF defenses
 2. DNS pinning and explicit origin policy
@@ -140,11 +140,11 @@ case-sensitive registry identity
 publication proves control of that namespace, not additional crawler runtime
 authority.
 
-Version `0.5.1` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.5.1 version gitHead dist.integrity`.
+Version `0.5.2` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.5.2 version gitHead dist.integrity`.
 
 ## Public benchmark evidence
 
-The extractor shipped in `0.5.1` was revalidated against the complete
+The extractor shipped in `0.5.2` was revalidated against the complete
 511-page held-out split of the
 human-reviewed WCEB v1.0 corpus. The source-pinned run produced
 **0.7653 macro word F1**, **0.9041 recall**, and **87.13% required-snippet
@@ -200,7 +200,7 @@ uses stable public exports and copyable examples from this package.
 The source registry reports what the current machine can use before an agent makes a request. This command reads configuration state only; it does not print secrets or contact a provider.
 
 ```bash
-npx -y --package cockroach-crawler@0.5.1 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.5.2 cockroach-sources doctor
 ```
 
 | Capability | No developer API key | Optional configuration | Honest boundary |
@@ -287,7 +287,7 @@ npm install cockroach-crawler
 Pin the exact stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@0.5.1
+npm install cockroach-crawler@0.5.2
 ```
 
 The stable `0.5.x` line includes advanced package subpaths:
@@ -758,7 +758,7 @@ const pages = await crawl({
 });
 ```
 
-The Chromium adapter installs a context-wide route before any page is created. Every HTTP(S) `GET` or `HEAD` request—including navigations, redirects, subresources, frames, and popup first requests—is fetched by the crawler's DNS-validated, address-pinned Undici transport and fulfilled back into Chromium. Chromium itself is placed behind a local deny-by-default egress sink. Redirect hops retain the URL/origin/robots/sensitive-path policy and redirect limit; exclusion patterns also apply to browser resources, while inclusion patterns select page navigations so required assets can still load. Redirect cookies are synchronized through Chromium before the next validated hop, preventing source-origin credentials from being forwarded while recomputing eligible target-origin cookies with conservative SameSite handling. The proxy intentionally accepts and sends only host-only, unpartitioned cookies: response `Domain` and `Partitioned` attributes are rejected, cookie prefixes and Secure/HTTPS requirements are checked before storage, and outbound host, RFC path-boundary, expiry, Secure, credentials-mode, and SameSite rules are applied explicitly. Strict, Lax, and unspecified/Lax-by-default cookies from cross-site subresource or nested-frame responses are rejected before Playwright storage. SameSite comparison deliberately requires the same scheme and exact host, so sibling subdomains are treated as cross-site; incomplete ancestry, opaque sandbox state, and non-navigation requests without a Chromium-emitted Cookie credential signal fail closed. Top-level redirects are replayed at the final URL; cross-origin redirects for subresources, frames, and popups are rejected because fulfilling them at the original URL could weaken browser origin/CORS semantics.
+The Chromium adapter installs a context-wide route before any page is created. Every HTTP(S) `GET` or `HEAD` request - including navigations, redirects, subresources, frames, and popup first requests - is fetched by the crawler's DNS-validated, address-pinned Undici transport and fulfilled back into Chromium. Chromium itself is placed behind a local deny-by-default egress sink. Redirect hops retain the URL/origin/robots/sensitive-path policy and redirect limit; exclusion patterns also apply to browser resources, while inclusion patterns select page navigations so required assets can still load. Redirect cookies are synchronized through Chromium before the next validated hop, preventing source-origin credentials from being forwarded while recomputing eligible target-origin cookies with conservative SameSite handling. The proxy intentionally accepts and sends only host-only, unpartitioned cookies: response `Domain` and `Partitioned` attributes are rejected, cookie prefixes and Secure/HTTPS requirements are checked before storage, and outbound host, RFC path-boundary, expiry, Secure, credentials-mode, and SameSite rules are applied explicitly. Strict, Lax, and unspecified/Lax-by-default cookies from cross-site subresource or nested-frame responses are rejected before Playwright storage. SameSite comparison deliberately requires the same scheme and exact host, so sibling subdomains are treated as cross-site; incomplete ancestry, opaque sandbox state, and non-navigation requests without a Chromium-emitted Cookie credential signal fail closed. Top-level redirects are replayed at the final URL; cross-origin redirects for subresources, frames, and popups are rejected because fulfilling them at the original URL could weaken browser origin/CORS semantics.
 
 Browser WebSockets and state-changing HTTP methods are blocked. Service workers, downloads, workers, WebTransport, beacons, and WebRTC/STUN are disabled as defense in depth, and observed popups are closed after their first request has passed through the context route. Decoded bytes from every proxied response count against the per-resource and total budgets; rendered DOM size is checked separately. All browser waits and actions use the remaining crawl deadline, and abort closes outstanding browser and network work.
 

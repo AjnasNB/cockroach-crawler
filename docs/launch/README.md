@@ -1,4 +1,4 @@
-# Cockroach Crawler 0.5.1 launch kit
+# Cockroach Crawler 0.5.2 launch kit
 
 Last verified: 2026-07-22.
 
@@ -19,15 +19,15 @@ Cockroach Crawler turns permitted public pages and supported read-only sources i
 ## Five-minute proof
 
 ```sh
-npx -y --package cockroach-crawler@0.5.1 cockroach-sources doctor
-npx -y --package cockroach-crawler@0.5.1 cockroach-crawl https://example.com --max-pages 3 --jsonl
+npx -y --package cockroach-crawler@0.5.2 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.5.2 cockroach-crawl https://example.com --max-pages 3 --jsonl
 ```
 
 Run `cockroach-reach setup` without `--apply` to inspect an optional-provider plan before it changes the machine.
 
 ## Launch order
 
-1. Verify the npm `0.5.1` artifact and matching GitHub tag.
+1. Verify the npm `0.5.2` artifact and matching GitHub tag.
 2. Run the provider doctor and bounded crawl from a clean install.
 3. Confirm the website, media, captions, GitHub social card, and every launch link.
 4. Publish one personally written Show HN submission while the maintainer can answer questions.
@@ -48,4 +48,4 @@ Run `cockroach-reach setup` without `--apply` to inspect an optional-provider pl
 - [Claims checklist](CLAIMS-CHECKLIST.md)
 - [Contributor issues](CONTRIBUTOR-ISSUES.md)
 
-The current npm and website release is stable `0.5.1`. Do not reuse prerelease wording from older screenshots or drafts.
+The current npm and website release is stable `0.5.2`. Do not reuse prerelease wording from older screenshots or drafts.
