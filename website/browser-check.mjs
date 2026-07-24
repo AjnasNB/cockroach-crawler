@@ -181,10 +181,43 @@ try {
             text: element.textContent?.trim().slice(0, 80) || ""
           }));
         const horizontalOverflow = Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        const overflowDiagnostic = horizontalOverflow > 1 ? {
+          html: {
+            clientWidth: document.documentElement.clientWidth,
+            scrollWidth: document.documentElement.scrollWidth
+          },
+          body: {
+            clientWidth: document.body.clientWidth,
+            scrollWidth: document.body.scrollWidth
+          },
+          candidates: [...document.body.querySelectorAll("*")]
+            .map((element) => {
+              const rect = element.getBoundingClientRect();
+              const style = getComputedStyle(element);
+              return {
+                tag: element.tagName.toLowerCase(),
+                id: element.id,
+                className: typeof element.className === "string" ? element.className : "",
+                left: Math.round(rect.left * 100) / 100,
+                right: Math.round(rect.right * 100) / 100,
+                width: Math.round(rect.width * 100) / 100,
+                clientWidth: element.clientWidth,
+                scrollWidth: element.scrollWidth,
+                overflowX: style.overflowX,
+                contain: style.contain,
+                whiteSpace: style.whiteSpace,
+                text: element.textContent?.trim().slice(0, 80) || ""
+              };
+            })
+            .filter((element) => element.right > viewportWidth || element.scrollWidth > element.clientWidth + 1)
+            .sort((left, right) => Math.max(right.right - viewportWidth, right.scrollWidth - right.clientWidth) - Math.max(left.right - viewportWidth, left.scrollWidth - left.clientWidth))
+            .slice(0, 16)
+        } : null;
         return {
           horizontalOverflow,
           horizontal: horizontalOverflow > 1,
           overflowElements,
+          overflowDiagnostic,
           navVisible: nav ? getComputedStyle(nav).display : "missing",
           currentNavVisible: !navRect || !currentRect ? false : currentRect.left >= navRect.left - 1 && currentRect.right <= navRect.right + 1,
           mobileToc: routeNeedsToc() ? Boolean(document.querySelector(".mobile-toc")) && getComputedStyle(document.querySelector(".mobile-toc")).display !== "none" : true,
