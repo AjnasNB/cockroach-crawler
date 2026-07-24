@@ -6,6 +6,20 @@ export interface CockroachMcpOptions {
   extractDefaults?: Omit<StructuredExtractionOptions, "fields">;
 }
 
+export interface CockroachMcpTransport {
+  onmessage?: (message: any) => void | Promise<void>;
+  onclose?: () => void;
+  onerror?: (error: Error) => void;
+  start(): Promise<void>;
+  send(message: unknown): Promise<void>;
+  close(): Promise<void>;
+}
+
+export interface CockroachMcpServer {
+  connect(transport: CockroachMcpTransport): Promise<void>;
+  close(): Promise<void>;
+}
+
 export function buildMcpCrawlOptions(
   defaults: CrawlOptions,
   request: {
@@ -20,8 +34,8 @@ export function buildMcpCrawlOptions(
 
 export function createCockroachMcpServer(
   options?: CockroachMcpOptions
-): import("@modelcontextprotocol/sdk/server/mcp.js").McpServer;
+): CockroachMcpServer;
 
 export function connectCockroachStdio(
   options?: CockroachMcpOptions
-): Promise<import("@modelcontextprotocol/sdk/server/mcp.js").McpServer>;
+): Promise<CockroachMcpServer>;

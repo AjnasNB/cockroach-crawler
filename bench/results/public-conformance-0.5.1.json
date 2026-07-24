@@ -1,0 +1,823 @@
+{
+  "schemaVersion": 1,
+  "benchmark": "cockroach-crawler-public-conformance",
+  "scope": {
+    "description": "Public-source conformance probes for robots dispatch and HTTP(S) canonical URL normalization.",
+    "intendedClaims": [
+      "pass rate on the named Google robots vectors adapted through the real crawler dispatch path",
+      "pass rate on the named pinned WPT HTTP(S) URL subset through extractPage canonical normalization"
+    ],
+    "excludedClaims": [
+      "complete RFC 9309 certification",
+      "complete WHATWG URL certification",
+      "browser-engine certification",
+      "network throughput or production capacity"
+    ]
+  },
+  "package": {
+    "name": "cockroach-crawler",
+    "version": "0.5.1",
+    "source": {
+      "algorithm": "sha256",
+      "normalization": "utf8-lf",
+      "value": "6171144e74f993ac81624b37e84071256e4ad566b7be5eb2654927a1d8bf28a7",
+      "inputs": [
+        "src/index.js",
+        "package.json",
+        "package-lock.json",
+        "bench/public/sources.json",
+        "bench/public/robots-vectors.json",
+        "bench/public/conformance-benchmark.mjs"
+      ]
+    }
+  },
+  "robots": {
+    "source": {
+      "repository": "https://github.com/google/robotstxt",
+      "revision": "22b355ff855419e6a3ff8ff09c0ad7fdb17116f9",
+      "path": "robots_test.cc",
+      "testGroup": "RobotsUnittest.GoogleOnly_DocumentationChecks and RFC-aligned ID_* groups",
+      "adaptation": "The public upstream allow/disallow examples are represented as data and exercised through Cockroach Crawler's real robots dispatch path."
+    },
+    "rfc": "https://www.rfc-editor.org/rfc/rfc9309.html",
+    "cases": 25,
+    "passed": 25,
+    "passRate": 1,
+    "results": [
+      {
+        "name": "allow fish root",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "allow fish extension",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "allow fish descendant",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "allow fish prefix",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "deny case-sensitive mismatch",
+        "expectedAllowed": false,
+        "observedAllowed": false,
+        "passed": true
+      },
+      {
+        "name": "deny non-prefix fish",
+        "expectedAllowed": false,
+        "observedAllowed": false,
+        "passed": true
+      },
+      {
+        "name": "wildcard php root",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "wildcard php nested",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "wildcard php query",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "wildcard php case mismatch",
+        "expectedAllowed": false,
+        "observedAllowed": false,
+        "passed": true
+      },
+      {
+        "name": "terminal php match",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "terminal php rejects query",
+        "expectedAllowed": false,
+        "observedAllowed": false,
+        "passed": true
+      },
+      {
+        "name": "terminal php rejects suffix",
+        "expectedAllowed": false,
+        "observedAllowed": false,
+        "passed": true
+      },
+      {
+        "name": "longest allow wins",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "equal allow wins",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "longest disallow wins",
+        "expectedAllowed": false,
+        "observedAllowed": false,
+        "passed": true
+      },
+      {
+        "name": "root anchor allows root",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "root anchor denies child",
+        "expectedAllowed": false,
+        "observedAllowed": false,
+        "passed": true
+      },
+      {
+        "name": "specific group selected",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "global group fallback",
+        "expectedAllowed": false,
+        "observedAllowed": false,
+        "passed": true
+      },
+      {
+        "name": "empty disallow allows",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "comments ignored",
+        "expectedAllowed": false,
+        "observedAllowed": false,
+        "passed": true
+      },
+      {
+        "name": "directive names case insensitive",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "path values case sensitive allow",
+        "expectedAllowed": true,
+        "observedAllowed": true,
+        "passed": true
+      },
+      {
+        "name": "path values case sensitive deny",
+        "expectedAllowed": false,
+        "observedAllowed": false,
+        "passed": true
+      }
+    ]
+  },
+  "wptUrl": {
+    "source": {
+      "name": "Web Platform Tests URL corpus",
+      "repository": "https://github.com/web-platform-tests/wpt",
+      "revision": "94dbeafcf5092c7be5e15ec78c95dca966d5ee26",
+      "path": "url/resources/urltestdata.json",
+      "sha256": "355c9f1e5f34aae66ba8adfabf3c853f5cd30ea22964ef7a53eb292e7975d81e",
+      "license": "BSD-3-Clause",
+      "licenseUrl": "https://github.com/web-platform-tests/wpt/blob/master/LICENSE.md"
+    },
+    "selection": "All applicable corpus entries, up to 500, with HTTP(S) expected protocol, no URL credentials, and string input/base/href fields.",
+    "corpusSha256": "355c9f1e5f34aae66ba8adfabf3c853f5cd30ea22964ef7a53eb292e7975d81e",
+    "cases": 101,
+    "passed": 101,
+    "passRate": 1,
+    "results": [
+      {
+        "index": 0,
+        "expected": "http://example.org/",
+        "actual": "http://example.org/",
+        "passed": true
+      },
+      {
+        "index": 1,
+        "expected": "http://example.org/foo/foo.com",
+        "actual": "http://example.org/foo/foo.com",
+        "passed": true
+      },
+      {
+        "index": 2,
+        "expected": "http://example.org/foo/:foo.com",
+        "actual": "http://example.org/foo/:foo.com",
+        "passed": true
+      },
+      {
+        "index": 3,
+        "expected": "http://example.org/foo/foo.com",
+        "actual": "http://example.org/foo/foo.com",
+        "passed": true
+      },
+      {
+        "index": 4,
+        "expected": "http://f:21/%20b%20?%20d%20",
+        "actual": "http://f:21/%20b%20?%20d%20",
+        "passed": true
+      },
+      {
+        "index": 5,
+        "expected": "http://f/c",
+        "actual": "http://f/c",
+        "passed": true
+      },
+      {
+        "index": 6,
+        "expected": "http://f:0/c",
+        "actual": "http://f:0/c",
+        "passed": true
+      },
+      {
+        "index": 7,
+        "expected": "http://f:0/c",
+        "actual": "http://f:0/c",
+        "passed": true
+      },
+      {
+        "index": 8,
+        "expected": "http://f/c",
+        "actual": "http://f/c",
+        "passed": true
+      },
+      {
+        "index": 9,
+        "expected": "http://f/c",
+        "actual": "http://f/c",
+        "passed": true
+      },
+      {
+        "index": 10,
+        "expected": "http://example.org/foo/bar",
+        "actual": "http://example.org/foo/bar",
+        "passed": true
+      },
+      {
+        "index": 11,
+        "expected": "http://example.org/foo/bar",
+        "actual": "http://example.org/foo/bar",
+        "passed": true
+      },
+      {
+        "index": 12,
+        "expected": "http://example.org/foo/:foo.com/",
+        "actual": "http://example.org/foo/:foo.com/",
+        "passed": true
+      },
+      {
+        "index": 13,
+        "expected": "http://example.org/foo/:foo.com/",
+        "actual": "http://example.org/foo/:foo.com/",
+        "passed": true
+      },
+      {
+        "index": 14,
+        "expected": "http://example.org/foo/:",
+        "actual": "http://example.org/foo/:",
+        "passed": true
+      },
+      {
+        "index": 15,
+        "expected": "http://example.org/foo/:a",
+        "actual": "http://example.org/foo/:a",
+        "passed": true
+      },
+      {
+        "index": 16,
+        "expected": "http://example.org/foo/:/",
+        "actual": "http://example.org/foo/:/",
+        "passed": true
+      },
+      {
+        "index": 17,
+        "expected": "http://example.org/foo/:/",
+        "actual": "http://example.org/foo/:/",
+        "passed": true
+      },
+      {
+        "index": 18,
+        "expected": "http://example.org/foo/:",
+        "actual": "http://example.org/foo/:",
+        "passed": true
+      },
+      {
+        "index": 19,
+        "expected": "http://example.org/foo/bar",
+        "actual": "http://example.org/foo/bar",
+        "passed": true
+      },
+      {
+        "index": 20,
+        "expected": "http://example.org/foo/bar",
+        "actual": "http://example.org/foo/bar",
+        "passed": true
+      },
+      {
+        "index": 21,
+        "expected": "http://example.org/foo/bar",
+        "actual": "http://example.org/foo/bar",
+        "passed": true
+      },
+      {
+        "index": 22,
+        "expected": "http://example.org/foo/bar",
+        "actual": "http://example.org/foo/bar",
+        "passed": true
+      },
+      {
+        "index": 23,
+        "expected": "http://example.org/foo/bar?",
+        "actual": "http://example.org/foo/bar?",
+        "passed": true
+      },
+      {
+        "index": 24,
+        "expected": "http://example.org/",
+        "actual": "http://example.org/",
+        "passed": true
+      },
+      {
+        "index": 25,
+        "expected": "http://example.org/foo/:23",
+        "actual": "http://example.org/foo/:23",
+        "passed": true
+      },
+      {
+        "index": 26,
+        "expected": "http://example.org/:23",
+        "actual": "http://example.org/:23",
+        "passed": true
+      },
+      {
+        "index": 27,
+        "expected": "http://example.org/x",
+        "actual": "http://example.org/x",
+        "passed": true
+      },
+      {
+        "index": 28,
+        "expected": "http://x/hello",
+        "actual": "http://x/hello",
+        "passed": true
+      },
+      {
+        "index": 29,
+        "expected": "http://example.org/foo/::",
+        "actual": "http://example.org/foo/::",
+        "passed": true
+      },
+      {
+        "index": 30,
+        "expected": "http://example.org/foo/::23",
+        "actual": "http://example.org/foo/::23",
+        "passed": true
+      },
+      {
+        "index": 31,
+        "expected": "http://example.org/foo/:@c:29",
+        "actual": "http://example.org/foo/:@c:29",
+        "passed": true
+      },
+      {
+        "index": 32,
+        "expected": "http://foo.com//@",
+        "actual": "http://foo.com//@",
+        "passed": true
+      },
+      {
+        "index": 33,
+        "expected": "http://foo.com/",
+        "actual": "http://foo.com/",
+        "passed": true
+      },
+      {
+        "index": 34,
+        "expected": "http://a/b:c/d@foo.com/",
+        "actual": "http://a/b:c/d@foo.com/",
+        "passed": true
+      },
+      {
+        "index": 35,
+        "expected": "http://foo/bar",
+        "actual": "http://foo/bar",
+        "passed": true
+      },
+      {
+        "index": 36,
+        "expected": "http://foo/path;a??e",
+        "actual": "http://foo/path;a??e",
+        "passed": true
+      },
+      {
+        "index": 37,
+        "expected": "http://foo/abcd?efgh?ijkl",
+        "actual": "http://foo/abcd?efgh?ijkl",
+        "passed": true
+      },
+      {
+        "index": 38,
+        "expected": "http://foo/abcd",
+        "actual": "http://foo/abcd",
+        "passed": true
+      },
+      {
+        "index": 39,
+        "expected": "http://example.org/foo/[61:24:74]:98",
+        "actual": "http://example.org/foo/[61:24:74]:98",
+        "passed": true
+      },
+      {
+        "index": 40,
+        "expected": "http://example.org/foo/[61:27]/:foo",
+        "actual": "http://example.org/foo/[61:27]/:foo",
+        "passed": true
+      },
+      {
+        "index": 41,
+        "expected": "http://[2001::1]/",
+        "actual": "http://[2001::1]/",
+        "passed": true
+      },
+      {
+        "index": 42,
+        "expected": "http://[::7f00:1]/",
+        "actual": "http://[::7f00:1]/",
+        "passed": true
+      },
+      {
+        "index": 43,
+        "expected": "http://[::d01:4403]/",
+        "actual": "http://[::d01:4403]/",
+        "passed": true
+      },
+      {
+        "index": 44,
+        "expected": "http://[2001::1]/",
+        "actual": "http://[2001::1]/",
+        "passed": true
+      },
+      {
+        "index": 45,
+        "expected": "http://example.org/example.com/",
+        "actual": "http://example.org/example.com/",
+        "passed": true
+      },
+      {
+        "index": 46,
+        "expected": "http://example.com/",
+        "actual": "http://example.com/",
+        "passed": true
+      },
+      {
+        "index": 47,
+        "expected": "https://example.com/",
+        "actual": "https://example.com/",
+        "passed": true
+      },
+      {
+        "index": 48,
+        "expected": "http://example.org/foo/example.com/",
+        "actual": "http://example.org/foo/example.com/",
+        "passed": true
+      },
+      {
+        "index": 49,
+        "expected": "https://example.com/",
+        "actual": "https://example.com/",
+        "passed": true
+      },
+      {
+        "index": 50,
+        "expected": "http://example.org/a/b/c",
+        "actual": "http://example.org/a/b/c",
+        "passed": true
+      },
+      {
+        "index": 51,
+        "expected": "http://example.org/a/%20/c",
+        "actual": "http://example.org/a/%20/c",
+        "passed": true
+      },
+      {
+        "index": 52,
+        "expected": "http://example.org/a%2fc",
+        "actual": "http://example.org/a%2fc",
+        "passed": true
+      },
+      {
+        "index": 53,
+        "expected": "http://example.org/a/%2f/c",
+        "actual": "http://example.org/a/%2f/c",
+        "passed": true
+      },
+      {
+        "index": 54,
+        "expected": "http://example.org/foo/bar",
+        "actual": "http://example.org/foo/bar",
+        "passed": true
+      },
+      {
+        "index": 55,
+        "expected": "http://www.example.com/",
+        "actual": "http://www.example.com/",
+        "passed": true
+      },
+      {
+        "index": 56,
+        "expected": "http://www.example.com/test.txt",
+        "actual": "http://www.example.com/test.txt",
+        "passed": true
+      },
+      {
+        "index": 57,
+        "expected": "http://www.example.com/",
+        "actual": "http://www.example.com/",
+        "passed": true
+      },
+      {
+        "index": 58,
+        "expected": "http://www.example.com/",
+        "actual": "http://www.example.com/",
+        "passed": true
+      },
+      {
+        "index": 59,
+        "expected": "http://www.example.com/test.txt",
+        "actual": "http://www.example.com/test.txt",
+        "passed": true
+      },
+      {
+        "index": 60,
+        "expected": "http://www.example.com/test.txt",
+        "actual": "http://www.example.com/test.txt",
+        "passed": true
+      },
+      {
+        "index": 61,
+        "expected": "http://www.example.com/test.txt",
+        "actual": "http://www.example.com/test.txt",
+        "passed": true
+      },
+      {
+        "index": 62,
+        "expected": "http://www.example.com/aaa/test.txt",
+        "actual": "http://www.example.com/aaa/test.txt",
+        "passed": true
+      },
+      {
+        "index": 63,
+        "expected": "http://www.example.com/test.txt",
+        "actual": "http://www.example.com/test.txt",
+        "passed": true
+      },
+      {
+        "index": 64,
+        "expected": "http://www.example.com/%E4%B8%AD/test.txt",
+        "actual": "http://www.example.com/%E4%B8%AD/test.txt",
+        "passed": true
+      },
+      {
+        "index": 65,
+        "expected": "http://www.example2.com/",
+        "actual": "http://www.example2.com/",
+        "passed": true
+      },
+      {
+        "index": 66,
+        "expected": "http://www.example2.com/",
+        "actual": "http://www.example2.com/",
+        "passed": true
+      },
+      {
+        "index": 67,
+        "expected": "http://example.com/",
+        "actual": "http://example.com/",
+        "passed": true
+      },
+      {
+        "index": 68,
+        "expected": "http://googoo.com/",
+        "actual": "http://googoo.com/",
+        "passed": true
+      },
+      {
+        "index": 69,
+        "expected": "http://www.foo.bar.com/",
+        "actual": "http://www.foo.bar.com/",
+        "passed": true
+      },
+      {
+        "index": 70,
+        "expected": "http://go.com/",
+        "actual": "http://go.com/",
+        "passed": true
+      },
+      {
+        "index": 71,
+        "expected": "http://xn--6qqa088eba/",
+        "actual": "http://xn--6qqa088eba/",
+        "passed": true
+      },
+      {
+        "index": 72,
+        "expected": "http://192.168.0.1/",
+        "actual": "http://192.168.0.1/",
+        "passed": true
+      },
+      {
+        "index": 73,
+        "expected": "http://192.168.0.1/",
+        "actual": "http://192.168.0.1/",
+        "passed": true
+      },
+      {
+        "index": 74,
+        "expected": "http://192.168.0.1/",
+        "actual": "http://192.168.0.1/",
+        "passed": true
+      },
+      {
+        "index": 75,
+        "expected": "http://example.org/foo/bar?a=b&c=d",
+        "actual": "http://example.org/foo/bar?a=b&c=d",
+        "passed": true
+      },
+      {
+        "index": 76,
+        "expected": "http://example.org/foo/bar??a=b&c=d",
+        "actual": "http://example.org/foo/bar??a=b&c=d",
+        "passed": true
+      },
+      {
+        "index": 77,
+        "expected": "http://example.org/foo/bar",
+        "actual": "http://example.org/foo/bar",
+        "passed": true
+      },
+      {
+        "index": 78,
+        "expected": "http://1.2.3.4/",
+        "actual": "http://1.2.3.4/",
+        "passed": true
+      },
+      {
+        "index": 79,
+        "expected": "http://1.2.3.4/",
+        "actual": "http://1.2.3.4/",
+        "passed": true
+      },
+      {
+        "index": 80,
+        "expected": "http://192.168.1.1/",
+        "actual": "http://192.168.1.1/",
+        "passed": true
+      },
+      {
+        "index": 81,
+        "expected": "http://192.168.1.1/",
+        "actual": "http://192.168.1.1/",
+        "passed": true
+      },
+      {
+        "index": 82,
+        "expected": "http://192.168.257.com/",
+        "actual": "http://192.168.257.com/",
+        "passed": true
+      },
+      {
+        "index": 83,
+        "expected": "http://0.0.1.0/",
+        "actual": "http://0.0.1.0/",
+        "passed": true
+      },
+      {
+        "index": 84,
+        "expected": "http://256.com/",
+        "actual": "http://256.com/",
+        "passed": true
+      },
+      {
+        "index": 85,
+        "expected": "http://59.154.201.255/",
+        "actual": "http://59.154.201.255/",
+        "passed": true
+      },
+      {
+        "index": 86,
+        "expected": "http://59.154.201.255/",
+        "actual": "http://59.154.201.255/",
+        "passed": true
+      },
+      {
+        "index": 87,
+        "expected": "http://999999999.com/",
+        "actual": "http://999999999.com/",
+        "passed": true
+      },
+      {
+        "index": 88,
+        "expected": "http://10000000000.com/",
+        "actual": "http://10000000000.com/",
+        "passed": true
+      },
+      {
+        "index": 89,
+        "expected": "http://255.255.255.255/",
+        "actual": "http://255.255.255.255/",
+        "passed": true
+      },
+      {
+        "index": 90,
+        "expected": "http://255.255.255.255/",
+        "actual": "http://255.255.255.255/",
+        "passed": true
+      },
+      {
+        "index": 91,
+        "expected": "http://[1::]/",
+        "actual": "http://[1::]/",
+        "passed": true
+      },
+      {
+        "index": 92,
+        "expected": "https://example.org/",
+        "actual": "https://example.org/",
+        "passed": true
+      },
+      {
+        "index": 93,
+        "expected": "http://test/",
+        "actual": "http://test/",
+        "passed": true
+      },
+      {
+        "index": 94,
+        "expected": "http://test/",
+        "actual": "http://test/",
+        "passed": true
+      },
+      {
+        "index": 95,
+        "expected": "http://example.org/path",
+        "actual": "http://example.org/path",
+        "passed": true
+      },
+      {
+        "index": 96,
+        "expected": "http://example.org/path",
+        "actual": "http://example.org/path",
+        "passed": true
+      },
+      {
+        "index": 97,
+        "expected": "http://example.org/",
+        "actual": "http://example.org/",
+        "passed": true
+      },
+      {
+        "index": 98,
+        "expected": "http://example.org/",
+        "actual": "http://example.org/",
+        "passed": true
+      },
+      {
+        "index": 99,
+        "expected": "http://example.org/path",
+        "actual": "http://example.org/path",
+        "passed": true
+      },
+      {
+        "index": 100,
+        "expected": "http://example.org/path",
+        "actual": "http://example.org/path",
+        "passed": true
+      }
+    ]
+  }
+}

@@ -305,7 +305,7 @@ The detailed API and authority contract is in
 
 ## Verification and supply-chain features
 
-- 184 core, advanced, source, security, Worker, browser-host, CLI, MCP-transport, and release tests on
+- 191 core, advanced, source, security, Worker, browser-host, CLI, MCP-transport, and release tests on
   the proposed branch.
 - 28 real Chromium integration tests.
 - Node 22, 24, and 26 CI.

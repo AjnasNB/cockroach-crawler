@@ -58,7 +58,7 @@ to the source that actually ran.
 
 ## Public extraction-quality result
 
-Cockroach Crawler `0.5.0` was evaluated against the full 511-page held-out split
+Cockroach Crawler `0.5.1` was evaluated against the full 511-page held-out split
 of [WCEB v1.0](https://webcontentextraction.org/), pinned to commit
 `62ff86d12ea72c80c31fb810ff1a724fad687bea`. The evaluator rejects modified or
 differently versioned dataset checkouts. It passes each cached HTML document to
@@ -96,7 +96,7 @@ Reproduce it from a clean WCEB v1.0 checkout:
 npm run bench:public:wceb -- \
   --dataset ../web-content-extraction-benchmark \
   --split test \
-  --output bench/results/wceb-test-0.5.0.json
+  --output bench/results/wceb-test-0.5.1.json
 ```
 
 ## Public-source conformance result
@@ -118,14 +118,14 @@ browser-engine, or network certification.
 
 ```sh
 npm run bench:public:conformance -- \
-  --output bench/results/public-conformance-0.5.0.json
+  --output bench/results/public-conformance-0.5.1.json
 npm run bench:public:verify
 ```
 
 ## Evidence files
 
-- `bench/results/wceb-test-0.5.0.json`: aggregate metrics and all 511 page rows.
-- `bench/results/public-conformance-0.5.0.json`: every robots and WPT case.
+- `bench/results/wceb-test-0.5.1.json`: aggregate metrics and all 511 page rows.
+- `bench/results/public-conformance-0.5.1.json`: every robots and WPT case.
 - `bench/results/ci-validated.json`: clean exact-commit loopback CI artifact.
 - `bench/public/sources.json`: upstream revisions, hashes, and licenses.
 - `bench/public/README.md`: reproduction workflow and held-out split policy.

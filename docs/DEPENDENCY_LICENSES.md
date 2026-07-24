@@ -1,10 +1,10 @@
 # Direct dependency licenses
 
-This is the reviewed direct-dependency snapshot for the stable `0.5.0` lockfile. From a source checkout, run `npm run audit:licenses` after `npm ci` to verify that installed package versions and SPDX license identifiers still match the lockfile and the project's permissive-license allowlist.
+This is the reviewed direct-dependency snapshot for the stable `0.5.1` lockfile. From a source checkout, run `npm run audit:licenses` after `npm ci` to verify that installed package versions and SPDX license identifiers still match the lockfile and the project's permissive-license allowlist.
 
 | Package | Resolved version | Relationship | SPDX license |
 | --- | ---: | --- | --- |
-| [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) | 1.29.0 | Runtime / MCP | MIT |
+| [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) | 1.29.0 | Development / MCP conformance client | MIT |
 | [@xmldom/xmldom](https://github.com/xmldom/xmldom) | 0.9.10 | Runtime / XPath DOM | MIT |
 | [ajv](https://github.com/ajv-validator/ajv) | 8.20.0 | Runtime / JSON Schema validation | MIT |
 | [cheerio](https://github.com/cheeriojs/cheerio) | 1.2.0 | Runtime | MIT |
