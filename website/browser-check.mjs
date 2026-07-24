@@ -109,7 +109,9 @@ try {
           display: style.display,
           position: style.position,
           overflowY: style.overflowY,
-          current: current?.getAttribute("href") ?? null
+          current: current?.getAttribute("href") ?? null,
+          groups: sidebar.querySelectorAll(".docs-sidebar-section").length,
+          collapsedGroups: sidebar.querySelectorAll(".docs-sidebar-group").length
         };
       })()
     }));
@@ -182,11 +184,19 @@ try {
           overflowElements,
           navVisible: nav ? getComputedStyle(nav).display : "missing",
           currentNavVisible: !navRect || !currentRect ? false : currentRect.left >= navRect.left - 1 && currentRect.right <= navRect.right + 1,
-          mobileToc: routeNeedsToc() ? Boolean(document.querySelector(".mobile-toc")) && getComputedStyle(document.querySelector(".mobile-toc")).display !== "none" : true
+          mobileToc: routeNeedsToc() ? Boolean(document.querySelector(".mobile-toc")) && getComputedStyle(document.querySelector(".mobile-toc")).display !== "none" : true,
+          mobileDocsExpanded: routeNeedsDocsNavigation() ? (() => {
+            const directory = document.querySelector(".docs-mobile-directory");
+            return Boolean(directory?.open) && directory.querySelectorAll(".docs-sidebar-section").length >= 5 && !directory.querySelector(".docs-sidebar-group");
+          })() : true
         };
 
         function routeNeedsToc() {
           return window.location.pathname === "/docs/" || Boolean(document.querySelector(".docs-manual-toc"));
+        }
+
+        function routeNeedsDocsNavigation() {
+          return window.location.pathname.startsWith("/docs/");
         }
       });
       mobileResults.push({ width, route, status: response?.status(), ...metrics, errors });
@@ -198,8 +208,8 @@ try {
     await mobile.close();
   }
 
-  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions || video.captionsDefault) || (result.route === "/docs/" && (result.docsDirectory?.display !== "grid" || result.docsDirectory.cards !== 6)) || (result.route.startsWith("/docs/") && result.docsSidebar && (result.docsSidebar.display === "none" || result.docsSidebar.position !== "sticky" || result.docsSidebar.overflowY === "auto" || !result.docsSidebar.current)));
-  const mobileFailed = mobileResults.filter((result) => result.status !== 200 || result.horizontal || result.navVisible === "none" || !result.currentNavVisible || !result.mobileToc || result.errors.length);
+  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions || video.captionsDefault) || (result.route === "/docs/" && (result.docsDirectory?.display !== "grid" || result.docsDirectory.cards !== 6)) || (result.route.startsWith("/docs/") && result.docsSidebar && (result.docsSidebar.display === "none" || result.docsSidebar.position !== "sticky" || result.docsSidebar.overflowY === "auto" || !result.docsSidebar.current || result.docsSidebar.groups < 5 || result.docsSidebar.collapsedGroups !== 0)));
+  const mobileFailed = mobileResults.filter((result) => result.status !== 200 || result.horizontal || result.navVisible === "none" || !result.currentNavVisible || !result.mobileToc || !result.mobileDocsExpanded || result.errors.length);
   console.log(JSON.stringify({ routes: results, keyboard: { firstFocus, afterSkip, copyLabel }, mediaServer, mobile: mobileResults }, null, 2));
   if (failed.length || mobileFailed.length || !mediaServer.captions || !mediaServer.range || firstFocus.className !== "skip-link" || afterSkip.id !== "main" || copyLabel !== "Copied") {
     process.exitCode = 1;

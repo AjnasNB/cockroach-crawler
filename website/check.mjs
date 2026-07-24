@@ -123,6 +123,11 @@ if (!docsHtml.includes("Cockroach Crawler 0.4.2 documentation")) errors.push("do
 if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
 if (!docsHtml.includes('href="/docs/capabilities/"')) errors.push("docs overview must link the dedicated capability library");
 if (!docsHtml.includes("docs-sidebar-nav")) errors.push("docs overview must use the persistent grouped documentation navigation");
+if (docsHtml.includes("docs-sidebar-group")) errors.push("docs navigation must not hide primary routes in collapsed accordion groups");
+if ((docsHtml.match(/data-docs-nav-expanded="true"/g) ?? []).length < 2) errors.push("desktop and mobile documentation navigation must expose every main group");
+for (const group of ["Start", "Crawl and extract", "Agents and sources", "Deploy and reference", "Capability library"]) {
+  if (!docsHtml.includes(`>${group}</h2>`)) errors.push(`docs navigation must expose the ${group} group heading`);
+}
 if (docsHtml.includes("data-feature-entry")) errors.push("docs overview must not restore the giant inline capability wall");
 const capabilityIndexHtml = await readFile(join(dist, "docs", "capabilities", "index.html"), "utf8");
 if ((capabilityIndexHtml.match(/data-feature-entry/g) ?? []).length !== 46) errors.push("capability library must expose all 46 indexed capabilities");
@@ -140,6 +145,7 @@ for (const file of capabilityDetailFiles) {
   const html = await readFile(file, "utf8");
   const label = file.slice(dist.length).replaceAll("\\", "/");
   if (!html.includes("docs-sidebar-nav")) errors.push(`${label}: capability page must include grouped documentation navigation`);
+  if (html.includes("docs-sidebar-group")) errors.push(`${label}: capability navigation must stay expanded`);
   if (!html.includes("of 46")) errors.push(`${label}: capability page must identify its place in the complete catalog`);
   if (!html.includes('aria-current="page"')) errors.push(`${label}: capability page must mark its current sidebar route`);
   for (const proof of ["Purpose and fit", "How to start", "Result contract", "Boundary and failures", "Related pages"]) {
@@ -148,14 +154,16 @@ for (const file of capabilityDetailFiles) {
 }
 for (const [route, proof] of [
   ["crawling", "Reuse only a policy-identical crawl."],
-  ["browser", "Render the page. Keep the evidence."],
-  ["extraction", "From page bytes to model-ready records."],
+  ["browser", "Render the page and keep the evidence."],
+  ["extraction", "Turn page bytes into model-ready records."],
   ["mcp", "cockroach://capabilities"],
   ["docker", "COCKROACH_API_TOKEN"],
   ["reference", "Every stable top-level crawl option."]
 ]) {
   const html = await readFile(join(dist, "docs", route, "index.html"), "utf8");
   if (!html.includes("docs-sidebar-nav")) errors.push(`${route} docs must include grouped documentation navigation`);
+  if (html.includes("docs-sidebar-group")) errors.push(`${route} docs must not hide main documentation groups`);
+  if (!html.includes("docs-breadcrumbs")) errors.push(`${route} docs must expose a semantic breadcrumb`);
   if (!html.includes(proof)) errors.push(`${route} docs are missing their reference proof`);
 }
 const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
