@@ -99,6 +99,11 @@ const required = ["robots.txt", "sitemap.xml", "llms.txt", "site.webmanifest", "
 for (const path of required) if (!await exists(join(dist, path))) errors.push(`missing ${path}`);
 const sitemap = await readFile(join(dist, "sitemap.xml"), "utf8");
 if (!sitemap.includes("<loc>https://cockroachcrawler.com/compare/</loc>")) errors.push("sitemap must include the AI crawler comparison");
+const sitemapLocations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+if (sitemapLocations.length !== htmlFiles.length - 1) errors.push(`sitemap must include every public HTML page; expected ${htmlFiles.length - 1}, found ${sitemapLocations.length}`);
+if (sitemapLocations.filter((location) => /\/docs\/capabilities\/[^/]+\/[^/]+\/$/.test(location)).length !== 46) {
+  errors.push("sitemap must include all 46 capability detail pages");
+}
 for (const route of ["crawling", "browser", "extraction", "mcp", "docker", "reference"]) {
   if (!sitemap.includes(`<loc>https://cockroachcrawler.com/docs/${route}/</loc>`)) {
     errors.push(`sitemap must include the ${route} documentation`);
@@ -116,8 +121,31 @@ if (!packageReadme.includes("Look up every package subpath, crawl option, page f
 const docsHtml = await readFile(join(dist, "docs", "index.html"), "utf8");
 if (!docsHtml.includes("Cockroach Crawler 0.4.2 documentation")) errors.push("docs must identify stable 0.4.2");
 if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
-if ((docsHtml.match(/data-feature-entry/g) ?? []).length !== 46) errors.push("docs must expose all 46 indexed capabilities");
-if (!docsHtml.includes("data-feature-search")) errors.push("docs must retain the searchable feature index");
+if (!docsHtml.includes('href="/docs/capabilities/"')) errors.push("docs overview must link the dedicated capability library");
+if (!docsHtml.includes("docs-sidebar-nav")) errors.push("docs overview must use the persistent grouped documentation navigation");
+if (docsHtml.includes("data-feature-entry")) errors.push("docs overview must not restore the giant inline capability wall");
+const capabilityIndexHtml = await readFile(join(dist, "docs", "capabilities", "index.html"), "utf8");
+if ((capabilityIndexHtml.match(/data-feature-entry/g) ?? []).length !== 46) errors.push("capability library must expose all 46 indexed capabilities");
+if (!capabilityIndexHtml.includes("data-feature-search")) errors.push("capability library must retain the searchable feature index");
+const capabilityIndexLinks = [...capabilityIndexHtml.matchAll(/href="(\/docs\/capabilities\/[^"]+\/)"/g)]
+  .map((match) => match[1])
+  .filter((route) => route.split("/").filter(Boolean).length === 4);
+if (new Set(capabilityIndexLinks).size !== 46) errors.push(`capability library must link 46 unique detail pages, found ${new Set(capabilityIndexLinks).size}`);
+const capabilityDetailFiles = htmlFiles.filter((file) => {
+  const label = file.slice(dist.length).replaceAll("\\", "/");
+  return /^\/?docs\/capabilities\/[^/]+\/[^/]+\/index\.html$/.test(label);
+});
+if (capabilityDetailFiles.length !== 46) errors.push(`expected 46 generated capability pages, found ${capabilityDetailFiles.length}`);
+for (const file of capabilityDetailFiles) {
+  const html = await readFile(file, "utf8");
+  const label = file.slice(dist.length).replaceAll("\\", "/");
+  if (!html.includes("docs-sidebar-nav")) errors.push(`${label}: capability page must include grouped documentation navigation`);
+  if (!html.includes("of 46")) errors.push(`${label}: capability page must identify its place in the complete catalog`);
+  if (!html.includes('aria-current="page"')) errors.push(`${label}: capability page must mark its current sidebar route`);
+  for (const proof of ["Purpose and fit", "How to start", "Result contract", "Boundary and failures", "Related pages"]) {
+    if (!html.includes(proof)) errors.push(`${label}: missing ${proof} section`);
+  }
+}
 for (const [route, proof] of [
   ["crawling", "Reuse only a policy-identical crawl."],
   ["browser", "Render the page. Keep the evidence."],
