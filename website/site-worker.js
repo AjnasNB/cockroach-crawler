@@ -5,8 +5,8 @@ async function fetchAsset(request, env) {
   try {
     return await env.ASSETS.fetch(request);
   } catch {
-    const fallbackUrl = new URL("/404.html", request.url);
-    const fallback = await env.ASSETS.fetch(new Request(fallbackUrl, { method: request.method }));
+    const fallbackUrl = new URL("/404", request.url);
+    const fallback = await env.ASSETS.fetch(new Request(fallbackUrl, { method: "GET" }));
     return new Response(fallback.body, {
       status: 404,
       statusText: "Not Found",

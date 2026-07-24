@@ -163,7 +163,12 @@ if (!secure.headers.get("cache-control")?.includes("max-age=0") || !secure.heade
 
 const missingEnvironment = {
   ASSETS: {
-    fetch: async () => new Response("missing", { status: 404, headers: { "content-type": "text/html; charset=utf-8" } }),
+    fetch: async (request) => {
+      if (new URL(request.url).pathname === "/404") {
+        return new Response("missing", { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
+      }
+      throw new Error("asset not found");
+    },
   },
 };
 const missing = await siteWorker.fetch(new Request("https://cockroachcrawler.com/docs/new-route/"), missingEnvironment);
