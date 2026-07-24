@@ -2534,6 +2534,16 @@ tr:last-child td {
   .docs-mobile-directory .docs-sidebar-nav section {
     grid-template-columns: 1fr;
   }
+
+  .code-panel pre {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  .code-panel code {
+    width: auto;
+    min-width: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
