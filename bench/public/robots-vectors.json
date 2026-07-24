@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "repository": "https://github.com/google/robotstxt",
+    "revision": "22b355ff855419e6a3ff8ff09c0ad7fdb17116f9",
+    "path": "robots_test.cc",
+    "testGroup": "RobotsUnittest.GoogleOnly_DocumentationChecks and RFC-aligned ID_* groups",
+    "adaptation": "The public upstream allow/disallow examples are represented as data and exercised through Cockroach Crawler's real robots dispatch path."
+  },
+  "cases": [
+    {
+      "name": "allow fish root",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /fish\n",
+      "path": "/fish",
+      "allowed": true
+    },
+    {
+      "name": "allow fish extension",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /fish\n",
+      "path": "/fish.html",
+      "allowed": true
+    },
+    {
+      "name": "allow fish descendant",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /fish\n",
+      "path": "/fish/salmon.html",
+      "allowed": true
+    },
+    {
+      "name": "allow fish prefix",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /fish\n",
+      "path": "/fishheads",
+      "allowed": true
+    },
+    {
+      "name": "deny case-sensitive mismatch",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /fish\n",
+      "path": "/Fish.asp",
+      "allowed": false
+    },
+    {
+      "name": "deny non-prefix fish",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /fish\n",
+      "path": "/catfish",
+      "allowed": false
+    },
+    {
+      "name": "wildcard php root",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /*.php\n",
+      "path": "/filename.php",
+      "allowed": true
+    },
+    {
+      "name": "wildcard php nested",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /*.php\n",
+      "path": "/folder/filename.php",
+      "allowed": true
+    },
+    {
+      "name": "wildcard php query",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /*.php\n",
+      "path": "/folder/filename.php?parameters",
+      "allowed": true
+    },
+    {
+      "name": "wildcard php case mismatch",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /*.php\n",
+      "path": "/windows.PHP",
+      "allowed": false
+    },
+    {
+      "name": "terminal php match",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /*.php$\n",
+      "path": "/filename.php",
+      "allowed": true
+    },
+    {
+      "name": "terminal php rejects query",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /*.php$\n",
+      "path": "/filename.php?parameters",
+      "allowed": false
+    },
+    {
+      "name": "terminal php rejects suffix",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /\nAllow: /*.php$\n",
+      "path": "/filename.php5",
+      "allowed": false
+    },
+    {
+      "name": "longest allow wins",
+      "robots": "user-agent: CockroachCrawler\nAllow: /p\nDisallow: /\n",
+      "path": "/page",
+      "allowed": true
+    },
+    {
+      "name": "equal allow wins",
+      "robots": "user-agent: CockroachCrawler\nAllow: /folder\nDisallow: /folder\n",
+      "path": "/folder/page",
+      "allowed": true
+    },
+    {
+      "name": "longest disallow wins",
+      "robots": "user-agent: CockroachCrawler\nAllow: /page\nDisallow: /*.htm\n",
+      "path": "/page.htm",
+      "allowed": false
+    },
+    {
+      "name": "root anchor allows root",
+      "robots": "user-agent: CockroachCrawler\nAllow: /$\nDisallow: /\n",
+      "path": "/",
+      "allowed": true
+    },
+    {
+      "name": "root anchor denies child",
+      "robots": "user-agent: CockroachCrawler\nAllow: /$\nDisallow: /\n",
+      "path": "/page.html",
+      "allowed": false
+    },
+    {
+      "name": "specific group selected",
+      "robots": "user-agent: *\nDisallow: /\nuser-agent: CockroachCrawler\nAllow: /\n",
+      "path": "/public",
+      "allowed": true
+    },
+    {
+      "name": "global group fallback",
+      "robots": "user-agent: OtherBot\nAllow: /\nuser-agent: *\nDisallow: /restricted\n",
+      "path": "/restricted-report",
+      "allowed": false
+    },
+    {
+      "name": "empty disallow allows",
+      "robots": "user-agent: CockroachCrawler\nDisallow:\n",
+      "path": "/anything",
+      "allowed": true
+    },
+    {
+      "name": "comments ignored",
+      "robots": "user-agent: CockroachCrawler # crawler group\nDisallow: /blocked # private\nAllow: /\n",
+      "path": "/blocked",
+      "allowed": false
+    },
+    {
+      "name": "directive names case insensitive",
+      "robots": "UsEr-AgEnT: CockroachCrawler\nDiSaLlOw: /blocked\nAlLoW: /\n",
+      "path": "/open",
+      "allowed": true
+    },
+    {
+      "name": "path values case sensitive allow",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /Fish\nAllow: /fish\n",
+      "path": "/fish",
+      "allowed": true
+    },
+    {
+      "name": "path values case sensitive deny",
+      "robots": "user-agent: CockroachCrawler\nDisallow: /Fish\nAllow: /fish\n",
+      "path": "/Fish",
+      "allowed": false
+    }
+  ]
+}
