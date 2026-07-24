@@ -2535,6 +2535,11 @@ tr:last-child td {
     grid-template-columns: 1fr;
   }
 
+  .docs-manual-content {
+    overflow-x: clip;
+    contain: inline-size;
+  }
+
   .code-panel pre {
     overflow-wrap: anywhere;
     white-space: pre-wrap;
