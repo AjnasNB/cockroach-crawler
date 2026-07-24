@@ -43,7 +43,7 @@ The local crawler produces structured JSON/JSONL with readable text, Markdown, l
 
 It does not bundle a model, model key, hosted account, stealth layer, CAPTCHA bypass, paywall bypass, or authorization bypass. Optional LLM extraction runs only through a host-supplied adapter and validates its output against the caller's JSON Schema.
 
-Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [advanced capabilities](./docs/ADVANCED.md) · [complete feature inventory](./docs/FEATURES.md) · [comparison](https://cockroachcrawler.com/compare/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
+Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [46-capability library](https://cockroachcrawler.com/docs/capabilities/) · [advanced capabilities](./docs/ADVANCED.md) · [complete feature inventory](./docs/FEATURES.md) · [comparison](https://cockroachcrawler.com/compare/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
 
 ## Complete documentation
 
@@ -53,6 +53,7 @@ uses stable public exports and copyable examples from this package.
 | Need | Guide |
 | --- | --- |
 | Install and run one bounded crawl | [Documentation overview](https://cockroachcrawler.com/docs/) |
+| Browse every shipped feature as a separate page with its API, output, failures, and boundary | [46-capability library](https://cockroachcrawler.com/docs/capabilities/) |
 | Use every CLI flag | [CLI guide](https://cockroachcrawler.com/docs/cli/) |
 | Embed the typed Node.js API | [JavaScript API](https://cockroachcrawler.com/docs/javascript/) |
 | Configure BFS, DFS, best-first, adaptive traversal, sitemaps, callbacks, and cache | [Crawling and cache](https://cockroachcrawler.com/docs/crawling/) |

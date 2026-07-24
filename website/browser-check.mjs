@@ -43,6 +43,21 @@ const routes = [
   "/docs/providers/",
   "/docs/serverless/",
   "/docs/reference/",
+  "/docs/capabilities/",
+  "/docs/capabilities/crawl/",
+  "/docs/capabilities/crawl/static-http-crawling/",
+  "/docs/capabilities/browser/",
+  "/docs/capabilities/browser/javascript-rendering/",
+  "/docs/capabilities/extract/",
+  "/docs/capabilities/extract/readable-markdown/",
+  "/docs/capabilities/sources/",
+  "/docs/capabilities/sources/public-github-reads/",
+  "/docs/capabilities/agents/",
+  "/docs/capabilities/agents/native-mcp-server/",
+  "/docs/capabilities/deploy/",
+  "/docs/capabilities/deploy/authenticated-docker-api/",
+  "/docs/capabilities/security/",
+  "/docs/capabilities/security/public-network-admission/",
   "/security/",
   "/providers/",
   "/compare/",
@@ -83,6 +98,18 @@ try {
           display: getComputedStyle(directory).display,
           columns: getComputedStyle(directory).gridTemplateColumns,
           cards: directory.querySelectorAll(":scope > a").length
+        };
+      })(),
+      docsSidebar: (() => {
+        const sidebar = document.querySelector(".docs-sidebar");
+        if (!sidebar) return null;
+        const style = getComputedStyle(sidebar);
+        const current = sidebar.querySelector('[aria-current="page"]');
+        return {
+          display: style.display,
+          position: style.position,
+          overflowY: style.overflowY,
+          current: current?.getAttribute("href") ?? null
         };
       })()
     }));
@@ -171,7 +198,7 @@ try {
     await mobile.close();
   }
 
-  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions || video.captionsDefault) || (result.route === "/docs/" && (result.docsDirectory?.display !== "grid" || result.docsDirectory.cards !== 8)));
+  const failed = results.filter((result) => result.status !== 200 || result.h1 !== 1 || result.horizontal || result.badImages.length || result.errors.length || result.main !== "-1" || !result.accessibleTables || !result.accessibleCode || result.videos.some((video) => !video.controls || video.autoplay || !video.poster || !video.captions || video.captionsDefault) || (result.route === "/docs/" && (result.docsDirectory?.display !== "grid" || result.docsDirectory.cards !== 6)) || (result.route.startsWith("/docs/") && result.docsSidebar && (result.docsSidebar.display === "none" || result.docsSidebar.position !== "sticky" || result.docsSidebar.overflowY === "auto" || !result.docsSidebar.current)));
   const mobileFailed = mobileResults.filter((result) => result.status !== 200 || result.horizontal || result.navVisible === "none" || !result.currentNavVisible || !result.mobileToc || result.errors.length);
   console.log(JSON.stringify({ routes: results, keyboard: { firstFocus, afterSkip, copyLabel }, mediaServer, mobile: mobileResults }, null, 2));
   if (failed.length || mobileFailed.length || !mediaServer.captions || !mediaServer.range || firstFocus.className !== "skip-link" || afterSkip.id !== "main" || copyLabel !== "Copied") {

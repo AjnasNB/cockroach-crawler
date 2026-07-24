@@ -191,6 +191,8 @@ const pages = [
     description: "Reference every stable package export, crawl option, page field, statistic, command, subpath, agent surface, and deployment entry point.",
     body: apiReferenceDocsPage()
   },
+  ...capabilityCategoryPages(),
+  ...capabilityDocsPages(),
   {
     slug: "security",
     nav: "Security",
@@ -760,6 +762,77 @@ function serverlessDocsPage() {
   );
 }
 
+function docsSlug(value) {
+  return String(value)
+    .toLowerCase()
+    .replaceAll("&", " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function capabilityCategoryPath(category) {
+  return `/docs/capabilities/${docsSlug(category)}/`;
+}
+
+function capabilityPath(feature) {
+  return `${capabilityCategoryPath(feature[0])}${docsSlug(feature[1])}/`;
+}
+
+function capabilityCategoryDetails(category) {
+  const details = {
+    Crawl: {
+      title: "Crawl and discover",
+      lede: "Choose seeds, traversal strategy, discovery rules, budgets, redirects, cancellation, caching, and compact maps.",
+      manual: ["/docs/crawling/", "Open the crawling manual"],
+      output: "A crawl returns normalized page records, structured failures, and aggregate statistics. Mapping returns compact fetch-validated URL entries.",
+      boundary: "Traversal changes queue order and discovery depth. It never expands origins, network reach, robots policy, or creator-owned resource ceilings."
+    },
+    Browser: {
+      title: "Render and capture",
+      lede: "Render JavaScript, perform bounded interaction, flatten readable component trees, and capture screenshot or PDF evidence.",
+      manual: ["/docs/browser/", "Open the browser manual"],
+      output: "Browser runs enrich page records with rendered HTML and requested evidence artifacts, including byte size and SHA-256 metadata.",
+      boundary: "Browser mode is optional. Page hooks and persistent profiles are operator-owned inputs, and hostile pages still require process or container isolation."
+    },
+    Extract: {
+      title: "Extract agent-ready data",
+      lede: "Produce readable Markdown, deterministic fields, PDF text, metadata, hashes, or schema-validated model output.",
+      manual: ["/docs/extraction/", "Open the extraction manual"],
+      output: "Extraction returns bounded data plus warnings while page records retain their canonical URL, retrieval time, hash, parent, depth, and redirect history.",
+      boundary: "Deterministic extractors operate on inactive content. Optional model extraction uses a host-supplied adapter and rejects output that fails the supplied JSON Schema."
+    },
+    Sources: {
+      title: "Reach public sources",
+      lede: "Inspect provider capability, read public sources, and route optional official or operator-installed read-only providers.",
+      manual: ["/docs/providers/", "Open the provider manual"],
+      output: "Provider routes return normalized research records with source identity, canonical URL, retrieval metadata, hashes, warnings, and provider-specific payloads.",
+      boundary: "Every route reports its access state before dispatch. Credentials and read-only sessions are installed by the operator and are never extracted from a browser profile."
+    },
+    Agents: {
+      title: "Connect agents and MCP",
+      lede: "Expose strict crawler tools to agent runtimes through JavaScript, native MCP, or an optional Maqam gateway.",
+      manual: ["/docs/mcp/", "Open the agent and MCP manual"],
+      output: "Agent surfaces return the same pages, failures, statistics, maps, extraction data, and machine-readable capability records as the underlying library.",
+      boundary: "Model-facing input may narrow but cannot broaden host-owned origins, budgets, credentials, browser hooks, profiles, or resource ceilings."
+    },
+    Deploy: {
+      title: "Deploy and operate",
+      lede: "Run the crawler through a token-authenticated Node or Docker API, a local playground, or a fixed-origin Worker profile.",
+      manual: ["/docs/docker/", "Open the deployment manual"],
+      output: "Deployment surfaces expose health, capability, crawl, map, and extraction responses without changing the crawler's record contracts.",
+      boundary: "The API token, origin allowlist, browser installation, storage, egress policy, and runtime resource limits remain deployment-owned."
+    },
+    Security: {
+      title: "Keep authority bounded",
+      lede: "Admit public destinations, pin DNS decisions, validate redirects, enforce exact budgets, and stop at access challenges.",
+      manual: ["/security/", "Open the security model"],
+      output: "Policy decisions appear as structured failures, warnings, skipped counters, transport attempts, and final crawl statistics.",
+      boundary: "The Node transport rejects undeclared or unsafe reach. The Worker profile is a smaller fixed-origin fetch tier and does not provide Node DNS pinning."
+    }
+  };
+  return details[category];
+}
+
 function docsNavigationGroups() {
   return [
     ["Start", [
@@ -783,14 +856,32 @@ function docsNavigationGroups() {
       ["/docs/serverless/", "Cloudflare Worker"],
       ["/docs/reference/", "Complete reference"],
       ["/security/", "Security model"]
+    ]],
+    ["Capability library", [
+      ["/docs/capabilities/", "All 46 capabilities"],
+      ...[...new Set(crawlerFeatureCatalog().map(([category]) => category))]
+        .map((category) => [capabilityCategoryPath(category), capabilityCategoryDetails(category).title])
     ]]
   ];
 }
 
 function docsSidebar(currentPath) {
+  const activeCategory = crawlerFeatureCatalog()
+    .map(([category]) => category)
+    .find((category) => currentPath.startsWith(capabilityCategoryPath(category)));
+  const currentFeatures = activeCategory
+    ? crawlerFeatureCatalog().filter(([category]) => category === activeCategory)
+    : [];
   return `<nav class="docs-sidebar-nav" aria-label="Documentation sections">
     <a class="docs-sidebar-home" href="/docs/">Cockroach Crawler ${stableVersion}</a>
-    ${docsNavigationGroups().map(([group, links]) => `<section><h2>${group}</h2>${links.map(([href, label]) => `<a href="${href}"${href === currentPath ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</section>`).join("")}
+    ${docsNavigationGroups().map(([group, links]) => {
+      const open = !activeCategory && links.some(([href]) => href === currentPath);
+      return `<details class="docs-sidebar-group"${open ? " open" : ""}><summary>${group}</summary><div>${links.map(([href, label]) => `<a href="${href}"${href === currentPath ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</div></details>`;
+    }).join("")}
+    ${activeCategory ? `<section class="docs-sidebar-children"><a class="docs-sidebar-category-home" href="${capabilityCategoryPath(activeCategory)}"${capabilityCategoryPath(activeCategory) === currentPath ? ' aria-current="page"' : ""}>${activeCategory} capabilities</a>${currentFeatures.map((feature) => {
+      const href = capabilityPath(feature);
+      return `<a href="${href}"${href === currentPath ? ' aria-current="page"' : ""}>${feature[1]}</a>`;
+    }).join("")}</section>` : ""}
   </nav>`;
 }
 
@@ -1363,18 +1454,181 @@ function crawlerFeatureCatalog() {
   ];
 }
 
+function capabilityPrerequisite(category) {
+  const prerequisites = {
+    Crawl: "Install the package on maintained Node.js 22, 24, or 26. Start from explicit HTTP(S) seeds and declare finite page, request, byte, depth, queue, and duration budgets.",
+    Browser: "Install Cockroach Crawler and its optional Playwright peer, then install a compatible Chromium build. Enable browser behavior only in creator-owned configuration.",
+    Extract: "Install the package and supply inactive HTML, a crawler page record, or explicit local PDF bytes. Optional model extraction also requires a host adapter and JSON Schema.",
+    Sources: "Install the package and run the provider doctor first. Public routes need no credential; official and session-backed routes require explicit operator configuration.",
+    Agents: "Install the package in the agent host. The host must own the origin allowlist and resource ceilings before the tool or MCP server starts.",
+    Deploy: "Choose Node.js 22, 24, or 26 or the published container. Configure a long API token, fixed allowed origins, and infrastructure-level resource and egress controls.",
+    Security: "Declare the smallest permitted origin set and finite budgets. Treat fetched content as untrusted data and isolate browser execution from sensitive host resources."
+  };
+  return prerequisites[category];
+}
+
+function capabilityQuickstart(category) {
+  const quickstarts = {
+    Crawl: `import { crawlDetailed } from "cockroach-crawler";
+
+const result = await crawlDetailed({
+  seeds: ["https://docs.example.com"],
+  allowedOrigins: ["https://docs.example.com"],
+  maxPages: 25,
+  maxRequests: 120,
+  maxDurationMs: 60_000
+});`,
+    Browser: `import { crawl } from "cockroach-crawler";
+
+const pages = await crawl({
+  seeds: ["https://app.example.com/public"],
+  browser: { waitUntil: "networkidle" },
+  maxPages: 3
+});`,
+    Extract: `import { extractStructured } from "cockroach-crawler";
+
+const result = extractStructured(html, pageUrl, {
+  fields: { title: "h1" },
+  maxTotalValues: 100,
+  maxTotalCharacters: 100_000
+});`,
+    Sources: `npx cockroach-sources doctor --json
+npx cockroach-reach doctor --json`,
+    Agents: `COCKROACH_ALLOWED_ORIGINS=https://docs.example.com \\
+COCKROACH_MAX_PAGES=10 \\
+npx cockroach-mcp`,
+    Deploy: `docker run --rm -p 3878:3878 \\
+  -e COCKROACH_API_TOKEN="replace-with-a-long-random-secret" \\
+  -e COCKROACH_ALLOWED_ORIGINS="https://docs.example.com" \\
+  cockroach-crawler:${stableVersion}`,
+    Security: `const result = await crawlDetailed({
+  seeds: ["https://docs.example.com"],
+  allowedOrigins: ["https://docs.example.com"],
+  maxPages: 25,
+  maxRequests: 120,
+  maxTotalBytes: 10_000_000,
+  maxDurationMs: 60_000
+});`
+  };
+  return quickstarts[category];
+}
+
+function capabilityLibraryPage() {
+  const features = crawlerFeatureCatalog();
+  const categories = [...new Set(features.map(([category]) => category))];
+  return docsManualPage({
+    currentPath: "/docs/capabilities/",
+    eyebrow: `Stable ${stableVersion} - capability library`,
+    title: "Forty-six capabilities. One page for every surface.",
+    lede: "Browse by job, open the exact capability, copy its public API or command, and understand its output and operating boundary without scrolling through one giant reference page.",
+    toc: [
+      ["categories", "Browse by category"],
+      ["all-capabilities", "All 46 capabilities"],
+      ["start", "Start in two minutes"]
+    ],
+    content: `
+      <section id="categories"><p class="eyebrow">01 - Categories</p><h2>Choose the job your agent needs to complete.</h2><div class="capability-category-grid">${categories.map((category) => {
+        const detail = capabilityCategoryDetails(category);
+        const count = features.filter(([candidate]) => candidate === category).length;
+        return `<a href="${capabilityCategoryPath(category)}"><span>${String(count).padStart(2, "0")} capabilities</span><strong>${detail.title}</strong><p>${detail.lede}</p><em>Open ${category.toLowerCase()} docs -></em></a>`;
+      }).join("")}</div></section>
+      <section id="all-capabilities"><p class="eyebrow">02 - Complete index</p><h2>Search a name, output, command, or integration.</h2>${renderFeatureCatalog()}</section>
+      <section id="start"><p class="eyebrow">03 - Quickstart</p><h2>Install once, then choose a capability page.</h2><p>The package exposes JavaScript, CLI, native MCP, Docker, provider, and Worker surfaces. Every capability page links back to its deeper task manual.</p>${codeBlock("capability-library-install", "terminal", `npm install cockroach-crawler@${stableVersion}
+npx cockroach-crawl --help
+npx cockroach-sources doctor --json`)}<div class="next-links"><a href="/docs/cli/"><span>Command line</span><strong>Run the CLI -></strong></a><a href="/docs/javascript/"><span>Application code</span><strong>Use the JavaScript API -></strong></a><a href="/docs/mcp/"><span>Agent clients</span><strong>Connect native MCP -></strong></a></div></section>`
+  });
+}
+
+function capabilityCategoryPage(category) {
+  const detail = capabilityCategoryDetails(category);
+  const features = crawlerFeatureCatalog().filter(([candidate]) => candidate === category);
+  const terminalCategory = ["Deploy", "Sources", "Agents"].includes(category);
+  return docsManualPage({
+    currentPath: capabilityCategoryPath(category),
+    eyebrow: `Capability library - ${category}`,
+    title: detail.title,
+    lede: detail.lede,
+    toc: [
+      ["quickstart", "Category quickstart"],
+      ["capabilities", `${features.length} capabilities`],
+      ["output", "Output and boundary"],
+      ["next", "Next steps"]
+    ],
+    content: `
+      <section id="quickstart"><p class="eyebrow">01 - Start</p><h2>Start from the category's smallest useful contract.</h2><p>${capabilityPrerequisite(category)}</p>${codeBlock(`category-${docsSlug(category)}-quickstart`, terminalCategory ? "terminal" : "quickstart.mjs", capabilityQuickstart(category), terminalCategory ? "text" : "javascript")}</section>
+      <section id="capabilities"><p class="eyebrow">02 - ${features.length} capabilities</p><h2>Open one capability at a time.</h2><div class="capability-page-list">${features.map((feature, index) => `<a href="${capabilityPath(feature)}"><span>${String(index + 1).padStart(2, "0")}</span><div><strong>${feature[1]}</strong><p>${feature[2]}</p><code>${escapeHtml(feature[3])}</code></div><em>Read the complete page -></em></a>`).join("")}</div></section>
+      <section id="output"><p class="eyebrow">03 - Contract</p><h2>Know the result and the boundary.</h2><div class="reference-cards"><article><strong>What you receive</strong><p>${detail.output}</p></article><article><strong>What remains fixed</strong><p>${detail.boundary}</p></article></div></section>
+      <section id="next"><p class="eyebrow">04 - Go deeper</p><h2>Move from capability to complete workflow.</h2><div class="next-links"><a href="${detail.manual[0]}"><span>Task manual</span><strong>${detail.manual[1]} -></strong></a><a href="/docs/capabilities/"><span>All features</span><strong>Browse all 46 capabilities -></strong></a><a href="/docs/reference/"><span>Typed reference</span><strong>Inspect the complete public surface -></strong></a></div></section>`
+  });
+}
+
+function capabilityDetailPage(feature, index, features) {
+  const [category, title, description, usage] = feature;
+  const detail = capabilityCategoryDetails(category);
+  const categoryFeatures = features.filter(([candidate]) => candidate === category);
+  const categoryIndex = categoryFeatures.findIndex((candidate) => candidate[1] === title);
+  const previous = categoryFeatures[categoryIndex - 1];
+  const next = categoryFeatures[categoryIndex + 1];
+  const uniqueId = `capability-${String(index + 1).padStart(2, "0")}`;
+  const terminalCategory = ["Deploy", "Sources", "Agents"].includes(category);
+  return docsManualPage({
+    currentPath: capabilityPath(feature),
+    eyebrow: `Capability ${String(index + 1).padStart(2, "0")} of ${features.length} - ${category}`,
+    title,
+    lede: description,
+    toc: [
+      ["purpose", "Purpose and fit"],
+      ["start", "How to start"],
+      ["result", "Result contract"],
+      ["boundary", "Boundary and failures"],
+      ["related", "Related pages"]
+    ],
+    content: `
+      <section id="purpose"><p class="eyebrow">01 - Purpose</p><h2>Use ${title.toLowerCase()} when this behavior belongs in the job contract.</h2><p>${description}</p><div class="reference-cards"><article><strong>Good fit</strong><p>Choose this capability when the application needs the behavior explicitly and can keep the related origin, credential, browser, or resource authority in trusted host configuration.</p></article><article><strong>Prerequisite</strong><p>${capabilityPrerequisite(category)}</p></article></div></section>
+      <section id="start"><p class="eyebrow">02 - Public surface</p><h2>Activate the capability through this option, function, field, or command.</h2>${codeBlock(`${uniqueId}-surface`, "public surface", usage, "javascript")}<p>This snippet names the stable ${stableVersion} surface. Combine it with the complete quickstart below when the fragment is an option or output field.</p>${codeBlock(`${uniqueId}-quickstart`, terminalCategory ? "terminal" : "category quickstart", capabilityQuickstart(category), terminalCategory ? "text" : "javascript")}</section>
+      <section id="result"><p class="eyebrow">03 - Result</p><h2>Keep the output attached to its evidence.</h2><p>${detail.output}</p><p>Inspect structured failures, warnings, and final statistics before treating a partial job as complete. Preserve canonical URLs, retrieval time, hashes, and source identity beside derived chunks or summaries.</p></section>
+      <section id="boundary"><p class="eyebrow">04 - Operating boundary</p><h2>This capability cannot silently expand authority.</h2><p>${detail.boundary}</p><div class="callout warning"><strong>Failure handling</strong><p>Unknown options, invalid inputs, unavailable optional dependencies, denied destinations, exhausted budgets, and provider access challenges return explicit failures or errors. They do not turn into a broader fallback route.</p></div></section>
+      <section id="related"><p class="eyebrow">05 - Continue</p><h2>Follow the workflow, not a scrolling wall.</h2><div class="next-links">${previous ? `<a href="${capabilityPath(previous)}"><span>Previous ${category.toLowerCase()} capability</span><strong>${previous[1]} -></strong></a>` : ""}${next ? `<a href="${capabilityPath(next)}"><span>Next ${category.toLowerCase()} capability</span><strong>${next[1]} -></strong></a>` : ""}<a href="${capabilityCategoryPath(category)}"><span>${category} index</span><strong>See all ${category.toLowerCase()} capabilities -></strong></a><a href="${detail.manual[0]}"><span>Complete workflow</span><strong>${detail.manual[1]} -></strong></a></div></section>`
+  });
+}
+
+function capabilityCategoryPages() {
+  const categories = [...new Set(crawlerFeatureCatalog().map(([category]) => category))];
+  return [
+    {
+      slug: "docs/capabilities",
+      active: "Docs",
+      title: "All 46 capabilities - Cockroach Crawler",
+      description: "Browse every Cockroach Crawler crawl, browser, extraction, source, agent, deployment, and security capability with its own detailed documentation page.",
+      body: capabilityLibraryPage()
+    },
+    ...categories.map((category) => {
+      const detail = capabilityCategoryDetails(category);
+      return {
+        slug: `docs/capabilities/${docsSlug(category)}`,
+        active: "Docs",
+        title: `${detail.title} - Cockroach Crawler capabilities`,
+        description: detail.lede,
+        body: capabilityCategoryPage(category)
+      };
+    })
+  ];
+}
+
+function capabilityDocsPages() {
+  const features = crawlerFeatureCatalog();
+  return features.map((feature, index) => ({
+    slug: capabilityPath(feature).replace(/^\/|\/$/g, ""),
+    active: "Docs",
+    title: `${feature[1]} - Cockroach Crawler`,
+    description: feature[2],
+    body: capabilityDetailPage(feature, index, features)
+  }));
+}
+
 function renderFeatureCatalog() {
   const features = crawlerFeatureCatalog();
   const categories = [...new Set(features.map(([category]) => category))];
-  const guideByCategory = {
-    Crawl: ["/docs/crawling/", "Crawling manual"],
-    Browser: ["/docs/browser/", "Browser manual"],
-    Extract: ["/docs/extraction/", "Extraction manual"],
-    Sources: ["/docs/providers/", "Provider manual"],
-    Agents: ["/docs/mcp/", "Agent and MCP manual"],
-    Deploy: ["/docs/docker/", "Deployment manual"],
-    Security: ["/security/", "Security model"]
-  };
   return `<section id="feature-reference" class="feature-reference" aria-labelledby="feature-reference-title">
     <div class="feature-reference-head">
       <div><p class="eyebrow">Complete feature index · ${features.length} capabilities</p><h2 id="feature-reference-title">Find the exact API surface.</h2><p>Every entry names the option, function, command, or output field that activates the capability in stable ${stableVersion}.</p></div>
@@ -1387,12 +1641,48 @@ function renderFeatureCatalog() {
       <h3>${escapeHtml(title)}</h3>
       <p>${escapeHtml(description)}</p>
       <pre tabindex="0" aria-label="${escapeHtml(title)} usage"><code>${escapeHtml(usage)}</code></pre>
-      <a class="feature-guide-link" href="${guideByCategory[category][0]}">${guideByCategory[category][1]} →</a>
+      <a class="feature-guide-link" href="${capabilityPath([category, title])}">Open the complete capability page →</a>
     </article>`).join("")}</div>
   </section>`;
 }
 
 function docsPage() {
+  const categories = [...new Set(crawlerFeatureCatalog().map(([category]) => category))];
+  return docsManualPage({
+    currentPath: "/docs/",
+    eyebrow: `Cockroach Crawler ${stableVersion} documentation`,
+    title: "The complete web toolkit for JavaScript AI agents.",
+    lede: "Install one Node.js package, choose a workflow, then open the exact capability page for its API, output, failure behavior, boundary, and related surfaces.",
+    toc: [
+      ["quickstart", "Two-minute quickstart"],
+      ["workflows", "Workflow manuals"],
+      ["capabilities", "46 capability pages"],
+      ["choose-surface", "Choose a surface"]
+    ],
+    content: `
+      <section id="quickstart"><p class="eyebrow">01 - Quickstart</p><h2>Turn one public site into agent-ready evidence.</h2><p>Use maintained Node.js 22, 24, or 26. Start with finite budgets, inspect pages and failures together, then add browser, extraction, provider, or agent surfaces only where the job needs them.</p>${codeBlock("docs-overview-quickstart", "terminal", `npm install cockroach-crawler@${stableVersion}
+npx cockroach-crawl https://example.com/docs \\
+  --max-pages 20 \\
+  --max-requests 80 \\
+  --max-duration 60000 \\
+  --jsonl \\
+  --output crawl.jsonl`)}</section>
+      <section id="workflows"><p class="eyebrow">02 - Workflow manuals</p><h2>Start with the result you need.</h2><nav class="doc-route-grid" aria-label="Documentation workflows">${[
+        ["Deep crawling", "BFS, DFS, best-first, adaptive relevance, sitemaps, filters, cache, callbacks, and exact budgets.", "/docs/crawling/"],
+        ["Browser evidence", "Chromium rendering, waits, clicks, virtual scroll, open Shadow DOM, readable iframes, screenshots, PDFs, hooks, and profiles.", "/docs/browser/"],
+        ["Extraction", "Readable Markdown, CSS, XPath, local PDF parsing, metadata, hashes, and optional schema-validated model extraction.", "/docs/extraction/"],
+        ["Agents and MCP", "Strict creator-owned tool limits, native stdio MCP, Codex and Claude setup, and optional Maqam composition.", "/docs/mcp/"],
+        ["Docker and API", "Authenticated Node or Docker API, health checks, dashboard, playground, and deployment configuration.", "/docs/docker/"],
+        ["Providers", "Public web and GitHub, no-key YouTube routes, official APIs, session-backed reads, feeds, doctor states, and routing.", "/docs/providers/"]
+      ].map(([title, text, href]) => `<a href="${href}"><strong>${title}</strong><span>${text}</span><em>Open manual -></em></a>`).join("")}</nav></section>
+      <section id="capabilities"><p class="eyebrow">03 - 46 capability pages</p><h2>Navigate by category instead of scrolling through one wall.</h2><p>Each capability now has a stable route with its purpose, prerequisite, public surface, quickstart, result contract, failure behavior, operating boundary, and previous or next link.</p><div class="capability-category-grid">${categories.map((category) => {
+        const detail = capabilityCategoryDetails(category);
+        const count = crawlerFeatureCatalog().filter(([candidate]) => candidate === category).length;
+        return `<a href="${capabilityCategoryPath(category)}"><span>${String(count).padStart(2, "0")} capabilities</span><strong>${detail.title}</strong><p>${detail.lede}</p><em>Browse ${category.toLowerCase()} -></em></a>`;
+      }).join("")}</div><div class="page-actions"><a class="button primary" href="/docs/capabilities/">Search all 46</a><a class="button secondary" href="/docs/reference/">Open typed reference</a></div></section>
+      <section id="choose-surface"><p class="eyebrow">04 - Interfaces</p><h2>Use the smallest interface that fits the host.</h2><div class="reference-cards"><article><strong>JavaScript</strong><p>Typed library calls for applications, queues, test fixtures, and evidence pipelines.</p><a class="text-link" href="/docs/javascript/">Open JavaScript guide -></a></article><article><strong>CLI</strong><p>Repeatable local exports, CI jobs, scheduled snapshots, and content inventories.</p><a class="text-link" href="/docs/cli/">Open CLI guide -></a></article><article><strong>MCP</strong><p>Native read-only tools for Codex, Claude Code, and other stdio MCP clients.</p><a class="text-link" href="/docs/mcp/">Open MCP guide -></a></article><article><strong>Docker or Worker</strong><p>Token-authenticated service deployment or a smaller fixed-origin edge fetch profile.</p><a class="text-link" href="/docs/docker/">Open deployment guide -></a></article></div></section>`
+  });
+
   const tocLinks = `<a href="#quickstart">Quickstart</a><a href="#deep-crawl">Deep crawling</a><a href="#browser-suite">Browser suite</a><a href="#extraction-suite">Extraction</a><a href="#agent-deploy">Agents and MCP</a><a href="#feature-reference">All features</a><a href="#output">Output</a><a href="#deployment">Deployment</a>`;
   return `
     <section class="page-hero shell docs-hero"><p class="eyebrow">Cockroach Crawler ${stableVersion} documentation</p><h1>The complete web toolkit for JavaScript AI agents.</h1><p class="lede">Crawl static and rendered pages, prioritize the right links, extract exact data, capture browser evidence, parse PDFs, route public sources, and connect through JavaScript, CLI, MCP, Docker, or Maqam.</p><div class="page-actions"><a class="button primary" href="#quickstart">Start in two minutes</a><a class="button secondary" href="#feature-reference">Explore ${crawlerFeatureCatalog().length} capabilities</a></div><div class="docs-command" aria-label="Installation command"><code>npm install cockroach-crawler</code><button type="button" class="copy-button" data-copy-value="npm install cockroach-crawler" aria-describedby="docs-install-copy">Copy</button><span class="sr-only" id="docs-install-copy" aria-live="polite"></span></div></section>
