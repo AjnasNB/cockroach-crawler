@@ -561,9 +561,9 @@ function focusedDocsPage(eyebrow, title, lede, content) {
   }[eyebrow] ?? "";
   return `
     <section class="page-hero shell"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1><p class="lede">${lede}</p><div class="page-actions"><a class="button secondary" href="/docs/">All documentation</a><a class="button secondary" href="${repository}">Source on GitHub</a></div></section>
-    <details class="docs-mobile-directory shell"><summary>Documentation menu</summary>${docsSidebar(currentPath)}</details>
+    <details class="docs-mobile-directory shell" open><summary>Browse documentation</summary>${docsSidebar(currentPath, "mobile")}</details>
     <div class="docs-manual-layout docs-focused-layout shell">
-      <aside class="docs-sidebar">${docsSidebar(currentPath)}</aside>
+      <aside class="docs-sidebar">${docsSidebar(currentPath, "desktop")}</aside>
       <article class="docs-article docs-manual-content">${content}</article>
       <aside class="docs-related"><h2>Go deeper</h2><a href="/docs/crawling/">Crawling and cache</a><a href="/docs/browser/">Browser rendering</a><a href="/docs/extraction/">Extraction and PDF</a><a href="/docs/mcp/">Native MCP</a><a href="/docs/reference/">Complete reference</a></aside>
     </div>`;
@@ -865,36 +865,46 @@ function docsNavigationGroups() {
   ];
 }
 
-function docsSidebar(currentPath) {
+function docsSidebar(currentPath, instance = "desktop") {
   const activeCategory = crawlerFeatureCatalog()
     .map(([category]) => category)
     .find((category) => currentPath.startsWith(capabilityCategoryPath(category)));
   const currentFeatures = activeCategory
     ? crawlerFeatureCatalog().filter(([category]) => category === activeCategory)
     : [];
-  return `<nav class="docs-sidebar-nav" aria-label="Documentation sections">
-    <a class="docs-sidebar-home" href="/docs/">Cockroach Crawler ${stableVersion}</a>
+  return `<nav class="docs-sidebar-nav" aria-label="Documentation sections" data-docs-nav-expanded="true">
+    <a class="docs-sidebar-home" href="/docs/"><span>Documentation</span><strong>v${stableVersion}</strong></a>
     ${docsNavigationGroups().map(([group, links]) => {
-      const open = !activeCategory && links.some(([href]) => href === currentPath);
-      return `<details class="docs-sidebar-group"${open ? " open" : ""}><summary>${group}</summary><div>${links.map(([href, label]) => `<a href="${href}"${href === currentPath ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</div></details>`;
+      const active = links.some(([href]) => href === currentPath || (href !== "/docs/" && currentPath.startsWith(href)));
+      const id = `docs-nav-${instance}-${docsSlug(group)}`;
+      return `<section class="docs-sidebar-section${active ? " is-active" : ""}" aria-labelledby="${id}"><h2 id="${id}">${group}</h2><ul>${links.map(([href, label]) => `<li><a href="${href}"${href === currentPath ? ' aria-current="page"' : ""}>${label}</a></li>`).join("")}</ul></section>`;
     }).join("")}
-    ${activeCategory ? `<section class="docs-sidebar-children"><a class="docs-sidebar-category-home" href="${capabilityCategoryPath(activeCategory)}"${capabilityCategoryPath(activeCategory) === currentPath ? ' aria-current="page"' : ""}>${activeCategory} capabilities</a>${currentFeatures.map((feature) => {
+    ${activeCategory ? `<section class="docs-sidebar-children" aria-labelledby="docs-nav-${instance}-current-category"><h2 id="docs-nav-${instance}-current-category">${activeCategory} capability pages</h2><ul>${currentFeatures.map((feature) => {
       const href = capabilityPath(feature);
-      return `<a href="${href}"${href === currentPath ? ' aria-current="page"' : ""}>${feature[1]}</a>`;
-    }).join("")}</section>` : ""}
+      return `<li><a href="${href}"${href === currentPath ? ' aria-current="page"' : ""}>${feature[1]}</a></li>`;
+    }).join("")}</ul></section>` : ""}
   </nav>`;
 }
 
 function docsManualPage({ currentPath, eyebrow, title, lede, toc, content }) {
-  const tocLinks = toc.map(([id, label]) => `<a href="#${id}">${label}</a>`).join("");
+  const currentLabel = docsNavigationGroups()
+    .flatMap(([, links]) => links)
+    .find(([href]) => href === currentPath)?.[1] ?? "Documentation";
+  const tocLinks = toc.map(([id, label], index) => `<a href="#${id}"><span>${String(index + 1).padStart(2, "0")}</span>${label}</a>`).join("");
   return `
-    <section class="page-hero shell docs-manual-hero"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1><p class="lede">${lede}</p><div class="page-actions"><a class="button primary" href="#${toc[0][0]}">Start here</a><a class="button secondary" href="/docs/reference/">Open the reference</a></div></section>
-    <details class="docs-mobile-directory shell"><summary>Documentation menu</summary>${docsSidebar(currentPath)}</details>
-    <details class="mobile-toc shell"><summary>On this page</summary><nav aria-label="On this page">${tocLinks}</nav></details>
+    <section class="page-hero shell docs-manual-hero" aria-labelledby="docs-manual-title">
+      <nav class="docs-breadcrumbs" aria-label="Breadcrumb"><a href="/docs/">Documentation</a><span aria-hidden="true">/</span><span aria-current="page">${currentLabel}</span></nav>
+      <div class="docs-hero-labels"><span>${eyebrow}</span><span>Stable ${stableVersion}</span></div>
+      <h1 id="docs-manual-title">${title}</h1>
+      <p class="lede">${lede}</p>
+      <div class="page-actions"><a class="button primary" href="#${toc[0][0]}">Read ${toc[0][1]}</a><a class="button secondary" href="/docs/reference/">View API reference</a></div>
+    </section>
+    <details class="docs-mobile-directory shell" open><summary>Browse documentation</summary>${docsSidebar(currentPath, "mobile")}</details>
+    <details class="mobile-toc shell"><summary>In this manual</summary><nav aria-label="In this manual">${tocLinks}</nav></details>
     <div class="docs-manual-layout shell">
-      <aside class="docs-sidebar">${docsSidebar(currentPath)}</aside>
+      <aside class="docs-sidebar">${docsSidebar(currentPath, "desktop")}</aside>
       <article class="docs-manual-content">${content}</article>
-      <aside class="toc docs-manual-toc"><nav aria-label="On this page"><h2>On this page</h2>${tocLinks}</nav></aside>
+      <aside class="toc docs-manual-toc"><nav aria-label="In this manual"><h2>In this manual</h2>${tocLinks}</nav></aside>
     </div>`;
 }
 
@@ -902,8 +912,8 @@ function crawlingDocsPage() {
   return docsManualPage({
     currentPath: "/docs/crawling/",
     eyebrow: "Core manual · crawling",
-    title: "Spend every request on the pages that matter.",
-    lede: "Run a simple crawl, cover a hierarchy with BFS or DFS, rank admitted URLs with best-first or adaptive relevance, and reuse results through a bounded persistent cache.",
+    title: "Deep crawling, traversal, and cache",
+    lede: "Spend requests on the pages that matter. Run a simple crawl, cover a hierarchy with BFS or DFS, rank admitted URLs with best-first or adaptive relevance, and reuse results through a bounded persistent cache.",
     toc: [
       ["simple-crawl", "Simple crawl"],
       ["strategies", "Traversal strategies"],
@@ -1020,8 +1030,8 @@ function browserDocsPage() {
   return docsManualPage({
     currentPath: "/docs/browser/",
     eyebrow: "Core manual · browser",
-    title: "Render the page. Keep the evidence.",
-    lede: "Use optional Playwright for JavaScript applications, explicit interaction, bounded virtual scroll, open Shadow DOM, readable same-origin frames, screenshots, PDFs, hooks, storage state, and dedicated profiles.",
+    title: "Browser rendering and evidence",
+    lede: "Render the page and keep the evidence. Use optional Playwright for JavaScript applications, explicit interaction, bounded virtual scroll, open Shadow DOM, readable same-origin frames, screenshots, PDFs, hooks, storage state, and dedicated profiles.",
     toc: [
       ["browser-install", "Install Chromium"],
       ["render", "Render and wait"],
@@ -1112,8 +1122,8 @@ function extractionDocsPage() {
   return docsManualPage({
     currentPath: "/docs/extraction/",
     eyebrow: "Core manual · extraction",
-    title: "From page bytes to model-ready records.",
-    lede: "Receive readable text and Markdown automatically, select exact CSS or XPath fields locally, parse bounded PDFs, or connect your own model adapter behind JSON Schema validation.",
+    title: "Extraction, Markdown, and PDF",
+    lede: "Turn page bytes into model-ready records. Receive readable text and Markdown automatically, select exact CSS or XPath fields locally, parse bounded PDFs, or connect your own model adapter behind JSON Schema validation.",
     toc: [
       ["markdown", "Text and Markdown"],
       ["css", "CSS extraction"],
@@ -1218,7 +1228,7 @@ function mcpDocsPage() {
   return docsManualPage({
     currentPath: "/docs/mcp/",
     eyebrow: "Integration manual · MCP",
-    title: "Connect the crawler to any MCP client.",
+    title: "MCP and agent integration",
     lede: "Run a native stdio server for Codex, Claude Code, desktop clients, or your own MCP host. The process refuses to start until the deployment supplies at least one allowed origin.",
     toc: [
       ["mcp-install", "Install"],
@@ -1282,7 +1292,7 @@ function dockerDocsPage() {
   return docsManualPage({
     currentPath: "/docs/docker/",
     eyebrow: "Deployment manual · Docker",
-    title: "Run an authenticated crawler API and playground.",
+    title: "Docker API, dashboard, and playground",
     lede: "Package fixed crawl authority into a non-root Node container with a health endpoint, responsive playground, bounded crawl/map endpoint, and deterministic extraction endpoint.",
     toc: [
       ["docker-build", "Build and run"],
@@ -1380,7 +1390,7 @@ function apiReferenceDocsPage() {
   return docsManualPage({
     currentPath: "/docs/reference/",
     eyebrow: "Stable 0.4.2 · reference",
-    title: "The complete public surface, in one place.",
+    title: "Complete JavaScript and CLI reference",
     lede: "Look up package exports, crawl options, page fields, statistics, CLI commands, MCP tools, environment variables, provider commands, and deployment entry points.",
     toc: [
       ["exports", "Package exports"],
