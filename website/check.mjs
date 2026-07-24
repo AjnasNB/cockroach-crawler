@@ -102,7 +102,9 @@ if (!llms.includes("Complete JavaScript and CLI reference: https://cockroachcraw
 const packageReadme = await readFile(join(dist, "..", "..", "README.md"), "utf8");
 if (/assets\/readme-proof-still/i.test(packageReadme)) errors.push("npm README must not restore the oversized proof banner");
 if (!packageReadme.includes("Give your AI agents web superpowers")) errors.push("npm README must lead with the AI web crawler benefit");
-if (!packageReadme.includes("https://cockroachcrawler.com/docs/reference/")) errors.push("npm README must link the complete reference");
+if (!packageReadme.includes("Look up every package subpath, crawl option, page field, statistic, and executable")) {
+  errors.push("npm README must retain the complete-reference documentation row");
+}
 const docsHtml = await readFile(join(dist, "docs", "index.html"), "utf8");
 if (!docsHtml.includes("Cockroach Crawler 0.4.2 documentation")) errors.push("docs must identify stable 0.4.2");
 if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
