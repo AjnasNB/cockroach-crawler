@@ -83,7 +83,7 @@ const assets = [
     height: 900,
     motif: "local",
     eyebrow: "PUBLIC-WEB REACH / EXPLICIT LIMITS",
-    headline: ["Give agents eyes—", "with boundaries."],
+    headline: ["Give agents eyes -", "with boundaries."],
     subhead: "The local tier validates DNS answers, pins the admitted address, and re-checks every redirect hop.",
     chips: ["DNS answers", "redirect hops", "robots", "budgets"],
     hook: "Read-only by default. Evidence stays attributable.",

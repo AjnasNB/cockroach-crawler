@@ -45,7 +45,7 @@
     "height": 900,
     "motif": "local",
     "hook": "Read-only by default. Evidence stays attributable.",
-    "alt": "Give agents eyes— with boundaries. The local tier validates DNS answers, pins the admitted address, and re-checks every redirect hop."
+    "alt": "Give agents eyes - with boundaries. The local tier validates DNS answers, pins the admitted address, and re-checks every redirect hop."
   },
   {
     "id": "x-square",

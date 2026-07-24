@@ -4,10 +4,10 @@ This folder contains the editable Remotion project and locally rendered release 
 
 ## Videos
 
-- `renders/cockroach-crawler-main-60s.mp4` — 60-second product overview, 1920×1080, 30 fps. This is an overview, not the end-to-end workflow proof.
-- `renders/cockroach-crawler-providers-serverless-30s.mp4` — 30-second provider and serverless boundary cut, 1920×1080, 30 fps.
-- `renders/cockroach-crawler-workflow-proof-45s.mp4` — 45-second deterministic end-to-end proof, 1920×1080, 30 fps. It runs the real CLI against an offline loopback fixture, captures an allow case and a fail-closed denial, runs the source registry, and shows the resulting normalized record.
-- `renders/cockroach-crawler-vertical-short-30s.mp4` — 30-second YouTube Shorts/Reels cut, 1080×1920, 30 fps. It reuses the verified provider/serverless narration and evidence with vertical safe-zone layouts and burned captions.
+- `renders/cockroach-crawler-main-60s.mp4` - 60-second product overview, 1920×1080, 30 fps. This is an overview, not the end-to-end workflow proof.
+- `renders/cockroach-crawler-providers-serverless-30s.mp4` - 30-second provider and serverless boundary cut, 1920×1080, 30 fps.
+- `renders/cockroach-crawler-workflow-proof-45s.mp4` - 45-second deterministic end-to-end proof, 1920×1080, 30 fps. It runs the real CLI against an offline loopback fixture, captures an allow case and a fail-closed denial, runs the source registry, and shows the resulting normalized record.
+- `renders/cockroach-crawler-vertical-short-30s.mp4` - 30-second YouTube Shorts/Reels cut, 1080×1920, 30 fps. It reuses the verified provider/serverless narration and evidence with vertical safe-zone layouts and burned captions.
 - Matching PNG posters, JSON caption timing, SRT, and WebVTT files live beside the renders.
 
 Every terminal line shown in the overview and provider/serverless cut is captured by `remotion/scripts/capture-evidence.mjs` from the current repository. The capture includes `cockroach-sources doctor`, CLI help, the Node test run, the package version, the Git revision state, and the checked-in local benchmark result. The renderer does not invent provider states, test counts, or benchmark scope.

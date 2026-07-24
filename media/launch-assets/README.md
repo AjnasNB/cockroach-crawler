@@ -11,7 +11,7 @@ This directory contains platform-ready PNGs and editable SVG originals for the C
 | Product Hunt gallery 02 | `product-hunt-02-source-doctor` | 1270 × 760 | Know which sources are ready. | A terminal-like source doctor lists Web, GitHub, YouTube, X API, and Reddit API with visible credential states. |
 | Product Hunt gallery 03 | `product-hunt-03-budgets` | 1270 × 760 | Every discovery path spends a budget. | A mechanical console shows hard ceilings for pages, depth, bytes, requests, concurrency, and deadline. |
 | Product Hunt thumbnail | `product-hunt-thumbnail` | 240 × 240 | Bounded public-web reach. | A compact mechanical gate icon in the Cockroach Crawler graphite and mint palette. |
-| X landscape | `x-landscape` | 1600 × 900 | Give agents reach—with boundaries. | A local crawler gate validates a public URL, rejects a private target, and emits a structured record. |
+| X landscape | `x-landscape` | 1600 × 900 | Give agents reach - with boundaries. | A local crawler gate validates a public URL, rejects a private target, and emits a structured record. |
 | X square | `x-square` | 1080 × 1080 | Crawl wider. Stay bounded. | A budget console puts hard limits around pages, depth, bytes, requests, concurrency, and time. |
 | LinkedIn | `linkedin` | 1200 × 627 | Reach that names its boundary. | A public source passes into a normalized record that retains source, type, URL, title, text, content hash, and retrieval provenance. |
 | Reddit | `reddit` | 1200 × 900 | A crawler that fails closed. | A hardened local gate checks DNS, redirects, robots, and limits before a public page becomes a record. |

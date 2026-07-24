@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.2 - 2026-07-24
+
+- Standardize public package, documentation, website, and launch copy on plain hyphens.
+- Preserve the complete 0.5.1 runtime and security surface without behavioral changes.
+
 ## 0.5.1 - 2026-07-24
 
 ### Fixed
