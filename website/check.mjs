@@ -149,6 +149,19 @@ if (secure.headers.get("strict-transport-security") !== "max-age=31536000; inclu
 if (!secure.headers.get("cache-control")?.includes("no-transform")) {
   errors.push("site worker must prevent automatic HTML transformation and blocked analytics injection");
 }
+if (!secure.headers.get("cache-control")?.includes("max-age=0") || !secure.headers.get("cache-control")?.includes("must-revalidate")) {
+  errors.push("site worker must require browsers to revalidate HTML so new documentation routes are visible immediately");
+}
+
+const missingEnvironment = {
+  ASSETS: {
+    fetch: async () => new Response("missing", { status: 404, headers: { "content-type": "text/html; charset=utf-8" } }),
+  },
+};
+const missing = await siteWorker.fetch(new Request("https://cockroachcrawler.com/docs/new-route/"), missingEnvironment);
+if (missing.status !== 404 || missing.headers.get("cache-control") !== "no-store, no-transform") {
+  errors.push("site worker must never cache missing documentation routes");
+}
 
 if (errors.length) {
   console.error(errors.join("\n"));

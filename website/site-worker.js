@@ -13,8 +13,10 @@ export default {
     const response = await env.ASSETS.fetch(request);
     const headers = new Headers(response.headers);
     headers.set("Strict-Transport-Security", HSTS);
-    if (headers.get("Content-Type")?.toLowerCase().includes("text/html")) {
-      headers.set("Cache-Control", "public, max-age=300, no-transform");
+    if (response.status >= 400) {
+      headers.set("Cache-Control", "no-store, no-transform");
+    } else if (headers.get("Content-Type")?.toLowerCase().includes("text/html")) {
+      headers.set("Cache-Control", "public, max-age=0, s-maxage=300, must-revalidate, no-transform");
     }
 
     return new Response(response.body, {
