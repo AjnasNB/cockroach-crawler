@@ -915,11 +915,8 @@ code {
 }
 
 .code-panel pre {
-  width: 100%;
-  min-width: 0;
   max-width: 100%;
   overflow: auto;
-  contain: inline-size;
   padding: 24px;
   margin: 0;
   color: #dce6e1;
@@ -936,9 +933,6 @@ code {
 }
 
 .code-panel code {
-  display: block;
-  width: max-content;
-  min-width: 100%;
   color: inherit;
 }
 
@@ -2535,19 +2529,15 @@ tr:last-child td {
     grid-template-columns: 1fr;
   }
 
-  .docs-manual-content {
-    overflow-x: clip;
-    contain: inline-size;
-  }
-
   .code-panel pre {
     overflow-wrap: anywhere;
     white-space: pre-wrap;
   }
 
-  .code-panel code {
-    width: auto;
-    min-width: 0;
+  .docs-manual-hero h1 {
+    max-width: none;
+    overflow-wrap: anywhere;
+    font-size: clamp(2.2rem, 11.5vw, 2.75rem);
   }
 }
 
