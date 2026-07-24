@@ -11,15 +11,88 @@ const REGEX_FIELD_KEYS = new Set(["pattern", "flags", "group", "multiple", "limi
 const SAFE_REGEX_FLAGS = /^[imsu]*$/;
 
 function hasUnsafeRegexStructure(pattern) {
-  if (/\\[1-9]|\\k<|\(\?<=[^)]|\(\?<!|\(\?=|\(\?!/.test(pattern)) return true;
-  // Repeated groups that contain another quantifier or an alternation are a
-  // common source of catastrophic backtracking in JavaScript's RegExp engine.
-  // Keep this strategy intentionally conservative; callers can use CSS, XPath,
-  // or a host adapter for patterns outside this bounded subset.
-  const repeatedGroup = /\((?:\\.|[^()])*\)(?:[+*]|\{\d+(?:,\d*)?\})/g;
-  for (const match of pattern.matchAll(repeatedGroup)) {
-    const group = match[0].slice(0, match[0].lastIndexOf(")"));
-    if (/[|+*?]|\{\d+(?:,\d*)?\}/.test(group)) return true;
+  const groups = [];
+  let inCharacterClass = false;
+
+  const quantifierLengthAt = (index) => {
+    const character = pattern[index];
+    if (character === "+" || character === "*") return 1;
+    if (character !== "{") return 0;
+    let cursor = index + 1;
+    let minimumDigits = 0;
+    while (cursor < pattern.length && pattern[cursor] >= "0" && pattern[cursor] <= "9") {
+      cursor += 1;
+      minimumDigits += 1;
+    }
+    if (!minimumDigits) return 0;
+    if (pattern[cursor] === "}") return cursor - index + 1;
+    if (pattern[cursor] !== ",") return 0;
+    cursor += 1;
+    while (cursor < pattern.length && pattern[cursor] >= "0" && pattern[cursor] <= "9") cursor += 1;
+    return pattern[cursor] === "}" ? cursor - index + 1 : 0;
+  };
+
+  for (let index = 0; index < pattern.length; index += 1) {
+    const character = pattern[index];
+    if (character === "\\") {
+      const escaped = pattern[index + 1];
+      if ((escaped >= "1" && escaped <= "9") || (escaped === "k" && pattern[index + 2] === "<")) {
+        return true;
+      }
+      index += 1;
+      continue;
+    }
+    if (character === "[" && !inCharacterClass) {
+      inCharacterClass = true;
+      continue;
+    }
+    if (character === "]" && inCharacterClass) {
+      inCharacterClass = false;
+      continue;
+    }
+    if (inCharacterClass) continue;
+    if (character === "(") {
+      let prefixEnd = index;
+      if (pattern[index + 1] === "?") {
+        if (pattern[index + 2] === ":") {
+          prefixEnd = index + 2;
+        } else if (pattern[index + 2] === "<") {
+          const nameEnd = pattern.indexOf(">", index + 3);
+          if (
+            nameEnd === -1
+            || pattern[index + 3] === "="
+            || pattern[index + 3] === "!"
+          ) {
+            return true;
+          }
+          prefixEnd = nameEnd;
+        } else {
+          return true;
+        }
+      }
+      groups.push({ hasAlternation: false, hasQuantifier: false });
+      index = prefixEnd;
+      continue;
+    }
+    if (character === "|") {
+      if (groups.length) groups.at(-1).hasAlternation = true;
+      continue;
+    }
+    if (character === ")") {
+      const group = groups.pop();
+      if (!group) continue;
+      const repeatedLength = quantifierLengthAt(index + 1);
+      if (repeatedLength && (group.hasAlternation || group.hasQuantifier)) return true;
+      if (groups.length && (group.hasQuantifier || repeatedLength)) {
+        groups.at(-1).hasQuantifier = true;
+      }
+      continue;
+    }
+    if (groups.length && (character === "?" || quantifierLengthAt(index))) {
+      groups.at(-1).hasQuantifier = true;
+      const length = quantifierLengthAt(index);
+      if (length > 1) index += length - 1;
+    }
   }
   return false;
 }
