@@ -26,6 +26,86 @@ Every capability stays behind creator-owned origin, request, byte, redirect, con
 
 Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [factual comparison with Firecrawl and Crawl4AI](https://cockroachcrawler.com/compare/) before choosing a crawler.
 
+## All 50 shipped capabilities
+
+Every item below has a public API, command, output contract, test, or dedicated
+documentation page in the stable `0.5.x` line.
+
+### Crawl and discover — 15
+
+1. Static HTTP crawling
+2. Multiple seeds
+3. Breadth-first traversal
+4. Depth-first traversal
+5. Best-first traversal
+6. Adaptive relevance traversal
+7. Sitemap discovery
+8. Robots enforcement
+9. Include and exclude filters
+10. Validated redirects
+11. Concurrency and politeness
+12. Deadlines and cancellation
+13. Persistent cache
+14. Compact fetch-validated site maps
+15. Searchable fetch-validated site maps
+
+### Render and capture — 9
+
+1. JavaScript rendering
+2. Selector waits and bounded clicks
+3. Infinite and virtual scroll
+4. Open Shadow DOM flattening
+5. Readable same-origin iframe flattening
+6. Full-page screenshots
+7. PDF generation
+8. Trusted operator page hooks
+9. Explicit persistent browser profiles
+
+### Extract agent-ready data — 8
+
+1. Readable Markdown
+2. CSS schema extraction
+3. XPath extraction
+4. Restricted regex extraction
+5. Optional host-model JSON Schema extraction
+6. Local PDF parsing
+7. Links and page metadata
+8. Evidence hashes and retrieval provenance
+
+### Reach public sources — 6
+
+1. Public GitHub repository and issue reads
+2. YouTube search and metadata without a developer API key through the optional reviewed route
+3. Official YouTube, X, and Reddit provider adapters
+4. Optional read-only session providers for X, Reddit, Facebook, Instagram, LinkedIn, and Xiaohongshu
+5. Offline RSS and Atom parsing
+6. Provider doctor, capability reporting, and deterministic routing
+
+### Connect agents — 3
+
+1. Strict creator-bounded agent tool
+2. Native MCP stdio server
+3. Optional Maqam policy, approval, trace, and evidence integration
+
+### Deploy and operate — 4
+
+1. Authenticated Node.js and Docker API
+2. Responsive dashboard and browser playground
+3. Bounded process-local asynchronous jobs
+4. Fixed-origin Cloudflare Worker profile
+
+### Keep authority bounded — 5
+
+1. Public-network admission and SSRF defenses
+2. DNS pinning and explicit origin policy
+3. Exact resource ceilings
+4. Fixed self-hosted proxy-gateway adapter
+5. Challenge-aware provider escalation that stops without access-control bypass
+
+Open the [searchable 50-capability library](https://cockroachcrawler.com/docs/capabilities/)
+for copyable APIs, expected outputs, prerequisites, failure modes, and the
+authority boundary for every item.
+
 ## Web superpowers, bounded by you
 
 - Turn an explicitly allowed public site or documentation section into normalized text, Markdown, links, metadata, and content hashes under hard page, byte, depth, redirect, concurrency, and time budgets.
@@ -36,6 +116,29 @@ Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compa
 - Feed research agents, RAG pipelines, content inventories, QA systems, and audit trails with Markdown, JSON, or JSONL records carrying source identity, retrieval metadata, warnings, hashes, redirects, and provenance.
 
 It does **not** extract cookies, reuse hidden credentials, bypass logins, CAPTCHA, paywalls, robots policy, or access controls, and it exposes no social write actions.
+
+### Public and authenticated GitHub reads
+
+Public repository search, repository reads, and issue reads work without a
+GitHub token at the public REST limit. Supplying `GITHUB_TOKEN` or `GH_TOKEN`
+raises the documented GitHub API limit while keeping the adapter read-only:
+
+```bash
+GITHUB_TOKEN=your_token cockroach-sources search github \
+  "topic:web-crawler language:javascript" \
+  --max-results 10 \
+  --json
+```
+
+Tokens are accepted only through trusted configuration or environment state.
+They are never accepted as a CLI flag and never appear in normalized records,
+errors, URLs, doctor output, or provenance.
+
+This is separate from MCP Registry ownership. The package carries the
+case-sensitive registry identity
+`io.github.AjnasNB/cockroach-crawler`; GitHub-authenticated registry
+publication proves control of that namespace, not additional crawler runtime
+authority.
 
 Version `0.5.1` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.5.1 version gitHead dist.integrity`.
 
@@ -64,7 +167,7 @@ The local crawler produces structured JSON/JSONL with readable text, Markdown, l
 
 It does not bundle a model, model key, hosted account, stealth layer, CAPTCHA bypass, paywall bypass, or authorization bypass. Optional LLM extraction runs only through a host-supplied adapter and validates its output against the caller's JSON Schema.
 
-Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [50-capability library](https://cockroachcrawler.com/docs/capabilities/) · [advanced capabilities](./docs/ADVANCED.md) · [complete feature inventory](./docs/FEATURES.md) · [comparison](https://cockroachcrawler.com/compare/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
+Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [50-capability library](https://cockroachcrawler.com/docs/capabilities/) · [advanced capabilities](./docs/ADVANCED.md) · [complete feature inventory](./docs/FEATURES.md) · [comparison](https://cockroachcrawler.com/compare/) · [benchmark](https://cockroachcrawler.com/benchmark/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [GitHub Discussions](https://github.com/AjnasNB/cockroach-crawler/discussions) · [issues](https://github.com/AjnasNB/cockroach-crawler/issues) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
 
 ## Complete documentation
 
@@ -87,6 +190,9 @@ uses stable public exports and copyable examples from this package.
 | Run the authenticated API, process-local job queue, dashboard, and playground | [Docker and Node API](https://cockroachcrawler.com/docs/docker/) |
 | Deploy the fixed-origin fetch-only Worker profile | [Cloudflare Worker](https://cockroachcrawler.com/docs/serverless/) |
 | Look up every package subpath, crawl option, page field, statistic, and executable | [Complete reference](https://cockroachcrawler.com/docs/reference/) |
+| Reproduce extraction and public-policy evidence | [Benchmark method and machine-readable results](https://cockroachcrawler.com/benchmark/) |
+| Ask design questions and share integrations | [GitHub Discussions](https://github.com/AjnasNB/cockroach-crawler/discussions) |
+| Report a reproducible bug or request a scoped capability | [GitHub Issues](https://github.com/AjnasNB/cockroach-crawler/issues) |
 | Audit network, browser, provider, and deployment authority | [Security model](https://cockroachcrawler.com/security/) |
 
 ## Check reach before you call a source
