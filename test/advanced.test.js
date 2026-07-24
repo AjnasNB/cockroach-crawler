@@ -358,6 +358,16 @@ test("native MCP stdio transport exposes bounded tools and capability evidence",
       tools.tools.map(({ name }) => name).sort(),
       ["crawl", "extract_structured", "map_site"]
     );
+    const extraction = await client.callTool({
+      name: "extract_structured",
+      arguments: {
+        html: "<main><h1>Native MCP</h1></main>",
+        url: "https://example.com/evidence",
+        fields: { heading: "h1" }
+      }
+    });
+    assert.equal(extraction.isError, undefined);
+    assert.equal(extraction.structuredContent.data.heading, "Native MCP");
     const resource = await client.readResource({ uri: "cockroach://capabilities" });
     const body = JSON.parse(resource.contents[0].text);
     assert.deepEqual(body.fixedPolicy.allowedOrigins, ["https://example.com"]);

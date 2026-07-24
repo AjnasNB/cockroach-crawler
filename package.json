@@ -1,7 +1,7 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.5.0",
-  "mcpName": "io.github.ajnasnb/cockroach-crawler",
+  "version": "0.5.1",
+  "mcpName": "io.github.AjnasNB/cockroach-crawler",
   "description": "Give AI agents superpowers on the web: crawl, render, map, extract, and verify evidence through one governed Node.js crawler.",
   "license": "MIT",
   "author": "Ajnas NB <ajnasnb@gmail.com>",
@@ -116,8 +116,8 @@
     "bench/local-benchmark.mjs",
     "bench/public/",
     "bench/results/ci-validated.json",
-    "bench/results/wceb-test-0.5.0.json",
-    "bench/results/public-conformance-0.5.0.json",
+    "bench/results/wceb-test-0.5.1.json",
+    "bench/results/public-conformance-0.5.1.json",
     "docs/RELEASE.md",
     "docs/DEPENDENCY_LICENSES.md",
     "docs/PROVENANCE.md",
@@ -196,7 +196,6 @@
     "serverless"
   ],
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
     "@xmldom/xmldom": "^0.9.10",
     "ajv": "^8.18.0",
     "cheerio": "^1.0.0",
@@ -217,6 +216,7 @@
     }
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "playwright": "^1.61.1",
     "typescript": "^7.0.2",
     "wrangler": "^4.83.0"

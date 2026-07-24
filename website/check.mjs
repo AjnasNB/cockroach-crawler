@@ -114,7 +114,7 @@ if (!mapHtml.includes("--map-search")) errors.push("map guide must show searched
 const extractionHtml = await readFile(join(dist, "docs", "extraction", "index.html"), "utf8");
 if (!extractionHtml.includes("Restricted regex extraction")) errors.push("extraction guide must document the restricted regex surface");
 const mcpHtml = await readFile(join(dist, "docs", "mcp", "index.html"), "utf8");
-if (!mcpHtml.includes("io.github.ajnasnb/cockroach-crawler")) errors.push("MCP guide must document the official Registry name");
+if (!mcpHtml.includes("io.github.AjnasNB/cockroach-crawler")) errors.push("MCP guide must document the official Registry name");
 const dockerHtml = await readFile(join(dist, "docs", "docker", "index.html"), "utf8");
 if (!dockerHtml.includes("/v1/jobs")) errors.push("Docker guide must document bounded asynchronous jobs");
 const llms = await readFile(join(dist, "llms.txt"), "utf8");
@@ -130,7 +130,7 @@ if (!packageReadme.includes("Look up every package subpath, crawl option, page f
   errors.push("npm README must retain the complete-reference documentation row");
 }
 const docsHtml = await readFile(join(dist, "docs", "index.html"), "utf8");
-if (!docsHtml.includes("Cockroach Crawler 0.5.0 documentation")) errors.push("docs must identify stable 0.5.0");
+if (!docsHtml.includes("Cockroach Crawler 0.5.1 documentation")) errors.push("docs must identify stable 0.5.1");
 if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
 if (!docsHtml.includes('href="/docs/capabilities/"')) errors.push("docs overview must link the dedicated capability library");
 if (!docsHtml.includes("docs-sidebar-nav")) errors.push("docs overview must use the persistent grouped documentation navigation");
@@ -178,7 +178,7 @@ for (const [route, proof] of [
   if (!html.includes(proof)) errors.push(`${route} docs are missing their reference proof`);
 }
 const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
-if (!releaseHtml.includes("npm install cockroach-crawler@0.5.0")) errors.push("release page must install stable 0.5.0");
+if (!releaseHtml.includes("npm install cockroach-crawler@0.5.1")) errors.push("release page must install stable 0.5.1");
 if (releaseHtml.includes("Release · 0.3.0")) errors.push("release page must not advertise 0.3.0 as current");
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);
 const headerPolicy = await readFile(join(dist, "_headers"), "utf8");

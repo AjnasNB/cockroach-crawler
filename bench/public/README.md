@@ -15,7 +15,7 @@ git -C ../wceb checkout 62ff86d12ea72c80c31fb810ff1a724fad687bea
 Run the held-out 511-page profile:
 
 ```sh
-npm run bench:public:wceb -- --dataset ../wceb --split test --output bench/results/wceb-test-0.5.0.json
+npm run bench:public:wceb -- --dataset ../wceb --split test --output bench/results/wceb-test-0.5.1.json
 ```
 
 The evaluator rejects another dataset revision or a modified checkout. It
@@ -32,7 +32,7 @@ Run the adapted Google robots dispatch vectors and the pinned WPT HTTP(S) URL
 normalization subset:
 
 ```sh
-npm run bench:public:conformance -- --output bench/results/public-conformance-0.5.0.json
+npm run bench:public:conformance -- --output bench/results/public-conformance-0.5.1.json
 ```
 
 The WPT corpus is downloaded from its exact commit and rejected when its SHA-256

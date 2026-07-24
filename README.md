@@ -37,12 +37,13 @@ Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compa
 
 It does **not** extract cookies, reuse hidden credentials, bypass logins, CAPTCHA, paywalls, robots policy, or access controls, and it exposes no social write actions.
 
-Version `0.5.0` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.5.0 version gitHead dist.integrity`.
+Version `0.5.1` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.5.1 version gitHead dist.integrity`.
 
 ## Public benchmark evidence
 
-The stable `0.5.0` extractor was run once against the complete 511-page held-out
-split of the human-reviewed WCEB v1.0 corpus. The source-pinned run produced
+The extractor shipped in `0.5.1` was revalidated against the complete
+511-page held-out split of the
+human-reviewed WCEB v1.0 corpus. The source-pinned run produced
 **0.7653 macro word F1**, **0.9041 recall**, and **87.13% required-snippet
 recall** across articles, services, products, collections, forums, listings,
 and documentation. Documentation pages scored **0.8839 F1** and articles
@@ -93,7 +94,7 @@ uses stable public exports and copyable examples from this package.
 The source registry reports what the current machine can use before an agent makes a request. This command reads configuration state only; it does not print secrets or contact a provider.
 
 ```bash
-npx -y --package cockroach-crawler@0.5.0 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.5.1 cockroach-sources doctor
 ```
 
 | Capability | No developer API key | Optional configuration | Honest boundary |
@@ -180,7 +181,7 @@ npm install cockroach-crawler
 Pin the exact stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@0.5.0
+npm install cockroach-crawler@0.5.1
 ```
 
 The stable `0.5.x` line includes advanced package subpaths:

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.1 - 2026-07-24
+
+### Fixed
+
+- Corrected the official MCP Registry identity to the case-sensitive GitHub
+  namespace `io.github.AjnasNB/cockroach-crawler`.
+- Replaced the runtime MCP SDK dependency with a purpose-built JSON-RPC stdio
+  transport while retaining the official SDK as a development-only
+  conformance client. Fresh production installs therefore do not inherit the
+  affected Windows static-server dependency reported by
+  `GHSA-frvp-7c67-39w9`.
+- Kept the crawler, extraction, job, proxy, and network-authority contracts
+  unchanged from `0.5.0`.
+
 ## 0.5.0 - 2026-07-24
 
 ### Added

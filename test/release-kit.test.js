@@ -65,7 +65,17 @@ test("MCP Registry metadata matches the packed npm package", async () => {
   const manifest = JSON.parse(await readFile(path.join(ROOT, "package.json"), "utf8"));
   const server = JSON.parse(await readFile(path.join(ROOT, "server.json"), "utf8"));
 
-  assert.equal(manifest.mcpName, "io.github.ajnasnb/cockroach-crawler");
+  assert.equal(manifest.mcpName, "io.github.AjnasNB/cockroach-crawler");
+  assert.equal(
+    manifest.dependencies?.["@modelcontextprotocol/sdk"],
+    undefined,
+    "the native MCP server must not add the SDK HTTP stack to production installs"
+  );
+  assert.match(
+    manifest.devDependencies?.["@modelcontextprotocol/sdk"] || "",
+    /^\^1\.29\./,
+    "the official SDK remains the development-only conformance client"
+  );
   assert.ok(manifest.files.includes("server.json"), "server.json must ship in the npm artifact");
   assert.equal(server.name, manifest.mcpName);
   assert.equal(server.version, manifest.version);
