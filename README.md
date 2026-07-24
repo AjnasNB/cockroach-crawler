@@ -39,6 +39,26 @@ It does **not** extract cookies, reuse hidden credentials, bypass logins, CAPTCH
 
 Version `0.4.2` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.4.2 version gitHead dist.integrity`.
 
+## Public benchmark evidence
+
+The stable `0.4.2` extractor was run once against the complete 511-page held-out
+split of the human-reviewed WCEB v1.0 corpus. The source-pinned run produced
+**0.7653 macro word F1**, **0.9041 recall**, and **87.13% required-snippet
+recall** across articles, services, products, collections, forums, listings,
+and documentation. Documentation pages scored **0.8839 F1** and articles
+**0.8367 F1**.
+
+Separate public-source conformance probes passed **25/25 adapted Google
+robots.txt dispatch vectors** and **101/101 applicable credential-free HTTP(S)
+canonicalization cases** from the pinned Web Platform Tests URL corpus.
+
+These are reproducible workload results, not a universal quality, speed, RFC
+certification, or competitor-ranking claim. Read the [method and complete
+page-type table](./docs/BENCHMARK.md), inspect the [machine-readable
+results](./bench/results/), and run the [source-pinned evaluators](./bench/public/).
+The local 120-page throughput fixture remains separate because extraction
+quality and loopback speed measure different things.
+
 The local crawler produces structured JSON/JSONL with readable text, Markdown, links, response metadata, redirect provenance, and content hashes for documentation indexing, RAG ingestion, content inventory, QA, research, and agent tools. The source adapters normalize GitHub, YouTube, X, and Reddit records when each provider's documented access requirements are met.
 
 It does not bundle a model, model key, hosted account, stealth layer, CAPTCHA bypass, paywall bypass, or authorization bypass. Optional LLM extraction runs only through a host-supplied adapter and validates its output against the caller's JSON Schema.

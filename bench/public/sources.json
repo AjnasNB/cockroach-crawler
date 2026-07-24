@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "wceb": {
+    "name": "Web Content Extraction Benchmark",
+    "repository": "https://github.com/Murrough-Foley/web-content-extraction-benchmark",
+    "revision": "62ff86d12ea72c80c31fb810ff1a724fad687bea",
+    "tag": "v1.0",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "homepage": "https://webcontentextraction.org/"
+  },
+  "googleRobots": {
+    "name": "Google robots.txt parser tests",
+    "repository": "https://github.com/google/robotstxt",
+    "revision": "22b355ff855419e6a3ff8ff09c0ad7fdb17116f9",
+    "path": "robots_test.cc",
+    "blobSha": "35853def27a3e811cf86cd8ef76b50d1f82e3d01",
+    "sha256": "9868caef2ba44991331e90418f0e45a0c13893b0e4e11c8b0385166face9d670",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/google/robotstxt/blob/master/LICENSE"
+  },
+  "wptUrl": {
+    "name": "Web Platform Tests URL corpus",
+    "repository": "https://github.com/web-platform-tests/wpt",
+    "revision": "94dbeafcf5092c7be5e15ec78c95dca966d5ee26",
+    "path": "url/resources/urltestdata.json",
+    "sha256": "355c9f1e5f34aae66ba8adfabf3c853f5cd30ea22964ef7a53eb292e7975d81e",
+    "license": "BSD-3-Clause",
+    "licenseUrl": "https://github.com/web-platform-tests/wpt/blob/master/LICENSE.md"
+  },
+  "rfc9309": {
+    "name": "Robots Exclusion Protocol",
+    "url": "https://www.rfc-editor.org/rfc/rfc9309.html"
+  }
+}
