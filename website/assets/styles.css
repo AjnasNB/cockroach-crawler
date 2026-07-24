@@ -13,7 +13,7 @@
   --cyan: #8cd8e8;
   --orange: #ffb589;
   --red: #ff8b7b;
-  --shell: min(1240px, calc(100vw - 48px));
+  --shell: min(1240px, calc(100% - 48px));
   --radius: 3px;
   --mono: "SFMono-Regular", Consolas, "Liberation Mono", ui-monospace, monospace;
   --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -2268,6 +2268,7 @@ tr:last-child td {
   .docs-mobile-directory .docs-sidebar-nav {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px 24px;
+    min-width: 0;
     padding: 18px;
     border-top: 1px solid var(--line);
   }
@@ -2280,6 +2281,7 @@ tr:last-child td {
   .docs-mobile-directory .docs-sidebar-section,
   .docs-mobile-directory .docs-sidebar-children {
     align-content: start;
+    min-width: 0;
   }
 
   .docs-mobile-directory .docs-sidebar-children {
@@ -2288,6 +2290,16 @@ tr:last-child td {
 
   .docs-mobile-directory .docs-sidebar-children ul {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .docs-mobile-directory li,
+  .docs-mobile-directory a {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .docs-mobile-directory a {
+    overflow-wrap: anywhere;
   }
 
   .capability-category-grid {
