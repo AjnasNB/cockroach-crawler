@@ -180,11 +180,33 @@ try {
             className: typeof element.className === "string" ? element.className : "",
             text: element.textContent?.trim().slice(0, 80) || ""
           }));
+        const overflowCandidates = [...document.body.querySelectorAll("*")]
+          .filter((element) => {
+            const rect = element.getBoundingClientRect();
+            return rect.left < 0 || rect.right > viewportWidth;
+          })
+          .slice(0, 12)
+          .map((element) => {
+            const rect = element.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            return {
+              tag: element.tagName.toLowerCase(),
+              className: typeof element.className === "string" ? element.className : "",
+              left: Math.round(rect.left * 100) / 100,
+              right: Math.round(rect.right * 100) / 100,
+              width: Math.round(rect.width * 100) / 100,
+              scrollWidth: element.scrollWidth,
+              clientWidth: element.clientWidth,
+              overflowX: style.overflowX,
+              text: element.textContent?.trim().slice(0, 80) || ""
+            };
+          });
         const horizontalOverflow = Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth);
         return {
           horizontalOverflow,
           horizontal: horizontalOverflow > 1,
           overflowElements,
+          overflowCandidates,
           navVisible: nav ? getComputedStyle(nav).display : "missing",
           currentNavVisible: !navRect || !currentRect ? false : currentRect.left >= navRect.left - 1 && currentRect.right <= navRect.right + 1,
           mobileToc: routeNeedsToc() ? Boolean(document.querySelector(".mobile-toc")) && getComputedStyle(document.querySelector(".mobile-toc")).display !== "none" : true,
