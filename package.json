@@ -1,6 +1,7 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.4.2",
+  "version": "0.5.0",
+  "mcpName": "io.github.ajnasnb/cockroach-crawler",
   "description": "Give AI agents superpowers on the web: crawl, render, map, extract, and verify evidence through one governed Node.js crawler.",
   "license": "MIT",
   "author": "Ajnas NB <ajnasnb@gmail.com>",
@@ -97,6 +98,11 @@
       "types": "./types/server.d.ts",
       "import": "./src/server.js",
       "default": "./src/server.js"
+    },
+    "./jobs": {
+      "types": "./types/jobs.d.ts",
+      "import": "./src/jobs.js",
+      "default": "./src/jobs.js"
     }
   },
   "files": [
@@ -104,13 +110,14 @@
     "src/",
     "types/",
     "schemas/",
+    "server.json",
     "worker/worker.js",
     "worker/wrangler.jsonc",
     "bench/local-benchmark.mjs",
     "bench/public/",
     "bench/results/ci-validated.json",
-    "bench/results/wceb-test-0.4.2.json",
-    "bench/results/public-conformance-0.4.2.json",
+    "bench/results/wceb-test-0.5.0.json",
+    "bench/results/public-conformance-0.5.0.json",
     "docs/RELEASE.md",
     "docs/DEPENDENCY_LICENSES.md",
     "docs/PROVENANCE.md",

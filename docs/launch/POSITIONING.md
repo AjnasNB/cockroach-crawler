@@ -6,7 +6,11 @@ An agent needs eyes on the web, but it should not receive an unrestricted browse
 
 ## Primary promise
 
-> Give your AI agent eyes on the web - without giving it the keys to your network.
+> Give your AI agents the web. Keep the keys.
+
+The narrower product position is: **built to be the best AI crawler for
+governed agents.** This describes the package's chosen boundary; it is not a
+universal fastest, cheapest, or highest-quality crawler claim.
 
 ## Proof points
 
@@ -17,6 +21,14 @@ An agent needs eyes on the web, but it should not receive an unrestricted browse
 - optional fixed read-only session providers for X, Reddit, Facebook, Instagram, LinkedIn, and Xiaohongshu through operator-controlled browser login state;
 - ordered source routes that fall back only on declared error codes;
 - normalized records with source URL, adapter identity, content hash, warnings, and retrieval provenance;
+- fetch-validated site maps with optional deterministic search and result
+  limits;
+- CSS, XPath, restricted regex, PDF, Markdown, and host-model JSON Schema
+  extraction;
+- a bounded process-local crawl/map job queue and a fixed operator-owned proxy
+  gateway for self-hosted deployments;
+- native MCP over stdio plus package metadata prepared for official Registry
+  verification;
 - a separately restricted serverless profile and a structural browser-host contract; and
 - local-first MIT code with no required Cockroach Crawler account or model provider.
 
@@ -36,7 +48,7 @@ Cockroach Crawler does not bypass login, paywall, CAPTCHA, robots policy, access
 
 | Say | Meaning |
 | --- | --- |
-| bounded eyes | permitted read-only reach with explicit budgets |
+| keep the keys | deployment-owned origins, credentials, proxy endpoints, hooks, profiles, and budgets |
 | source doctor | local capability and credential-state inspection before dispatch |
 | optional reach | separately installed no-key or session-backed read providers |
 | normalized evidence record | source identity, content, hashes, warnings, and provenance in one shape |
@@ -66,12 +78,15 @@ No. It enforces an HTTPS origin allowlist and strict budgets but cannot provide 
 
 ### Does it write to a provider?
 
-No built-in or optional provider in `0.3.0` posts, comments, likes, follows, edits, submits, or deletes.
+No built-in or optional provider in `0.5.0` posts, comments, likes, follows, edits, submits, or deletes.
 
 ## Approved descriptions
 
-**Short:** Give AI agents bounded eyes on the public web: crawl, search, and normalize evidence without exposing an unrestricted browser.
+**Short:** Give your AI agents the web. Keep the keys.
 
-**Medium:** Cockroach Crawler gives Node.js agents bounded read-only reach across public pages and explicit source providers. Creator-owned policy limits the network and workload; normalized records keep source identity and retrieval provenance attached.
+**Medium:** Cockroach Crawler is built to be the best AI crawler for governed
+agents: a Node.js toolkit for deep crawl, browser rendering, searched maps,
+structured extraction, public sources, and evidence under creator-owned
+network and resource policy.
 
 **Boilerplate:** Cockroach Crawler is an MIT-licensed Node.js reading layer for agent workflows. It combines a hardened local crawler, capability-aware source routing, optional explicit reach providers, a governed browser-host contract, and a deliberately restricted serverless profile. It does not bypass authentication or hide provider authority.

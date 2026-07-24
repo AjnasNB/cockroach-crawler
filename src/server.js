@@ -1,6 +1,8 @@
 import { timingSafeEqual } from "node:crypto";
 import { createServer } from "node:http";
 import { crawlDetailed, extractStructured, mapSite } from "./index.js";
+import { extractWithRegex, extractWithXPath } from "./extractors.js";
+import { createBoundedJobQueue } from "./jobs.js";
 
 const DASHBOARD = `<!doctype html>
 <html lang="en">
@@ -41,7 +43,8 @@ form.addEventListener("submit",async(event)=>{
   event.preventDefault();output.textContent="Running...";
   const token=document.querySelector("#token").value;
   try{
-    const response=await fetch("/v1/crawl",{method:"POST",headers:{"content-type":"application/json",...(token?{authorization:"Bearer "+token}:{})},body:JSON.stringify({seeds:[document.querySelector("#url").value],mode:document.querySelector("#mode").value,maxPages:Number(document.querySelector("#pages").value)})});
+    const mode=document.querySelector("#mode").value;
+    const response=await fetch(mode==="map"?"/v1/map":"/v1/crawl",{method:"POST",headers:{"content-type":"application/json",...(token?{authorization:"Bearer "+token}:{})},body:JSON.stringify({seeds:[document.querySelector("#url").value],maxPages:Number(document.querySelector("#pages").value)})});
     const body=await response.json();output.textContent=JSON.stringify(body,null,2);
   }catch(error){output.textContent=String(error?.message||error)}
 });
@@ -105,7 +108,7 @@ function deploymentCrawlOptions(defaults, request) {
   if (!request || typeof request !== "object" || Array.isArray(request)) {
     throw new TypeError("Crawl request must be an object.");
   }
-  const allowed = new Set(["seeds", "mode", "maxPages", "maxDepth", "query"]);
+  const allowed = new Set(["seeds", "maxPages", "maxDepth", "query"]);
   const unknown = Object.keys(request).filter((key) => !allowed.has(key));
   if (unknown.length) throw new TypeError(`Unknown crawl request field(s): ${unknown.join(", ")}.`);
   const seeds = Array.isArray(request.seeds) ? request.seeds : [];
@@ -126,6 +129,33 @@ function deploymentCrawlOptions(defaults, request) {
     maxPages,
     maxDepth,
     ...(query ? { traversal: { mode: "adaptive", query } } : {})
+  };
+}
+
+function deploymentMapOptions(defaults, request) {
+  if (!request || typeof request !== "object" || Array.isArray(request)) {
+    throw new TypeError("Map request must be an object.");
+  }
+  const { search, maxResults, ...crawlRequest } = request;
+  const options = deploymentCrawlOptions(defaults, crawlRequest);
+  if (search !== undefined && (
+    typeof search !== "string"
+    || !search.normalize("NFKC").trim()
+    || search.length > 2_048
+  )) {
+    throw new TypeError("search must contain 1-2048 characters.");
+  }
+  const resultLimit = integer(
+    maxResults,
+    "maxResults",
+    options.maxPages,
+    1,
+    options.maxPages
+  );
+  return {
+    ...options,
+    ...(search ? { search } : {}),
+    maxResults: resultLimit
   };
 }
 
@@ -151,6 +181,30 @@ export function createCrawlerApiServer(options = {}) {
   if (!Array.isArray(crawlDefaults.allowedOrigins) || !crawlDefaults.allowedOrigins.length) {
     throw new TypeError("crawlDefaults.allowedOrigins must contain at least one deployment-owned origin.");
   }
+  const queueOptions = options.queue === false ? null : structuredClone(options.queue || {});
+  const jobs = queueOptions
+    ? createBoundedJobQueue({
+        ...queueOptions,
+        execute: async (job, context) => {
+          if (!job || typeof job !== "object" || Array.isArray(job)) {
+            throw new TypeError("Job must be an object.");
+          }
+          if (job.operation === "crawl") {
+            return crawlDetailed({
+              ...job.options,
+              signal: context.signal
+            });
+          }
+          if (job.operation === "map") {
+            return mapSite({
+              ...job.options,
+              signal: context.signal
+            });
+          }
+          throw new TypeError("operation must be 'crawl' or 'map'.");
+        }
+      })
+    : null;
 
   const server = createServer(async (request, response) => {
     try {
@@ -169,7 +223,16 @@ export function createCrawlerApiServer(options = {}) {
         writeJson(response, 200, {
           ok: true,
           service: "cockroach-crawler",
-          capabilities: ["crawl", "map", "structured-extract", "playground"]
+          capabilities: [
+            "crawl",
+            "map-search",
+            "css-extract",
+            "xpath-extract",
+            "regex-extract",
+            ...(jobs ? ["bounded-jobs"] : []),
+            "playground"
+          ],
+          ...(jobs ? { jobs: jobs.stats() } : {})
         }, maxResponseBytes);
         return;
       }
@@ -183,23 +246,77 @@ export function createCrawlerApiServer(options = {}) {
 
       if (request.method === "POST" && url.pathname === "/v1/crawl") {
         const body = await readJson(request, maxBodyBytes);
-        const crawlOptions = deploymentCrawlOptions(crawlDefaults, body);
-        const result = body.mode === "map"
-          ? await mapSite(crawlOptions)
-          : await crawlDetailed(crawlOptions);
+        const result = await crawlDetailed(deploymentCrawlOptions(crawlDefaults, body));
+        writeJson(response, 200, result, maxResponseBytes);
+        return;
+      }
+      if (request.method === "POST" && url.pathname === "/v1/map") {
+        const body = await readJson(request, maxBodyBytes);
+        const result = await mapSite(deploymentMapOptions(crawlDefaults, body));
         writeJson(response, 200, result, maxResponseBytes);
         return;
       }
       if (request.method === "POST" && url.pathname === "/v1/extract") {
         const body = await readJson(request, maxBodyBytes);
-        if (typeof body.html !== "string" || typeof body.url !== "string") {
-          throw new TypeError("html and url strings are required.");
+        const allowed = new Set(["strategy", "html", "text", "url", "fields"]);
+        const unknown = Object.keys(body).filter((key) => !allowed.has(key));
+        if (unknown.length) {
+          throw new TypeError(`Unknown extraction request field(s): ${unknown.join(", ")}.`);
         }
-        const result = extractStructured(body.html, body.url, {
-          ...extractDefaults,
-          fields: body.fields
-        });
+        const strategy = body.strategy || "css";
+        if (!["css", "xpath", "regex"].includes(strategy)) {
+          throw new TypeError("strategy must be 'css', 'xpath', or 'regex'.");
+        }
+        let result;
+        if (strategy === "regex") {
+          if (typeof body.text !== "string") throw new TypeError("text is required for regex extraction.");
+          result = extractWithRegex(body.text, { ...extractDefaults, fields: body.fields });
+        } else {
+          if (typeof body.html !== "string" || typeof body.url !== "string") {
+            throw new TypeError("html and url strings are required.");
+          }
+          result = strategy === "xpath"
+            ? extractWithXPath(body.html, body.url, { ...extractDefaults, fields: body.fields })
+            : extractStructured(body.html, body.url, { ...extractDefaults, fields: body.fields });
+        }
         writeJson(response, 200, result, maxResponseBytes);
+        return;
+      }
+      if (jobs && request.method === "POST" && url.pathname === "/v1/jobs") {
+        const body = await readJson(request, maxBodyBytes);
+        if (!body || typeof body !== "object" || Array.isArray(body)) {
+          throw new TypeError("Job request must be an object.");
+        }
+        const unknown = Object.keys(body).filter((key) => !["operation", "input"].includes(key));
+        if (unknown.length) throw new TypeError(`Unknown job field(s): ${unknown.join(", ")}.`);
+        if (!["crawl", "map"].includes(body.operation)) {
+          throw new TypeError("operation must be 'crawl' or 'map'.");
+        }
+        const input = body.operation === "map"
+          ? deploymentMapOptions(crawlDefaults, body.input)
+          : deploymentCrawlOptions(crawlDefaults, body.input);
+        writeJson(response, 202, jobs.submit({ operation: body.operation, options: input }), maxResponseBytes);
+        return;
+      }
+      const jobMatch = /^\/v1\/jobs\/([0-9a-f-]{36})$/.exec(url.pathname);
+      if (jobs && jobMatch && request.method === "GET") {
+        const job = jobs.get(jobMatch[1]);
+        writeJson(
+          response,
+          job ? 200 : 404,
+          job || { error: { code: "JOB_NOT_FOUND", message: "Job not found." } },
+          maxResponseBytes
+        );
+        return;
+      }
+      if (jobs && jobMatch && request.method === "DELETE") {
+        const cancelled = jobs.cancel(jobMatch[1]);
+        writeJson(
+          response,
+          cancelled ? 202 : 409,
+          { id: jobMatch[1], cancelled },
+          maxResponseBytes
+        );
         return;
       }
       writeJson(response, 404, { error: { code: "NOT_FOUND", message: "Route not found." } }, maxResponseBytes);
@@ -212,12 +329,12 @@ export function createCrawlerApiServer(options = {}) {
       }, maxResponseBytes);
     }
   });
-  return { server, host };
+  return { server, host, jobs };
 }
 
 export async function startCrawlerApi(options = {}) {
   const port = integer(options.port, "port", 3_878, 0, 65_535);
-  const { server, host } = createCrawlerApiServer(options);
+  const { server, host, jobs } = createCrawlerApiServer(options);
   await new Promise((resolve, reject) => {
     server.once("error", reject);
     server.listen(port, host, () => {
@@ -231,6 +348,7 @@ export async function startCrawlerApi(options = {}) {
     port: server.address().port,
     url: `http://${host.includes(":") ? `[${host}]` : host}:${server.address().port}`,
     async close() {
+      jobs?.close();
       if (!server.listening) return;
       server.closeIdleConnections?.();
       server.closeAllConnections?.();

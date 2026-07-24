@@ -39,3 +39,16 @@ export function createEscalationRouter<TRequest = unknown, TResponse = unknown>(
     attempts: Array<Record<string, unknown>>;
   }>;
 };
+
+export function createProxyGatewayProvider<
+  TRequest = unknown,
+  TResponse = unknown
+>(options: {
+  id: string;
+  endpoint: string;
+  token?: string;
+  authority?: string;
+  timeoutMs?: number;
+  maxResponseBytes?: number;
+  fetch?: typeof globalThis.fetch;
+}): EscalationProvider<TRequest, TResponse>;

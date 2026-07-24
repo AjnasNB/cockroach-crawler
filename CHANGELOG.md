@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.5.0 - 2026-07-24
+
+### Added
+
+- Added deterministic search and result limits to fetch-validated site maps
+  across the JavaScript API, CLI, authenticated HTTP API, and native MCP tool.
+- Added bounded restricted-regex extraction beside the existing CSS, XPath,
+  PDF, Markdown, and host-model JSON Schema strategies.
+- Added a process-local asynchronous crawl/map queue with concurrency, pending,
+  retained-record, result-byte, status, cancellation, and shutdown controls.
+- Added a fixed self-hosted proxy-gateway provider whose endpoint, credential,
+  timeout, redirect behavior, and response ceiling remain operator owned.
+- Added official MCP Registry metadata through matching npm `mcpName` and
+  packaged `server.json` identities.
+- Expanded the documentation portal to 50 searchable capability manuals and
+  documented the dedicated map, queue, extraction, proxy, and MCP surfaces.
+
+### Security
+
+- Search ranks only entries already fetched under the crawler's origin, DNS,
+  redirect, robots, sensitive-path, and resource policy.
+- Regex extraction rejects lookarounds, backreferences, unsupported flags,
+  suspicious nested repetition, and output beyond explicit ceilings.
+- Agent and MCP input cannot select proxy endpoints or credentials, create
+  queue authority, add origins, enable private networks, or raise host limits.
+- The bundled queue is explicitly process-local and non-durable; the fixed
+  gateway is an operator integration point, not a stealth or bypass network.
+
 ## 0.4.2 - 2026-07-24
 
 - Expanded the public documentation into task-focused crawling, browser,

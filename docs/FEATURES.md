@@ -1,11 +1,11 @@
 # Cockroach Crawler Feature Inventory
 
-This is the source-backed inventory for the stable `0.4.x` capability line.
+This is the source-backed inventory for the stable `0.5.x` capability line.
 The public package, declarations, tests, and documentation ship together.
 
 Status terms:
 
-- **Stable 0.4.x** means the feature exists in the current npm package.
+- **Stable 0.5.x** means the feature exists in the current npm package.
 - **Optional** means the feature requires an explicitly installed peer,
   credential, executable, browser session, or deployment component.
 - **Excluded** means Cockroach Crawler deliberately does not advertise or
@@ -18,6 +18,9 @@ Status terms:
 - Programmatic root API: `crawl`, `crawlDetailed`, `mapSite`,
   `discoverSitemapUrls`, `extractPage`, `extractStructured`, `normalizeUrl`,
   `classifyIpAddress`, `isPublicIpAddress`, and `resolveUrlTarget`.
+- Advanced subpaths for traversal, cache, documents, CSS/XPath/restricted-regex
+  and host-model extraction, browser evidence, bounded jobs, provider
+  escalation, native MCP, and the authenticated server.
 - Agent-tool API: `cockroachCrawlerToolSchema`,
   `createCockroachCrawlerTool`, and `runCockroachCrawlerTool`.
 - Source APIs: `createSourceRegistry`, `createSourceRegistryFromEnv`,
@@ -27,8 +30,9 @@ Status terms:
 - Maqam-compatible browser-host API with an injected runtime.
 - Restricted serverless crawler API and a checked-in Cloudflare Worker entry
   point.
-- Four CLIs: `cockroach-crawl`, `cockroach-crawler`,
-  `cockroach-sources`, and `cockroach-reach`.
+- Seven CLIs: `cockroach-crawl`, `cockroach-crawler`,
+  `cockroach-sources`, `cockroach-reach`, `cockroach-documents`,
+  `cockroach-mcp`, and `cockroach-server`.
 - Machine-readable source record JSON Schema.
 - MIT-licensed core package with direct dependency license auditing.
 
@@ -63,8 +67,10 @@ Status terms:
   decoded-byte growth.
 - Async `onPage` and `onError` callbacks with detached, frozen records and
   deadline enforcement.
-- **Stable 0.4.x:** fetch-validated compact site maps through `mapSite()` and
+- **Stable 0.5.x:** fetch-validated compact site maps through `mapSite()` and
   CLI `--map`.
+- **Stable 0.5.x:** optional lexical map search and result limits that rank
+  only pages already fetched under the crawl policy.
 
 ## Page extraction and output
 
@@ -84,17 +90,19 @@ Status terms:
 - JSON output.
 - JSON Lines output.
 - Atomic file output to explicit nested paths.
-- **Stable 0.4.x:** deterministic CSS extraction from visible text, cleaned
+- **Stable 0.5.x:** deterministic CSS extraction from visible text, cleaned
   inner HTML, or a named attribute.
-- **Stable 0.4.x:** single and multiple extraction values.
-- **Stable 0.4.x:** per-field item limits.
-- **Stable 0.4.x:** relative HTTP(S) URL resolution for attribute values.
-- **Stable 0.4.x:** independent maximum field, input-character, item,
+- **Stable 0.5.x:** single and multiple extraction values.
+- **Stable 0.5.x:** per-field item limits.
+- **Stable 0.5.x:** relative HTTP(S) URL resolution for attribute values.
+- **Stable 0.5.x:** independent maximum field, input-character, item,
   per-value, total-value, and total-character limits.
-- **Stable 0.4.x:** deterministic extraction truncation warnings.
-- **Stable 0.4.x:** extraction through `extractStructured`, crawl option
+- **Stable 0.5.x:** deterministic extraction truncation warnings.
+- **Stable 0.5.x:** inactive-markup XPath and restricted regex strategies with
+  independent input, field, match, value, and total output ceilings.
+- **Stable 0.5.x:** extraction through `extractStructured`, crawl option
   `extract`, agent creator defaults, and CLI `--extract`.
-- **Stable 0.4.x:** rejection of unknown/inherited options, accessors,
+- **Stable 0.5.x:** rejection of unknown/inherited options, accessors,
   prototype-sensitive field names, invalid selectors, invalid attributes,
   active content, and incompatible settings before crawl dispatch.
 
@@ -276,6 +284,8 @@ request-selected origins.
   bounded output, JSON parsing, and mandatory JSON Schema validation.
 - Explicit provider/proxy rotation with attempt provenance and fixed
   escalation statuses.
+- Fixed self-hosted proxy-gateway adapter with operator-owned endpoint,
+  credential, timeout, redirect, and response-size policy.
 - Access-challenge detection that stops by default and never adds CAPTCHA,
   login, paywall, robots, or authorization bypass.
 - Native MCP tools for crawl, compact map, and deterministic extraction plus a
@@ -284,6 +294,9 @@ request-selected origins.
   private-network, browser, or credential authority.
 - Authenticated Node/Docker API with fixed deployment crawl policy, bounded
   request and response bodies, health endpoint, and responsive playground.
+- Dedicated `/v1/map` search endpoint plus a bounded process-local
+  asynchronous job queue with status, cancellation, retention, concurrency,
+  and result-size ceilings.
 - Dedicated CLIs for crawl, source routing, optional reach, local PDF parsing,
   MCP stdio, and the authenticated crawler server.
 
@@ -313,9 +326,11 @@ The detailed API and authority contract is in
 2. Persistent bounded cache.
 3. Browser screenshots, PDF generation, PDF parsing, Shadow DOM and iframe
    flattening, virtual scroll, trusted hooks, and persistent profiles.
-4. XPath and optional schema-validated host LLM extraction.
-5. Explicit provider/proxy escalation with challenge-safe defaults.
-6. Authenticated Docker API, dashboard, playground, and native MCP.
+4. XPath, restricted regex, and optional schema-validated host LLM extraction.
+5. Explicit provider/proxy escalation with a fixed self-hosted gateway adapter
+   and challenge-safe defaults.
+6. Authenticated Docker API, bounded jobs, dashboard, playground, and native
+   MCP Registry metadata.
 7. Public JavaScript exports, TypeScript declarations, CLIs, documentation,
    and executable regression coverage for every added surface.
 8. A benefit-first npm README without an oversized hero image.
@@ -329,19 +344,19 @@ products overlap, but their complete surfaces are different.
 | --- | --- | --- |
 | Static and JavaScript crawling | Implemented | Implemented |
 | Breadth-first deep crawl | Implemented | Implemented |
-| DFS and relevance/adaptive strategies | Stable 0.4.x | Implemented |
-| Fetch-validated site map | Stable 0.4.x | Domain mapping implemented |
-| Deterministic CSS and XPath extraction | Stable 0.4.x | Implemented |
-| LLM extraction and schema generation | Stable 0.4.x through a host-supplied validated adapter | Implemented as optional model-backed strategies |
+| DFS and relevance/adaptive strategies | Stable 0.5.x | Implemented |
+| Fetch-validated site map with optional search | Stable 0.5.x | Domain mapping implemented |
+| Deterministic CSS, XPath, and restricted regex extraction | Stable 0.5.x | Implemented |
+| LLM extraction and schema generation | Stable 0.5.x through a host-supplied validated adapter | Implemented as optional model-backed strategies |
 | Markdown | Implemented | Implemented with additional fit/BM25/citation strategies |
-| Screenshots and PDF generation/parsing | Stable 0.4.x | Implemented |
-| Shadow DOM and iframe flattening | Stable 0.4.x | Implemented |
-| Infinite-scroll and virtual-scroll helpers | Stable 0.4.x | Implemented |
-| Hooks and arbitrary page JavaScript | Stable 0.4.x, trusted operator API only | Implemented |
-| Persistent crawl cache | Stable 0.4.x | Implemented |
-| Proxy rotation and anti-bot escalation | Stable 0.4.x; explicit providers, no CAPTCHA bypass | Implemented with a different authority model |
-| Session/browser profile features | Stable 0.4.x; explicit dedicated profile directory | Wider session and managed-browser surface |
-| Docker API, dashboard, playground, MCP | Stable 0.4.x; bearer auth rather than JWT | Implemented |
+| Screenshots and PDF generation/parsing | Stable 0.5.x | Implemented |
+| Shadow DOM and iframe flattening | Stable 0.5.x | Implemented |
+| Infinite-scroll and virtual-scroll helpers | Stable 0.5.x | Implemented |
+| Hooks and arbitrary page JavaScript | Stable 0.5.x, trusted operator API only | Implemented |
+| Persistent crawl cache | Stable 0.5.x | Implemented |
+| Proxy rotation and anti-bot escalation | Stable 0.5.x; explicit providers, no CAPTCHA bypass | Implemented with a different authority model |
+| Session/browser profile features | Stable 0.5.x; explicit dedicated profile directory | Wider session and managed-browser surface |
+| Docker API, bounded job queue, dashboard, playground, MCP | Stable 0.5.x; bearer auth, process-local queue | Implemented |
 | Public source/social provider routing | Implemented | Not the primary product surface |
 | DNS classification and pinning | Implemented in Node transport | Different transport boundary |
 | Exact redirect/origin/resource evidence | Implemented | Different evidence model |

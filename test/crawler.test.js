@@ -219,6 +219,20 @@ test("crawler attaches bounded structured extraction and mapSite emits compact e
   assert.equal(Object.hasOwn(result.entries[0], "markdown"), false);
   assert.equal(typeof result.entries[0].linkCount, "number");
   assert.equal(result.stats.pages, 2);
+  assert.equal(result.search, null);
+
+  const searched = await mapSite({
+    seeds: [`${baseUrl}/`],
+    maxPages: 3,
+    maxResults: 1,
+    search: "about",
+    delayMs: 0,
+    allowPrivateNetworks: true
+  });
+  assert.equal(searched.entries.length, 1);
+  assert.match(searched.entries[0].url, /\/about$/);
+  assert.ok(searched.entries[0].score > 0);
+  assert.deepEqual(searched.search, { query: "about", matched: 1, maxResults: 1 });
 });
 
 test("discoverSitemapUrls follows sitemap indexes", async () => {

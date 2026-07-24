@@ -4,7 +4,7 @@ Hacker News asks users not to post generated or AI-edited text. Do not paste thi
 
 ## Preconditions
 
-- `cockroach-crawler@0.3.0` resolves from npm `latest` and matches the reviewed GitHub tag;
+- `cockroach-crawler@0.5.0` resolves from npm `latest` and matches the reviewed GitHub tag;
 - the repository and website work without signup;
 - the two-command proof works from a clean install;
 - the maintainer is available for the discussion; and
@@ -18,18 +18,28 @@ Hacker News asks users not to post generated or AI-edited text. Do not paste thi
 - Optional reach providers are separate, read-only, operator-selected, and never silent fallbacks.
 - The serverless profile accepts only deployment-configured HTTPS origins and explicitly reports that it lacks local DNS pinning.
 - The output is Markdown/JSON/JSONL plus source URLs, hashes, warnings, and retrieval provenance.
-- It does not include a model, proxy network, stealth, CAPTCHA/paywall/login bypass, cookie extraction, or write actions.
+- Searchable site maps rank only URLs that the bounded crawler already fetched.
+- Deterministic extraction covers CSS, XPath, and restricted regex; an optional
+  host model must return JSON that passes the caller's schema.
+- The self-hosted API includes bounded process-local jobs, and provider routing
+  can use one fixed operator-owned proxy gateway.
+- The native MCP server ships matching npm and `server.json` Registry
+  identities.
+- It does not include a bundled model, managed proxy fleet, durable distributed
+  queue, stealth, CAPTCHA/paywall/login bypass, cookie extraction, or write
+  actions.
 
 ## Runnable proof
 
 ```sh
-npx -y --package cockroach-crawler@0.3.0 cockroach-sources doctor
-npx -y --package cockroach-crawler@0.3.0 cockroach-crawl https://example.com --max-pages 3 --jsonl
+npx -y --package cockroach-crawler@0.5.0 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.5.0 cockroach-crawl https://example.com \
+  --map --map-search "example domain" --map-results 3 --json
 ```
 
 ## Possible factual title to rewrite
 
-`Show HN: Cockroach Crawler - bounded web access for AI agents`
+`Show HN: Cockroach Crawler – give AI agents the web while you keep the keys`
 
 ## Questions worth asking
 
@@ -39,7 +49,11 @@ npx -y --package cockroach-crawler@0.3.0 cockroach-crawl https://example.com --m
 
 ## Response facts
 
-**Why not a larger crawler?** Use a managed or distributed platform for proxy fleets, queues, hosted extraction, and large-scale orchestration. Cockroach Crawler is a compact local boundary with explicit authority and portable records.
+**Why not a larger crawler?** Cockroach Crawler now covers deep crawling,
+browser evidence, searched maps, structured extraction, MCP, Docker,
+process-local jobs, and a fixed proxy-gateway adapter in one Node.js package.
+Use a managed service when you specifically need its operated distributed queue
+or proxy fleet.
 
 **Can it read YouTube without a developer key?** The optional pinned `youtube-no-key` provider uses a separately installed `yt-dlp` for bounded search and metadata. It does not promise that every video exposes captions, and official API access remains a separate route.
 

@@ -106,3 +106,88 @@ export function createEscalationRouter(options = {}) {
     }
   });
 }
+
+export function createProxyGatewayProvider(options = {}) {
+  if (typeof options.id !== "string" || !/^[A-Za-z0-9._-]{1,128}$/.test(options.id)) {
+    throw new TypeError("id is invalid.");
+  }
+  let endpoint;
+  try {
+    endpoint = new URL(options.endpoint);
+  } catch {
+    throw new TypeError("endpoint must be an absolute HTTP(S) URL.");
+  }
+  if (!["http:", "https:"].includes(endpoint.protocol) || endpoint.username || endpoint.password) {
+    throw new TypeError("endpoint must be an HTTP(S) URL without embedded credentials.");
+  }
+  if (options.fetch !== undefined && typeof options.fetch !== "function") {
+    throw new TypeError("fetch must be a trusted host function.");
+  }
+  const fetchImplementation = options.fetch || globalThis.fetch;
+  const timeoutMs = integer(options.timeoutMs, "timeoutMs", 30_000, 100, 300_000);
+  const maxResponseBytes = integer(
+    options.maxResponseBytes,
+    "maxResponseBytes",
+    5_000_000,
+    1_024,
+    50_000_000
+  );
+  const token = options.token;
+  if (token !== undefined && (typeof token !== "string" || token.length < 16 || token.length > 4_096)) {
+    throw new TypeError("token must contain 16-4096 characters.");
+  }
+  return Object.freeze({
+    id: options.id,
+    authority: typeof options.authority === "string"
+      ? options.authority.slice(0, 256)
+      : `fixed proxy gateway ${endpoint.origin}`,
+    credentialed: Boolean(token),
+    async execute(request, context = {}) {
+      const signal = context.signal
+        ? AbortSignal.any([context.signal, AbortSignal.timeout(timeoutMs)])
+        : AbortSignal.timeout(timeoutMs);
+      const response = await fetchImplementation(endpoint, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          ...(token ? { authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify(structuredClone(request)),
+        signal,
+        redirect: "error"
+      });
+      const contentLength = Number(response.headers?.get?.("content-length") || 0);
+      if (Number.isFinite(contentLength) && contentLength > maxResponseBytes) {
+        const error = new RangeError(`Proxy response exceeds maxResponseBytes (${maxResponseBytes}).`);
+        error.code = "PROXY_RESPONSE_LIMIT";
+        throw error;
+      }
+      const body = await response.text();
+      if (Buffer.byteLength(body) > maxResponseBytes) {
+        const error = new RangeError(`Proxy response exceeds maxResponseBytes (${maxResponseBytes}).`);
+        error.code = "PROXY_RESPONSE_LIMIT";
+        throw error;
+      }
+      if (!response.ok) {
+        const error = new Error(`Proxy gateway returned HTTP ${response.status}.`);
+        error.code = "PROXY_GATEWAY_HTTP";
+        error.status = response.status;
+        error.retryable = DEFAULT_ESCALATION_STATUSES.has(response.status);
+        throw error;
+      }
+      let value;
+      try {
+        value = JSON.parse(body);
+      } catch (cause) {
+        const error = new TypeError("Proxy gateway returned invalid JSON.");
+        error.code = "PROXY_INVALID_RESPONSE";
+        error.cause = cause;
+        throw error;
+      }
+      if (!value || typeof value !== "object" || Array.isArray(value)) {
+        throw new TypeError("Proxy gateway response must be an object.");
+      }
+      return structuredClone(value);
+    }
+  });
+}

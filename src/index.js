@@ -17,7 +17,7 @@ import {
   resolveUrlTarget,
   withPinnedFetch
 } from "./security.js";
-import { createTraversalQueue, normalizeTraversalOptions } from "./strategies.js";
+import { createTraversalQueue, normalizeTraversalOptions, scoreRelevance } from "./strategies.js";
 
 const DEFAULT_USER_AGENT = `CockroachCrawler/${PACKAGE_VERSION} (+https://github.com/AjnasNB/cockroach-crawler)`;
 const DEFAULT_MAX_BYTES = 3 * 1024 * 1024;
@@ -107,6 +107,11 @@ const CRAWL_OPTION_KEYS = new Set([
   "onError",
   "signal",
   "dnsLookup"
+]);
+const MAP_OPTION_KEYS = new Set([
+  ...CRAWL_OPTION_KEYS,
+  "search",
+  "maxResults"
 ]);
 const BROWSER_REQUEST_HEADER_BLOCKLIST = new Set([
   "connection",
@@ -2548,23 +2553,59 @@ export async function crawl(input = {}) {
 }
 
 export async function mapSite(input = {}) {
-  const result = await crawlDetailed(input);
+  const mapInput = snapshotOptionRecord(input, "map", MAP_OPTION_KEYS);
+  const search = mapInput.search;
+  if (search !== undefined && (
+    typeof search !== "string"
+    || !search.normalize("NFKC").trim()
+    || search.length > 2_048
+  )) {
+    throw new TypeError("map.search must contain 1-2048 characters.");
+  }
+  const maxResults = integerOption(
+    mapInput.maxResults,
+    "map.maxResults",
+    mapInput.maxPages ?? 50,
+    1,
+    10_000
+  );
+  delete mapInput.search;
+  delete mapInput.maxResults;
+  const result = await crawlDetailed(mapInput);
+  let entries = result.pages.map((page) => ({
+    url: page.url,
+    canonical: page.canonical,
+    title: page.title,
+    description: page.description,
+    status: page.status,
+    contentType: page.contentType,
+    depth: page.depth,
+    discoveredFrom: page.discoveredFrom,
+    contentHash: page.contentHash,
+    linkCount: page.links.length,
+    fetchedAt: page.fetchedAt
+  }));
+  if (search) {
+    entries = entries
+      .map((entry, index) => ({
+        ...entry,
+        score: scoreRelevance(entry, search),
+        index
+      }))
+      .filter((entry) => entry.score > 0)
+      .sort((left, right) => right.score - left.score || left.index - right.index)
+      .slice(0, maxResults)
+      .map(({ index: _index, ...entry }) => entry);
+  } else {
+    entries = entries.slice(0, maxResults);
+  }
   return {
-    entries: result.pages.map((page) => ({
-      url: page.url,
-      canonical: page.canonical,
-      title: page.title,
-      description: page.description,
-      status: page.status,
-      contentType: page.contentType,
-      depth: page.depth,
-      discoveredFrom: page.discoveredFrom,
-      contentHash: page.contentHash,
-      linkCount: page.links.length,
-      fetchedAt: page.fetchedAt
-    })),
+    entries,
     failures: result.failures,
-    stats: result.stats
+    stats: result.stats,
+    search: search
+      ? { query: search.normalize("NFKC").trim(), matched: entries.length, maxResults }
+      : null
   };
 }
 

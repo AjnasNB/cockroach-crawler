@@ -13,9 +13,14 @@ import {
 } from "../src/browser.js";
 import { createCachedCrawler, FileCrawlCache } from "../src/cache.js";
 import { parsePdf } from "../src/documents.js";
-import { extractWithLlm, extractWithXPath } from "../src/extractors.js";
+import { extractWithLlm, extractWithRegex, extractWithXPath } from "../src/extractors.js";
+import { createBoundedJobQueue } from "../src/jobs.js";
 import { buildMcpCrawlOptions, createCockroachMcpServer } from "../src/mcp.js";
-import { createEscalationRouter, detectAccessChallenge } from "../src/providers.js";
+import {
+  createEscalationRouter,
+  createProxyGatewayProvider,
+  detectAccessChallenge
+} from "../src/providers.js";
 import { startCrawlerApi } from "../src/server.js";
 import { createTraversalQueue, scoreRelevance } from "../src/strategies.js";
 import { crawl } from "../src/index.js";
@@ -163,6 +168,68 @@ test("XPath and optional host-supplied LLM extraction are bounded and schema val
   );
 });
 
+test("restricted regex extraction supports numbered and named groups with hard ceilings", () => {
+  const result = extractWithRegex("Invoice INV-42 total $19.50; invoice INV-43 total $7.00", {
+    fields: {
+      ids: {
+        pattern: "INV-(?<id>\\d+)",
+        group: "id",
+        multiple: true
+      },
+      firstTotal: {
+        pattern: "\\$(\\d+\\.\\d{2})",
+        group: 1
+      }
+    }
+  });
+  assert.deepEqual(result.data.ids, ["42", "43"]);
+  assert.equal(result.data.firstTotal, "19.50");
+  assert.throws(
+    () => extractWithRegex("aaaaaaaa", { fields: { unsafe: "(a+)+$" } }),
+    /nested repetition/
+  );
+});
+
+test("restricted regex extraction rejects backtracking-prone repeated groups", () => {
+  assert.throws(
+    () => extractWithRegex(`${"a".repeat(1_000)}!`, {
+      fields: { unsafe: { pattern: "^(a|aa)+$" } }
+    }),
+    /repeated alternation/
+  );
+  assert.throws(
+    () => extractWithRegex("aaaa", {
+      fields: { unsafe: { pattern: "^(a+)+$" } }
+    }),
+    /nested repetition/
+  );
+});
+
+test("bounded self-hosted jobs expose status, cancellation, and result ceilings", async () => {
+  const queue = createBoundedJobQueue({
+    concurrency: 1,
+    maxPending: 2,
+    execute: async ({ value }, { signal }) => {
+      await new Promise((resolve, reject) => {
+        const timer = setTimeout(resolve, 5);
+        signal.addEventListener("abort", () => {
+          clearTimeout(timer);
+          reject(signal.reason);
+        }, { once: true });
+      });
+      return { value };
+    }
+  });
+  const submitted = queue.submit({ value: 42 });
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.equal(queue.get(submitted.id).status, "succeeded");
+  assert.deepEqual(queue.get(submitted.id).result, { value: 42 });
+  const cancelled = queue.submit({ value: 7 });
+  assert.equal(queue.cancel(cancelled.id), true);
+  assert.equal(queue.get(cancelled.id).status, "cancelled");
+  queue.close();
+});
+
 test("browser helpers bound scroll configuration, hook output, screenshots, and PDFs", async () => {
   assert.deepEqual(
     normalizeScrollOptions({ maxSteps: 2, stableIterations: 1 }),
@@ -213,6 +280,44 @@ test("provider escalation rotates only under explicit policy and stops on access
     assert.equal(error.code, "ACCESS_CHALLENGE");
     return true;
   });
+});
+
+test("fixed proxy gateway provider keeps endpoint and credentials operator-owned", async () => {
+  let observed;
+  const provider = createProxyGatewayProvider({
+    id: "self-hosted-proxy",
+    endpoint: "https://proxy.example.test/v1/fetch",
+    token: "operator-secret-token",
+    fetch: async (endpoint, init) => {
+      observed = { endpoint: String(endpoint), init };
+      return new Response(JSON.stringify({ status: 200, body: "ok" }), {
+        headers: { "content-type": "application/json" }
+      });
+    }
+  });
+  const result = await provider.execute({ url: "https://example.com" });
+  assert.equal(result.status, 200);
+  assert.equal(observed.endpoint, "https://proxy.example.test/v1/fetch");
+  assert.equal(observed.init.headers.authorization, "Bearer operator-secret-token");
+});
+
+test("fixed proxy gateway provider classifies gateway HTTP failures without exposing its token", async () => {
+  const provider = createProxyGatewayProvider({
+    id: "self-hosted",
+    endpoint: "https://gateway.example/v1/read",
+    token: "operator-secret-long-enough",
+    fetch: async () => new Response("temporarily unavailable", { status: 503 })
+  });
+  await assert.rejects(
+    provider.execute({ url: "https://example.com" }),
+    (error) => {
+      assert.equal(error.code, "PROXY_GATEWAY_HTTP");
+      assert.equal(error.status, 503);
+      assert.equal(error.retryable, true);
+      assert.doesNotMatch(error.message, /operator-secret/);
+      return true;
+    }
+  );
 });
 
 test("MCP surface clamps model input to operator-owned crawl limits", async () => {
@@ -302,6 +407,50 @@ test("Docker API serves a playground and authenticated bounded crawl", async () 
     assert.equal(response.status, 200);
     const body = await response.json();
     assert.equal(body.pages.length, 1);
+
+    const mapResponse = await fetch(`${api.url}/v1/map`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        seeds: [targetUrl],
+        maxPages: 2,
+        query: "invoice",
+        search: "invoice",
+        maxResults: 1
+      })
+    });
+    assert.equal(mapResponse.status, 200);
+    const mapBody = await mapResponse.json();
+    assert.equal(mapBody.entries.length, 1);
+    assert.match(mapBody.entries[0].url, /invoice-approval/);
+
+    const jobResponse = await fetch(`${api.url}/v1/jobs`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        operation: "map",
+        input: { seeds: [targetUrl], maxPages: 1 }
+      })
+    });
+    assert.equal(jobResponse.status, 202);
+    const submittedJob = await jobResponse.json();
+    let completedJob;
+    for (let attempt = 0; attempt < 50; attempt += 1) {
+      const statusResponse = await fetch(`${api.url}/v1/jobs/${submittedJob.id}`, {
+        headers: { authorization: `Bearer ${token}` }
+      });
+      completedJob = await statusResponse.json();
+      if (["succeeded", "failed"].includes(completedJob.status)) break;
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    assert.equal(completedJob.status, "succeeded");
+    assert.equal(completedJob.result.entries.length, 1);
   } finally {
     await api.close();
   }

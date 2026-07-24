@@ -33,6 +33,12 @@ const api = await startCrawlerApi({
     maxDepth: Number(process.env.COCKROACH_MAX_DEPTH || 2),
     maxRequests: Number(process.env.COCKROACH_MAX_REQUESTS || 100),
     maxDurationMs: Number(process.env.COCKROACH_MAX_DURATION_MS || 120_000)
+  },
+  queue: {
+    concurrency: Number(process.env.COCKROACH_JOB_CONCURRENCY || 2),
+    maxPending: Number(process.env.COCKROACH_JOB_MAX_PENDING || 100),
+    maxRetained: Number(process.env.COCKROACH_JOB_MAX_RETAINED || 1_000),
+    maxResultBytes: Number(process.env.COCKROACH_JOB_MAX_RESULT_BYTES || 20_000_000)
   }
 });
 

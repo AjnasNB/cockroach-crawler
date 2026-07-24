@@ -31,6 +31,8 @@ Options:
   --timeout <ms>          Request timeout. Default: 15000
   --sitemaps              Discover URLs from robots.txt sitemaps and /sitemap.xml
   --map                   Emit compact fetch-validated URL map entries
+  --map-search <text>     Rank and filter fetched map entries
+  --map-results <n>       Maximum map entries returned after ranking
   --extract <json-file>   Apply bounded deterministic CSS extraction fields
   --all-origins           Use the explicit --allow-origin allowlist across origins
   --allow-origin <origin> Permit an HTTP(S) origin. Can be repeated
@@ -126,6 +128,8 @@ async function readArgs(argv) {
     timeoutMs: 15_000,
     includeSitemaps: false,
     map: false,
+    mapSearch: null,
+    mapResults: undefined,
     extract: null,
     sameOrigin: true,
     allowedOrigins: [],
@@ -192,6 +196,14 @@ async function readArgs(argv) {
       options.includeSitemaps = true;
     } else if (arg === "--map") {
       options.map = true;
+    } else if (arg === "--map-search") {
+      options.map = true;
+      options.mapSearch = readValue(argv, i, "--map-search");
+      i += 1;
+    } else if (arg === "--map-results") {
+      options.map = true;
+      options.mapResults = parseInteger(readValue(argv, i, "--map-results"), "--map-results", 1);
+      i += 1;
     } else if (arg === "--extract") {
       options.extract = await extractionFromFile(readValue(argv, i, "--extract"));
       i += 1;
@@ -351,7 +363,11 @@ async function main() {
     }
   };
   const result = options.map
-    ? await mapSite(crawlOptions)
+    ? await mapSite({
+        ...crawlOptions,
+        ...(options.mapSearch ? { search: options.mapSearch } : {}),
+        ...(options.mapResults ? { maxResults: options.mapResults } : {})
+      })
     : await crawl(crawlOptions);
 
   await writeOutput(result, options);

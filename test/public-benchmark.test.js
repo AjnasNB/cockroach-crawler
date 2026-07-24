@@ -12,8 +12,8 @@ test("public benchmark evidence is source-pinned, packaged, and independently ve
   const sources = JSON.parse(await readFile(path.join(root, "bench", "public", "sources.json"), "utf8"));
 
   assert.ok(manifest.files.includes("bench/public/"));
-  assert.ok(manifest.files.includes("bench/results/wceb-test-0.4.2.json"));
-  assert.ok(manifest.files.includes("bench/results/public-conformance-0.4.2.json"));
+  assert.ok(manifest.files.includes("bench/results/wceb-test-0.5.0.json"));
+  assert.ok(manifest.files.includes("bench/results/public-conformance-0.5.0.json"));
   assert.equal(sources.wceb.revision, "62ff86d12ea72c80c31fb810ff1a724fad687bea");
   assert.equal(sources.googleRobots.revision.length, 40);
   assert.equal(sources.wptUrl.revision.length, 40);

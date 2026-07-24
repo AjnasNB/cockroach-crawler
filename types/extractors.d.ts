@@ -26,6 +26,23 @@ export interface LlmExtractionRequest {
   instruction: string;
 }
 
+export interface RegexField {
+  pattern: string;
+  flags?: string;
+  group?: number | string;
+  multiple?: boolean;
+  limit?: number;
+}
+
+export interface RegexExtractionOptions {
+  fields: Record<string, string | RegexField>;
+  maxFields?: number;
+  maxItemsPerField?: number;
+  maxInputCharacters?: number;
+  maxValueLength?: number;
+  maxTotalCharacters?: number;
+}
+
 export interface LlmExtractionOptions {
   adapter: (request: Readonly<LlmExtractionRequest>) => unknown | Promise<unknown>;
   schema: object;
@@ -38,6 +55,11 @@ export function extractWithXPath(
   html: string,
   url: string,
   options: XPathExtractionOptions
+): { data: Record<string, string | string[] | null>; warnings: string[] };
+
+export function extractWithRegex(
+  text: string,
+  options: RegexExtractionOptions
 ): { data: Record<string, string | string[] | null>; warnings: string[] };
 
 export function extractWithLlm(
