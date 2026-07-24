@@ -1,14 +1,14 @@
 # Advanced AI crawler capabilities
 
-Cockroach Crawler `0.4.x` is the stable capability line for agents that need
+Cockroach Crawler `0.5.x` is the stable capability line for agents that need
 deep traversal, browser evidence, document parsing, structured extraction,
 local deployment, and MCP without losing the package's origin, robots,
 network, and resource boundaries.
 
 The stable line is designed to be the best AI crawler for governed agents.
 That scope matters: it is a compact Node.js package with reviewable authority,
-not a claim to be a hosted proxy fleet, a CAPTCHA bypass, or a distributed
-multi-tenant scraping cloud.
+not a claim to be a CAPTCHA bypass, distributed durable queue, managed proxy
+fleet, or multi-tenant scraping cloud.
 
 ## Capability map
 
@@ -24,12 +24,14 @@ multi-tenant scraping cloud.
 | Trusted page JavaScript | `browser.hooks` | Direct operator API only and requires `allowPageJavaScript: true`; excluded from agent/MCP input |
 | CSS extraction | root `extract` and `extractStructured` | No script execution; independent field, item, value, and total ceilings |
 | XPath extraction | `cockroach-crawler/extractors` | Active nodes removed; XPath, field, input, item, value, and total ceilings |
+| Restricted regex extraction | `cockroach-crawler/extractors` | Bounded input/matches/output; backreferences, lookarounds, and nested repetition rejected |
 | Optional LLM schema extraction | `cockroach-crawler/extractors` | Host-supplied adapter, bounded disclosure/output, mandatory JSON Schema validation |
-| Provider/proxy rotation | `cockroach-crawler/providers` | Explicit operator providers and escalation statuses; attempts recorded |
+| Provider/proxy rotation | `cockroach-crawler/providers` | Explicit operator providers or fixed self-hosted gateway; attempts recorded |
 | Access-challenge detection | `cockroach-crawler/providers` | Stops on challenge by default; no CAPTCHA or authorization bypass |
 | Docker crawler API | `Dockerfile`; `cockroach-server` | Bearer auth, deployment-owned origins and limits, bounded request/response |
 | Dashboard and playground | `/` and `/playground` on the Node API | Cannot widen the server's crawl defaults |
 | Native MCP service | `cockroach-crawler/mcp`; `cockroach-mcp` | Model arguments can only narrow deployment-owned origins and budgets |
+| Process-local job queue | `cockroach-crawler/jobs`; Node/Docker API | Fixed concurrency, pending, retention, result, cancellation, and authority limits |
 | Persistent managed profile | `browser.profileDirectory` | Explicit operator directory plus `allowPersistentProfile: true`; never inferred from a local browser |
 
 ## Deep crawl strategies
@@ -275,22 +277,49 @@ The adapter receives bounded content. The result must be valid JSON and pass
 the supplied schema. Model identity, data residency, credential handling,
 retry behavior, and billing remain the host's responsibility.
 
-## Provider and proxy escalation
+## Restricted regex extraction
 
-The router composes approved transports without bundling a proxy service:
+Use regex only for bounded text patterns that do not need document structure:
 
 ```js
-import { createEscalationRouter } from "cockroach-crawler/providers";
+import { extractWithRegex } from "cockroach-crawler/extractors";
+
+const result = extractWithRegex(text, {
+  fields: {
+    invoiceIds: {
+      pattern: "INV-(?<id>\\d+)",
+      group: "id",
+      multiple: true,
+      limit: 100
+    }
+  },
+  maxInputCharacters: 1_000_000,
+  maxTotalCharacters: 100_000
+});
+```
+
+The restricted strategy rejects backreferences, lookarounds, nested
+repetition, oversized patterns, and unsupported flags before matching.
+
+## Provider and proxy escalation
+
+The router composes approved transports without bundling a proxy fleet. A
+fixed self-hosted JSON gateway can be configured by the operator:
+
+```js
+import {
+  createEscalationRouter,
+  createProxyGatewayProvider
+} from "cockroach-crawler/providers";
 
 const router = createEscalationRouter({
   providers: [
     { id: "direct", execute: directTransport },
-    {
+    createProxyGatewayProvider({
       id: "company-proxy",
-      authority: "operator-approved proxy pool",
-      credentialed: true,
-      execute: companyProxyTransport
-    }
+      endpoint: "https://proxy.internal.example/v1/fetch",
+      token: process.env.PROXY_GATEWAY_TOKEN
+    })
   ],
   escalationStatuses: [408, 429, 502, 503, 504],
   maxAttempts: 2
@@ -331,7 +360,7 @@ credentials, or expand deployment budgets.
 Build:
 
 ```bash
-docker build -t cockroach-crawler:0.4.2 .
+docker build -t cockroach-crawler:0.5.0 .
 ```
 
 Run with an API token and fixed origins:
@@ -341,7 +370,7 @@ docker run --rm -p 3878:3878 \
   -e COCKROACH_API_TOKEN="replace-with-a-long-random-secret" \
   -e COCKROACH_ALLOWED_ORIGINS="https://docs.example.com" \
   -e COCKROACH_MAX_PAGES=20 \
-  cockroach-crawler:0.4.2
+  cockroach-crawler:0.5.0
 ```
 
 Endpoints:
@@ -349,9 +378,14 @@ Endpoints:
 - `GET /health`;
 - `GET /` and `GET /playground`;
 - authenticated `POST /v1/crawl`;
+- authenticated `POST /v1/map`;
 - authenticated `POST /v1/extract`.
+- authenticated `POST /v1/jobs`, `GET /v1/jobs/:id`, and
+  `DELETE /v1/jobs/:id`.
 
-The request body can provide seeds and lower page/depth limits. It cannot
+The queue is bounded and process-local: it provides status, cancellation,
+concurrency, retention, and result-size ceilings, not distributed durability
+or crash recovery. The request body can provide seeds and lower page/depth limits. It cannot
 provide an origin allowlist, private-network flag, credential, callback,
 browser hook, executable path, or profile path.
 

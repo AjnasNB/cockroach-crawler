@@ -9,6 +9,12 @@ export interface CrawlerApiOptions {
   maxResponseBytes?: number;
   crawlDefaults?: CrawlOptions;
   extractDefaults?: Omit<StructuredExtractionOptions, "fields">;
+  queue?: false | {
+    concurrency?: number;
+    maxPending?: number;
+    maxRetained?: number;
+    maxResultBytes?: number;
+  };
 }
 
 export interface CrawlerHttpServer {
@@ -23,6 +29,7 @@ export interface CrawlerHttpServer {
 export function createCrawlerApiServer(options?: CrawlerApiOptions): {
   server: CrawlerHttpServer;
   host: string;
+  jobs: ReturnType<typeof import("./jobs.js").createBoundedJobQueue> | null;
 };
 
 export function startCrawlerApi(options?: CrawlerApiOptions): Promise<{

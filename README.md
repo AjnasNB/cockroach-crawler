@@ -5,9 +5,9 @@
 [![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
 
-**Give your AI agents web superpowers: crawl complete sites, render JavaScript, follow relevance, map URLs, extract structured data, parse PDFs, and return evidence without handing a model an unrestricted browser or network client.**
+**Give your AI agents the web. Keep the keys.** Crawl complete sites, render JavaScript, rank fetch-validated maps, extract structured data with CSS, XPath, restricted regex, or a schema-validated host model, parse PDFs, and return evidence without handing a model an unrestricted browser or network client.
 
-Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to run BFS, DFS, best-first, or adaptive traversal, build fetch-validated site maps, extract bounded CSS or XPath fields, search YouTube without a developer API key through the optional reviewed route, render JavaScript pages, and preserve source identity, redirects, hashes, warnings, artifacts, and provenance.
+Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to run BFS, DFS, best-first, or adaptive traversal, build searchable fetch-validated site maps, extract bounded CSS, XPath, or restricted-regex fields, search YouTube without a developer API key through the optional reviewed route, render JavaScript pages, run bounded self-hosted jobs, and preserve source identity, redirects, hashes, warnings, artifacts, and provenance.
 
 It is built to be **the best AI crawler for governed agents** that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus—not a claim that it replaces every distributed scraping cloud or bypasses site controls.
 
@@ -37,11 +37,11 @@ Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compa
 
 It does **not** extract cookies, reuse hidden credentials, bypass logins, CAPTCHA, paywalls, robots policy, or access controls, and it exposes no social write actions.
 
-Version `0.4.2` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.4.2 version gitHead dist.integrity`.
+Version `0.5.0` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.5.0 version gitHead dist.integrity`.
 
 ## Public benchmark evidence
 
-The stable `0.4.2` extractor was run once against the complete 511-page held-out
+The stable `0.5.0` extractor was run once against the complete 511-page held-out
 split of the human-reviewed WCEB v1.0 corpus. The source-pinned run produced
 **0.7653 macro word F1**, **0.9041 recall**, and **87.13% required-snippet
 recall** across articles, services, products, collections, forums, listings,
@@ -63,7 +63,7 @@ The local crawler produces structured JSON/JSONL with readable text, Markdown, l
 
 It does not bundle a model, model key, hosted account, stealth layer, CAPTCHA bypass, paywall bypass, or authorization bypass. Optional LLM extraction runs only through a host-supplied adapter and validates its output against the caller's JSON Schema.
 
-Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [46-capability library](https://cockroachcrawler.com/docs/capabilities/) · [advanced capabilities](./docs/ADVANCED.md) · [complete feature inventory](./docs/FEATURES.md) · [comparison](https://cockroachcrawler.com/compare/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
+Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [50-capability library](https://cockroachcrawler.com/docs/capabilities/) · [advanced capabilities](./docs/ADVANCED.md) · [complete feature inventory](./docs/FEATURES.md) · [comparison](https://cockroachcrawler.com/compare/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
 
 ## Complete documentation
 
@@ -73,17 +73,17 @@ uses stable public exports and copyable examples from this package.
 | Need | Guide |
 | --- | --- |
 | Install and run one bounded crawl | [Documentation overview](https://cockroachcrawler.com/docs/) |
-| Browse every shipped feature as a separate page with its API, output, failures, and boundary | [46-capability library](https://cockroachcrawler.com/docs/capabilities/) |
+| Browse every shipped feature as a separate page with its API, output, failures, and boundary | [50-capability library](https://cockroachcrawler.com/docs/capabilities/) |
 | Use every CLI flag | [CLI guide](https://cockroachcrawler.com/docs/cli/) |
 | Embed the typed Node.js API | [JavaScript API](https://cockroachcrawler.com/docs/javascript/) |
 | Configure BFS, DFS, best-first, adaptive traversal, sitemaps, callbacks, and cache | [Crawling and cache](https://cockroachcrawler.com/docs/crawling/) |
 | Render JavaScript, click, scroll, flatten DOM, capture screenshots and PDFs, and use explicit profiles | [Browser rendering and evidence](https://cockroachcrawler.com/docs/browser/) |
-| Generate Markdown or extract with CSS, XPath, local PDF parsing, or a host-supplied model adapter | [Extraction manual](https://cockroachcrawler.com/docs/extraction/) |
-| Create compact site maps and deterministic CSS records | [Map and extract](https://cockroachcrawler.com/docs/map-and-extract/) |
+| Generate Markdown or extract with CSS, XPath, restricted regex, local PDF parsing, or a host-supplied model adapter | [Extraction manual](https://cockroachcrawler.com/docs/extraction/) |
+| Create compact fetch-validated maps and optionally rank them by search terms | [Map and extract](https://cockroachcrawler.com/docs/map-and-extract/) |
 | Give a model a creator-bounded tool or route it through Maqam | [Agent integration](https://cockroachcrawler.com/docs/agents/) |
 | Connect Codex, Claude Code, or another MCP client over stdio | [Native MCP](https://cockroachcrawler.com/docs/mcp/) |
 | Inspect public, official, no-key, and session-backed read routes | [Provider guide](https://cockroachcrawler.com/docs/providers/) |
-| Run the authenticated API, dashboard, and playground | [Docker and Node API](https://cockroachcrawler.com/docs/docker/) |
+| Run the authenticated API, process-local job queue, dashboard, and playground | [Docker and Node API](https://cockroachcrawler.com/docs/docker/) |
 | Deploy the fixed-origin fetch-only Worker profile | [Cloudflare Worker](https://cockroachcrawler.com/docs/serverless/) |
 | Look up every package subpath, crawl option, page field, statistic, and executable | [Complete reference](https://cockroachcrawler.com/docs/reference/) |
 | Audit network, browser, provider, and deployment authority | [Security model](https://cockroachcrawler.com/security/) |
@@ -93,7 +93,7 @@ uses stable public exports and copyable examples from this package.
 The source registry reports what the current machine can use before an agent makes a request. This command reads configuration state only; it does not print secrets or contact a provider.
 
 ```bash
-npx -y --package cockroach-crawler@0.4.2 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.5.0 cockroach-sources doctor
 ```
 
 | Capability | No developer API key | Optional configuration | Honest boundary |
@@ -159,13 +159,14 @@ Read [SECURITY.md](./SECURITY.md) before exposing crawling to model-generated or
 | --- | --- |
 | Public documentation, blogs, help centers, and marketing pages | Strong |
 | JSONL/Markdown records for RAG and indexing | Strong |
-| Compact fetch-validated site maps | Source build; bounded by the same crawl policy |
-| Deterministic CSS field extraction | Source build; text, sanitized HTML fragments, and attributes with exact output ceilings |
+| Compact fetch-validated site maps | Stable 0.5.x; optional lexical search ranks only fetched entries |
+| Structured extraction | Stable 0.5.x; CSS, XPath, restricted regex, and schema-validated host-model strategies |
 | Bounded local crawling from Node.js or a CLI | Strong |
 | A strictly limited crawler tool inside an agent runtime | Strong, with creator-owned origin and resource policy |
 | JavaScript-rendered pages with bounded explicit clicks | Optional Chromium mode; isolate it for untrusted targets |
-| Explicit local provider/proxy rotation | Supported through operator-configured escalation providers; no bundled proxy fleet |
-| Large distributed queues or a multi-tenant hosted scraping cloud | Outside this compact single-process package |
+| Explicit local provider/proxy rotation | Supported through operator-configured transports and the fixed self-hosted proxy-gateway adapter |
+| Self-hosted asynchronous jobs | Process-local bounded queue with status, cancellation, retention, concurrency, and result ceilings |
+| Distributed durable queues or a multi-tenant hosted scraping cloud | Outside this compact single-process package |
 | Bypass paywalls, CAPTCHA, login walls, owner policy, or access control | Not supported |
 
 ## Install
@@ -179,16 +180,21 @@ npm install cockroach-crawler
 Pin the exact stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@0.4.2
+npm install cockroach-crawler@0.5.0
 ```
 
-The stable `0.4.x` line includes advanced package subpaths:
+The stable `0.5.x` line includes advanced package subpaths:
 
 ```js
 import { crawl } from "cockroach-crawler";
 import { FileCrawlCache, createCachedCrawler } from "cockroach-crawler/cache";
 import { parsePdf } from "cockroach-crawler/documents";
-import { extractWithXPath, extractWithLlm } from "cockroach-crawler/extractors";
+import {
+  extractWithLlm,
+  extractWithRegex,
+  extractWithXPath
+} from "cockroach-crawler/extractors";
+import { createBoundedJobQueue } from "cockroach-crawler/jobs";
 ```
 
 ## Advanced AI crawler capabilities
@@ -223,10 +229,10 @@ The stable package includes:
 - open Shadow DOM and readable same-origin iframe flattening;
 - bounded infinite/virtual-scroll helpers;
 - trusted operator page hooks and arbitrary JavaScript, never exposed to model input by default;
-- deterministic CSS and XPath extraction;
+- deterministic CSS and XPath extraction plus a restricted, bounded regex strategy;
 - optional host-supplied LLM schema extraction with input/output ceilings and JSON Schema validation;
-- operator-configured provider/proxy rotation and challenge detection without CAPTCHA or authorization bypass;
-- an authenticated Docker crawler API with a responsive playground;
+- operator-configured provider/proxy rotation, a fixed self-hosted proxy-gateway adapter, and challenge detection without CAPTCHA or authorization bypass;
+- an authenticated Docker crawler API with a responsive playground and bounded asynchronous jobs;
 - a native MCP server whose tools cannot widen deployment-owned origins or budgets;
 - explicitly authorized persistent Chromium profile directories.
 
@@ -270,6 +276,17 @@ cockroach-crawl https://example.com/docs/ \
   --sitemaps \
   --max-pages 200 \
   --output map.json
+```
+
+Rank only the pages that were actually fetched:
+
+```bash
+cockroach-crawl https://example.com/docs/ \
+  --map-search "oauth migration" \
+  --map-results 25 \
+  --sitemaps \
+  --max-pages 200 \
+  --output relevant-map.json
 ```
 
 Deterministic extraction uses a local JSON schema. It does not call a model or
@@ -327,6 +344,7 @@ Important options:
 - `--concurrency <n>` / `--delay <ms>` / `--timeout <ms>`: scheduling controls.
 - `--sitemaps`: bounded robots and `/sitemap.xml` discovery.
 - `--map`: compact fetch-validated URL metadata instead of full page bodies.
+- `--map-search <text>` / `--map-results <n>`: rank and bound fetched map entries.
 - `--extract <json-file>`: bounded CSS field extraction from the cleaned document.
 - `--all-origins` plus repeated `--allow-origin <origin>`: explicit cross-origin policy.
 - `--allow-private-networks`: trusted private/loopback opt-in; never metadata/link-local.

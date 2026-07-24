@@ -74,16 +74,25 @@ export function createCockroachMcpServer(options = {}) {
   server.registerTool("map_site", {
     title: "Fetch-validated site map",
     description: "Return compact metadata for pages reached under fixed crawler policy.",
-    inputSchema: crawlInput,
+    inputSchema: {
+      ...crawlInput,
+      search: z.string().min(1).max(2_048).optional(),
+      maxResults: z.number().int().min(1).optional()
+    },
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true
     }
-  }, async (request) => toolResult(
-    await mapSite(buildMcpCrawlOptions(crawlDefaults, request))
-  ));
+  }, async (request) => {
+    const crawlOptions = buildMcpCrawlOptions(crawlDefaults, request);
+    return toolResult(await mapSite({
+      ...crawlOptions,
+      ...(request.search ? { search: request.search } : {}),
+      maxResults: Math.min(request.maxResults ?? crawlOptions.maxPages, crawlOptions.maxPages)
+    }));
+  });
 
   server.registerTool("extract_structured", {
     title: "Bounded structured extraction",

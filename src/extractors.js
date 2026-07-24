@@ -7,6 +7,95 @@ const { evaluateXPathToNodes } = fontoxpath;
 
 const FIELD_KEYS = new Set(["xpath", "source", "attribute", "multiple", "limit", "resolveUrl"]);
 const SOURCES = new Set(["text", "html", "attribute"]);
+const REGEX_FIELD_KEYS = new Set(["pattern", "flags", "group", "multiple", "limit"]);
+const SAFE_REGEX_FLAGS = /^[imsu]*$/;
+
+function hasUnsafeRegexStructure(pattern) {
+  const groups = [];
+  let inCharacterClass = false;
+
+  const quantifierLengthAt = (index) => {
+    const character = pattern[index];
+    if (character === "+" || character === "*") return 1;
+    if (character !== "{") return 0;
+    let cursor = index + 1;
+    let minimumDigits = 0;
+    while (cursor < pattern.length && pattern[cursor] >= "0" && pattern[cursor] <= "9") {
+      cursor += 1;
+      minimumDigits += 1;
+    }
+    if (!minimumDigits) return 0;
+    if (pattern[cursor] === "}") return cursor - index + 1;
+    if (pattern[cursor] !== ",") return 0;
+    cursor += 1;
+    while (cursor < pattern.length && pattern[cursor] >= "0" && pattern[cursor] <= "9") cursor += 1;
+    return pattern[cursor] === "}" ? cursor - index + 1 : 0;
+  };
+
+  for (let index = 0; index < pattern.length; index += 1) {
+    const character = pattern[index];
+    if (character === "\\") {
+      const escaped = pattern[index + 1];
+      if ((escaped >= "1" && escaped <= "9") || (escaped === "k" && pattern[index + 2] === "<")) {
+        return true;
+      }
+      index += 1;
+      continue;
+    }
+    if (character === "[" && !inCharacterClass) {
+      inCharacterClass = true;
+      continue;
+    }
+    if (character === "]" && inCharacterClass) {
+      inCharacterClass = false;
+      continue;
+    }
+    if (inCharacterClass) continue;
+    if (character === "(") {
+      let prefixEnd = index;
+      if (pattern[index + 1] === "?") {
+        if (pattern[index + 2] === ":") {
+          prefixEnd = index + 2;
+        } else if (pattern[index + 2] === "<") {
+          const nameEnd = pattern.indexOf(">", index + 3);
+          if (
+            nameEnd === -1
+            || pattern[index + 3] === "="
+            || pattern[index + 3] === "!"
+          ) {
+            return true;
+          }
+          prefixEnd = nameEnd;
+        } else {
+          return true;
+        }
+      }
+      groups.push({ hasAlternation: false, hasQuantifier: false });
+      index = prefixEnd;
+      continue;
+    }
+    if (character === "|") {
+      if (groups.length) groups.at(-1).hasAlternation = true;
+      continue;
+    }
+    if (character === ")") {
+      const group = groups.pop();
+      if (!group) continue;
+      const repeatedLength = quantifierLengthAt(index + 1);
+      if (repeatedLength && (group.hasAlternation || group.hasQuantifier)) return true;
+      if (groups.length && (group.hasQuantifier || repeatedLength)) {
+        groups.at(-1).hasQuantifier = true;
+      }
+      continue;
+    }
+    if (groups.length && (character === "?" || quantifierLengthAt(index))) {
+      groups.at(-1).hasQuantifier = true;
+      const length = quantifierLengthAt(index);
+      if (length > 1) index += length - 1;
+    }
+  }
+  return false;
+}
 
 function integer(value, label, fallback, minimum, maximum) {
   const result = value ?? fallback;
@@ -167,6 +256,104 @@ export function extractWithXPath(html, url, options = {}) {
       totalCharacters += value.length;
       values.push(value);
       if (totalCharacters >= maxTotalCharacters) break;
+    }
+    data[name] = field.multiple ? values : (values[0] ?? null);
+  }
+  return { data, warnings };
+}
+
+function normalizeRegexField(value, name, maxItemsPerField) {
+  const field = typeof value === "string" ? { pattern: value } : ownRecord(value, `fields.${name}`, 6);
+  const unknown = Object.keys(field).filter((key) => !REGEX_FIELD_KEYS.has(key));
+  if (unknown.length) {
+    throw new TypeError(`Unknown regex field option(s) for '${name}': ${unknown.join(", ")}.`);
+  }
+  if (typeof field.pattern !== "string" || !field.pattern || field.pattern.length > 2_048) {
+    throw new TypeError(`fields.${name}.pattern must contain 1-2048 characters.`);
+  }
+  if (hasUnsafeRegexStructure(field.pattern)) {
+    throw new TypeError(
+      `fields.${name}.pattern uses backreferences, lookarounds, nested repetition, or repeated alternation, which are not allowed.`
+    );
+  }
+  const flags = field.flags ?? "";
+  if (typeof flags !== "string" || !SAFE_REGEX_FLAGS.test(flags) || new Set(flags).size !== flags.length) {
+    throw new TypeError(`fields.${name}.flags may contain each of i, m, s, and u at most once.`);
+  }
+  const group = field.group ?? 0;
+  if (!(Number.isSafeInteger(group) && group >= 0 && group <= 64)
+    && !(typeof group === "string" && /^[A-Za-z_][A-Za-z0-9_]{0,63}$/.test(group))) {
+    throw new TypeError(`fields.${name}.group must be an integer from 0 to 64 or a named group.`);
+  }
+  const multiple = field.multiple === true;
+  if (field.multiple !== undefined && typeof field.multiple !== "boolean") {
+    throw new TypeError(`fields.${name}.multiple must be a boolean.`);
+  }
+  return Object.freeze({
+    pattern: field.pattern,
+    flags,
+    group,
+    multiple,
+    limit: integer(field.limit, `fields.${name}.limit`, multiple ? maxItemsPerField : 1, 1, maxItemsPerField)
+  });
+}
+
+export function extractWithRegex(text, options = {}) {
+  if (typeof text !== "string") throw new TypeError("text must be a string.");
+  const maxInputCharacters = integer(
+    options.maxInputCharacters,
+    "maxInputCharacters",
+    1_000_000,
+    1,
+    5_000_000
+  );
+  if (text.length > maxInputCharacters) {
+    throw new RangeError(`text exceeds maxInputCharacters (${text.length} > ${maxInputCharacters}).`);
+  }
+  const maxFields = integer(options.maxFields, "maxFields", 32, 1, 128);
+  const maxItemsPerField = integer(options.maxItemsPerField, "maxItemsPerField", 50, 1, 1_000);
+  const maxValueLength = integer(options.maxValueLength, "maxValueLength", 16_384, 1, 262_144);
+  const maxTotalCharacters = integer(
+    options.maxTotalCharacters,
+    "maxTotalCharacters",
+    262_144,
+    1,
+    4 * 1024 * 1024
+  );
+  const fields = ownRecord(options.fields, "fields", maxFields);
+  if (!Object.keys(fields).length) throw new TypeError("fields must contain at least one regex field.");
+  const data = Object.create(null);
+  const warnings = [];
+  let totalCharacters = 0;
+
+  for (const [name, raw] of Object.entries(fields)) {
+    const field = normalizeRegexField(raw, name, maxItemsPerField);
+    const expression = new RegExp(field.pattern, `${field.flags}g`);
+    const values = [];
+    let match;
+    while (values.length < field.limit && (match = expression.exec(text)) !== null) {
+      let value = typeof field.group === "string" ? match.groups?.[field.group] : match[field.group];
+      if (value === undefined) {
+        warnings.push(`Regex field '${name}' did not expose group '${field.group}'.`);
+        break;
+      }
+      value = String(value);
+      if (value.length > maxValueLength) {
+        value = value.slice(0, maxValueLength);
+        warnings.push(`Regex field '${name}' value was truncated at maxValueLength (${maxValueLength}).`);
+      }
+      const remaining = maxTotalCharacters - totalCharacters;
+      if (remaining <= 0) {
+        warnings.push(`Regex extraction reached maxTotalCharacters (${maxTotalCharacters}).`);
+        break;
+      }
+      if (value.length > remaining) {
+        value = value.slice(0, remaining);
+        warnings.push(`Regex extraction reached maxTotalCharacters (${maxTotalCharacters}).`);
+      }
+      values.push(value);
+      totalCharacters += value.length;
+      if (match[0] === "") expression.lastIndex += 1;
     }
     data[name] = field.multiple ? values : (values[0] ?? null);
   }

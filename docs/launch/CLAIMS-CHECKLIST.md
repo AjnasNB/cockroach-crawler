@@ -2,7 +2,7 @@
 
 ## Release identity
 
-- [ ] `npm view cockroach-crawler@0.3.0 version gitHead dist.integrity` matches the reviewed `v0.3.0` tag.
+- [ ] `npm view cockroach-crawler@0.5.0 version gitHead dist.integrity` matches the reviewed `v0.5.0` tag.
 - [ ] A registry-only install passes the doctor, bounded crawl, package exports, and CLI-bin checks.
 - [ ] The website, captions, social card, and release links work signed out.
 
@@ -15,6 +15,14 @@
 - [ ] Optional providers are separate authority tiers, dry-run setup by default, and never silent fallbacks.
 - [ ] Records keep source identity, content hashes, warnings, and request provenance.
 - [ ] Local and serverless network guarantees are described separately.
+- [ ] Map search is described as ranking fetch-validated entries, not universal
+  web search or discovery beyond admitted pages.
+- [ ] Regex extraction is described as restricted and bounded.
+- [ ] The bundled job queue is described as process-local and non-durable.
+- [ ] The proxy gateway is described as one fixed operator-owned integration,
+  not a bundled or managed proxy fleet.
+- [ ] npm `mcpName`, packaged `server.json`, and release version are identical
+  before MCP Registry publication.
 
 ## Always qualify
 

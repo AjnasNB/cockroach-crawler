@@ -202,12 +202,26 @@ export interface SiteMapEntry {
   contentHash?: `sha256:${string}`;
   linkCount: number;
   fetchedAt: string;
+  /** Deterministic lexical relevance score, present when map search is used. */
+  score?: number;
 }
 
 export interface SiteMapResult {
   entries: SiteMapEntry[];
   failures: CrawlFailure[];
   stats: CrawlStats;
+  search: {
+    query: string;
+    matched: number;
+    maxResults: number;
+  } | null;
+}
+
+export interface SiteMapOptions extends CrawlOptions {
+  /** Rank and filter fetched entries by URL, title, and description. */
+  search?: string;
+  /** Bound the number of compact entries returned. */
+  maxResults?: number;
 }
 
 export interface IpClassification {
@@ -233,7 +247,7 @@ export interface UrlSecurityOptions {
 
 export function crawl(options?: CrawlOptions): Promise<CrawlPages>;
 export function crawlDetailed(options?: CrawlOptions): Promise<CrawlDetailedResult>;
-export function mapSite(options?: CrawlOptions): Promise<SiteMapResult>;
+export function mapSite(options?: SiteMapOptions): Promise<SiteMapResult>;
 export function discoverSitemapUrls(sitemapUrl: string, options?: CrawlOptions): Promise<string[]>;
 export function extractStructured(
   html: string,

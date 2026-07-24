@@ -101,25 +101,36 @@ const sitemap = await readFile(join(dist, "sitemap.xml"), "utf8");
 if (!sitemap.includes("<loc>https://cockroachcrawler.com/compare/</loc>")) errors.push("sitemap must include the AI crawler comparison");
 const sitemapLocations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 if (sitemapLocations.length !== htmlFiles.length - 1) errors.push(`sitemap must include every public HTML page; expected ${htmlFiles.length - 1}, found ${sitemapLocations.length}`);
-if (sitemapLocations.filter((location) => /\/docs\/capabilities\/[^/]+\/[^/]+\/$/.test(location)).length !== 46) {
-  errors.push("sitemap must include all 46 capability detail pages");
+if (sitemapLocations.filter((location) => /\/docs\/capabilities\/[^/]+\/[^/]+\/$/.test(location)).length !== 50) {
+  errors.push("sitemap must include all 50 capability detail pages");
 }
 for (const route of ["crawling", "browser", "extraction", "mcp", "docker", "reference"]) {
   if (!sitemap.includes(`<loc>https://cockroachcrawler.com/docs/${route}/</loc>`)) {
     errors.push(`sitemap must include the ${route} documentation`);
   }
 }
+const mapHtml = await readFile(join(dist, "docs", "map-and-extract", "index.html"), "utf8");
+if (!mapHtml.includes("--map-search")) errors.push("map guide must show searched site maps");
+const extractionHtml = await readFile(join(dist, "docs", "extraction", "index.html"), "utf8");
+if (!extractionHtml.includes("Restricted regex extraction")) errors.push("extraction guide must document the restricted regex surface");
+const mcpHtml = await readFile(join(dist, "docs", "mcp", "index.html"), "utf8");
+if (!mcpHtml.includes("io.github.ajnasnb/cockroach-crawler")) errors.push("MCP guide must document the official Registry name");
+const dockerHtml = await readFile(join(dist, "docs", "docker", "index.html"), "utf8");
+if (!dockerHtml.includes("/v1/jobs")) errors.push("Docker guide must document bounded asynchronous jobs");
 const llms = await readFile(join(dist, "llms.txt"), "utf8");
 if (!llms.includes("AI crawler comparison: https://cockroachcrawler.com/compare/")) errors.push("llms.txt must link the factual crawler comparison");
 if (!llms.includes("Complete JavaScript and CLI reference: https://cockroachcrawler.com/docs/reference/")) errors.push("llms.txt must link the complete reference");
+for (const phrase of ["searchable fetch-validated site maps", "restricted regex extraction", "bounded process-local asynchronous jobs", "official Registry metadata"]) {
+  if (!llms.includes(phrase)) errors.push(`llms.txt must document ${phrase}`);
+}
 const packageReadme = await readFile(join(dist, "..", "..", "README.md"), "utf8");
 if (/assets\/readme-proof-still/i.test(packageReadme)) errors.push("npm README must not restore the oversized proof banner");
-if (!packageReadme.includes("Give your AI agents web superpowers")) errors.push("npm README must lead with the AI web crawler benefit");
+if (!packageReadme.includes("Give your AI agents the web. Keep the keys.")) errors.push("npm README must lead with the creator-owned AI web crawler promise");
 if (!packageReadme.includes("Look up every package subpath, crawl option, page field, statistic, and executable")) {
   errors.push("npm README must retain the complete-reference documentation row");
 }
 const docsHtml = await readFile(join(dist, "docs", "index.html"), "utf8");
-if (!docsHtml.includes("Cockroach Crawler 0.4.2 documentation")) errors.push("docs must identify stable 0.4.2");
+if (!docsHtml.includes("Cockroach Crawler 0.5.0 documentation")) errors.push("docs must identify stable 0.5.0");
 if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
 if (!docsHtml.includes('href="/docs/capabilities/"')) errors.push("docs overview must link the dedicated capability library");
 if (!docsHtml.includes("docs-sidebar-nav")) errors.push("docs overview must use the persistent grouped documentation navigation");
@@ -130,23 +141,23 @@ for (const group of ["Start", "Crawl and extract", "Agents and sources", "Deploy
 }
 if (docsHtml.includes("data-feature-entry")) errors.push("docs overview must not restore the giant inline capability wall");
 const capabilityIndexHtml = await readFile(join(dist, "docs", "capabilities", "index.html"), "utf8");
-if ((capabilityIndexHtml.match(/data-feature-entry/g) ?? []).length !== 46) errors.push("capability library must expose all 46 indexed capabilities");
+if ((capabilityIndexHtml.match(/data-feature-entry/g) ?? []).length !== 50) errors.push("capability library must expose all 50 indexed capabilities");
 if (!capabilityIndexHtml.includes("data-feature-search")) errors.push("capability library must retain the searchable feature index");
 const capabilityIndexLinks = [...capabilityIndexHtml.matchAll(/href="(\/docs\/capabilities\/[^"]+\/)"/g)]
   .map((match) => match[1])
   .filter((route) => route.split("/").filter(Boolean).length === 4);
-if (new Set(capabilityIndexLinks).size !== 46) errors.push(`capability library must link 46 unique detail pages, found ${new Set(capabilityIndexLinks).size}`);
+if (new Set(capabilityIndexLinks).size !== 50) errors.push(`capability library must link 50 unique detail pages, found ${new Set(capabilityIndexLinks).size}`);
 const capabilityDetailFiles = htmlFiles.filter((file) => {
   const label = file.slice(dist.length).replaceAll("\\", "/");
   return /^\/?docs\/capabilities\/[^/]+\/[^/]+\/index\.html$/.test(label);
 });
-if (capabilityDetailFiles.length !== 46) errors.push(`expected 46 generated capability pages, found ${capabilityDetailFiles.length}`);
+if (capabilityDetailFiles.length !== 50) errors.push(`expected 50 generated capability pages, found ${capabilityDetailFiles.length}`);
 for (const file of capabilityDetailFiles) {
   const html = await readFile(file, "utf8");
   const label = file.slice(dist.length).replaceAll("\\", "/");
   if (!html.includes("docs-sidebar-nav")) errors.push(`${label}: capability page must include grouped documentation navigation`);
   if (html.includes("docs-sidebar-group")) errors.push(`${label}: capability navigation must stay expanded`);
-  if (!html.includes("of 46")) errors.push(`${label}: capability page must identify its place in the complete catalog`);
+  if (!html.includes("of 50")) errors.push(`${label}: capability page must identify its place in the complete catalog`);
   if (!html.includes('aria-current="page"')) errors.push(`${label}: capability page must mark its current sidebar route`);
   for (const proof of ["Purpose and fit", "How to start", "Result contract", "Boundary and failures", "Related pages"]) {
     if (!html.includes(proof)) errors.push(`${label}: missing ${proof} section`);
@@ -167,7 +178,7 @@ for (const [route, proof] of [
   if (!html.includes(proof)) errors.push(`${route} docs are missing their reference proof`);
 }
 const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
-if (!releaseHtml.includes("npm install cockroach-crawler@0.4.2")) errors.push("release page must install stable 0.4.2");
+if (!releaseHtml.includes("npm install cockroach-crawler@0.5.0")) errors.push("release page must install stable 0.5.0");
 if (releaseHtml.includes("Release · 0.3.0")) errors.push("release page must not advertise 0.3.0 as current");
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);
 const headerPolicy = await readFile(join(dist, "_headers"), "utf8");

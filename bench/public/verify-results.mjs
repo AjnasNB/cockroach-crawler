@@ -21,7 +21,7 @@ async function fingerprint(inputs) {
   return hash.digest("hex");
 }
 
-const wceb = JSON.parse(await readFile(path.join(root, "bench/results/wceb-test-0.4.2.json"), "utf8"));
+const wceb = JSON.parse(await readFile(path.join(root, "bench/results/wceb-test-0.5.0.json"), "utf8"));
 assert.equal(wceb.schemaVersion, 1);
 assert.equal(wceb.benchmark, "cockroach-crawler-wceb-main-content");
 assert.equal(wceb.dataset.revision, "62ff86d12ea72c80c31fb810ff1a724fad687bea");
@@ -39,7 +39,7 @@ for (const metric of ["precision", "recall", "f1", "requiredSnippetRecall", "unw
   assert.ok(Number.isFinite(wceb.results[metric]) && wceb.results[metric] >= 0 && wceb.results[metric] <= 1, metric);
 }
 
-const conformance = JSON.parse(await readFile(path.join(root, "bench/results/public-conformance-0.4.2.json"), "utf8"));
+const conformance = JSON.parse(await readFile(path.join(root, "bench/results/public-conformance-0.5.0.json"), "utf8"));
 assert.equal(conformance.schemaVersion, 1);
 assert.equal(conformance.benchmark, "cockroach-crawler-public-conformance");
 assert.equal(conformance.package.source.normalization, "utf8-lf");

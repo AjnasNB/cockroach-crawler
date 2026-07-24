@@ -46,14 +46,46 @@ test("the packed feature inventory stays complete and release-honest", async () 
     "Bounded infinite/virtual-scroll",
     "Trusted operator page hooks",
     "XPath extraction",
+    "Restricted regex extraction",
     "Optional host-supplied LLM extraction",
     "Explicit provider/proxy rotation",
+    "optional lexical map search",
+    "process-local",
+    "asynchronous job queue",
+    "fixed self-hosted proxy-gateway",
     "Native MCP tools",
     "Authenticated Node/Docker API"
   ]) {
     assert.match(features, new RegExp(capability.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"));
   }
   assert.doesNotMatch(features, /DFS and relevance\/adaptive strategies \| Not implemented/);
+});
+
+test("MCP Registry metadata matches the packed npm package", async () => {
+  const manifest = JSON.parse(await readFile(path.join(ROOT, "package.json"), "utf8"));
+  const server = JSON.parse(await readFile(path.join(ROOT, "server.json"), "utf8"));
+
+  assert.equal(manifest.mcpName, "io.github.ajnasnb/cockroach-crawler");
+  assert.ok(manifest.files.includes("server.json"), "server.json must ship in the npm artifact");
+  assert.equal(server.name, manifest.mcpName);
+  assert.equal(server.version, manifest.version);
+  assert.equal(
+    server.$schema,
+    "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
+  );
+  assert.deepEqual(server.packages, [{
+    registryType: "npm",
+    identifier: manifest.name,
+    version: manifest.version,
+    transport: { type: "stdio" },
+    environmentVariables: [{
+      description: "Comma-separated HTTP(S) origins that the MCP server may crawl.",
+      isRequired: true,
+      format: "string",
+      isSecret: false,
+      name: "COCKROACH_ALLOWED_ORIGINS"
+    }]
+  }]);
 });
 
 test("alpha release checksums match every named release source asset", async () => {

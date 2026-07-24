@@ -8,7 +8,14 @@ export interface CockroachMcpOptions {
 
 export function buildMcpCrawlOptions(
   defaults: CrawlOptions,
-  request: { urls: string[]; maxPages?: number; maxDepth?: number; query?: string }
+  request: {
+    urls: string[];
+    maxPages?: number;
+    maxDepth?: number;
+    query?: string;
+    search?: string;
+    maxResults?: number;
+  }
 ): CrawlOptions;
 
 export function createCockroachMcpServer(
