@@ -238,7 +238,7 @@ flowchart LR
 | [Cockroach Browser](https://github.com/AjnasNB/cockroach-browser) | Authorized interactive sessions, semantic snapshots, and browser evidence behind its own policy and budgets | Public `cockroach-browser@0.1.0`; separate `AGPL-3.0-or-later` package, never a crawler dependency |
 | [Maqam](https://github.com/AjnasNB/maqam) | Policy, exact one-use approvals, registered tool execution, browser-action contracts, traces, and evidence | Public npm package |
 | [ProductLoop OS](https://github.com/AjnasNB/productloop-os) | Workflow, policy, approval, connector, skill, evaluation, provenance, and research composition | Public npm package |
-| Qarinah | Local-first context ledger, deterministic graph/index, compact cited context packs, and Codex/Claude hooks | Private alpha; no public install claim yet |
+| [Qarinah](https://qarinah.io) | Local-first context ledger, deterministic graph/index, compact cited context packs, and coding-agent hooks | Public Apache-2.0 package: `qarinah@0.1.2` |
 
 Cockroach Crawler does not ship Cockroach Browser, a model, proxy network, CAPTCHA bypass, hidden credential reuse, operating-system sandbox, or universal interception. A call is governed only when the host routes the real operation through its registered boundary.
 
