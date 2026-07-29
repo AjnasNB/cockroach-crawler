@@ -26,6 +26,12 @@ The browser remains **not a process or JavaScript sandbox**. Hostile JavaScript 
 
 Storage-state files contain authentication secrets. Keep them outside source control, restrict file permissions, and never accept their path from model/user-controlled agent input. Only `GET` and `HEAD` are proxied, but page JavaScript and explicit clicks can trigger server behavior implemented on unsafe `GET` endpoints. Sensitive-path matching is defense in depth rather than an authorization boundary; use browser actions only on authorized pages with policy and selectors reviewed by an operator.
 
+### Separate Cockroach Browser runtime
+
+The browser boundary above describes Cockroach Crawler's own optional Playwright rendering. The public `cockroach-browser@0.1.0` runtime is a separate `AGPL-3.0-or-later` package with its own network, session, policy and evidence boundary; Cockroach Crawler does not install, bundle or govern it.
+
+A host may use Cockroach Crawler for static discovery and then select one fetched URL for authorized work in Cockroach Browser. Only the exact URL, explicit allowed origins and finite browser budgets may cross from crawler evidence into that handoff. Browser profiles, cookies, storage state, daemon authentication, website credentials and authenticated page state must never enter crawler options, callbacks, records, failures or logs. Read browser daemon authentication only after crawler work completes and use it only in the browser client's local request. See [Cockroach Browser handoff](docs/COCKROACH-BROWSER.md).
+
 ## Agent and content boundary
 
 The agent adapter validates an exact runtime schema. Unknown fields are rejected, creator limits are upper bounds, politeness delays are creator-controlled, robots remains enabled, private-network access is creator-only, and browser input is rejected unless the creator sets `allowBrowser: true`. Crawl input, creator defaults, authority-bearing arrays, and browser settings are copied from own enumerable data properties into null-prototype snapshots. Inherited authority and accessors are rejected, and later mutation cannot broaden policy. Agent include/exclude values are escaped literal URL fragments, not executable regular expressions.

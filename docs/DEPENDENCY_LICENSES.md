@@ -21,6 +21,16 @@ This is the reviewed direct-dependency snapshot for the stable `0.5.2` lockfile.
 
 This audit covers direct runtime, peer, and development packages only. Transitive dependencies remain governed by their own licenses. Compatible dependency ranges can resolve newer versions for downstream consumers, so license and provenance review must be repeated when the lockfile changes. This inventory is informational and is not legal advice.
 
+## Separate Cockroach Browser runtime
+
+[`cockroach-browser@0.1.0`](https://www.npmjs.com/package/cockroach-browser/v/0.1.0)
+is a separately installed `AGPL-3.0-or-later` runtime. It is not a runtime,
+peer, optional or development dependency of this MIT package, has no entry in
+`package-lock.json`, and is not included in the Cockroach Crawler tarball.
+The documented handoff uses the browser runtime's public authenticated daemon
+API; no Cockroach Browser source or artifact is copied or vendored here.
+Deployment owners must review and comply with its license independently.
+
 ## Optional external tools
 
 These tools are not npm dependencies, are not bundled in the package tarball, and run only after an operator selects the external-source tier. `cockroach-reach` pins the reviewed version in its generated setup plan.
