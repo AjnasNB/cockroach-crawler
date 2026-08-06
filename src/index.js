@@ -18,6 +18,13 @@ import {
   withPinnedFetch
 } from "./security.js";
 import { createTraversalQueue, normalizeTraversalOptions, scoreRelevance } from "./strategies.js";
+import {
+  applyChallengePolicy,
+  detectChallenge,
+  identityHeaders,
+  normalizeChallengePolicy,
+  resolveIdentity
+} from "./identity.js";
 
 const DEFAULT_USER_AGENT = `CockroachCrawler/${PACKAGE_VERSION} (+https://github.com/AjnasNB/cockroach-crawler)`;
 const DEFAULT_MAX_BYTES = 3 * 1024 * 1024;
@@ -91,6 +98,8 @@ const CRAWL_OPTION_KEYS = new Set([
   "obeyRobots",
   "allowPrivateNetworks",
   "userAgent",
+  "identity",
+  "challengePolicy",
   "delayMs",
   "timeoutMs",
   "maxDurationMs",
@@ -688,10 +697,17 @@ function normalizeOptions(input, seedCount) {
   const maxBytes = integerOption(input.maxBytes, "maxBytes", DEFAULT_MAX_BYTES, 1_024, 50 * 1024 * 1024);
   const defaultTotalBytes = Math.min(256 * 1024 * 1024, Math.max(maxBytes, maxBytes * Math.min(maxPages, 50)));
   const timeoutMs = integerOption(input.timeoutMs, "timeoutMs", 15_000, 100, 120_000);
-  const userAgent = String(input.userAgent || DEFAULT_USER_AGENT);
-  if (!userAgent || userAgent.length > 256 || /[\r\n\0]/.test(userAgent)) {
-    throw new TypeError("userAgent must be 1-256 characters without line breaks.");
+  const identity = input.identity === undefined ? null : resolveIdentity(input.identity);
+  if (identity && input.userAgent !== undefined) {
+    throw new TypeError("Set either identity or userAgent, not both.");
   }
+  const userAgent = identity
+    ? identity.userAgent
+    : String(input.userAgent || DEFAULT_USER_AGENT);
+  if (!userAgent || userAgent.length > 512 || /[\r\n\0]/.test(userAgent)) {
+    throw new TypeError("userAgent must be 1-512 characters without line breaks.");
+  }
+  const challengePolicy = normalizeChallengePolicy(input.challengePolicy);
   const sameOrigin = input.sameOrigin !== false;
   if (input.skipSensitivePaths !== undefined && typeof input.skipSensitivePaths !== "boolean") {
     throw new TypeError("skipSensitivePaths must be a boolean.");
@@ -724,6 +740,8 @@ function normalizeOptions(input, seedCount) {
     obeyRobots: input.obeyRobots !== false,
     allowPrivateNetworks: input.allowPrivateNetworks === true,
     userAgent,
+    identity,
+    challengePolicy,
     delayMs: integerOption(input.delayMs, "delayMs", 250, 0, 60_000),
     timeoutMs,
     maxDurationMs: integerOption(input.maxDurationMs, "maxDurationMs", 600_000, 100, 3_600_000),
@@ -801,8 +819,11 @@ async function fetchText(startUrl, options) {
     try {
       const result = await withPinnedFetch(currentUrl, {
         headers: {
+          ...(options.identity ? identityHeaders(options.identity) : {}),
           "user-agent": options.userAgent,
-          accept: options.accept || "text/html,application/xhtml+xml,application/xml;q=0.9,text/plain;q=0.8,*/*;q=0.5"
+          accept: options.accept
+            || options.identity?.accept
+            || "text/html,application/xhtml+xml,application/xml;q=0.9,text/plain;q=0.8,*/*;q=0.5"
         },
         signal
       }, {
@@ -832,11 +853,18 @@ async function fetchText(startUrl, options) {
         }
 
         const { text, bytes } = await readResponseBody(response, options);
+        const challenge = detectChallenge({
+          status: response.status,
+          headers: Object.fromEntries(response.headers),
+          body: text,
+          url: target.url.toString()
+        });
         return {
           status: response.status,
           ok: response.ok,
           text,
           bytes,
+          challenge,
           contentType: response.headers.get("content-type") || "",
           retryAfter: response.headers.get("retry-after"),
           etag: response.headers.get("etag"),
@@ -844,7 +872,12 @@ async function fetchText(startUrl, options) {
         };
       });
 
-      if (!result.redirect) return { ...result, finalUrl: currentUrl, redirectChain };
+      if (!result.redirect) {
+        if (result.challenge?.challenged) {
+          await applyChallengePolicy(result.challenge, options.challengePolicy, { url: currentUrl });
+        }
+        return { ...result, finalUrl: currentUrl, redirectChain };
+      }
       if (hop >= options.maxRedirects) {
         throw new Error(`Redirect limit exceeded (${options.maxRedirects}).`);
       }

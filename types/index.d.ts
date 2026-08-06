@@ -1,3 +1,5 @@
+import type { ChallengePolicyInput, IdentityOverrides, IdentityProfileName } from "./identity.js";
+
 export type UrlPattern = string | RegExp;
 
 export interface DnsLookupAddress {
@@ -166,6 +168,8 @@ export interface CrawlOptions {
   obeyRobots?: boolean;
   allowPrivateNetworks?: boolean;
   userAgent?: string;
+  identity?: IdentityProfileName | (IdentityOverrides & { profile?: IdentityProfileName });
+  challengePolicy?: ChallengePolicyInput | false | null;
   delayMs?: number;
   timeoutMs?: number;
   maxDurationMs?: number;
