@@ -276,13 +276,21 @@ function inAttribute(token) {
   return new RegExp(`(?:src|id|class|data-sitekey)\\s*=\\s*["'][^"']*${token}`, "iu");
 }
 
+function loadedFrom(host, pathPrefix = "") {
+  const escape = (value) => value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+  return new RegExp(
+    `(?:src|href)\\s*=\\s*["']https?://(?:[a-z0-9-]+\\.)*${escape(host)}/${escape(pathPrefix)}`,
+    "iu"
+  );
+}
+
 const CHALLENGE_SIGNATURES = Object.freeze([
   Object.freeze({
     vendor: "cloudflare",
     kind: "interstitial",
     headers: ["cf-mitigated"],
     body: [
-      /https?:\/\/(?:[a-z0-9-]+\.)*challenges\.cloudflare\.com\//iu,
+      loadedFrom("challenges.cloudflare.com"),
       /__cf_chl_/iu,
       inAttribute("cf-challenge-running"),
       /<title>\s*just a moment/iu
@@ -298,7 +306,7 @@ const CHALLENGE_SIGNATURES = Object.freeze([
     vendor: "datadome",
     kind: "captcha",
     headers: ["x-datadome"],
-    body: [/https?:\/\/(?:[a-z0-9-]+\.)*captcha-delivery\.com\//iu, inAttribute("datadome")]
+    body: [loadedFrom("captcha-delivery.com"), inAttribute("datadome")]
   }),
   Object.freeze({
     vendor: "perimeterx",
@@ -316,13 +324,13 @@ const CHALLENGE_SIGNATURES = Object.freeze([
     vendor: "recaptcha",
     kind: "captcha",
     headers: [],
-    body: [/https?:\/\/(?:[a-z0-9-]+\.)*google\.com\/recaptcha\//iu, inAttribute("g-recaptcha")]
+    body: [loadedFrom("google.com", "recaptcha/"), inAttribute("g-recaptcha")]
   }),
   Object.freeze({
     vendor: "hcaptcha",
     kind: "captcha",
     headers: [],
-    body: [/https?:\/\/(?:[a-z0-9-]+\.)*hcaptcha\.com\//iu, inAttribute("h-captcha")]
+    body: [loadedFrom("hcaptcha.com"), inAttribute("h-captcha")]
   })
 ]);
 
