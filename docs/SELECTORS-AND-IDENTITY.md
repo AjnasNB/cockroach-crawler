@@ -95,6 +95,13 @@ This solves a correctness problem: a client whose headers describe no real
 browser gets degraded markup or a flat refusal from many sites. Profiles are
 named and inspectable, and none impersonates a specific person or account.
 
+What a profile does **not** change is the TLS handshake. The `tlsProfile` field
+is a descriptive label for the browser build being described; the transport
+still presents Node's own TLS fingerprint. A site that classifies clients by
+JA3 or a similar handshake fingerprint will still see a Node client, and no
+combination of headers changes that. If that is the barrier you are hitting,
+headers are not the fix.
+
 ## Access challenges
 
 A challenge page is an access-control decision, not page content. Detection is

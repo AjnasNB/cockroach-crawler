@@ -30,6 +30,12 @@ export interface IdentityProfile {
   accept: string;
   locale: string;
   timezone: string;
+  /**
+   * Descriptive label for the browser build this profile describes. It is
+   * metadata only. Cockroach Crawler does not spoof the TLS handshake, so the
+   * transport still presents Node's own TLS fingerprint regardless of this
+   * value.
+   */
   tlsProfile: string;
 }
 
