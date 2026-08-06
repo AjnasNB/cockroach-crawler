@@ -1,3 +1,4 @@
+import { blogIndexPage, blogPosts } from "./blog.mjs";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
@@ -50,6 +51,8 @@ const robotsPassed = publicConformanceResult.robots.passed;
 const robotsCases = publicConformanceResult.robots.cases;
 const wptPassed = publicConformanceResult.wptUrl.passed;
 const wptCases = publicConformanceResult.wptUrl.cases;
+
+const extraPosts = blogPosts({ codeBlock, siteUrl, repository });
 
 const pages = [
   {
@@ -341,7 +344,14 @@ const pages = [
         }
       ]
     }
-  }
+  },
+  {
+    slug: "blog",
+    title: "Engineering notes | Cockroach Crawler",
+    description: "Mechanisms behind resilient crawling: adaptive selectors, request identity, access challenges, resumable spiders, cookies, proxies, and resource blocking.",
+    body: blogIndexPage([{ slug: "blog/why-css-selectors-break", cardTitle: "Why CSS selectors break, and what to do about it", cardSummary: "A selector encodes a path, not an identity. Why brittleness is structural, and how an ancestor subsequence comparison survives a redesign that breaks every selector." }, ...extraPosts])
+  },
+  ...extraPosts
 ];
 
 function faqSchema(name, text) {
