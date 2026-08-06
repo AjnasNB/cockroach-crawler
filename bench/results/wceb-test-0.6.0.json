@@ -28,11 +28,11 @@
   },
   "package": {
     "name": "cockroach-crawler",
-    "version": "0.5.2",
+    "version": "0.6.0",
     "source": {
       "algorithm": "sha256",
       "normalization": "utf8-lf",
-      "value": "9c29a948486d29a6145a29194a13b63cc39789302a36645077a0773bab566e47",
+      "value": "24657120e38dd9ec4f2cfa345cceb0e262cba6c983ba135d3233fb0b45f3bb08",
       "inputs": [
         "src/index.js",
         "package.json",

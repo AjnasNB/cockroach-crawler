@@ -1,6 +1,6 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "mcpName": "io.github.AjnasNB/cockroach-crawler",
   "description": "Give AI agents superpowers on the web: crawl, render, map, extract, and verify evidence through one governed Node.js crawler.",
   "license": "MIT",
@@ -59,6 +59,26 @@
       "import": "./src/serverless.js",
       "default": "./src/serverless.js"
     },
+    "./parser": {
+      "types": "./types/parser.d.ts",
+      "import": "./src/parser.js",
+      "default": "./src/parser.js"
+    },
+    "./adaptive": {
+      "types": "./types/adaptive.d.ts",
+      "import": "./src/adaptive.js",
+      "default": "./src/adaptive.js"
+    },
+    "./identity": {
+      "types": "./types/identity.d.ts",
+      "import": "./src/identity.js",
+      "default": "./src/identity.js"
+    },
+    "./exporters": {
+      "types": "./types/exporters.d.ts",
+      "import": "./src/exporters.js",
+      "default": "./src/exporters.js"
+    },
     "./strategies": {
       "types": "./types/strategies.d.ts",
       "import": "./src/strategies.js",
@@ -116,8 +136,8 @@
     "bench/local-benchmark.mjs",
     "bench/public/",
     "bench/results/ci-validated.json",
-    "bench/results/wceb-test-0.5.2.json",
-    "bench/results/public-conformance-0.5.2.json",
+    "bench/results/wceb-test-0.6.0.json",
+    "bench/results/public-conformance-0.6.0.json",
     "docs/RELEASE.md",
     "docs/DEPENDENCY_LICENSES.md",
     "docs/PROVENANCE.md",
@@ -132,6 +152,7 @@
     "docs/CAPABILITIES.md",
     "docs/FEATURES.md",
     "docs/ADVANCED.md",
+    "docs/SELECTORS-AND-IDENTITY.md",
     "Dockerfile",
     "README.md",
     "SECURITY.md",
@@ -143,7 +164,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/advanced.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/external-sources-cli.test.js test/external-sources.test.js test/limits.test.js test/public-benchmark.test.js test/release-kit.test.js test/security.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
+    "test": "node --test test/adaptive.test.js test/advanced.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/exporters.test.js test/external-sources-cli.test.js test/external-sources.test.js test/identity.test.js test/limits.test.js test/parser.test.js test/public-benchmark.test.js test/release-kit.test.js test/security.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
     "test:browser": "node --test browser-test/integration.test.js",
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
@@ -193,7 +214,12 @@
     "linkedin",
     "ssrf-protection",
     "cloudflare-workers",
-    "serverless"
+    "serverless",
+    "adaptive-selectors",
+    "self-healing-selectors",
+    "css-selectors",
+    "html-parser",
+    "data-export"
   ],
   "dependencies": {
     "@xmldom/xmldom": "^0.9.10",

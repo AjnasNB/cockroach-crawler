@@ -304,6 +304,66 @@ import {
 import { createBoundedJobQueue } from "cockroach-crawler/jobs";
 ```
 
+## Selectors that survive a redesign
+
+CSS selectors break the moment a site ships new markup. Cockroach Crawler
+fingerprints an element the first time it sees it, and recovers it later even
+when the tag, classes, and nesting have all changed.
+
+```js
+import { ElementFingerprintStore, createAdaptiveLocator } from "cockroach-crawler/adaptive";
+
+const locate = createAdaptiveLocator(
+  new ElementFingerprintStore({ directory: ".cockroach/elements" })
+);
+
+await locate("product-title", html, { selector: "h2.title" });
+// { locatedBy: "selector",  text: "Widget A" }
+
+// ...the site is redesigned: h2.title becomes h3.name inside a new <section>
+await locate("product-title", redesigned, { selector: "h2.title" });
+// { locatedBy: "relocated", text: "Widget A", selector: "li.card:nth-of-type(1) > h3.name" }
+```
+
+Scoring combines tag family, identity attributes, class set, text, ancestor
+chain, and sibling structure. Below an explicit threshold it reports a miss
+instead of guessing, because a confidently wrong element is worse than a
+reported failure.
+
+The same document API handles ordinary selection:
+
+```js
+import { Selector } from "cockroach-crawler/parser";
+
+const page = Selector.parse(html, { url: "https://shop.example/catalog" });
+page.css(".title::text").getall();          // ["Widget A", "Widget B"]
+page.css("a::attr(href)").getall();         // resolved to absolute URLs
+page.xpath("//span[@class='price']");       // live nodes, still traversable
+page.findAll("li", { class_: "product" });
+page.findByText(/clearance/iu, { tag: "h2" });
+page.css("li.product").first.findSimilar(); // the other product cards
+```
+
+## Declared identity and access challenges
+
+```js
+import { resolveIdentity, identityHeaders, detectChallenge } from "cockroach-crawler/identity";
+
+identityHeaders(resolveIdentity("chrome-windows"));
+```
+
+A profile keeps user agent, client hints, `Accept-Language`, viewport, platform,
+locale, and timezone consistent, and drives the HTTP and browser tiers from one
+declaration — which is what stops sites from serving degraded markup to a
+client whose headers describe no real browser.
+
+Challenge pages are detected and surfaced as a first-class outcome, never
+mistaken for content. The default policy fails closed; `report` hands the
+report back; `operator` delegates to a handler you supply under an explicit
+authorization statement and origin allowlist. No solver is bundled and no
+solving service is used — see
+[docs/SELECTORS-AND-IDENTITY.md](docs/SELECTORS-AND-IDENTITY.md).
+
 ## Advanced AI crawler capabilities
 
 One bounded browser crawl can render, scroll, flatten, capture, and retain an explicitly authorized profile:
