@@ -1,3 +1,4 @@
+import type { RequestPolicyInput } from "./blocklist.js";
 import type { ChallengePolicyInput, IdentityOverrides, IdentityProfileName } from "./identity.js";
 
 export type UrlPattern = string | RegExp;
@@ -13,6 +14,7 @@ export type DnsLookup = (
 ) => DnsLookupAddress | DnsLookupAddress[] | Promise<DnsLookupAddress | DnsLookupAddress[]>;
 
 export interface BrowserOptions {
+  requestPolicy?: RequestPolicyInput | false;
   headless?: boolean;
   headed?: boolean;
   channel?: string;

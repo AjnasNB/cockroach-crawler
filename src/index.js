@@ -18,6 +18,7 @@ import {
   withPinnedFetch
 } from "./security.js";
 import { createTraversalQueue, normalizeTraversalOptions, scoreRelevance } from "./strategies.js";
+import { normalizeRequestPolicy, shouldBlockRequest } from "./blocklist.js";
 import {
   applyChallengePolicy,
   detectChallenge,
@@ -51,6 +52,7 @@ const EXTRACTION_FIELD_KEYS = new Set([
 const SENSITIVE_PATH_PATTERN = /(?:login|logout|signin|sign-in|signup|auth|account|admin|dashboard|checkout|cart|billing|private|session|password|reset|wp-admin)/i;
 const MAX_SENSITIVE_DECODE_PASSES = 8;
 const BROWSER_KEYS = new Set([
+  "requestPolicy",
   "headless",
   "headed",
   "channel",
@@ -553,6 +555,7 @@ function normalizeBrowserOptions(value, timeoutMs) {
   }
 
   return Object.freeze({
+    requestPolicy: normalizeRequestPolicy(browser.requestPolicy),
     headless: browser.headless ?? !browser.headed,
     channel: stringOption(browser.channel, "browser.channel", 128),
     executablePath: stringOption(browser.executablePath, "browser.executablePath", 4_096),
@@ -1806,6 +1809,7 @@ async function createBrowserFetcher(options, hooks) {
         topLevelSiteUrl: startUrl,
         frameSites: new WeakMap(),
         closing: false,
+        blockedRequests: [],
         pending: new Set(),
         popups: new Set(),
         recordBlocked(error) {
@@ -1894,6 +1898,20 @@ async function createBrowserFetcher(options, hooks) {
           }
           try {
             const method = request.method().toUpperCase();
+            if (options.browser?.requestPolicy && !request.isNavigationRequest()) {
+              let resourceType = null;
+              try {
+                resourceType = request.resourceType();
+              } catch {
+                resourceType = null;
+              }
+              const blocked = shouldBlockRequest(request.url(), resourceType, options.browser.requestPolicy);
+              if (blocked) {
+                this.blockedRequests.push({ url: request.url(), reason: blocked.reason, detail: blocked.detail });
+                await route.abort("blockedbyclient").catch(() => {});
+                return;
+              }
+            }
             if (method !== "GET" && method !== "HEAD") {
               throw createCrawlerSecurityError(`Browser method '${method}' is disabled.`, {
                 url: request.url(),
