@@ -18,6 +18,15 @@ import {
   withPinnedFetch
 } from "./security.js";
 import { createTraversalQueue, normalizeTraversalOptions, scoreRelevance } from "./strategies.js";
+import { normalizeRequestPolicy, shouldBlockRequest } from "./blocklist.js";
+import {
+  applyChallengePolicy,
+  detectChallenge,
+  identityHeaders,
+  identityTlsOptions,
+  normalizeChallengePolicy,
+  resolveIdentity
+} from "./identity.js";
 
 const DEFAULT_USER_AGENT = `CockroachCrawler/${PACKAGE_VERSION} (+https://github.com/AjnasNB/cockroach-crawler)`;
 const DEFAULT_MAX_BYTES = 3 * 1024 * 1024;
@@ -44,6 +53,9 @@ const EXTRACTION_FIELD_KEYS = new Set([
 const SENSITIVE_PATH_PATTERN = /(?:login|logout|signin|sign-in|signup|auth|account|admin|dashboard|checkout|cart|billing|private|session|password|reset|wp-admin)/i;
 const MAX_SENSITIVE_DECODE_PASSES = 8;
 const BROWSER_KEYS = new Set([
+  "requestPolicy",
+  "cdpUrl",
+  "captureXhr",
   "headless",
   "headed",
   "channel",
@@ -91,6 +103,8 @@ const CRAWL_OPTION_KEYS = new Set([
   "obeyRobots",
   "allowPrivateNetworks",
   "userAgent",
+  "identity",
+  "challengePolicy",
   "delayMs",
   "timeoutMs",
   "maxDurationMs",
@@ -452,6 +466,50 @@ function normalizePdfOptions(value) {
   });
 }
 
+function normalizeXhrCapture(value) {
+  if (value === undefined || value === false || value === null) return null;
+  const capture = value === true ? Object.create(null) : snapshotOptionRecord(value, "browser.captureXhr", new Set(["maxEntries", "maxBodyBytes", "contentTypes"]));
+  const unknown = Object.keys(capture).filter((key) => !["maxEntries", "maxBodyBytes", "contentTypes"].includes(key));
+  if (unknown.length) throw new TypeError(`Unknown browser.captureXhr option(s): ${unknown.join(", ")}.`);
+  let contentTypes = [];
+  if (capture.contentTypes !== undefined) {
+    if (!Array.isArray(capture.contentTypes)) throw new TypeError("browser.captureXhr.contentTypes must be an array.");
+    if (capture.contentTypes.length > 32) throw new TypeError("browser.captureXhr.contentTypes exceeds its 32-entry limit.");
+    contentTypes = capture.contentTypes.map((entry) => {
+      const text = String(entry ?? "").trim().toLowerCase();
+      if (!text || text.length > 128) throw new TypeError("browser.captureXhr.contentTypes entries must be 1-128 characters.");
+      return text;
+    });
+  }
+  return Object.freeze({
+    maxEntries: integerOption(capture.maxEntries, "browser.captureXhr.maxEntries", 50, 1, 1_000),
+    maxBodyBytes: integerOption(capture.maxBodyBytes, "browser.captureXhr.maxBodyBytes", 256 * 1024, 64, 8 * 1024 * 1024),
+    contentTypes: Object.freeze(contentTypes)
+  });
+}
+
+function normalizeCdpUrl(value) {
+  if (value === undefined || value === null || value === false) return null;
+  if (typeof value !== "string" || !value.trim()) {
+    throw new TypeError("browser.cdpUrl must be a non-empty string.");
+  }
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch (cause) {
+    const error = new TypeError("browser.cdpUrl must be a valid URL.");
+    error.cause = cause;
+    throw error;
+  }
+  if (!["http:", "https:", "ws:", "wss:"].includes(parsed.protocol)) {
+    throw new TypeError("browser.cdpUrl must use http, https, ws, or wss.");
+  }
+  if (parsed.username || parsed.password) {
+    throw new TypeError("browser.cdpUrl must not embed credentials.");
+  }
+  return parsed.toString();
+}
+
 function normalizeBrowserOptions(value, timeoutMs) {
   if (!value) return null;
   const browser = value === true
@@ -544,6 +602,9 @@ function normalizeBrowserOptions(value, timeoutMs) {
   }
 
   return Object.freeze({
+    requestPolicy: normalizeRequestPolicy(browser.requestPolicy),
+    cdpUrl: normalizeCdpUrl(browser.cdpUrl),
+    captureXhr: normalizeXhrCapture(browser.captureXhr),
     headless: browser.headless ?? !browser.headed,
     channel: stringOption(browser.channel, "browser.channel", 128),
     executablePath: stringOption(browser.executablePath, "browser.executablePath", 4_096),
@@ -688,10 +749,17 @@ function normalizeOptions(input, seedCount) {
   const maxBytes = integerOption(input.maxBytes, "maxBytes", DEFAULT_MAX_BYTES, 1_024, 50 * 1024 * 1024);
   const defaultTotalBytes = Math.min(256 * 1024 * 1024, Math.max(maxBytes, maxBytes * Math.min(maxPages, 50)));
   const timeoutMs = integerOption(input.timeoutMs, "timeoutMs", 15_000, 100, 120_000);
-  const userAgent = String(input.userAgent || DEFAULT_USER_AGENT);
-  if (!userAgent || userAgent.length > 256 || /[\r\n\0]/.test(userAgent)) {
-    throw new TypeError("userAgent must be 1-256 characters without line breaks.");
+  const identity = input.identity === undefined ? null : resolveIdentity(input.identity);
+  if (identity && input.userAgent !== undefined) {
+    throw new TypeError("Set either identity or userAgent, not both.");
   }
+  const userAgent = identity
+    ? identity.userAgent
+    : String(input.userAgent || DEFAULT_USER_AGENT);
+  if (!userAgent || userAgent.length > 512 || /[\r\n\0]/.test(userAgent)) {
+    throw new TypeError("userAgent must be 1-512 characters without line breaks.");
+  }
+  const challengePolicy = normalizeChallengePolicy(input.challengePolicy);
   const sameOrigin = input.sameOrigin !== false;
   if (input.skipSensitivePaths !== undefined && typeof input.skipSensitivePaths !== "boolean") {
     throw new TypeError("skipSensitivePaths must be a boolean.");
@@ -724,6 +792,9 @@ function normalizeOptions(input, seedCount) {
     obeyRobots: input.obeyRobots !== false,
     allowPrivateNetworks: input.allowPrivateNetworks === true,
     userAgent,
+    identity,
+    tlsOptions: identity ? identityTlsOptions(identity) : null,
+    challengePolicy,
     delayMs: integerOption(input.delayMs, "delayMs", 250, 0, 60_000),
     timeoutMs,
     maxDurationMs: integerOption(input.maxDurationMs, "maxDurationMs", 600_000, 100, 3_600_000),
@@ -801,13 +872,17 @@ async function fetchText(startUrl, options) {
     try {
       const result = await withPinnedFetch(currentUrl, {
         headers: {
+          ...(options.identity ? identityHeaders(options.identity) : {}),
           "user-agent": options.userAgent,
-          accept: options.accept || "text/html,application/xhtml+xml,application/xml;q=0.9,text/plain;q=0.8,*/*;q=0.5"
+          accept: options.accept
+            || options.identity?.accept
+            || "text/html,application/xhtml+xml,application/xml;q=0.9,text/plain;q=0.8,*/*;q=0.5"
         },
         signal
       }, {
         allowPrivateNetworks: options.allowPrivateNetworks,
         lookup: options.dnsLookup || undefined,
+        tls: options.tlsOptions || undefined,
         signal
       }, async (response, target) => {
         if (REDIRECT_STATUSES.has(response.status)) {
@@ -832,11 +907,18 @@ async function fetchText(startUrl, options) {
         }
 
         const { text, bytes } = await readResponseBody(response, options);
+        const challenge = detectChallenge({
+          status: response.status,
+          headers: Object.fromEntries(response.headers),
+          body: text,
+          url: target.url.toString()
+        });
         return {
           status: response.status,
           ok: response.ok,
           text,
           bytes,
+          challenge,
           contentType: response.headers.get("content-type") || "",
           retryAfter: response.headers.get("retry-after"),
           etag: response.headers.get("etag"),
@@ -844,7 +926,12 @@ async function fetchText(startUrl, options) {
         };
       });
 
-      if (!result.redirect) return { ...result, finalUrl: currentUrl, redirectChain };
+      if (!result.redirect) {
+        if (result.challenge?.challenged) {
+          await applyChallengePolicy(result.challenge, options.challengePolicy, { url: currentUrl });
+        }
+        return { ...result, finalUrl: currentUrl, redirectChain };
+      }
       if (hop >= options.maxRedirects) {
         throw new Error(`Redirect limit exceeded (${options.maxRedirects}).`);
       }
@@ -1619,7 +1706,11 @@ async function createBrowserFetcher(options, hooks) {
       serviceWorkers: "block",
       acceptDownloads: false
     };
-    if (options.browser.profileDirectory) {
+    if (options.browser.cdpUrl) {
+      browser = await chromium.connectOverCDP(options.browser.cdpUrl);
+      if (options.signal?.aborted) throw abortError(options.signal);
+      context = await browser.newContext(contextOptions);
+    } else if (options.browser.profileDirectory) {
       context = await chromium.launchPersistentContext(
         options.browser.profileDirectory,
         { ...launchOptions, ...contextOptions }
@@ -1773,6 +1864,8 @@ async function createBrowserFetcher(options, hooks) {
         topLevelSiteUrl: startUrl,
         frameSites: new WeakMap(),
         closing: false,
+        blockedRequests: [],
+        capturedXhr: [],
         pending: new Set(),
         popups: new Set(),
         recordBlocked(error) {
@@ -1854,6 +1947,33 @@ async function createBrowserFetcher(options, hooks) {
           }
           return true;
         },
+        captureXhr(url, request, result) {
+          const policy = options.browser?.captureXhr;
+          if (!policy) return;
+          let resourceType = null;
+          try {
+            resourceType = request.resourceType();
+          } catch {
+            resourceType = null;
+          }
+          if (!["xhr", "fetch"].includes(resourceType)) return;
+          if (this.capturedXhr.length >= policy.maxEntries) return;
+          const contentType = String(result.headers?.["content-type"] ?? "");
+          if (policy.contentTypes.length
+            && !policy.contentTypes.some((entry) => contentType.toLowerCase().includes(entry))) {
+            return;
+          }
+          const body = Buffer.isBuffer(result.body) ? result.body : Buffer.from(String(result.body ?? ""));
+          this.capturedXhr.push(Object.freeze({
+            url,
+            status: result.status,
+            contentType,
+            bytes: body.byteLength,
+            truncated: body.byteLength > policy.maxBodyBytes,
+            body: body.subarray(0, policy.maxBodyBytes).toString("utf8")
+          }));
+        },
+
         async handleRoute(route, request) {
           if (this.closing || this.blockedError) {
             await route.abort("blockedbyclient").catch(() => {});
@@ -1861,6 +1981,20 @@ async function createBrowserFetcher(options, hooks) {
           }
           try {
             const method = request.method().toUpperCase();
+            if (options.browser?.requestPolicy && !request.isNavigationRequest()) {
+              let resourceType = null;
+              try {
+                resourceType = request.resourceType();
+              } catch {
+                resourceType = null;
+              }
+              const blocked = shouldBlockRequest(request.url(), resourceType, options.browser.requestPolicy);
+              if (blocked) {
+                this.blockedRequests.push({ url: request.url(), reason: blocked.reason, detail: blocked.detail });
+                await route.abort("blockedbyclient").catch(() => {});
+                return;
+              }
+            }
             if (method !== "GET" && method !== "HEAD") {
               throw createCrawlerSecurityError(`Browser method '${method}' is disabled.`, {
                 url: request.url(),
@@ -1940,6 +2074,7 @@ async function createBrowserFetcher(options, hooks) {
               this.mainResponse = result;
               this.topLevelSiteUrl = result.url;
             }
+            this.captureXhr(url, request, result);
             await route.fulfill({
               status: result.status,
               headers: result.headers,
@@ -2074,7 +2209,9 @@ async function createBrowserFetcher(options, hooks) {
             hooks: hookResults,
             scroll: scrollResult,
             flattened,
-            persistentProfile: Boolean(options.browser.profileDirectory)
+            persistentProfile: Boolean(options.browser.profileDirectory),
+            blockedRequests: Object.freeze([...session.blockedRequests]),
+            capturedXhr: Object.freeze([...session.capturedXhr])
           }
         };
       } catch (error) {
@@ -2476,7 +2613,9 @@ export async function crawlDetailed(input = {}) {
             await sleep(retryDelay(error, attempt, options), operationSignal);
             continue;
           }
-          if (error?.code !== "ROBOTS_DENIED") await recordFailure(item.url, error, "page");
+          if (error?.code !== "ROBOTS_DENIED" || item.depth === 0) {
+            await recordFailure(item.url, error, "page");
+          }
           if (isFatalCrawlError(error)) throw error;
           return null;
         }

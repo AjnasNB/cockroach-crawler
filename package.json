@@ -1,6 +1,6 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "mcpName": "io.github.AjnasNB/cockroach-crawler",
   "description": "Give AI agents superpowers on the web: crawl, render, map, extract, and verify evidence through one governed Node.js crawler.",
   "license": "MIT",
@@ -13,7 +13,8 @@
     "cockroach-reach": "bin/cockroach-reach.js",
     "cockroach-documents": "bin/cockroach-documents.js",
     "cockroach-mcp": "bin/cockroach-mcp.js",
-    "cockroach-server": "bin/cockroach-server.js"
+    "cockroach-server": "bin/cockroach-server.js",
+    "cockroach-shell": "bin/cockroach-shell.js"
   },
   "main": "src/index.js",
   "types": "types/index.d.ts",
@@ -59,6 +60,26 @@
       "import": "./src/serverless.js",
       "default": "./src/serverless.js"
     },
+    "./parser": {
+      "types": "./types/parser.d.ts",
+      "import": "./src/parser.js",
+      "default": "./src/parser.js"
+    },
+    "./adaptive": {
+      "types": "./types/adaptive.d.ts",
+      "import": "./src/adaptive.js",
+      "default": "./src/adaptive.js"
+    },
+    "./identity": {
+      "types": "./types/identity.d.ts",
+      "import": "./src/identity.js",
+      "default": "./src/identity.js"
+    },
+    "./exporters": {
+      "types": "./types/exporters.d.ts",
+      "import": "./src/exporters.js",
+      "default": "./src/exporters.js"
+    },
     "./strategies": {
       "types": "./types/strategies.d.ts",
       "import": "./src/strategies.js",
@@ -103,6 +124,26 @@
       "types": "./types/jobs.d.ts",
       "import": "./src/jobs.js",
       "default": "./src/jobs.js"
+    },
+    "./session": {
+      "types": "./types/session.d.ts",
+      "import": "./src/session.js",
+      "default": "./src/session.js"
+    },
+    "./spider": {
+      "types": "./types/spider.d.ts",
+      "import": "./src/spider.js",
+      "default": "./src/spider.js"
+    },
+    "./blocklist": {
+      "types": "./types/blocklist.d.ts",
+      "import": "./src/blocklist.js",
+      "default": "./src/blocklist.js"
+    },
+    "./shell": {
+      "types": "./types/shell.d.ts",
+      "import": "./src/shell.js",
+      "default": "./src/shell.js"
     }
   },
   "files": [
@@ -116,8 +157,8 @@
     "bench/local-benchmark.mjs",
     "bench/public/",
     "bench/results/ci-validated.json",
-    "bench/results/wceb-test-0.5.2.json",
-    "bench/results/public-conformance-0.5.2.json",
+    "bench/results/wceb-test-0.6.0.json",
+    "bench/results/public-conformance-0.6.0.json",
     "docs/RELEASE.md",
     "docs/DEPENDENCY_LICENSES.md",
     "docs/PROVENANCE.md",
@@ -132,6 +173,9 @@
     "docs/CAPABILITIES.md",
     "docs/FEATURES.md",
     "docs/ADVANCED.md",
+    "docs/QUICKSTART.md",
+    "docs/SELECTORS-AND-IDENTITY.md",
+    "docs/SPIDER.md",
     "Dockerfile",
     "README.md",
     "SECURITY.md",
@@ -143,8 +187,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/advanced.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/external-sources-cli.test.js test/external-sources.test.js test/limits.test.js test/public-benchmark.test.js test/release-kit.test.js test/security.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
-    "test:browser": "node --test browser-test/integration.test.js",
+    "test": "node --test test/adaptive.test.js test/advanced.test.js test/blocklist.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/exporters.test.js test/external-sources-cli.test.js test/external-sources.test.js test/identity-crawl.test.js test/identity.test.js test/limits.test.js test/mcp-tools.test.js test/parser.test.js test/public-benchmark.test.js test/release-kit.test.js test/security.test.js test/session.test.js test/spider.test.js test/shell.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
+    "test:browser": "node --test browser-test/integration.test.js browser-test/xhr-capture.test.js",
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
     "check": "npm test && npm run test:types && npm run bench && npm run audit:licenses",
@@ -158,7 +202,8 @@
     "worker:types": "wrangler types --config worker/wrangler.jsonc worker/env.d.ts",
     "crawl": "node bin/cockroach-crawl.js",
     "mcp": "node bin/cockroach-mcp.js",
-    "serve": "node bin/cockroach-server.js"
+    "serve": "node bin/cockroach-server.js",
+    "shell": "node bin/cockroach-shell.js"
   },
   "keywords": [
     "crawler",
@@ -193,7 +238,21 @@
     "linkedin",
     "ssrf-protection",
     "cloudflare-workers",
-    "serverless"
+    "serverless",
+    "adaptive-selectors",
+    "self-healing-selectors",
+    "css-selectors",
+    "html-parser",
+    "data-export",
+    "cookies",
+    "proxy-rotation",
+    "session",
+    "spider",
+    "crawl-spider",
+    "autothrottle",
+    "ad-blocking",
+    "tracker-blocking",
+    "repl"
   ],
   "dependencies": {
     "@xmldom/xmldom": "^0.9.10",

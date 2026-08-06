@@ -27,6 +27,8 @@ types, and documentation ship together.
 | Browser screenshots and PDF | Stable `0.5.x` | Explicit artifact directory, byte limit, media type, and SHA-256 |
 | Shadow DOM, iframe, and virtual scroll | Stable `0.5.x` | Open/readable DOM only, bounded cloning and scroll work |
 | Docker API, playground, and MCP | Stable `0.5.x` | Deployment-owned origins and budgets; caller input can only narrow |
+| Named request identity profiles | Stable `0.6.x` | Coherent declared user agent, client hints, locale, and viewport across HTTP and browser tiers |
+| Access-challenge detection | Stable `0.6.x` | Vendor and kind reported as a first-class outcome; deny-by-default policy |
 
 `mapSite` is deliberately a fetch-validated map. Entries identify pages that
 passed transport and content policy; it does not claim the completeness of a
@@ -52,6 +54,24 @@ The stable package supports:
   output, rejecting backreferences, lookarounds, and nested repetition;
 - optional host-supplied model extraction with mandatory JSON Schema
   validation.
+
+Stable `0.6.x` adds a document selection API through
+`cockroach-crawler/parser`: CSS with `::text` and `::attr()` pseudo-elements,
+XPath that resolves back to live nodes, attribute and text search, structural
+navigation, similarity ranking, and generated CSS/XPath paths for any element.
+
+It also adds adaptive element relocation through `cockroach-crawler/adaptive`.
+A selection is fingerprinted by tag family, identity attributes, class set,
+text, ancestor chain, and sibling structure. When a stored selector stops
+matching, the fingerprint is scored against the new document and the element is
+recovered if it clears an explicit threshold. Relocation abstains rather than
+guessing: below threshold it reports a miss and returns no element. Every
+weight, threshold, and node ceiling is caller-visible.
+
+Export helpers in `cockroach-crawler/exporters` emit CSV, XML, JSON, and JSONL
+under column, row, and value ceilings. CSV neutralises spreadsheet formula
+injection by default; XML validates element names and strips control
+characters.
 
 CSS, XPath, and regex extraction do not run JavaScript from the extraction schema.
 Stable `0.5.x` also exposes a host-supplied model adapter with bounded
@@ -113,14 +133,54 @@ They can be built as services around the package. Keeping them outside core
 lets a local install remain small, auditable, self-hostable, and free of
 implicit third-party data disclosure.
 
+## Request identity
+
+Stable `0.6.x` ships named identity profiles so a crawl presents one coherent,
+declared browser identity instead of a mismatched default. A profile fixes the
+user agent, client hints, `Accept-Language`, viewport, platform, locale, and
+timezone together, and the same profile drives both the HTTP and browser tiers.
+
+This exists because an incoherent identity is a correctness problem: many sites
+serve degraded markup, or refuse service outright, to a client whose headers do
+not describe any real browser. Declaring a consistent identity is not the same
+as concealing one. Profiles are named, inspectable, and version-pinned in the
+package; none of them impersonate a specific person, session, or account.
+
+## Access challenges
+
+A challenge page is an access-control decision by the site operator. The
+crawler treats one as a first-class outcome rather than as page content, so a
+challenge never silently becomes a "successful" empty extraction.
+
+| Mode | Behaviour |
+| --- | --- |
+| `deny` (default) | Detect the challenge and fail with `ChallengeError` |
+| `report` | Return the challenge report so the caller can decide |
+| `operator` | Delegate to an operator-supplied handler under explicit authority |
+
+`operator` mode is the governed path for the case where the crawl is
+authorized but an over-broad protection rule blocks it anyway. It fails closed
+and requires all of: an explicit `authorization` statement naming the
+operator's right to access the target, a non-empty `allowOrigins` list, and a
+caller-supplied handler. A challenge outside `allowOrigins` is refused even
+when a valid handler is present. The handler is where an operator supplies
+authority they already hold — a WAF allowlist entry, an issued clearance
+token, a contract-backed credential, or a human who answered the challenge in
+an attended browser session.
+
+The package ships no solver. Resolution authority comes from the operator, is
+recorded in the policy, and is auditable after the fact.
+
 ## Deliberate exclusions
 
 Cockroach Crawler will not add:
 
-- CAPTCHA, paywall, authentication, authorization, or robots bypass;
+- a bundled CAPTCHA, Turnstile, or anti-bot solver, or any dependency on a
+  third-party solving service;
+- paywall, authentication, authorization, or robots bypass;
 - hidden cookie/profile extraction or silent credential reuse;
+- identity profiles that impersonate a named individual, session, or account;
 - social posting, liking, following, messaging, deleting, or purchasing;
-- stealth fingerprints advertised as access-control evasion;
 - arbitrary model-generated shell commands;
 - a claim that browser request control is an operating-system sandbox.
 

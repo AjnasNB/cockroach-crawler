@@ -1,0 +1,138 @@
+name: Publish npm on version change
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish-cockroach-crawler
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    name: Detect a version bump
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      changed: ${{ steps.compare.outputs.changed }}
+      version: ${{ steps.compare.outputs.version }}
+      dist_tag: ${{ steps.compare.outputs.dist_tag }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 2
+
+      - name: Compare package version against the previous commit
+        id: compare
+        shell: bash
+        run: |
+          set -euo pipefail
+          current="$(node -p 'require("./package.json").version')"
+          previous="$(git show HEAD~1:package.json 2>/dev/null | node -p 'JSON.parse(require("node:fs").readFileSync(0,"utf8")).version' || echo "")"
+          echo "current=${current} previous=${previous}"
+          [[ "${current}" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]] || { echo "Invalid version." >&2; exit 1; }
+          if [[ "${current}" == "${previous}" ]]; then
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "Version unchanged; nothing to publish."
+            exit 0
+          fi
+          if npm view "cockroach-crawler@${current}" version >/dev/null 2>&1; then
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "cockroach-crawler@${current} is already published; refusing to republish."
+            exit 0
+          fi
+          if [[ "${current}" == *-* ]]; then tag=next; else tag=latest; fi
+          echo "changed=true" >> "${GITHUB_OUTPUT}"
+          echo "version=${current}" >> "${GITHUB_OUTPUT}"
+          echo "dist_tag=${tag}" >> "${GITHUB_OUTPUT}"
+
+  verify:
+    name: Run the release gate
+    needs: detect
+    if: needs.detect.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    outputs:
+      sha256: ${{ steps.pack.outputs.sha256 }}
+      size_bytes: ${{ steps.pack.outputs.size_bytes }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-node@v6.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Release gate
+        run: npm run release:check
+
+      - name: Verify published benchmark evidence
+        run: npm run bench:public:verify
+
+      - name: Pack and record the artifact
+        id: pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          tarball="$(npm pack --ignore-scripts --silent)"
+          sha256="$(sha256sum "${tarball}" | cut -d' ' -f1)"
+          size="$(stat -c%s "${tarball}")"
+          echo "sha256=${sha256}" >> "${GITHUB_OUTPUT}"
+          echo "size_bytes=${size}" >> "${GITHUB_OUTPUT}"
+          echo "Packed ${tarball} (${size} bytes, sha256 ${sha256})"
+
+  publish:
+    name: Publish to npm
+    needs: [detect, verify]
+    if: needs.detect.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: npm-publish
+      url: https://www.npmjs.com/package/cockroach-crawler/v/${{ needs.detect.outputs.version }}
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      VERSION: ${{ needs.detect.outputs.version }}
+      DIST_TAG: ${{ needs.detect.outputs.dist_tag }}
+      EXPECTED_SHA256: ${{ needs.verify.outputs.sha256 }}
+      EXPECTED_SIZE_BYTES: ${{ needs.verify.outputs.size_bytes }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-node@v6.0.0
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install
+        run: npm ci
+
+      - name: Repack and confirm the artifact matches the verified one
+        id: repack
+        shell: bash
+        run: |
+          set -euo pipefail
+          tarball="$(npm pack --ignore-scripts --silent)"
+          sha256="$(sha256sum "${tarball}" | cut -d' ' -f1)"
+          size="$(stat -c%s "${tarball}")"
+          [[ "${sha256}" == "${EXPECTED_SHA256}" ]] || { echo "Tarball digest changed since verification." >&2; exit 1; }
+          [[ "${size}" == "${EXPECTED_SIZE_BYTES}" ]] || { echo "Tarball size changed since verification." >&2; exit 1; }
+          [[ "$(node -p 'require("./package.json").version')" == "${VERSION}" ]] || { echo "Version drift." >&2; exit 1; }
+          echo "tarball=${tarball}" >> "${GITHUB_OUTPUT}"
+
+      - name: Publish
+        run: npm publish "${{ steps.repack.outputs.tarball }}" --access public --ignore-scripts --provenance --tag "${DIST_TAG}"

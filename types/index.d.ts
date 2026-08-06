@@ -1,3 +1,6 @@
+import type { RequestPolicyInput } from "./blocklist.js";
+import type { ChallengePolicyInput, IdentityOverrides, IdentityProfileName } from "./identity.js";
+
 export type UrlPattern = string | RegExp;
 
 export interface DnsLookupAddress {
@@ -11,6 +14,9 @@ export type DnsLookup = (
 ) => DnsLookupAddress | DnsLookupAddress[] | Promise<DnsLookupAddress | DnsLookupAddress[]>;
 
 export interface BrowserOptions {
+  requestPolicy?: RequestPolicyInput | false;
+  cdpUrl?: string;
+  captureXhr?: boolean | { maxEntries?: number; maxBodyBytes?: number; contentTypes?: string[] };
   headless?: boolean;
   headed?: boolean;
   channel?: string;
@@ -87,6 +93,8 @@ export interface CrawlPage {
       warnings: string[];
     } | null;
     persistentProfile: boolean;
+    blockedRequests: ReadonlyArray<{ url: string; reason: string; detail: string }>;
+    capturedXhr: ReadonlyArray<{ url: string; status: number; contentType: string; bytes: number; truncated: boolean; body: string }>;
   };
 }
 
@@ -166,6 +174,8 @@ export interface CrawlOptions {
   obeyRobots?: boolean;
   allowPrivateNetworks?: boolean;
   userAgent?: string;
+  identity?: IdentityProfileName | (IdentityOverrides & { profile?: IdentityProfileName });
+  challengePolicy?: ChallengePolicyInput | false | null;
   delayMs?: number;
   timeoutMs?: number;
   maxDurationMs?: number;

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { after, before, test } from "node:test";
 import {
+  crawlDetailed,
   crawl,
   discoverSitemapUrls,
   extractPage,
@@ -323,5 +324,35 @@ test("agent adapter accepts creator-owned extraction without exposing schema aut
       extract: { fields: { secret: "script" } }
     }),
     /Unknown agent tool field/
+  );
+});
+
+test("a seed disallowed by robots is reported rather than silently dropped", async () => {
+  const result = await crawlDetailed({
+    seeds: [`${baseUrl}/private`],
+    maxPages: 1,
+    maxDepth: 0,
+    skipSensitivePaths: false,
+    allowPrivateNetworks: true
+  });
+  assert.equal(result.pages.length, 0);
+  assert.equal(result.failures.length, 1);
+  assert.equal(result.failures[0].code, "ROBOTS_DENIED");
+  assert.equal(result.stats.skippedRobots, 1);
+});
+
+test("discovered links disallowed by robots stay out of failures", async () => {
+  const result = await crawlDetailed({
+    seeds: [`${baseUrl}/`],
+    maxPages: 5,
+    maxDepth: 1,
+    skipSensitivePaths: false,
+    allowPrivateNetworks: true
+  });
+  assert.ok(result.stats.skippedRobots >= 1, "the /private link should be skipped");
+  assert.equal(
+    result.failures.some((failure) => failure.code === "ROBOTS_DENIED"),
+    false,
+    "a discovered robots skip must not become a failure"
   );
 });

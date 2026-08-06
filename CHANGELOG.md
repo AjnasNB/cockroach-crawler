@@ -1,5 +1,49 @@
 # Changelog
 
+## 0.6.0 - 2026-08-06
+
+### Added
+
+- Document selection API at `cockroach-crawler/parser`: CSS with `::text` and
+  `::attr()` pseudo-elements, XPath that resolves back to live traversable
+  nodes, attribute and text search, structural navigation, similarity ranking,
+  and generated CSS/XPath paths.
+- Adaptive element relocation at `cockroach-crawler/adaptive`. Elements are
+  fingerprinted by tag family, identity attributes, class set, text, ancestor
+  chain, and sibling structure, then recovered after a redesign when the score
+  clears an explicit threshold. Relocation abstains below threshold instead of
+  returning a best guess.
+- Named request identity profiles at `cockroach-crawler/identity` covering
+  Chrome, Edge, Firefox, and Safari on desktop and mobile. A profile keeps user
+  agent, client hints, `Accept-Language`, viewport, platform, locale, and
+  timezone coherent across the HTTP and browser tiers.
+- Access-challenge detection and a deny-by-default challenge policy. A challenge
+  is reported as a first-class outcome rather than treated as page content.
+  `operator` mode delegates resolution to an operator-supplied handler and
+  requires an explicit authorization statement plus an origin allowlist. No
+  solver is bundled and no solving service is used.
+- Record exporters at `cockroach-crawler/exporters` for CSV, XML, JSON, and
+  JSONL under column, row, and value ceilings. CSV neutralises spreadsheet
+  formula injection by default.
+
+- Cookie-persisting sessions, an RFC 6265-style cookie jar, and proxy rotation
+  at `cockroach-crawler/session`. The jar enforces Secure, host-only, Domain,
+  Path, and expiry rules and serialises to JSON. `ProxyRotator` supports cycle,
+  random, and sticky strategies with failure cooldowns.
+- A copy-paste quickstart covering the CLI, the library, and MCP host
+  configuration for Claude Code, Claude Desktop, Cursor, Windsurf, and Codex.
+- Automatic npm publication when the package version changes on main, gated by
+  the full release gate and an artifact digest check across jobs.
+
+### Changed
+
+- The capability contract now describes request identity and governed challenge
+  handling. Bundled solvers, solving services, and identity profiles that
+  impersonate a named individual, session, or account remain excluded.
+- Public benchmark evidence regenerated for 0.6.0. Extraction and conformance
+  results are byte-identical to 0.5.2 apart from the version fingerprint.
+- Resolved high-severity advisories in `undici` and `fast-uri`.
+
 ## 0.5.2 - 2026-07-24
 
 - Standardize public package, documentation, website, and launch copy on plain hyphens.
