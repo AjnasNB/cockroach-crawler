@@ -1,0 +1,73 @@
+name: Deploy website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - website/**
+      - bench/results/**
+      - .github/workflows/deploy-site.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-cockroach-crawler-site
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build, verify, and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: website
+      url: https://cockroachcrawler.com
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-node@v6.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build
+        run: npm --prefix website run build
+
+      - name: Verify structure, routes, and assets
+        run: npm --prefix website run check
+
+      - name: Verify rendered pages in a browser
+        run: npm --prefix website run check:browser
+
+      - name: Confirm the site does not advertise an unpublished version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(node -p 'require("./package.json").version')"
+          if ! grep -rq "cockroach-crawler@${version}" website/dist; then
+            echo "Site does not reference ${version}; nothing to cross-check."
+            exit 0
+          fi
+          if npm view "cockroach-crawler@${version}" version >/dev/null 2>&1; then
+            echo "cockroach-crawler@${version} is published; site copy is safe to ship."
+          else
+            echo "Site advertises ${version} but npm does not have it yet." >&2
+            echo "Let the publish workflow finish, then re-run this deploy." >&2
+            exit 1
+          fi
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: website
+          command: deploy
