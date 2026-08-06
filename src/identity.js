@@ -152,6 +152,132 @@ const PROFILES = Object.freeze({
   })
 });
 
+const CHROME_SIGALGS = [
+  "ecdsa_secp256r1_sha256",
+  "rsa_pss_rsae_sha256",
+  "rsa_pkcs1_sha256",
+  "ecdsa_secp384r1_sha384",
+  "rsa_pss_rsae_sha384",
+  "rsa_pkcs1_sha384",
+  "rsa_pss_rsae_sha512",
+  "rsa_pkcs1_sha512"
+].join(":");
+
+const FIREFOX_SIGALGS = [
+  "ecdsa_secp256r1_sha256",
+  "ecdsa_secp384r1_sha384",
+  "ecdsa_secp521r1_sha512",
+  "rsa_pss_rsae_sha256",
+  "rsa_pss_rsae_sha384",
+  "rsa_pss_rsae_sha512",
+  "rsa_pkcs1_sha256",
+  "rsa_pkcs1_sha384",
+  "rsa_pkcs1_sha512"
+].join(":");
+
+const TLS_PROFILES = Object.freeze({
+  "chrome-141": Object.freeze({
+    ciphers: [
+      "ECDHE-ECDSA-AES128-GCM-SHA256",
+      "ECDHE-RSA-AES128-GCM-SHA256",
+      "ECDHE-ECDSA-AES256-GCM-SHA384",
+      "ECDHE-RSA-AES256-GCM-SHA384",
+      "ECDHE-ECDSA-CHACHA20-POLY1305",
+      "ECDHE-RSA-CHACHA20-POLY1305",
+      "ECDHE-RSA-AES128-SHA",
+      "ECDHE-RSA-AES256-SHA",
+      "AES128-GCM-SHA256",
+      "AES256-GCM-SHA384",
+      "AES128-SHA",
+      "AES256-SHA"
+    ].join(":"),
+    ecdhCurve: "X25519:prime256v1:secp384r1",
+    sigalgs: CHROME_SIGALGS,
+    minVersion: "TLSv1.2",
+    maxVersion: "TLSv1.3",
+    alpn: Object.freeze(["h2", "http/1.1"])
+  }),
+  "edge-141": Object.freeze({
+    ciphers: [
+      "ECDHE-ECDSA-AES128-GCM-SHA256",
+      "ECDHE-RSA-AES128-GCM-SHA256",
+      "ECDHE-ECDSA-AES256-GCM-SHA384",
+      "ECDHE-RSA-AES256-GCM-SHA384",
+      "ECDHE-ECDSA-CHACHA20-POLY1305",
+      "ECDHE-RSA-CHACHA20-POLY1305",
+      "ECDHE-RSA-AES128-SHA",
+      "ECDHE-RSA-AES256-SHA",
+      "AES128-GCM-SHA256",
+      "AES256-GCM-SHA384",
+      "AES128-SHA",
+      "AES256-SHA"
+    ].join(":"),
+    ecdhCurve: "X25519:prime256v1:secp384r1",
+    sigalgs: CHROME_SIGALGS,
+    minVersion: "TLSv1.2",
+    maxVersion: "TLSv1.3",
+    alpn: Object.freeze(["h2", "http/1.1"])
+  }),
+  "firefox-146": Object.freeze({
+    ciphers: [
+      "ECDHE-ECDSA-AES128-GCM-SHA256",
+      "ECDHE-RSA-AES128-GCM-SHA256",
+      "ECDHE-ECDSA-CHACHA20-POLY1305",
+      "ECDHE-RSA-CHACHA20-POLY1305",
+      "ECDHE-ECDSA-AES256-GCM-SHA384",
+      "ECDHE-RSA-AES256-GCM-SHA384",
+      "ECDHE-ECDSA-AES256-SHA",
+      "ECDHE-ECDSA-AES128-SHA",
+      "ECDHE-RSA-AES128-SHA",
+      "ECDHE-RSA-AES256-SHA",
+      "AES128-GCM-SHA256",
+      "AES256-GCM-SHA384",
+      "AES128-SHA",
+      "AES256-SHA"
+    ].join(":"),
+    ecdhCurve: "X25519:prime256v1:secp384r1:secp521r1",
+    sigalgs: FIREFOX_SIGALGS,
+    minVersion: "TLSv1.2",
+    maxVersion: "TLSv1.3",
+    alpn: Object.freeze(["h2", "http/1.1"])
+  }),
+  "safari-18": Object.freeze({
+    ciphers: [
+      "ECDHE-ECDSA-AES256-GCM-SHA384",
+      "ECDHE-ECDSA-AES128-GCM-SHA256",
+      "ECDHE-ECDSA-CHACHA20-POLY1305",
+      "ECDHE-RSA-AES256-GCM-SHA384",
+      "ECDHE-RSA-AES128-GCM-SHA256",
+      "ECDHE-RSA-CHACHA20-POLY1305",
+      "ECDHE-ECDSA-AES256-SHA384",
+      "ECDHE-ECDSA-AES128-SHA256",
+      "ECDHE-RSA-AES256-SHA384",
+      "ECDHE-RSA-AES128-SHA256"
+    ].join(":"),
+    ecdhCurve: "X25519:prime256v1:secp384r1:secp521r1",
+    sigalgs: CHROME_SIGALGS,
+    minVersion: "TLSv1.2",
+    maxVersion: "TLSv1.3",
+    alpn: Object.freeze(["h2", "http/1.1"])
+  })
+});
+
+export const tlsProfileNames = Object.freeze(Object.keys(TLS_PROFILES));
+
+export function identityTlsOptions(identity) {
+  const profile = identity?.schema === IDENTITY_SCHEMA ? identity : resolveIdentity(identity);
+  const tls = TLS_PROFILES[profile.tlsProfile];
+  if (!tls) return null;
+  return Object.freeze({
+    ciphers: tls.ciphers,
+    ecdhCurve: tls.ecdhCurve,
+    sigalgs: tls.sigalgs,
+    minVersion: tls.minVersion,
+    maxVersion: tls.maxVersion,
+    ALPNProtocols: [...tls.alpn]
+  });
+}
+
 export const identityProfileNames = Object.freeze(Object.keys(PROFILES));
 
 export function resolveIdentity(value = "chrome-windows", overrides = {}) {

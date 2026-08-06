@@ -23,6 +23,7 @@ import {
   applyChallengePolicy,
   detectChallenge,
   identityHeaders,
+  identityTlsOptions,
   normalizeChallengePolicy,
   resolveIdentity
 } from "./identity.js";
@@ -768,6 +769,7 @@ function normalizeOptions(input, seedCount) {
     allowPrivateNetworks: input.allowPrivateNetworks === true,
     userAgent,
     identity,
+    tlsOptions: identity ? identityTlsOptions(identity) : null,
     challengePolicy,
     delayMs: integerOption(input.delayMs, "delayMs", 250, 0, 60_000),
     timeoutMs,
@@ -856,6 +858,7 @@ async function fetchText(startUrl, options) {
       }, {
         allowPrivateNetworks: options.allowPrivateNetworks,
         lookup: options.dnsLookup || undefined,
+        tls: options.tlsOptions || undefined,
         signal
       }, async (response, target) => {
         if (REDIRECT_STATUSES.has(response.status)) {

@@ -95,12 +95,29 @@ This solves a correctness problem: a client whose headers describe no real
 browser gets degraded markup or a flat refusal from many sites. Profiles are
 named and inspectable, and none impersonates a specific person or account.
 
-What a profile does **not** change is the TLS handshake. The `tlsProfile` field
-is a descriptive label for the browser build being described; the transport
-still presents Node's own TLS fingerprint. A site that classifies clients by
-JA3 or a similar handshake fingerprint will still see a Node client, and no
-combination of headers changes that. If that is the barrier you are hitting,
-headers are not the fix.
+### The TLS handshake
+
+A profile also sets the transport's TLS parameters, because a Chrome user agent
+arriving over a Node-default handshake is the same incoherence as a Chrome user
+agent with no client hints — just one layer down.
+
+`identityTlsOptions()` returns the cipher list, curve list, signature
+algorithms, version range, and ALPN protocols for the profile's browser, and
+`crawl()` applies them automatically when you declare an `identity`. Chromium,
+Firefox, and WebKit each get their own ordering, so the ClientHello differs
+between them the way it does between the real browsers.
+
+Be precise about what this achieves. A JA3 fingerprint is computed from the
+ClientHello: TLS version, cipher list, extension list, elliptic curves, and
+curve formats. Profiles control the cipher list, curves, signature algorithms,
+version range, and ALPN — most of those inputs. They do **not** control
+extension ordering or GREASE values, which Node does not expose. So the
+handshake moves substantially toward the browser it names and away from a
+Node default, but it is not byte-identical to real Chrome, and a service
+matching exact JA3 hashes will still tell the difference.
+
+If you need an exact match, that requires a TLS stack Node does not have, and
+no header or cipher configuration substitutes for it.
 
 ## Access challenges
 

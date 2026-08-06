@@ -31,10 +31,10 @@ export interface IdentityProfile {
   locale: string;
   timezone: string;
   /**
-   * Descriptive label for the browser build this profile describes. It is
-   * metadata only. Cockroach Crawler does not spoof the TLS handshake, so the
-   * transport still presents Node's own TLS fingerprint regardless of this
-   * value.
+   * Name of the TLS profile applied to the transport. Controls the cipher
+   * list, curves, signature algorithms, version range, and ALPN, but not
+   * extension ordering or GREASE, so the handshake is browser-shaped rather
+   * than byte-identical to the named browser.
    */
   tlsProfile: string;
 }
@@ -136,6 +136,21 @@ export declare class ChallengeError extends Error {
   readonly code: "CHALLENGE_ENCOUNTERED";
   readonly report: ChallengeReport;
 }
+
+export interface IdentityTlsOptions {
+  ciphers: string;
+  ecdhCurve: string;
+  sigalgs: string;
+  minVersion: string;
+  maxVersion: string;
+  ALPNProtocols: string[];
+}
+
+export const tlsProfileNames: readonly string[];
+
+export function identityTlsOptions(
+  identity: IdentityProfile | IdentityProfileName
+): IdentityTlsOptions | null;
 
 export const identityProfileNames: readonly IdentityProfileName[];
 

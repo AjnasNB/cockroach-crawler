@@ -590,3 +590,41 @@ test("DNS resolution honors AbortSignal without waiting for a stalled resolver",
     (error) => error.code === "CRAWLER_URL_BLOCKED" && error.cause?.message === "stop now"
   );
 });
+
+test("URL security options accept a bounded TLS profile", async () => {
+  const target = await resolveUrlTarget("https://example.com/", {
+    tls: {
+      ciphers: "ECDHE-RSA-AES128-GCM-SHA256",
+      ecdhCurve: "X25519:prime256v1",
+      sigalgs: "rsa_pss_rsae_sha256",
+      minVersion: "TLSv1.2",
+      maxVersion: "TLSv1.3",
+      ALPNProtocols: ["h2", "http/1.1"]
+    }
+  });
+  assert.equal(target.url.protocol, "https:");
+});
+
+test("URL security options reject unknown or malformed TLS fields", async () => {
+  await assert.rejects(
+    () => resolveUrlTarget("https://example.com/", { tls: { rejectUnauthorized: false } }),
+    /Unknown TLS connect option 'rejectUnauthorized'/
+  );
+  await assert.rejects(
+    () => resolveUrlTarget("https://example.com/", { tls: { ciphers: 42 } }),
+    /tls.ciphers must be a string/
+  );
+  await assert.rejects(
+    () => resolveUrlTarget("https://example.com/", { tls: { ALPNProtocols: "h2" } }),
+    /ALPNProtocols must be an array/
+  );
+  await assert.rejects(
+    () => resolveUrlTarget("https://example.com/", { tls: [] }),
+    /'tls' must be an object/
+  );
+});
+
+test("an absent TLS profile is accepted", async () => {
+  const target = await resolveUrlTarget("https://example.com/", { tls: undefined });
+  assert.equal(target.hostname, "example.com");
+});

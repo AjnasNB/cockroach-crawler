@@ -25,8 +25,44 @@ const PLATFORM_ADDRESSES = new Set([
 const URL_SECURITY_OPTION_KEYS = new Set([
   "allowPrivateNetworks",
   "lookup",
-  "signal"
+  "signal",
+  "tls"
 ]);
+
+const TLS_CONNECT_OPTION_KEYS = new Set([
+  "ciphers",
+  "ecdhCurve",
+  "sigalgs",
+  "minVersion",
+  "maxVersion",
+  "ALPNProtocols"
+]);
+
+function assertTlsOptions(value) {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== "object" || Array.isArray(value)) {
+    throw new TypeError("URL security option 'tls' must be an object.");
+  }
+  const snapshot = Object.create(null);
+  for (const key of Reflect.ownKeys(value)) {
+    if (typeof key !== "string" || !TLS_CONNECT_OPTION_KEYS.has(key)) {
+      throw new TypeError(`Unknown TLS connect option '${String(key)}'.`);
+    }
+    const entry = value[key];
+    if (key === "ALPNProtocols") {
+      if (!Array.isArray(entry) || !entry.every((item) => typeof item === "string" && item.length && item.length <= 32)) {
+        throw new TypeError("tls.ALPNProtocols must be an array of short strings.");
+      }
+      snapshot[key] = [...entry];
+      continue;
+    }
+    if (typeof entry !== "string" || !entry.length || entry.length > 4_096) {
+      throw new TypeError(`tls.${key} must be a string of 1-4096 characters.`);
+    }
+    snapshot[key] = entry;
+  }
+  return snapshot;
+}
 
 function snapshotUrlSecurityOptions(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -56,6 +92,8 @@ function snapshotUrlSecurityOptions(value) {
     }
     snapshot[key] = descriptor.value;
   }
+
+  snapshot.tls = assertTlsOptions(snapshot.tls);
 
   if (snapshot.allowPrivateNetworks !== undefined && typeof snapshot.allowPrivateNetworks !== "boolean") {
     throw new TypeError("URL security option 'allowPrivateNetworks' must be a boolean.");
@@ -216,9 +254,10 @@ export async function resolveUrlTarget(value, options = {}) {
   };
 }
 
-function createPinnedDispatcher(target) {
+function createPinnedDispatcher(target, tlsOptions) {
   return new Agent({
     connect: {
+      ...(tlsOptions ?? {}),
       lookup(hostname, options, callback) {
         if (normalizeHostname(hostname) !== target.hostname) {
           callback(createCrawlerSecurityError("Crawler connection attempted an unvalidated hostname.", {
@@ -239,7 +278,7 @@ function createPinnedDispatcher(target) {
 
 export async function withPinnedFetch(value, requestOptions, securityOptions, consume) {
   const target = await resolveUrlTarget(value, securityOptions);
-  const dispatcher = createPinnedDispatcher(target);
+  const dispatcher = createPinnedDispatcher(target, securityOptions?.tls);
   let response = null;
   try {
     response = await undiciFetch(target.url, {

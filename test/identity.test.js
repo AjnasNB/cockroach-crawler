@@ -9,6 +9,8 @@ import {
   identityDefaults,
   identityHeaders,
   identityProfileNames,
+  identityTlsOptions,
+  tlsProfileNames,
   normalizeChallengePolicy,
   resolveIdentity
 } from "../src/identity.js";
@@ -227,4 +229,33 @@ test("an unchallenged report short-circuits every policy", async () => {
   const outcome = await applyChallengePolicy(report, normalizeChallengePolicy(), {});
   assert.equal(outcome.resolved, true);
   assert.equal(outcome.action, "none");
+});
+
+test("every browser profile maps to a TLS profile", () => {
+  for (const name of identityProfileNames) {
+    const options = identityTlsOptions(resolveIdentity(name));
+    assert.ok(options, `${name} must have TLS options`);
+    assert.ok(options.ciphers.split(":").length >= 8, `${name} cipher list`);
+    assert.match(options.ecdhCurve, /X25519/u);
+    assert.deepEqual(options.ALPNProtocols, ["h2", "http/1.1"]);
+    assert.equal(options.minVersion, "TLSv1.2");
+    assert.equal(options.maxVersion, "TLSv1.3");
+  }
+});
+
+test("engines present distinguishable TLS client hellos", () => {
+  const chrome = identityTlsOptions(resolveIdentity("chrome-windows"));
+  const firefox = identityTlsOptions(resolveIdentity("firefox-windows"));
+  const safari = identityTlsOptions(resolveIdentity("safari-macos"));
+
+  assert.notEqual(chrome.ciphers, firefox.ciphers, "chrome and firefox must differ");
+  assert.notEqual(chrome.ciphers, safari.ciphers, "chrome and safari must differ");
+  assert.notEqual(chrome.ecdhCurve, firefox.ecdhCurve, "curve lists must differ");
+  assert.equal(identityTlsOptions(resolveIdentity("edge-windows")).ciphers, chrome.ciphers);
+});
+
+test("tls profile names are published", () => {
+  assert.ok(tlsProfileNames.includes("chrome-141"));
+  assert.ok(tlsProfileNames.includes("firefox-146"));
+  assert.ok(tlsProfileNames.includes("safari-18"));
 });

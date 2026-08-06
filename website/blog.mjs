@@ -103,7 +103,7 @@ await crawl({
 
       <h2>Where this stops helping</h2>
       <p>A coherent identity fixes the case where a site is refusing you because your client looks broken. It does not fix a site that has decided it does not want automated traffic and is enforcing that with challenges. Those are different problems, and conflating them is how people end up on an escalation ladder they should have stepped off at the first rung.</p>
-      <p>Cockroach Crawler ships no fingerprint randomiser, no TLS spoofing library, and no solver. Profiles are named, version-pinned, and inspectable in the package, and none of them impersonates a specific person, session, or account. If a site is challenging you, the honest next step is <a href="/blog/challenges-are-not-content/">treating that as a signal</a>, not a puzzle.</p>
+      <p>A profile also sets the transport's cipher list, curves, signature algorithms, and ALPN to match the browser it names, because a Chrome user agent over a Node-default handshake is the same incoherence one layer down. It controls most of what a JA3 fingerprint hashes, but not extension ordering or GREASE, so the handshake is browser-shaped rather than byte-identical. Cockroach Crawler ships no fingerprint randomiser and no solver. Profiles are named, version-pinned, and inspectable in the package, and none of them impersonates a specific person, session, or account. If a site is challenging you, the honest next step is <a href="/blog/challenges-are-not-content/">treating that as a signal</a>, not a puzzle.</p>
 
       <h2>Try it</h2>
       ${codeBlock("identity-install", "install", "npm install cockroach-crawler", "shell")}
