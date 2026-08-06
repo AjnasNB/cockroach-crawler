@@ -2527,7 +2527,9 @@ export async function crawlDetailed(input = {}) {
             await sleep(retryDelay(error, attempt, options), operationSignal);
             continue;
           }
-          if (error?.code !== "ROBOTS_DENIED") await recordFailure(item.url, error, "page");
+          if (error?.code !== "ROBOTS_DENIED" || item.depth === 0) {
+            await recordFailure(item.url, error, "page");
+          }
           if (isFatalCrawlError(error)) throw error;
           return null;
         }

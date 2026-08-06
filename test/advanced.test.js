@@ -356,7 +356,7 @@ test("native MCP stdio transport exposes bounded tools and capability evidence",
     const tools = await client.listTools();
     assert.deepEqual(
       tools.tools.map(({ name }) => name).sort(),
-      ["crawl", "extract_structured", "map_site"]
+      ["crawl", "crawl_spider", "export_records", "extract_structured", "find_similar", "map_site", "relocate_element", "select"]
     );
     const extraction = await client.callTool({
       name: "extract_structured",

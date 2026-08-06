@@ -83,6 +83,19 @@ Config file locations:
 | Windsurf | `~/.codeium/windsurf/mcp_config.json` |
 | Codex | `~/.codex/config.toml` |
 
+The server exposes eight read-only tools:
+
+| Tool | Does |
+| --- | --- |
+| `crawl` | Bounded evidence crawl of allowed origins |
+| `crawl_spider` | Rule-driven crawl following only allow/deny matches |
+| `map_site` | Fetch-validated site map, optionally ranked |
+| `select` | CSS, XPath, or text query over supplied HTML |
+| `find_similar` | Repeated records from one example element |
+| `relocate_element` | Recover an element after a redesign |
+| `extract_structured` | Deterministic CSS field extraction |
+| `export_records` | Serialize records to CSV, XML, JSON, or JSONL |
+
 Restart the host after editing. Then ask it to crawl something inside your
 allowed origins.
 

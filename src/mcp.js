@@ -1,6 +1,10 @@
 import process from "node:process";
 import * as z from "zod/v4";
 import { crawlDetailed, extractStructured, mapSite } from "./index.js";
+import { findSimilarElements, relocateElement } from "./adaptive.js";
+import { exportFormats, exportRecords } from "./exporters.js";
+import { Selector } from "./parser.js";
+import { CrawlSpider } from "./spider.js";
 import { PACKAGE_VERSION } from "./version.js";
 
 const LATEST_PROTOCOL_VERSION = "2025-11-25";
@@ -128,6 +132,68 @@ function createToolDefinitions(crawlDefaults, extractDefaults) {
     additionalProperties: false,
     $schema: "http://json-schema.org/draft-07/schema#"
   };
+  const selectInputSchema = {
+    type: "object",
+    properties: {
+      html: { type: "string", maxLength: maxInputCharacters },
+      url: { type: "string", format: "uri" },
+      css: { type: "string", minLength: 1, maxLength: 4096 },
+      xpath: { type: "string", minLength: 1, maxLength: 4096 },
+      text: { type: "string", minLength: 1, maxLength: 2048 },
+      tag: { type: "string", minLength: 1, maxLength: 64 },
+      limit: { type: "integer", minimum: 1, maximum: 1000 }
+    },
+    required: ["html"],
+    additionalProperties: false,
+    $schema: "http://json-schema.org/draft-07/schema#"
+  };
+  const findSimilarInputSchema = {
+    type: "object",
+    properties: {
+      html: { type: "string", maxLength: maxInputCharacters },
+      selector: { type: "string", minLength: 1, maxLength: 4096 },
+      threshold: { type: "number", minimum: 0, maximum: 1 },
+      limit: { type: "integer", minimum: 1, maximum: 1000 }
+    },
+    required: ["html", "selector"],
+    additionalProperties: false,
+    $schema: "http://json-schema.org/draft-07/schema#"
+  };
+  const relocateInputSchema = {
+    type: "object",
+    properties: {
+      originalHtml: { type: "string", maxLength: maxInputCharacters },
+      updatedHtml: { type: "string", maxLength: maxInputCharacters },
+      selector: { type: "string", minLength: 1, maxLength: 4096 },
+      threshold: { type: "number", minimum: 0, maximum: 1 }
+    },
+    required: ["originalHtml", "updatedHtml", "selector"],
+    additionalProperties: false,
+    $schema: "http://json-schema.org/draft-07/schema#"
+  };
+  const spiderInputSchema = structuredClone(crawlInputSchema);
+  spiderInputSchema.properties.allow = {
+    type: "array",
+    items: { type: "string", minLength: 1, maxLength: 2048 },
+    maxItems: 32
+  };
+  spiderInputSchema.properties.deny = {
+    type: "array",
+    items: { type: "string", minLength: 1, maxLength: 2048 },
+    maxItems: 32
+  };
+  const exportInputSchema = {
+    type: "object",
+    properties: {
+      records: { type: "array", items: { type: "object" }, minItems: 1, maxItems: 10000 },
+      format: { type: "string", enum: [...exportFormats] },
+      columns: { type: "array", items: { type: "string", minLength: 1 }, minItems: 1, maxItems: 256 }
+    },
+    required: ["records", "format"],
+    additionalProperties: false,
+    $schema: "http://json-schema.org/draft-07/schema#"
+  };
+
   return new Map([
     ["crawl", {
       definition: {
@@ -165,6 +231,136 @@ function createToolDefinitions(crawlDefaults, extractDefaults) {
           maxResults: Math.min(request.maxResults ?? crawlOptions.maxPages, crawlOptions.maxPages)
         }));
       }
+    }],
+    ["select", {
+      definition: {
+        name: "select",
+        title: "Query supplied markup",
+        description: "Run CSS (with ::text and ::attr()), XPath, or text queries against caller-supplied HTML without executing page scripts.",
+        inputSchema: selectInputSchema,
+        annotations: { ...annotations, openWorldHint: false },
+        execution: { taskSupport: "forbidden" }
+      },
+      schema: z.object({
+        html: z.string().max(maxInputCharacters),
+        url: z.url().optional(),
+        css: z.string().min(1).max(4_096).optional(),
+        xpath: z.string().min(1).max(4_096).optional(),
+        text: z.string().min(1).max(2_048).optional(),
+        tag: z.string().min(1).max(64).optional(),
+        limit: z.number().int().min(1).max(1_000).optional()
+      }).strict(),
+      run: async ({ html, url, css, xpath, text, tag, limit }) => {
+        if (!css && !xpath && !text) throw new TypeError("Supply one of css, xpath, or text.");
+        const page = Selector.parse(html, url ? { url } : {});
+        const cap = limit ?? 100;
+        let matches;
+        if (css) matches = page.css(css, { limit: cap });
+        else if (xpath) matches = page.xpath(xpath, { limit: cap });
+        else matches = page.findByText(text, { ...(tag ? { tag } : {}), limit: cap });
+        return toolResult({
+          matched: matches.length,
+          items: matches.slice(0, cap).map((entry) => entry.toJSON())
+        });
+      }
+    }],
+    ["find_similar", {
+      definition: {
+        name: "find_similar",
+        title: "Find repeated records",
+        description: "Given one example element, return structurally similar elements from the same document, such as the remaining product cards or table rows.",
+        inputSchema: findSimilarInputSchema,
+        annotations: { ...annotations, openWorldHint: false },
+        execution: { taskSupport: "forbidden" }
+      },
+      schema: z.object({
+        html: z.string().max(maxInputCharacters),
+        selector: z.string().min(1).max(4_096),
+        threshold: z.number().min(0).max(1).optional(),
+        limit: z.number().int().min(1).max(1_000).optional()
+      }).strict(),
+      run: async ({ html, selector, threshold, limit }) => {
+        const example = Selector.parse(html, {}).css(selector).first;
+        if (!example) throw new TypeError("selector matched no element.");
+        const matches = findSimilarElements(html, example.fingerprint(), {
+          ...(threshold === undefined ? {} : { threshold }),
+          limit: limit ?? 100
+        });
+        return toolResult({ matched: matches.length, items: matches });
+      }
+    }],
+    ["relocate_element", {
+      definition: {
+        name: "relocate_element",
+        title: "Recover an element after a redesign",
+        description: "Locate an element in updated markup using a fingerprint taken from the original markup. Reports a miss rather than guessing below the confidence threshold.",
+        inputSchema: relocateInputSchema,
+        annotations: { ...annotations, openWorldHint: false },
+        execution: { taskSupport: "forbidden" }
+      },
+      schema: z.object({
+        originalHtml: z.string().max(maxInputCharacters),
+        updatedHtml: z.string().max(maxInputCharacters),
+        selector: z.string().min(1).max(4_096),
+        threshold: z.number().min(0).max(1).optional()
+      }).strict(),
+      run: async ({ originalHtml, updatedHtml, selector, threshold }) => {
+        const target = Selector.parse(originalHtml, {}).css(selector).first;
+        if (!target) throw new TypeError("selector matched no element in originalHtml.");
+        return toolResult(relocateElement(updatedHtml, target.fingerprint(), {
+          ...(threshold === undefined ? {} : { threshold })
+        }));
+      }
+    }],
+    ["crawl_spider", {
+      definition: {
+        name: "crawl_spider",
+        title: "Rule-driven bounded crawl",
+        description: "Crawl operator-authorized URLs following only links that match allow and deny rules, under the same origin, robots, network, and resource policy as crawl.",
+        inputSchema: spiderInputSchema,
+        annotations: { ...annotations, openWorldHint: true },
+        execution: { taskSupport: "forbidden" }
+      },
+      schema: z.object({
+        ...commonShape,
+        allow: z.array(z.string().min(1).max(2_048)).max(32).optional(),
+        deny: z.array(z.string().min(1).max(2_048)).max(32).optional()
+      }).strict(),
+      run: async (request) => {
+        const { seeds, maxPages, maxDepth, ...rest } = buildMcpCrawlOptions(crawlDefaults, request);
+        const rule = {
+          ...(request.allow?.length ? { allow: request.allow } : {}),
+          ...(request.deny?.length ? { deny: request.deny } : {})
+        };
+        const spider = new CrawlSpider({
+          ...rest,
+          startUrls: seeds,
+          maxPages,
+          maxDepth,
+          ...(Object.keys(rule).length ? { rules: [rule] } : {})
+        });
+        return toolResult(await spider.run());
+      }
+    }],
+    ["export_records", {
+      definition: {
+        name: "export_records",
+        title: "Serialize records",
+        description: "Convert caller-supplied records to CSV, XML, JSON, or JSONL under column and value ceilings. CSV neutralises spreadsheet formula injection.",
+        inputSchema: exportInputSchema,
+        annotations: { ...annotations, openWorldHint: false },
+        execution: { taskSupport: "forbidden" }
+      },
+      schema: z.object({
+        records: z.array(z.record(z.string(), z.unknown())).min(1).max(10_000),
+        format: z.enum(["csv", "xml", "jsonl", "json"]),
+        columns: z.array(z.string().min(1)).min(1).max(256).optional()
+      }).strict(),
+      run: async ({ records, format, columns }) => toolResult({
+        format,
+        rows: records.length,
+        output: exportRecords(records, format, columns ? { columns } : {})
+      })
     }],
     ["extract_structured", {
       definition: {
