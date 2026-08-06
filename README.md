@@ -1,11 +1,23 @@
-# Cockroach Crawler
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/AjnasNB/cockroach-crawler/main/assets/banner.svg" alt="Cockroach Crawler - give your AI agents the web, keep the keys" width="100%">
 
 [![npm version](https://img.shields.io/npm/v/cockroach-crawler.svg)](https://www.npmjs.com/package/cockroach-crawler)
 [![CI](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml)
 [![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
 
+**[Documentation](https://cockroachcrawler.com/docs/)** · **[Quickstart](./docs/QUICKSTART.md)** · **[Why selectors break](https://cockroachcrawler.com/blog/why-css-selectors-break/)** · **[Benchmarks](https://cockroachcrawler.com/benchmark/)** · **[npm](https://www.npmjs.com/package/cockroach-crawler)**
+
+</div>
+
+---
+
 **Give your AI agents the web. Keep the keys.** Crawl complete sites, render JavaScript, rank fetch-validated maps, extract structured data with CSS, XPath, restricted regex, or a schema-validated host model, parse PDFs, and return evidence without handing a model an unrestricted browser or network client.
+
+```bash
+npm install cockroach-crawler
+```
 
 Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to run BFS, DFS, best-first, or adaptive traversal, build searchable fetch-validated site maps, extract bounded CSS, XPath, or restricted-regex fields, search YouTube without a developer API key through the optional reviewed route, render JavaScript pages, run bounded self-hosted jobs, and preserve source identity, redirects, hashes, warnings, artifacts, and provenance.
 
