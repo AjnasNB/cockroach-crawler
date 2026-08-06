@@ -26,6 +26,15 @@
   JSONL under column, row, and value ceilings. CSV neutralises spreadsheet
   formula injection by default.
 
+- Cookie-persisting sessions, an RFC 6265-style cookie jar, and proxy rotation
+  at `cockroach-crawler/session`. The jar enforces Secure, host-only, Domain,
+  Path, and expiry rules and serialises to JSON. `ProxyRotator` supports cycle,
+  random, and sticky strategies with failure cooldowns.
+- A copy-paste quickstart covering the CLI, the library, and MCP host
+  configuration for Claude Code, Claude Desktop, Cursor, Windsurf, and Codex.
+- Automatic npm publication when the package version changes on main, gated by
+  the full release gate and an artifact digest check across jobs.
+
 ### Changed
 
 - The capability contract now describes request identity and governed challenge
