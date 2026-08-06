@@ -11,6 +11,11 @@ let server;
 let baseUrl;
 let hits;
 
+const PRODUCTS = Object.freeze({
+  a: Object.freeze({ id: "a", price: 10 }),
+  b: Object.freeze({ id: "b", price: 20 })
+});
+
 before(async () => {
   server = createServer((request, response) => {
     hits.push(request.url);
@@ -27,9 +32,15 @@ before(async () => {
       return;
     }
     if (request.url.startsWith("/product/")) {
-      const id = request.url.split("/").pop();
-      response.end(`<html><head><title>Product ${id}</title></head><body><main>
-        <h1>Product ${id}</h1><span class="price">$${id === "a" ? 10 : 20}</span>
+      const requested = request.url.slice("/product/".length);
+      const product = PRODUCTS[requested];
+      if (!product) {
+        response.statusCode = 404;
+        response.end("<html><head><title>Not found</title></head><body><main>Not found</main></body></html>");
+        return;
+      }
+      response.end(`<html><head><title>Product ${product.id}</title></head><body><main>
+        <h1>Product ${product.id}</h1><span class="price">$${product.price}</span>
         <a href="/">Home</a></main></body></html>`);
       return;
     }

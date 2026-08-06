@@ -100,6 +100,41 @@ test("detectChallenge flags bare blocks without inventing a vendor", () => {
   assert.equal(report.kind, "rate-limit");
 });
 
+test("a page that merely writes about a vendor is not a challenge", () => {
+  const article = detectChallenge({
+    status: 200,
+    body: `<html><body><article><h1>How Turnstile works</h1>
+      <p>Cloudflare serves it from challenges.cloudflare.com/turnstile and Google
+      offers www.google.com/recaptcha as an alternative. hcaptcha.com/1/api.js is
+      another option, and DataDome uses geo.captcha-delivery.com.</p>
+    </article></body></html>`
+  });
+  assert.equal(article.challenged, false, `misdetected: ${JSON.stringify(article.evidence)}`);
+});
+
+test("a page that actually loads a vendor script is a challenge", () => {
+  const real = detectChallenge({
+    status: 403,
+    body: '<html><body><script src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script></body></html>'
+  });
+  assert.equal(real.challenged, true);
+  assert.equal(real.vendor, "cloudflare");
+
+  const subdomain = detectChallenge({
+    status: 403,
+    body: '<html><body><script src="https://cdn.challenges.cloudflare.com/turnstile/v0/api.js"></script></body></html>'
+  });
+  assert.equal(subdomain.vendor, "cloudflare");
+});
+
+test("a vendor hostname inside an attacker path does not match", () => {
+  const spoofed = detectChallenge({
+    status: 200,
+    body: '<html><body><script src="https://evil.test/challenges.cloudflare.com/turnstile/v0/api.js"></script></body></html>'
+  });
+  assert.equal(spoofed.challenged, false);
+});
+
 test("detectChallenge leaves ordinary pages alone", () => {
   const report = detectChallenge({ status: 200, body: "<html><body><h1>Docs</h1></body></html>" });
   assert.equal(report.challenged, false);

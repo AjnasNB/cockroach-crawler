@@ -272,48 +272,57 @@ export function identityBrowserContext(identity) {
   });
 }
 
+function inAttribute(token) {
+  return new RegExp(`(?:src|id|class|data-sitekey)\\s*=\\s*["'][^"']*${token}`, "iu");
+}
+
 const CHALLENGE_SIGNATURES = Object.freeze([
   Object.freeze({
     vendor: "cloudflare",
     kind: "interstitial",
     headers: ["cf-mitigated"],
-    body: [/challenges\.cloudflare\.com\/turnstile/iu, /__cf_chl_/iu, /cf-challenge-running/iu, /<title>\s*just a moment/iu]
+    body: [
+      /https?:\/\/(?:[a-z0-9-]+\.)*challenges\.cloudflare\.com\//iu,
+      /__cf_chl_/iu,
+      inAttribute("cf-challenge-running"),
+      /<title>\s*just a moment/iu
+    ]
   }),
   Object.freeze({
     vendor: "cloudflare",
     kind: "captcha",
     headers: [],
-    body: [/cf-turnstile/iu, /data-sitekey=[^>]*turnstile/iu]
+    body: [inAttribute("cf-turnstile"), /data-sitekeys*=s*["'][^"']*turnstile/iu]
   }),
   Object.freeze({
     vendor: "datadome",
     kind: "captcha",
     headers: ["x-datadome"],
-    body: [/geo\.captcha-delivery\.com/iu, /datadome/iu]
+    body: [/https?:\/\/(?:[a-z0-9-]+\.)*captcha-delivery\.com\//iu, inAttribute("datadome")]
   }),
   Object.freeze({
     vendor: "perimeterx",
     kind: "captcha",
     headers: [],
-    body: [/px-captcha/iu, /_pxhd/iu, /perimeterx/iu]
+    body: [inAttribute("px-captcha"), /_pxhd/iu, inAttribute("perimeterx")]
   }),
   Object.freeze({
     vendor: "akamai",
     kind: "interstitial",
     headers: [],
-    body: [/_abck/iu, /akamai.*reference\s*#/iu]
+    body: [/_abck\b/iu, /akamai[^<>]{0,120}reference\s*#/iu]
   }),
   Object.freeze({
     vendor: "recaptcha",
     kind: "captcha",
     headers: [],
-    body: [/www\.google\.com\/recaptcha/iu, /g-recaptcha/iu]
+    body: [/https?:\/\/(?:[a-z0-9-]+\.)*google\.com\/recaptcha\//iu, inAttribute("g-recaptcha")]
   }),
   Object.freeze({
     vendor: "hcaptcha",
     kind: "captcha",
     headers: [],
-    body: [/hcaptcha\.com\/1\/api\.js/iu, /h-captcha/iu]
+    body: [/https?:\/\/(?:[a-z0-9-]+\.)*hcaptcha\.com\//iu, inAttribute("h-captcha")]
   })
 ]);
 
