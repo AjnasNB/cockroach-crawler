@@ -13,7 +13,8 @@
     "cockroach-reach": "bin/cockroach-reach.js",
     "cockroach-documents": "bin/cockroach-documents.js",
     "cockroach-mcp": "bin/cockroach-mcp.js",
-    "cockroach-server": "bin/cockroach-server.js"
+    "cockroach-server": "bin/cockroach-server.js",
+    "cockroach-shell": "bin/cockroach-shell.js"
   },
   "main": "src/index.js",
   "types": "types/index.d.ts",
@@ -138,6 +139,11 @@
       "types": "./types/blocklist.d.ts",
       "import": "./src/blocklist.js",
       "default": "./src/blocklist.js"
+    },
+    "./shell": {
+      "types": "./types/shell.d.ts",
+      "import": "./src/shell.js",
+      "default": "./src/shell.js"
     }
   },
   "files": [
@@ -181,7 +187,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/adaptive.test.js test/advanced.test.js test/blocklist.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/exporters.test.js test/external-sources-cli.test.js test/external-sources.test.js test/identity-crawl.test.js test/identity.test.js test/limits.test.js test/mcp-tools.test.js test/parser.test.js test/public-benchmark.test.js test/release-kit.test.js test/security.test.js test/session.test.js test/spider.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
+    "test": "node --test test/adaptive.test.js test/advanced.test.js test/blocklist.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/exporters.test.js test/external-sources-cli.test.js test/external-sources.test.js test/identity-crawl.test.js test/identity.test.js test/limits.test.js test/mcp-tools.test.js test/parser.test.js test/public-benchmark.test.js test/release-kit.test.js test/security.test.js test/session.test.js test/spider.test.js test/shell.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
     "test:browser": "node --test browser-test/integration.test.js browser-test/xhr-capture.test.js",
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
@@ -196,7 +202,8 @@
     "worker:types": "wrangler types --config worker/wrangler.jsonc worker/env.d.ts",
     "crawl": "node bin/cockroach-crawl.js",
     "mcp": "node bin/cockroach-mcp.js",
-    "serve": "node bin/cockroach-server.js"
+    "serve": "node bin/cockroach-server.js",
+    "shell": "node bin/cockroach-shell.js"
   },
   "keywords": [
     "crawler",
@@ -244,7 +251,8 @@
     "crawl-spider",
     "autothrottle",
     "ad-blocking",
-    "tracker-blocking"
+    "tracker-blocking",
+    "repl"
   ],
   "dependencies": {
     "@xmldom/xmldom": "^0.9.10",
