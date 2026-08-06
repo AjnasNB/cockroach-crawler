@@ -68,6 +68,83 @@ function preview(value, limit = MAX_PREVIEW) {
   return text.length > limit ? `${text.slice(0, limit)}\n… ${text.length - limit} more characters` : text;
 }
 
+export function parseCurl(command) {
+  const line = String(command ?? "").trim().replace(/\\\r?\n/gu, " ");
+  if (!/^curl\b/u.test(line)) throw new TypeError("Not a curl command.");
+  if (line.length > 16_384) throw new TypeError("curl command exceeds 16384 characters.");
+
+  const tokens = splitArguments(line).slice(1);
+  const headers = Object.create(null);
+  let url = null;
+  let method = "GET";
+  let hasBody = false;
+
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = tokens[index];
+    if (token === "-H" || token === "--header") {
+      const entry = tokens[index += 1] ?? "";
+      const separator = entry.indexOf(":");
+      if (separator > 0) headers[entry.slice(0, separator).trim().toLowerCase()] = entry.slice(separator + 1).trim();
+      continue;
+    }
+    if (token === "-X" || token === "--request") {
+      method = String(tokens[index += 1] ?? "GET").toUpperCase();
+      continue;
+    }
+    if (token === "-d" || token === "--data" || token === "--data-raw" || token === "--data-binary") {
+      index += 1;
+      hasBody = true;
+      continue;
+    }
+    if (token === "-b" || token === "--cookie") {
+      headers.cookie = String(tokens[index += 1] ?? "");
+      continue;
+    }
+    if (token === "-A" || token === "--user-agent") {
+      headers["user-agent"] = String(tokens[index += 1] ?? "");
+      continue;
+    }
+    if (token === "--url") {
+      url = String(tokens[index += 1] ?? "");
+      continue;
+    }
+    if (token.startsWith("-")) {
+      if (["-o", "--output", "-e", "--referer", "--max-time", "--connect-timeout"].includes(token)) index += 1;
+      continue;
+    }
+    if (!url) url = token;
+  }
+
+  if (!url) throw new TypeError("No URL found in the curl command.");
+  const parsed = new URL(url);
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    throw new TypeError("Only http(s) URLs are supported.");
+  }
+  if (hasBody && method === "GET") method = "POST";
+
+  const warnings = [];
+  if (method !== "GET") {
+    warnings.push(`The crawler issues GET and HEAD only; ${method} cannot be reproduced.`);
+  }
+  if (headers.authorization) {
+    warnings.push("An Authorization header was present and has been dropped. Supply credentials explicitly.");
+    delete headers.authorization;
+  }
+
+  return Object.freeze({
+    url: parsed.toString(),
+    method,
+    headers: Object.freeze({ ...headers }),
+    warnings: Object.freeze(warnings),
+    crawlOptions: Object.freeze({
+      seeds: [parsed.toString()],
+      maxPages: 1,
+      maxDepth: 0,
+      ...(headers["accept-language"] ? { identity: { acceptLanguage: headers["accept-language"] } } : {})
+    })
+  });
+}
+
 export function createShellSession(options = {}) {
   const settings = ownRecord(options, "shell options", 16);
   const state = {
@@ -260,6 +337,24 @@ export function createShellSession(options = {}) {
       run: () => {
         if (!state.html) throw new TypeError("Load a page first.");
         return preview(detectChallenge({ body: state.html, url: state.url ?? undefined }));
+      }
+    }],
+    ["curl", {
+      raw: true,
+      summary: "curl <command> — translate a copied curl command into crawler options",
+      run: (args, rest) => {
+        const command = freeform(rest);
+        if (!command) throw new TypeError("Usage: curl <curl command>");
+        const parsed = parseCurl(command);
+        const lines = [
+          `url      ${parsed.url}`,
+          `method   ${parsed.method}`,
+          `headers  ${Object.keys(parsed.headers).length}`,
+          "",
+          "await crawl(" + JSON.stringify(parsed.crawlOptions, null, 2) + ");"
+        ];
+        for (const warning of parsed.warnings) lines.push(`warning: ${warning}`);
+        return lines.join("\n");
       }
     }],
     ["status", {

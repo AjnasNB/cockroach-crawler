@@ -401,6 +401,45 @@ export class SitemapSpider extends Spider {
   }
 }
 
+const SHOPIFY_PRODUCT_PATTERN = /\/products\/[^/?#]+/u;
+const SHOPIFY_COLLECTION_PATTERN = /\/collections\/[^/?#]+/u;
+
+export class ShopifySpider extends Spider {
+  constructor(options = {}) {
+    const settings = ownRecord(options, "ShopifySpider options", 48);
+    const { rules, parse, ...rest } = settings;
+    if (rules !== undefined) {
+      throw new TypeError("ShopifySpider defines its own rules. Use Spider or CrawlSpider for custom rules.");
+    }
+    super({
+      ...rest,
+      includeSitemaps: rest.includeSitemaps !== false,
+      rules: [
+        { name: "product", allow: SHOPIFY_PRODUCT_PATTERN, follow: false },
+        { name: "collection", allow: SHOPIFY_COLLECTION_PATTERN, follow: true, callback: () => null },
+        { name: "root", allow: /\/$/u, follow: true, callback: () => null }
+      ],
+      ...(parse ? { parse } : {})
+    });
+  }
+
+  async parse(page, context) {
+    if (this.parseFn) return this.parseFn(page, context);
+    if (context?.rule?.callback) return context.rule.callback(page, context);
+    if (!SHOPIFY_PRODUCT_PATTERN.test(page.url)) return null;
+
+    const handleMatch = page.url.match(/\/products\/([^/?#]+)/u);
+    return {
+      handle: handleMatch ? decodeURIComponent(handleMatch[1]) : null,
+      url: page.url,
+      title: page.title,
+      description: page.description,
+      markdown: page.markdown,
+      depth: context?.depth ?? 0
+    };
+  }
+}
+
 export const spiderDefaults = Object.freeze({
   checkpointSchema: CHECKPOINT_SCHEMA
 });

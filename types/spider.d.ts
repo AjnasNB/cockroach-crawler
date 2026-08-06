@@ -115,6 +115,8 @@ export declare class CrawlSpider<Item = unknown> extends Spider<Item> {}
 
 export declare class SitemapSpider<Item = unknown> extends Spider<Item> {}
 
+export declare class ShopifySpider<Item = unknown> extends Spider<Item> {}
+
 export const spiderDefaults: {
   readonly checkpointSchema: "cockroach.spider-checkpoint.v1";
 };

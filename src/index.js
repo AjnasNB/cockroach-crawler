@@ -54,6 +54,7 @@ const SENSITIVE_PATH_PATTERN = /(?:login|logout|signin|sign-in|signup|auth|accou
 const MAX_SENSITIVE_DECODE_PASSES = 8;
 const BROWSER_KEYS = new Set([
   "requestPolicy",
+  "cdpUrl",
   "captureXhr",
   "headless",
   "headed",
@@ -487,6 +488,28 @@ function normalizeXhrCapture(value) {
   });
 }
 
+function normalizeCdpUrl(value) {
+  if (value === undefined || value === null || value === false) return null;
+  if (typeof value !== "string" || !value.trim()) {
+    throw new TypeError("browser.cdpUrl must be a non-empty string.");
+  }
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch (cause) {
+    const error = new TypeError("browser.cdpUrl must be a valid URL.");
+    error.cause = cause;
+    throw error;
+  }
+  if (!["http:", "https:", "ws:", "wss:"].includes(parsed.protocol)) {
+    throw new TypeError("browser.cdpUrl must use http, https, ws, or wss.");
+  }
+  if (parsed.username || parsed.password) {
+    throw new TypeError("browser.cdpUrl must not embed credentials.");
+  }
+  return parsed.toString();
+}
+
 function normalizeBrowserOptions(value, timeoutMs) {
   if (!value) return null;
   const browser = value === true
@@ -580,6 +603,7 @@ function normalizeBrowserOptions(value, timeoutMs) {
 
   return Object.freeze({
     requestPolicy: normalizeRequestPolicy(browser.requestPolicy),
+    cdpUrl: normalizeCdpUrl(browser.cdpUrl),
     captureXhr: normalizeXhrCapture(browser.captureXhr),
     headless: browser.headless ?? !browser.headed,
     channel: stringOption(browser.channel, "browser.channel", 128),
@@ -1682,7 +1706,11 @@ async function createBrowserFetcher(options, hooks) {
       serviceWorkers: "block",
       acceptDownloads: false
     };
-    if (options.browser.profileDirectory) {
+    if (options.browser.cdpUrl) {
+      browser = await chromium.connectOverCDP(options.browser.cdpUrl);
+      if (options.signal?.aborted) throw abortError(options.signal);
+      context = await browser.newContext(contextOptions);
+    } else if (options.browser.profileDirectory) {
       context = await chromium.launchPersistentContext(
         options.browser.profileDirectory,
         { ...launchOptions, ...contextOptions }

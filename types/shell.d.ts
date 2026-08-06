@@ -34,3 +34,13 @@ export interface ShellOptions {
 export function createShellSession(options?: ShellOptions): ShellSession;
 
 export function runShell(options?: ShellOptions): Promise<ShellSession>;
+
+export interface ParsedCurl {
+  url: string;
+  method: string;
+  headers: Readonly<Record<string, string>>;
+  warnings: readonly string[];
+  crawlOptions: Readonly<Record<string, unknown>>;
+}
+
+export function parseCurl(command: string): ParsedCurl;

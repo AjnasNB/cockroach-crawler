@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { after, before, test } from "node:test";
 
-import { AutoThrottle, CrawlSpider, SitemapSpider, Spider, SpiderCheckpoint } from "../src/spider.js";
+import { AutoThrottle, CrawlSpider, ShopifySpider, SitemapSpider, Spider, SpiderCheckpoint } from "../src/spider.js";
 
 let server;
 let baseUrl;
@@ -270,4 +270,40 @@ test("Spider records failures without aborting the run", async () => {
   });
   const result = await spider.run();
   assert.ok(result.stats.pages >= 1);
+});
+
+test("ShopifySpider emits product records and skips collections", async () => {
+  reset();
+  const spider = new ShopifySpider({
+    startUrls: [`${baseUrl}/`],
+    maxPages: 5,
+    maxDepth: 2,
+    allowPrivateNetworks: true,
+    includeSitemaps: false
+  });
+  assert.ok(spider.rules.some((rule) => rule.name === "product"));
+  assert.ok(spider.rules.some((rule) => rule.name === "collection"));
+});
+
+test("ShopifySpider refuses custom rules", () => {
+  assert.throws(
+    () => new ShopifySpider({ startUrls: ["https://shop.test/"], rules: [{ allow: "/x" }] }),
+    /defines its own rules/
+  );
+});
+
+test("ShopifySpider extracts a product handle from the url", async () => {
+  const spider = new ShopifySpider({ startUrls: ["https://shop.test/"] });
+  const record = await spider.parse(
+    { url: "https://shop.test/products/blue-widget", title: "Blue Widget", description: "d", markdown: "m" },
+    { depth: 1, rule: { callback: null }, spider }
+  );
+  assert.equal(record.handle, "blue-widget");
+  assert.equal(record.title, "Blue Widget");
+
+  const skipped = await spider.parse(
+    { url: "https://shop.test/collections/all", title: "All", description: "", markdown: "" },
+    { depth: 1, rule: { callback: null }, spider }
+  );
+  assert.equal(skipped, null);
 });

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { createShellSession } from "../src/shell.js";
+import { createShellSession, parseCurl } from "../src/shell.js";
 
 const PAGE = `<html><body><div id="app"><ul class="products">
 <li class="product" data-id="1"><h2 class="title">Widget A</h2><a href="/a">Buy</a><span class="price">$10</span></li>
@@ -143,4 +143,50 @@ test("an unterminated quote is still refused for discrete arguments", async () =
 
 test("oversized input is refused", async () => {
   await assert.rejects(() => session().execute(`css ${"a".repeat(9_000)}`), /exceeds 8192 characters/);
+});
+
+test("parseCurl extracts url, headers, and method", () => {
+  const parsed = parseCurl('curl "https://shop.example/p?page=2" -H "Accept-Language: de-DE" -A "Mozilla/5.0" --compressed');
+  assert.equal(parsed.url, "https://shop.example/p?page=2");
+  assert.equal(parsed.method, "GET");
+  assert.equal(parsed.headers["accept-language"], "de-DE");
+  assert.equal(parsed.headers["user-agent"], "Mozilla/5.0");
+  assert.deepEqual(parsed.crawlOptions.seeds, ["https://shop.example/p?page=2"]);
+});
+
+test("parseCurl infers POST from a body and warns it cannot be reproduced", () => {
+  const parsed = parseCurl('curl https://x.test/api -d "a=1"');
+  assert.equal(parsed.method, "POST");
+  assert.ok(parsed.warnings.some((entry) => entry.includes("GET and HEAD only")));
+});
+
+test("parseCurl drops an Authorization header and says so", () => {
+  const parsed = parseCurl('curl https://x.test/a -H "Authorization: Bearer secret"');
+  assert.equal(parsed.headers.authorization, undefined);
+  assert.ok(parsed.warnings.some((entry) => entry.includes("Authorization")));
+  assert.equal(JSON.stringify(parsed).includes("secret"), false, "the token must not survive anywhere");
+});
+
+test("parseCurl handles --url, cookies, and line continuations", () => {
+  const parsed = parseCurl('curl --url https://x.test/a -b "sid=1"');
+  assert.equal(parsed.url, "https://x.test/a");
+  assert.equal(parsed.headers.cookie, "sid=1");
+
+  const wrapped = parseCurl("curl https://x.test/b \\n  -H 'Accept: text/html'");
+  assert.equal(wrapped.url, "https://x.test/b");
+  assert.equal(wrapped.headers.accept, "text/html");
+});
+
+test("parseCurl rejects non-curl and non-http input", () => {
+  assert.throws(() => parseCurl("wget https://x.test"), /Not a curl command/);
+  assert.throws(() => parseCurl("curling https://x.test"), /Not a curl command/);
+  assert.throws(() => parseCurl("curl ftp://x.test/a"), /Only http\(s\) URLs/);
+  assert.throws(() => parseCurl("curl -X GET"), /No URL found/);
+});
+
+test("the curl command prints runnable crawl options", async () => {
+  const output = await session().execute("curl curl https://x.test/a -H 'Accept: text/html'");
+  assert.match(output, /url {6}https:\/\/x\.test\/a/);
+  assert.match(output, /await crawl\(/);
+  assert.match(output, /"seeds"/);
 });

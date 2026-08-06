@@ -397,3 +397,22 @@ test("manual redirects retain provenance and obey maxRedirects", async () => {
   assert.equal(blocked.pages.length, 0);
   assert.match(blocked.failures[0].error, /Redirect limit exceeded/);
 });
+
+test("browser.cdpUrl accepts a remote endpoint and rejects unsafe forms", async () => {
+  await assert.rejects(
+    () => crawl({ seeds: ["https://example.com/"], browser: { cdpUrl: "ftp://x.test" } }),
+    /must use http, https, ws, or wss/
+  );
+  await assert.rejects(
+    () => crawl({ seeds: ["https://example.com/"], browser: { cdpUrl: "http://user:pass@x.test" } }),
+    /must not embed credentials/
+  );
+  await assert.rejects(
+    () => crawl({ seeds: ["https://example.com/"], browser: { cdpUrl: "not a url" } }),
+    /must be a valid URL/
+  );
+  await assert.rejects(
+    () => crawl({ seeds: ["https://example.com/"], browser: { cdpUrl: 42 } }),
+    /must be a non-empty string/
+  );
+});

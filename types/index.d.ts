@@ -15,6 +15,7 @@ export type DnsLookup = (
 
 export interface BrowserOptions {
   requestPolicy?: RequestPolicyInput | false;
+  cdpUrl?: string;
   captureXhr?: boolean | { maxEntries?: number; maxBodyBytes?: number; contentTypes?: string[] };
   headless?: boolean;
   headed?: boolean;
