@@ -15,6 +15,7 @@ export type DnsLookup = (
 
 export interface BrowserOptions {
   requestPolicy?: RequestPolicyInput | false;
+  captureXhr?: boolean | { maxEntries?: number; maxBodyBytes?: number; contentTypes?: string[] };
   headless?: boolean;
   headed?: boolean;
   channel?: string;
@@ -91,6 +92,8 @@ export interface CrawlPage {
       warnings: string[];
     } | null;
     persistentProfile: boolean;
+    blockedRequests: ReadonlyArray<{ url: string; reason: string; detail: string }>;
+    capturedXhr: ReadonlyArray<{ url: string; status: number; contentType: string; bytes: number; truncated: boolean; body: string }>;
   };
 }
 

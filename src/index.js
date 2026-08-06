@@ -53,6 +53,7 @@ const SENSITIVE_PATH_PATTERN = /(?:login|logout|signin|sign-in|signup|auth|accou
 const MAX_SENSITIVE_DECODE_PASSES = 8;
 const BROWSER_KEYS = new Set([
   "requestPolicy",
+  "captureXhr",
   "headless",
   "headed",
   "channel",
@@ -463,6 +464,28 @@ function normalizePdfOptions(value) {
   });
 }
 
+function normalizeXhrCapture(value) {
+  if (value === undefined || value === false || value === null) return null;
+  const capture = value === true ? Object.create(null) : snapshotOptionRecord(value, "browser.captureXhr", new Set(["maxEntries", "maxBodyBytes", "contentTypes"]));
+  const unknown = Object.keys(capture).filter((key) => !["maxEntries", "maxBodyBytes", "contentTypes"].includes(key));
+  if (unknown.length) throw new TypeError(`Unknown browser.captureXhr option(s): ${unknown.join(", ")}.`);
+  let contentTypes = [];
+  if (capture.contentTypes !== undefined) {
+    if (!Array.isArray(capture.contentTypes)) throw new TypeError("browser.captureXhr.contentTypes must be an array.");
+    if (capture.contentTypes.length > 32) throw new TypeError("browser.captureXhr.contentTypes exceeds its 32-entry limit.");
+    contentTypes = capture.contentTypes.map((entry) => {
+      const text = String(entry ?? "").trim().toLowerCase();
+      if (!text || text.length > 128) throw new TypeError("browser.captureXhr.contentTypes entries must be 1-128 characters.");
+      return text;
+    });
+  }
+  return Object.freeze({
+    maxEntries: integerOption(capture.maxEntries, "browser.captureXhr.maxEntries", 50, 1, 1_000),
+    maxBodyBytes: integerOption(capture.maxBodyBytes, "browser.captureXhr.maxBodyBytes", 256 * 1024, 64, 8 * 1024 * 1024),
+    contentTypes: Object.freeze(contentTypes)
+  });
+}
+
 function normalizeBrowserOptions(value, timeoutMs) {
   if (!value) return null;
   const browser = value === true
@@ -556,6 +579,7 @@ function normalizeBrowserOptions(value, timeoutMs) {
 
   return Object.freeze({
     requestPolicy: normalizeRequestPolicy(browser.requestPolicy),
+    captureXhr: normalizeXhrCapture(browser.captureXhr),
     headless: browser.headless ?? !browser.headed,
     channel: stringOption(browser.channel, "browser.channel", 128),
     executablePath: stringOption(browser.executablePath, "browser.executablePath", 4_096),
@@ -1810,6 +1834,7 @@ async function createBrowserFetcher(options, hooks) {
         frameSites: new WeakMap(),
         closing: false,
         blockedRequests: [],
+        capturedXhr: [],
         pending: new Set(),
         popups: new Set(),
         recordBlocked(error) {
@@ -1891,6 +1916,33 @@ async function createBrowserFetcher(options, hooks) {
           }
           return true;
         },
+        captureXhr(url, request, result) {
+          const policy = options.browser?.captureXhr;
+          if (!policy) return;
+          let resourceType = null;
+          try {
+            resourceType = request.resourceType();
+          } catch {
+            resourceType = null;
+          }
+          if (!["xhr", "fetch"].includes(resourceType)) return;
+          if (this.capturedXhr.length >= policy.maxEntries) return;
+          const contentType = String(result.headers?.["content-type"] ?? "");
+          if (policy.contentTypes.length
+            && !policy.contentTypes.some((entry) => contentType.toLowerCase().includes(entry))) {
+            return;
+          }
+          const body = Buffer.isBuffer(result.body) ? result.body : Buffer.from(String(result.body ?? ""));
+          this.capturedXhr.push(Object.freeze({
+            url,
+            status: result.status,
+            contentType,
+            bytes: body.byteLength,
+            truncated: body.byteLength > policy.maxBodyBytes,
+            body: body.subarray(0, policy.maxBodyBytes).toString("utf8")
+          }));
+        },
+
         async handleRoute(route, request) {
           if (this.closing || this.blockedError) {
             await route.abort("blockedbyclient").catch(() => {});
@@ -1991,6 +2043,7 @@ async function createBrowserFetcher(options, hooks) {
               this.mainResponse = result;
               this.topLevelSiteUrl = result.url;
             }
+            this.captureXhr(url, request, result);
             await route.fulfill({
               status: result.status,
               headers: result.headers,
@@ -2125,7 +2178,9 @@ async function createBrowserFetcher(options, hooks) {
             hooks: hookResults,
             scroll: scrollResult,
             flattened,
-            persistentProfile: Boolean(options.browser.profileDirectory)
+            persistentProfile: Boolean(options.browser.profileDirectory),
+            blockedRequests: Object.freeze([...session.blockedRequests]),
+            capturedXhr: Object.freeze([...session.capturedXhr])
           }
         };
       } catch (error) {
