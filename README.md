@@ -32,13 +32,27 @@ Main-content extraction on all 511 pages of WCEB v1.0, one scorer applied to eve
 | Tool | Precision | Recall | F1 |
 | --- | --- | --- | --- |
 | trafilatura 2.2.0 | 0.8901 | 0.8683 | **0.8600** |
-| cockroach-crawler 0.6.0 | 0.7330 | **0.9041** | 0.7653 |
+| cockroach-crawler 0.6.0 | 0.7530 | **0.9038** | 0.7791 |
 | readability-lxml | 0.8694 | 0.6263 | 0.6565 |
 
-Cockroach Crawler has the highest recall and keeps the most annotated content,
-and it does not win overall - trafilatura leads macro F1 by 0.095 because
-Cockroach Crawler retains more boilerplate. The full page-class breakdown, the
-reproduce steps, and what the number does not measure are in
+Cockroach Crawler has the highest recall and keeps the most annotated content.
+It does not win overall - trafilatura leads macro F1 by 0.081 because Cockroach
+Crawler still retains more boilerplate.
+
+Raising `boilerplate` from the default closes most of the remaining gap:
+
+| `boilerplate` | Precision | Recall | F1 | Unwanted |
+| --- | --- | --- | --- | --- |
+| `off` | 0.7330 | 0.9041 | 0.7653 | 0.3885 |
+| `structural` (default) | 0.7530 | 0.9038 | 0.7791 | 0.2870 |
+| `balanced` | 0.8283 | 0.8613 | **0.8095** | 0.1593 |
+| `aggressive` | 0.8360 | 0.8461 | 0.8050 | 0.1495 |
+
+The default removes only HTML landmarks the specification already places
+outside main content, which costs no measurable recall. `balanced` scores the
+best F1 but trades real recall, so it stays opt-in. `aggressive` scores worse
+than `balanced` - over-removal costs more recall than the precision buys.
+The page-class breakdown and reproduce steps are in
 [docs/EXTRACTION-COMPARISON.md](./docs/EXTRACTION-COMPARISON.md).
 
 ## Why developers choose Cockroach Crawler

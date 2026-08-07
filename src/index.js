@@ -19,6 +19,7 @@ import {
 } from "./security.js";
 import { createTraversalQueue, normalizeTraversalOptions, scoreRelevance } from "./strategies.js";
 import { normalizeRequestPolicy, shouldBlockRequest } from "./blocklist.js";
+import { normalizeBoilerplateOptions, stripBoilerplate } from "./boilerplate.js";
 import {
   applyChallengePolicy,
   detectChallenge,
@@ -105,6 +106,7 @@ const CRAWL_OPTION_KEYS = new Set([
   "userAgent",
   "identity",
   "challengePolicy",
+  "boilerplate",
   "delayMs",
   "timeoutMs",
   "maxDurationMs",
@@ -1187,6 +1189,8 @@ export function extractPage(html, url, options = {}) {
 
   const main = $("main, article, [role='main']").first();
   const contentRoot = main.length ? main : $("body");
+  const boilerplate = normalizeBoilerplateOptions(options.boilerplate);
+  const boilerplateResult = stripBoilerplate($, contentRoot, boilerplate);
   const htmlFragment = contentRoot.html() || "";
   const text = contentRoot.text().replace(/\s+/g, " ").trim();
   const turndown = new TurndownService({
