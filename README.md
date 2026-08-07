@@ -182,6 +182,7 @@ uses stable public exports and copyable examples from this package.
 | Embed the typed Node.js API | [JavaScript API](https://cockroachcrawler.com/docs/javascript/) |
 | Configure BFS, DFS, best-first, adaptive traversal, sitemaps, callbacks, and cache | [Crawling and cache](https://cockroachcrawler.com/docs/crawling/) |
 | Render JavaScript, click, scroll, flatten DOM, capture screenshots and PDFs, and use explicit profiles | [Browser rendering and evidence](https://cockroachcrawler.com/docs/browser/) |
+| Hand one reviewed URL from static discovery to the separate Cockroach Browser runtime | [Explicit crawler-to-browser handoff](https://github.com/AjnasNB/cockroach-crawler/blob/main/docs/COCKROACH-BROWSER.md) |
 | Generate Markdown or extract with CSS, XPath, restricted regex, local PDF parsing, or a host-supplied model adapter | [Extraction manual](https://cockroachcrawler.com/docs/extraction/) |
 | Create compact fetch-validated maps and optionally rank them by search terms | [Map and extract](https://cockroachcrawler.com/docs/map-and-extract/) |
 | Give a model a creator-bounded tool or route it through Maqam | [Agent integration](https://cockroachcrawler.com/docs/agents/) |
@@ -224,7 +225,9 @@ flowchart LR
   Loop --> Context["Qarinah: compile context"]
   Loop --> Maqam["Maqam: govern registered actions"]
   Maqam --> Crawl["Cockroach Crawler: collect bounded public evidence"]
+  Crawl -- "exact URL / origin / budget" --> Browser["Cockroach Browser: authorized interaction"]
   Crawl --> Evidence["Normalized records and provenance"]
+  Browser --> Evidence
   Evidence --> Context
   Maqam --> Evidence
 ```
@@ -232,11 +235,12 @@ flowchart LR
 | Layer | What it contributes | Public status |
 | --- | --- | --- |
 | [Cockroach Crawler](https://github.com/AjnasNB/cockroach-crawler) | Bounded web crawling, source capability checks, normalized records, and a restricted serverless profile | Stable local, provider, browser-host, reach, and serverless package surfaces |
+| [Cockroach Browser](https://github.com/AjnasNB/cockroach-browser) | Authorized interactive sessions, semantic snapshots, and browser evidence behind its own policy and budgets | Public `cockroach-browser@0.1.0`; separate `AGPL-3.0-or-later` package, never a crawler dependency |
 | [Maqam](https://github.com/AjnasNB/maqam) | Policy, exact one-use approvals, registered tool execution, browser-action contracts, traces, and evidence | Public npm package |
 | [ProductLoop OS](https://github.com/AjnasNB/productloop-os) | Workflow, policy, approval, connector, skill, evaluation, provenance, and research composition | Public npm package |
-| Qarinah | Local-first context ledger, deterministic graph/index, compact cited context packs, and Codex/Claude hooks | Private alpha; no public install claim yet |
+| [Qarinah](https://qarinah.io) | Local-first context ledger, deterministic graph/index, compact cited context packs, and coding-agent hooks | Public Apache-2.0 package: `qarinah@0.1.2` |
 
-The stack does not ship a model, browser engine, proxy network, CAPTCHA bypass, hidden credential reuse, operating-system sandbox, or universal interception. A call is governed only when the host routes the real operation through its registered boundary.
+Cockroach Crawler does not ship Cockroach Browser, a model, proxy network, CAPTCHA bypass, hidden credential reuse, operating-system sandbox, or universal interception. A call is governed only when the host routes the real operation through its registered boundary.
 
 ## Two execution tiers
 
@@ -626,7 +630,7 @@ registerGovernedBrowserTools(gateway, {
 });
 ```
 
-Maqam remains the governance boundary: policy, exact input-bound approval, one-use consumption, replay rejection, and evidence stay there. The current crawler host intentionally requires an injected trusted runtime; it does not yet bundle an interactive Playwright runtime with the crawler's DNS-pinned network transport. Inspect `host.capabilityReport()` before enabling an integration. See [the reach and browser architecture](docs/REACH-AND-BROWSER.md).
+Maqam remains the governance boundary: policy, exact input-bound approval, one-use consumption, replay rejection, and evidence stay there. The current crawler host intentionally requires an injected trusted runtime; it does not bundle an interactive Playwright runtime with the crawler's DNS-pinned network transport. The separately published `cockroach-browser@0.1.0` runtime does not change that in-package capability report and is not bundled or installed by Cockroach Crawler. Inspect `host.capabilityReport()` before enabling an integration. See [the reach and browser architecture](docs/REACH-AND-BROWSER.md) and [the explicit crawler-to-browser handoff](https://github.com/AjnasNB/cockroach-crawler/blob/main/docs/COCKROACH-BROWSER.md).
 
 ## Self-hosted serverless crawler
 
