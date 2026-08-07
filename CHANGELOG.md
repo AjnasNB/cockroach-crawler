@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.6.1 - 2026-08-07
+
+### Added
+
+- Boilerplate removal before extraction, with four presets. The default removes
+  only HTML landmarks the specification already places outside main content;
+  `balanced` and `aggressive` trade recall for precision.
+- Content-block scoring when a page carries no `main`, `article`, or
+  `[role=main]` landmark, replacing the previous whole-body fallback.
+- Sentence-aware filtering that drops blocks which are both link-heavy and
+  free of sentence punctuation, which is what separates a category menu from a
+  paragraph that happens to cite several sources.
+- A reproducible extraction comparison against trafilatura and readability-lxml
+  with extraction and scoring as separate processes.
+
+### Changed
+
+- Default extraction output now excludes landmark boilerplate. Measured across
+  all 511 pages of the pinned WCEB split, precision moves 0.7330 to 0.7938 and
+  unwanted-boilerplate inclusion falls from 0.3885 to 0.1787, for 0.026 of
+  recall. Set `boilerplate: "off"` to restore the previous behaviour.
+- Every npm publishing path now lives in `publish-npm.yml`, the only workflow
+  filename npm trusts for this package. `docs/RELEASE.md` explains why a second
+  publishing workflow fails with a misleading registry 404.
+
 ## 0.6.0 - 2026-08-06
 
 ### Added
