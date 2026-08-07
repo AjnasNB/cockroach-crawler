@@ -19,7 +19,7 @@ import {
 } from "./security.js";
 import { createTraversalQueue, normalizeTraversalOptions, scoreRelevance } from "./strategies.js";
 import { normalizeRequestPolicy, shouldBlockRequest } from "./blocklist.js";
-import { normalizeBoilerplateOptions, stripBoilerplate } from "./boilerplate.js";
+import { normalizeBoilerplateOptions, selectContentRoot, stripBoilerplate } from "./boilerplate.js";
 import {
   applyChallengePolicy,
   detectChallenge,
@@ -1188,8 +1188,13 @@ export function extractPage(html, url, options = {}) {
   const language = ($("html").attr("lang") || "").trim() || null;
 
   const main = $("main, article, [role='main']").first();
-  const contentRoot = main.length ? main : $("body");
   const boilerplate = normalizeBoilerplateOptions(options.boilerplate);
+  // Without a landmark the previous behaviour was to take the whole body.
+  // Scoring candidate blocks recovers precision on those pages; it is skipped
+  // when boilerplate handling is off so "off" still means untouched output.
+  const contentRoot = main.length
+    ? main
+    : (boilerplate.mode === "off" ? $("body") : selectContentRoot($, $("body"), {}).root);
   const boilerplateResult = stripBoilerplate($, contentRoot, boilerplate);
   const htmlFragment = contentRoot.html() || "";
   const text = contentRoot.text().replace(/\s+/g, " ").trim();

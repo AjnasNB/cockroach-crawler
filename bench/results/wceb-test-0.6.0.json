@@ -32,7 +32,7 @@
     "source": {
       "algorithm": "sha256",
       "normalization": "utf8-lf",
-      "value": "b11323b84a956a26ad127e9f953284e1d19b70da4f7ac0fa936bc2cdd2075d77",
+      "value": "d02ebb1d76193c2277877c7030eb5ab9f13a4a17c185c198e939d13cb13cf919",
       "inputs": [
         "src/index.js",
         "package.json",
@@ -44,67 +44,67 @@
   },
   "results": {
     "pages": 511,
-    "precision": 0.753037,
-    "recall": 0.903825,
-    "f1": 0.779079,
-    "requiredSnippetRecall": 0.871265,
-    "unwantedSnippetInclusion": 0.287019,
+    "precision": 0.774856,
+    "recall": 0.892777,
+    "f1": 0.789532,
+    "requiredSnippetRecall": 0.857893,
+    "unwantedSnippetInclusion": 0.22032,
     "byPageType": {
       "article": {
         "pages": 257,
-        "precision": 0.818392,
-        "recall": 0.938888,
-        "f1": 0.849198,
-        "requiredSnippetRecall": 0.907977,
-        "unwantedSnippetInclusion": 0.324254
+        "precision": 0.831496,
+        "recall": 0.935688,
+        "f1": 0.857006,
+        "requiredSnippetRecall": 0.904086,
+        "unwantedSnippetInclusion": 0.268482
       },
       "service": {
         "pages": 59,
-        "precision": 0.723439,
-        "recall": 0.865468,
-        "f1": 0.735756,
-        "requiredSnippetRecall": 0.846045,
-        "unwantedSnippetInclusion": 0.285311
+        "precision": 0.763133,
+        "recall": 0.834152,
+        "f1": 0.744218,
+        "requiredSnippetRecall": 0.80791,
+        "unwantedSnippetInclusion": 0.206215
       },
       "product": {
         "pages": 28,
-        "precision": 0.553928,
+        "precision": 0.564216,
         "recall": 0.824367,
-        "f1": 0.587195,
+        "f1": 0.598381,
         "requiredSnippetRecall": 0.7625,
-        "unwantedSnippetInclusion": 0.25
+        "unwantedSnippetInclusion": 0.241071
       },
       "collection": {
         "pages": 34,
-        "precision": 0.571821,
-        "recall": 0.894782,
-        "f1": 0.651466,
-        "requiredSnippetRecall": 0.875,
-        "unwantedSnippetInclusion": 0.205882
+        "precision": 0.611021,
+        "recall": 0.840061,
+        "f1": 0.665972,
+        "requiredSnippetRecall": 0.811275,
+        "unwantedSnippetInclusion": 0.147059
       },
       "forum": {
         "pages": 51,
-        "precision": 0.679125,
+        "precision": 0.694227,
         "recall": 0.750523,
-        "f1": 0.610628,
+        "f1": 0.621014,
         "requiredSnippetRecall": 0.730392,
-        "unwantedSnippetInclusion": 0.253268
+        "unwantedSnippetInclusion": 0.189542
       },
       "listing": {
         "pages": 40,
-        "precision": 0.640924,
-        "recall": 0.94772,
-        "f1": 0.724418,
-        "requiredSnippetRecall": 0.90875,
-        "unwantedSnippetInclusion": 0.304167
+        "precision": 0.687987,
+        "recall": 0.920274,
+        "f1": 0.742226,
+        "requiredSnippetRecall": 0.873333,
+        "unwantedSnippetInclusion": 0.158333
       },
       "documentation": {
         "pages": 42,
-        "precision": 0.870664,
-        "recall": 0.947801,
-        "f1": 0.898705,
+        "precision": 0.898432,
+        "recall": 0.947386,
+        "f1": 0.917444,
         "requiredSnippetRecall": 0.886905,
-        "unwantedSnippetInclusion": 0.176587
+        "unwantedSnippetInclusion": 0.087302
       }
     }
   },
@@ -156,12 +156,12 @@
     {
       "id": "4021",
       "pageType": "collection",
-      "precision": 0.133028,
-      "recall": 1,
-      "f1": 0.234818,
-      "requiredSnippetRecall": 1,
+      "precision": 0.017647,
+      "recall": 0.051724,
+      "f1": 0.026316,
+      "requiredSnippetRecall": 0,
       "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 5955,
+      "extractedCharacters": 2472,
       "referenceCharacters": 602
     },
     {
@@ -211,12 +211,12 @@
     {
       "id": "4035",
       "pageType": "collection",
-      "precision": 0.558954,
+      "precision": 0.934818,
       "recall": 1,
-      "f1": 0.717089,
+      "f1": 0.966311,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 12640,
+      "unwantedSnippetInclusion": 0.25,
+      "extractedCharacters": 6309,
       "referenceCharacters": 6098
     },
     {
@@ -442,12 +442,12 @@
     {
       "id": "4092",
       "pageType": "article",
-      "precision": 0.748419,
+      "precision": 0.955157,
       "recall": 1,
-      "f1": 0.856109,
+      "f1": 0.977064,
       "requiredSnippetRecall": 0.4,
-      "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 8300,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 6292,
       "referenceCharacters": 5986
     },
     {
@@ -475,12 +475,12 @@
     {
       "id": "4103",
       "pageType": "article",
-      "precision": 0.647306,
+      "precision": 1,
       "recall": 1,
-      "f1": 0.785897,
+      "f1": 1,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 7871,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 4934,
       "referenceCharacters": 4974
     },
     {
@@ -541,12 +541,12 @@
     {
       "id": "4117",
       "pageType": "article",
-      "precision": 0.915675,
-      "recall": 0.944504,
-      "f1": 0.929866,
+      "precision": 0.965327,
+      "recall": 0.935966,
+      "f1": 0.95042,
       "requiredSnippetRecall": 0.6,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 10865,
+      "unwantedSnippetInclusion": 0.75,
+      "extractedCharacters": 10103,
       "referenceCharacters": 10417
     },
     {
@@ -585,12 +585,12 @@
     {
       "id": "4142",
       "pageType": "article",
-      "precision": 0.898621,
+      "precision": 0.904861,
       "recall": 0.999616,
-      "f1": 0.946432,
+      "f1": 0.949882,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 17389,
+      "extractedCharacters": 17100,
       "referenceCharacters": 15315
     },
     {
@@ -728,23 +728,23 @@
     {
       "id": "4200",
       "pageType": "product",
-      "precision": 0.140299,
+      "precision": 0.141226,
       "recall": 1,
-      "f1": 0.246073,
+      "f1": 0.247499,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0.25,
-      "extractedCharacters": 9384,
+      "extractedCharacters": 9317,
       "referenceCharacters": 1302
     },
     {
       "id": "4206",
       "pageType": "product",
-      "precision": 0.182471,
+      "precision": 0.39441,
       "recall": 1,
-      "f1": 0.308627,
+      "f1": 0.565702,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 4213,
+      "unwantedSnippetInclusion": 0.5,
+      "extractedCharacters": 1827,
       "referenceCharacters": 819
     },
     {
@@ -827,12 +827,12 @@
     {
       "id": "4225",
       "pageType": "product",
-      "precision": 0.805537,
+      "precision": 0.854545,
       "recall": 1,
-      "f1": 0.892296,
+      "f1": 0.921569,
       "requiredSnippetRecall": 0.75,
       "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 9275,
+      "extractedCharacters": 8548,
       "referenceCharacters": 7429
     },
     {
@@ -915,23 +915,23 @@
     {
       "id": "4335",
       "pageType": "collection",
-      "precision": 0.662374,
-      "recall": 0.998613,
-      "f1": 0.79646,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.25,
-      "extractedCharacters": 8628,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 4529,
       "referenceCharacters": 4601
     },
     {
       "id": "4351",
       "pageType": "collection",
-      "precision": 0.652669,
-      "recall": 1,
-      "f1": 0.789837,
+      "precision": 0.896495,
+      "recall": 0.999081,
+      "f1": 0.945012,
       "requiredSnippetRecall": 0.75,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 19321,
+      "extractedCharacters": 13854,
       "referenceCharacters": 12482
     },
     {
@@ -970,12 +970,12 @@
     {
       "id": "4369",
       "pageType": "collection",
-      "precision": 0.435597,
-      "recall": 0.853211,
-      "f1": 0.576744,
-      "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 4794,
+      "precision": 0.050847,
+      "recall": 0.013761,
+      "f1": 0.021661,
+      "requiredSnippetRecall": 0,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 1215,
       "referenceCharacters": 1255
     },
     {
@@ -1069,12 +1069,12 @@
     {
       "id": "4396",
       "pageType": "collection",
-      "precision": 0.186603,
-      "recall": 0.886364,
-      "f1": 0.3083,
-      "requiredSnippetRecall": 1,
+      "precision": 0.303279,
+      "recall": 0.840909,
+      "f1": 0.445783,
+      "requiredSnippetRecall": 0.833333,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 4616,
+      "extractedCharacters": 2522,
       "referenceCharacters": 810
     },
     {
@@ -1135,23 +1135,23 @@
     {
       "id": "4437",
       "pageType": "collection",
-      "precision": 0.388966,
+      "precision": 0.946309,
       "recall": 1,
-      "f1": 0.560079,
+      "f1": 0.972414,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.25,
-      "extractedCharacters": 4600,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 1697,
       "referenceCharacters": 1618
     },
     {
       "id": "4440",
       "pageType": "article",
-      "precision": 0.899083,
-      "recall": 0.955166,
-      "f1": 0.926276,
+      "precision": 0.942085,
+      "recall": 0.951267,
+      "f1": 0.946654,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 3605,
+      "unwantedSnippetInclusion": 0.5,
+      "extractedCharacters": 3387,
       "referenceCharacters": 3292
     },
     {
@@ -1190,12 +1190,12 @@
     {
       "id": "4456",
       "pageType": "article",
-      "precision": 0.196008,
+      "precision": 0.317842,
       "recall": 1,
-      "f1": 0.327771,
+      "f1": 0.482368,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 12029,
+      "extractedCharacters": 7395,
       "referenceCharacters": 2335
     },
     {
@@ -1238,30 +1238,30 @@
       "recall": 0,
       "f1": 0,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 1109,
+      "unwantedSnippetInclusion": 0.25,
+      "extractedCharacters": 305,
       "referenceCharacters": 0
     },
     {
       "id": "4486",
       "pageType": "article",
-      "precision": 0.355705,
-      "recall": 0.058306,
-      "f1": 0.100189,
+      "precision": 0.312849,
+      "recall": 0.030803,
+      "f1": 0.056084,
       "requiredSnippetRecall": 0,
       "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 2562,
+      "extractedCharacters": 1804,
       "referenceCharacters": 10871
     },
     {
       "id": "4487",
       "pageType": "article",
-      "precision": 0.884681,
+      "precision": 0.931452,
       "recall": 1,
-      "f1": 0.938812,
+      "f1": 0.964509,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 14208,
+      "unwantedSnippetInclusion": 0.666667,
+      "extractedCharacters": 13412,
       "referenceCharacters": 12693
     },
     {
@@ -1278,12 +1278,12 @@
     {
       "id": "4498",
       "pageType": "article",
-      "precision": 0.944493,
+      "precision": 0.99634,
       "recall": 1,
-      "f1": 0.971454,
+      "f1": 0.998167,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.5,
-      "extractedCharacters": 6630,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 6218,
       "referenceCharacters": 6180
     },
     {
@@ -1421,12 +1421,12 @@
     {
       "id": "4608",
       "pageType": "article",
-      "precision": 0.951049,
+      "precision": 0.952715,
       "recall": 1,
-      "f1": 0.97491,
+      "f1": 0.975785,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 3628,
+      "extractedCharacters": 3620,
       "referenceCharacters": 3427
     },
     {
@@ -1608,12 +1608,12 @@
     {
       "id": "4762",
       "pageType": "collection",
-      "precision": 0.392157,
-      "recall": 0.555556,
-      "f1": 0.45977,
+      "precision": 0.59375,
+      "recall": 0.527778,
+      "f1": 0.558824,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.5,
-      "extractedCharacters": 351,
+      "unwantedSnippetInclusion": 0.25,
+      "extractedCharacters": 219,
       "referenceCharacters": 217
     },
     {
@@ -1674,12 +1674,12 @@
     {
       "id": "4795",
       "pageType": "product",
-      "precision": 0.421747,
+      "precision": 0.447931,
       "recall": 1,
-      "f1": 0.59328,
+      "f1": 0.618718,
       "requiredSnippetRecall": 0.75,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 9415,
+      "extractedCharacters": 8814,
       "referenceCharacters": 3874
     },
     {
@@ -1806,12 +1806,12 @@
     {
       "id": "4930",
       "pageType": "service",
-      "precision": 0.674229,
+      "precision": 0.678126,
       "recall": 0.987157,
-      "f1": 0.801222,
+      "f1": 0.803968,
       "requiredSnippetRecall": 0.75,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 19567,
+      "extractedCharacters": 19475,
       "referenceCharacters": 13350
     },
     {
@@ -1861,12 +1861,12 @@
     {
       "id": "4937",
       "pageType": "service",
-      "precision": 0.639535,
-      "recall": 0.995475,
-      "f1": 0.778761,
+      "precision": 0.960526,
+      "recall": 0.99095,
+      "f1": 0.975501,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.666667,
-      "extractedCharacters": 2399,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 1523,
       "referenceCharacters": 1494
     },
     {
@@ -1883,12 +1883,12 @@
     {
       "id": "4941",
       "pageType": "service",
-      "precision": 0.613126,
+      "precision": 0.652574,
       "recall": 0.511527,
-      "f1": 0.557738,
+      "f1": 0.573506,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 5256,
+      "unwantedSnippetInclusion": 0.666667,
+      "extractedCharacters": 4974,
       "referenceCharacters": 4709
     },
     {
@@ -2037,12 +2037,12 @@
     {
       "id": "4975",
       "pageType": "article",
-      "precision": 0.837779,
-      "recall": 0.934036,
-      "f1": 0.883293,
+      "precision": 0.957577,
+      "recall": 0.927548,
+      "f1": 0.942324,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 29880,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 25287,
       "referenceCharacters": 25394
     },
     {
@@ -2059,12 +2059,12 @@
     {
       "id": "4978",
       "pageType": "article",
-      "precision": 0.884746,
-      "recall": 0.988296,
-      "f1": 0.933659,
+      "precision": 0.992385,
+      "recall": 0.986919,
+      "f1": 0.989644,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 20663,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 18019,
       "referenceCharacters": 18103
     },
     {
@@ -2114,23 +2114,23 @@
     {
       "id": "4987",
       "pageType": "service",
-      "precision": 0.364072,
+      "precision": 0.988978,
       "recall": 1,
-      "f1": 0.533802,
+      "f1": 0.994458,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 19566,
+      "unwantedSnippetInclusion": 0.25,
+      "extractedCharacters": 7529,
       "referenceCharacters": 7543
     },
     {
       "id": "4988",
       "pageType": "service",
-      "precision": 0.562147,
-      "recall": 0.882483,
-      "f1": 0.686799,
-      "requiredSnippetRecall": 0.75,
+      "precision": 0.730769,
+      "recall": 0.084257,
+      "f1": 0.151093,
+      "requiredSnippetRecall": 0,
       "unwantedSnippetInclusion": 0.25,
-      "extractedCharacters": 6141,
+      "extractedCharacters": 321,
       "referenceCharacters": 2994
     },
     {
@@ -2202,12 +2202,12 @@
     {
       "id": "5004",
       "pageType": "service",
-      "precision": 0.898876,
-      "recall": 0.992701,
-      "f1": 0.943462,
+      "precision": 0.948673,
+      "recall": 0.991606,
+      "f1": 0.969665,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.333333,
-      "extractedCharacters": 20031,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 19064,
       "referenceCharacters": 18421
     },
     {
@@ -2246,12 +2246,12 @@
     {
       "id": "5009",
       "pageType": "forum",
-      "precision": 0.347325,
+      "precision": 0.382498,
       "recall": 0.998158,
-      "f1": 0.515332,
+      "f1": 0.553061,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 17577,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 15838,
       "referenceCharacters": 6022
     },
     {
@@ -2279,23 +2279,23 @@
     {
       "id": "5022",
       "pageType": "listing",
-      "precision": 0.218553,
-      "recall": 1,
-      "f1": 0.35871,
-      "requiredSnippetRecall": 1,
+      "precision": 0.293144,
+      "recall": 0.892086,
+      "f1": 0.441281,
+      "requiredSnippetRecall": 0.666667,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 3534,
+      "extractedCharacters": 2218,
       "referenceCharacters": 858
     },
     {
       "id": "5024",
       "pageType": "listing",
-      "precision": 0.262609,
-      "recall": 1,
-      "f1": 0.415978,
-      "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 3046,
+      "precision": 0.278846,
+      "recall": 0.960265,
+      "f1": 0.432191,
+      "requiredSnippetRecall": 0.666667,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 2727,
       "referenceCharacters": 908
     },
     {
@@ -2356,12 +2356,12 @@
     {
       "id": "5039",
       "pageType": "forum",
-      "precision": 0.710894,
+      "precision": 0.854027,
       "recall": 1,
-      "f1": 0.83102,
+      "f1": 0.921267,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 4085,
+      "unwantedSnippetInclusion": 0.5,
+      "extractedCharacters": 3311,
       "referenceCharacters": 2750
     },
     {
@@ -2466,12 +2466,12 @@
     {
       "id": "5080",
       "pageType": "forum",
-      "precision": 0.792732,
+      "precision": 0.816669,
       "recall": 1,
-      "f1": 0.884384,
+      "f1": 0.899084,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 35652,
+      "extractedCharacters": 34328,
       "referenceCharacters": 27800
     },
     {
@@ -2488,12 +2488,12 @@
     {
       "id": "5084",
       "pageType": "forum",
-      "precision": 0.798519,
+      "precision": 0.871463,
       "recall": 0.980446,
-      "f1": 0.88018,
+      "f1": 0.922748,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 15378,
+      "unwantedSnippetInclusion": 0.5,
+      "extractedCharacters": 13809,
       "referenceCharacters": 12128
     },
     {
@@ -2554,23 +2554,23 @@
     {
       "id": "5095",
       "pageType": "forum",
-      "precision": 0.44559,
+      "precision": 0.646537,
       "recall": 1,
-      "f1": 0.616482,
+      "f1": 0.78533,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0.5,
-      "extractedCharacters": 16048,
+      "extractedCharacters": 9744,
       "referenceCharacters": 6386
     },
     {
       "id": "5097",
       "pageType": "listing",
-      "precision": 0.62069,
-      "recall": 1,
-      "f1": 0.765957,
+      "precision": 0.692661,
+      "recall": 0.986928,
+      "f1": 0.814016,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 2623,
+      "extractedCharacters": 2275,
       "referenceCharacters": 1859
     },
     {
@@ -2587,12 +2587,12 @@
     {
       "id": "5103",
       "pageType": "listing",
-      "precision": 0.497949,
-      "recall": 0.897412,
-      "f1": 0.640501,
+      "precision": 0.515733,
+      "recall": 0.893715,
+      "f1": 0.654041,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.25,
-      "extractedCharacters": 11318,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 10806,
       "referenceCharacters": 6517
     },
     {
@@ -2642,12 +2642,12 @@
     {
       "id": "5120",
       "pageType": "forum",
-      "precision": 0.767098,
+      "precision": 0.786862,
       "recall": 1,
-      "f1": 0.868201,
+      "f1": 0.88072,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 43066,
+      "unwantedSnippetInclusion": 0.75,
+      "extractedCharacters": 41710,
       "referenceCharacters": 32134
     },
     {
@@ -2697,12 +2697,12 @@
     {
       "id": "5134",
       "pageType": "listing",
-      "precision": 0.771084,
+      "precision": 0.867797,
       "recall": 0.997403,
-      "f1": 0.869762,
+      "f1": 0.928097,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 5144,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 4340,
       "referenceCharacters": 3851
     },
     {
@@ -2719,12 +2719,12 @@
     {
       "id": "5148",
       "pageType": "forum",
-      "precision": 0.876121,
+      "precision": 0.925474,
       "recall": 0.988026,
-      "f1": 0.928714,
+      "f1": 0.955727,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0.5,
-      "extractedCharacters": 22943,
+      "extractedCharacters": 21374,
       "referenceCharacters": 19724
     },
     {
@@ -2741,12 +2741,12 @@
     {
       "id": "5151",
       "pageType": "forum",
-      "precision": 0.700782,
+      "precision": 0.821865,
       "recall": 0.980839,
-      "f1": 0.81749,
+      "f1": 0.894343,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0.5,
-      "extractedCharacters": 8767,
+      "extractedCharacters": 7198,
       "referenceCharacters": 5907
     },
     {
@@ -2774,12 +2774,12 @@
     {
       "id": "5155",
       "pageType": "forum",
-      "precision": 0.821694,
+      "precision": 0.925532,
       "recall": 1,
-      "f1": 0.902121,
+      "f1": 0.961326,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 19124,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 16531,
       "referenceCharacters": 15686
     },
     {
@@ -3060,12 +3060,12 @@
     {
       "id": "5203",
       "pageType": "article",
-      "precision": 0.976571,
+      "precision": 0.98173,
       "recall": 0.972949,
-      "f1": 0.974757,
+      "f1": 0.97732,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0.5,
-      "extractedCharacters": 27723,
+      "extractedCharacters": 27425,
       "referenceCharacters": 27437
     },
     {
@@ -3104,12 +3104,12 @@
     {
       "id": "5210",
       "pageType": "article",
-      "precision": 0.131567,
-      "recall": 1,
-      "f1": 0.23254,
-      "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 43378,
+      "precision": 0.165163,
+      "recall": 0.272311,
+      "f1": 0.205616,
+      "requiredSnippetRecall": 0,
+      "unwantedSnippetInclusion": 0.25,
+      "extractedCharacters": 10178,
       "referenceCharacters": 5878
     },
     {
@@ -3192,23 +3192,23 @@
     {
       "id": "5241",
       "pageType": "listing",
-      "precision": 0.659102,
+      "precision": 0.955449,
       "recall": 1,
-      "f1": 0.794528,
+      "f1": 0.977217,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 14476,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 9782,
       "referenceCharacters": 9432
     },
     {
       "id": "5245",
       "pageType": "listing",
-      "precision": 0.901538,
+      "precision": 0.927215,
       "recall": 1,
-      "f1": 0.94822,
+      "f1": 0.962233,
       "requiredSnippetRecall": 0.75,
-      "unwantedSnippetInclusion": 0.25,
-      "extractedCharacters": 4412,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 4289,
       "referenceCharacters": 4018
     },
     {
@@ -3280,12 +3280,12 @@
     {
       "id": "5263",
       "pageType": "service",
-      "precision": 0.220963,
+      "precision": 0.231454,
       "recall": 0.847826,
-      "f1": 0.350562,
+      "f1": 0.363636,
       "requiredSnippetRecall": 0.75,
       "unwantedSnippetInclusion": 0.333333,
-      "extractedCharacters": 4341,
+      "extractedCharacters": 4150,
       "referenceCharacters": 1116
     },
     {
@@ -3313,12 +3313,12 @@
     {
       "id": "5268",
       "pageType": "service",
-      "precision": 0.57,
+      "precision": 0.413043,
       "recall": 1,
-      "f1": 0.726115,
+      "f1": 0.584615,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.333333,
-      "extractedCharacters": 600,
+      "unwantedSnippetInclusion": 1,
+      "extractedCharacters": 844,
       "referenceCharacters": 324
     },
     {
@@ -3368,23 +3368,23 @@
     {
       "id": "5285",
       "pageType": "listing",
-      "precision": 0.404255,
-      "recall": 1,
-      "f1": 0.575758,
+      "precision": 0.962963,
+      "recall": 0.821053,
+      "f1": 0.886364,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 1555,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 496,
       "referenceCharacters": 623
     },
     {
       "id": "5286",
       "pageType": "documentation",
-      "precision": 0.30393,
+      "precision": 0.624776,
       "recall": 0.948229,
-      "f1": 0.460317,
+      "f1": 0.753247,
       "requiredSnippetRecall": 0.75,
-      "unwantedSnippetInclusion": 0.333333,
-      "extractedCharacters": 7662,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 3695,
       "referenceCharacters": 2399
     },
     {
@@ -3423,12 +3423,12 @@
     {
       "id": "5291",
       "pageType": "article",
-      "precision": 0.705043,
-      "recall": 0.976285,
-      "f1": 0.818785,
+      "precision": 0.941401,
+      "recall": 0.97365,
+      "f1": 0.957254,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 7555,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 5260,
       "referenceCharacters": 5061
     },
     {
@@ -3478,12 +3478,12 @@
     {
       "id": "5301",
       "pageType": "listing",
-      "precision": 0.123457,
-      "recall": 0.963855,
-      "f1": 0.218878,
+      "precision": 0.172113,
+      "recall": 0.951807,
+      "f1": 0.291513,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0.5,
-      "extractedCharacters": 4505,
+      "extractedCharacters": 3225,
       "referenceCharacters": 616
     },
     {
@@ -3522,12 +3522,12 @@
     {
       "id": "5317",
       "pageType": "service",
-      "precision": 0.469965,
-      "recall": 0.970803,
-      "f1": 0.633333,
-      "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 1716,
+      "precision": 0.728261,
+      "recall": 0.489051,
+      "f1": 0.585153,
+      "requiredSnippetRecall": 0.166667,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 512,
       "referenceCharacters": 767
     },
     {
@@ -3555,12 +3555,12 @@
     {
       "id": "5326",
       "pageType": "article",
-      "precision": 0.797851,
+      "precision": 1,
       "recall": 1,
-      "f1": 0.887561,
+      "f1": 1,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 8539,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 6751,
       "referenceCharacters": 6864
     },
     {
@@ -3577,12 +3577,12 @@
     {
       "id": "5335",
       "pageType": "listing",
-      "precision": 0.334819,
+      "precision": 0.929329,
       "recall": 1,
-      "f1": 0.501669,
+      "f1": 0.96337,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 8884,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 3372,
       "referenceCharacters": 3297
     },
     {
@@ -3621,23 +3621,23 @@
     {
       "id": "5345",
       "pageType": "service",
-      "precision": 0.394737,
+      "precision": 0.944056,
       "recall": 1,
-      "f1": 0.566038,
+      "f1": 0.971223,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 2433,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 948,
       "referenceCharacters": 899
     },
     {
       "id": "5346",
       "pageType": "service",
-      "precision": 0.851692,
-      "recall": 0.998312,
-      "f1": 0.919192,
-      "requiredSnippetRecall": 1,
+      "precision": 1,
+      "recall": 0.755274,
+      "f1": 0.860577,
+      "requiredSnippetRecall": 0.666667,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 8162,
+      "extractedCharacters": 5178,
       "referenceCharacters": 6976
     },
     {
@@ -3676,12 +3676,12 @@
     {
       "id": "5357",
       "pageType": "article",
-      "precision": 0.035585,
+      "precision": 0.037838,
       "recall": 1,
-      "f1": 0.068724,
+      "f1": 0.072917,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 7914,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 7379,
       "referenceCharacters": 299
     },
     {
@@ -3753,23 +3753,23 @@
     {
       "id": "5379",
       "pageType": "documentation",
-      "precision": 0.611472,
-      "recall": 0.986038,
-      "f1": 0.754843,
+      "precision": 0.973684,
+      "recall": 0.968586,
+      "f1": 0.971129,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 6881,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 3580,
       "referenceCharacters": 3659
     },
     {
       "id": "5380",
       "pageType": "documentation",
-      "precision": 0.791878,
+      "precision": 0.984671,
       "recall": 0.975,
-      "f1": 0.87395,
+      "f1": 0.979812,
       "requiredSnippetRecall": 0.75,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 9759,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 6462,
       "referenceCharacters": 6695
     },
     {
@@ -3863,23 +3863,23 @@
     {
       "id": "5395",
       "pageType": "documentation",
-      "precision": 0.954023,
+      "precision": 1,
       "recall": 1,
-      "f1": 0.976471,
+      "f1": 1,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.666667,
-      "extractedCharacters": 27457,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 26396,
       "referenceCharacters": 26551
     },
     {
       "id": "5406",
       "pageType": "article",
-      "precision": 0.995781,
+      "precision": 0.996832,
       "recall": 1,
-      "f1": 0.997886,
+      "f1": 0.998414,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 16251,
+      "extractedCharacters": 16237,
       "referenceCharacters": 16305
     },
     {
@@ -3962,12 +3962,12 @@
     {
       "id": "5416",
       "pageType": "article",
-      "precision": 0.836727,
+      "precision": 0.974909,
       "recall": 1,
-      "f1": 0.911106,
+      "f1": 0.987295,
       "requiredSnippetRecall": 0.75,
-      "unwantedSnippetInclusion": 0.666667,
-      "extractedCharacters": 16131,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 13754,
       "referenceCharacters": 13785
     },
     {
@@ -4094,12 +4094,12 @@
     {
       "id": "5434",
       "pageType": "article",
-      "precision": 0.94273,
-      "recall": 0.965714,
-      "f1": 0.954084,
+      "precision": 0.958111,
+      "recall": 0.958476,
+      "f1": 0.958294,
       "requiredSnippetRecall": 0.25,
-      "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 16611,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 16008,
       "referenceCharacters": 15870
     },
     {
@@ -4171,12 +4171,12 @@
     {
       "id": "5442",
       "pageType": "article",
-      "precision": 0.885113,
+      "precision": 0.971581,
       "recall": 1,
-      "f1": 0.939056,
+      "f1": 0.985586,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 7964,
+      "extractedCharacters": 7270,
       "referenceCharacters": 7066
     },
     {
@@ -4193,12 +4193,12 @@
     {
       "id": "5445",
       "pageType": "documentation",
-      "precision": 0.697692,
+      "precision": 0.931689,
       "recall": 1,
-      "f1": 0.82193,
+      "f1": 0.964637,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 33191,
+      "unwantedSnippetInclusion": 0.25,
+      "extractedCharacters": 24391,
       "referenceCharacters": 22863
     },
     {
@@ -4303,12 +4303,12 @@
     {
       "id": "5467",
       "pageType": "documentation",
-      "precision": 0.904604,
+      "precision": 0.915052,
       "recall": 1,
-      "f1": 0.949913,
+      "f1": 0.955642,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.25,
-      "extractedCharacters": 20838,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 20597,
       "referenceCharacters": 19518
     },
     {
@@ -4589,23 +4589,23 @@
     {
       "id": "5551",
       "pageType": "article",
-      "precision": 0.948966,
+      "precision": 0.997101,
       "recall": 1,
-      "f1": 0.973815,
+      "f1": 0.998549,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.666667,
-      "extractedCharacters": 11968,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 11121,
       "referenceCharacters": 11123
     },
     {
       "id": "5553",
       "pageType": "article",
-      "precision": 0.902237,
+      "precision": 0.929181,
       "recall": 1,
-      "f1": 0.948606,
+      "f1": 0.963291,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 6273,
+      "extractedCharacters": 6060,
       "referenceCharacters": 5578
     },
     {
@@ -4765,12 +4765,12 @@
     {
       "id": "5579",
       "pageType": "article",
-      "precision": 0.871492,
+      "precision": 1,
       "recall": 1,
-      "f1": 0.931334,
+      "f1": 1,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 7276,
+      "extractedCharacters": 6314,
       "referenceCharacters": 6340
     },
     {
@@ -4941,12 +4941,12 @@
     {
       "id": "5600",
       "pageType": "listing",
-      "precision": 0.918669,
-      "recall": 1,
-      "f1": 0.957611,
-      "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.333333,
-      "extractedCharacters": 3377,
+      "precision": 1,
+      "recall": 0.257545,
+      "f1": 0.4096,
+      "requiredSnippetRecall": 0.25,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 809,
       "referenceCharacters": 3011
     },
     {
@@ -4974,12 +4974,12 @@
     {
       "id": "5603",
       "pageType": "article",
-      "precision": 0.914225,
+      "precision": 0.915054,
       "recall": 1,
-      "f1": 0.955191,
+      "f1": 0.955643,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 18809,
+      "extractedCharacters": 18793,
       "referenceCharacters": 17307
     },
     {
@@ -5095,23 +5095,23 @@
     {
       "id": "5615",
       "pageType": "article",
-      "precision": 0.453311,
+      "precision": 0.543788,
       "recall": 1,
-      "f1": 0.623832,
+      "f1": 0.704485,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.75,
-      "extractedCharacters": 3475,
+      "unwantedSnippetInclusion": 0.5,
+      "extractedCharacters": 2829,
       "referenceCharacters": 1560
     },
     {
       "id": "5617",
       "pageType": "article",
-      "precision": 0.890722,
+      "precision": 0.893793,
       "recall": 0.997691,
-      "f1": 0.941176,
+      "f1": 0.942888,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 8132,
+      "extractedCharacters": 8106,
       "referenceCharacters": 7325
     },
     {
@@ -5161,12 +5161,12 @@
     {
       "id": "5624",
       "pageType": "article",
-      "precision": 0.784076,
+      "precision": 0.787263,
       "recall": 1,
-      "f1": 0.878971,
+      "f1": 0.88097,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 5218,
+      "extractedCharacters": 5195,
       "referenceCharacters": 4111
     },
     {
@@ -5216,23 +5216,23 @@
     {
       "id": "5631",
       "pageType": "article",
-      "precision": 0.851695,
-      "recall": 0.950559,
-      "f1": 0.898415,
+      "precision": 0.940196,
+      "recall": 0.94626,
+      "f1": 0.943218,
       "requiredSnippetRecall": 0.75,
       "unwantedSnippetInclusion": 0.333333,
-      "extractedCharacters": 16268,
+      "extractedCharacters": 14454,
       "referenceCharacters": 14442
     },
     {
       "id": "5634",
       "pageType": "article",
-      "precision": 0.887688,
-      "recall": 0.96517,
-      "f1": 0.924809,
+      "precision": 0.972801,
+      "recall": 0.960554,
+      "f1": 0.966639,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 17263,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 15491,
       "referenceCharacters": 15547
     },
     {
@@ -5271,23 +5271,23 @@
     {
       "id": "5638",
       "pageType": "service",
-      "precision": 0.905506,
+      "precision": 0.936875,
       "recall": 0.995908,
-      "f1": 0.948558,
+      "f1": 0.96549,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 8382,
+      "extractedCharacters": 8171,
       "referenceCharacters": 7747
     },
     {
       "id": "5639",
       "pageType": "article",
-      "precision": 0.833673,
-      "recall": 0.977793,
-      "f1": 0.9,
+      "precision": 0.963618,
+      "recall": 0.968227,
+      "f1": 0.965917,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 22554,
+      "unwantedSnippetInclusion": 0.666667,
+      "extractedCharacters": 19422,
       "referenceCharacters": 19308
     },
     {
@@ -5348,12 +5348,12 @@
     {
       "id": "5646",
       "pageType": "service",
-      "precision": 0.343949,
-      "recall": 0.993865,
-      "f1": 0.511041,
-      "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.333333,
-      "extractedCharacters": 5477,
+      "precision": 0.616246,
+      "recall": 0.674847,
+      "f1": 0.644217,
+      "requiredSnippetRecall": 0.666667,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 1990,
       "referenceCharacters": 1901
     },
     {
@@ -5425,12 +5425,12 @@
     {
       "id": "5654",
       "pageType": "article",
-      "precision": 0.718415,
+      "precision": 0.95815,
       "recall": 1,
-      "f1": 0.836136,
+      "f1": 0.978628,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 7836,
+      "unwantedSnippetInclusion": 0.666667,
+      "extractedCharacters": 5771,
       "referenceCharacters": 5557
     },
     {
@@ -5458,12 +5458,12 @@
     {
       "id": "5659",
       "pageType": "service",
-      "precision": 0.808917,
+      "precision": 0.830065,
       "recall": 0.996078,
-      "f1": 0.892794,
+      "f1": 0.905526,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 1986,
+      "unwantedSnippetInclusion": 0.333333,
+      "extractedCharacters": 1928,
       "referenceCharacters": 1665
     },
     {
@@ -5513,12 +5513,12 @@
     {
       "id": "5667",
       "pageType": "article",
-      "precision": 0.929463,
+      "precision": 0.990954,
       "recall": 1,
-      "f1": 0.963442,
+      "f1": 0.995457,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 38738,
+      "extractedCharacters": 35963,
       "referenceCharacters": 35999
     },
     {
@@ -5535,12 +5535,12 @@
     {
       "id": "5670",
       "pageType": "article",
-      "precision": 0.928974,
-      "recall": 0.984622,
-      "f1": 0.955989,
+      "precision": 0.980225,
+      "recall": 0.978426,
+      "f1": 0.979325,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 1,
-      "extractedCharacters": 29412,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 27592,
       "referenceCharacters": 28174
     },
     {
@@ -5667,12 +5667,12 @@
     {
       "id": "5689",
       "pageType": "article",
-      "precision": 0.377778,
-      "recall": 1,
-      "f1": 0.548387,
+      "precision": 1,
+      "recall": 0.987616,
+      "f1": 0.993769,
       "requiredSnippetRecall": 1,
-      "unwantedSnippetInclusion": 0.5,
-      "extractedCharacters": 11073,
+      "unwantedSnippetInclusion": 0,
+      "extractedCharacters": 3772,
       "referenceCharacters": 3863
     },
     {
@@ -5700,12 +5700,12 @@
     {
       "id": "5693",
       "pageType": "article",
-      "precision": 0.830328,
+      "precision": 0.833059,
       "recall": 1,
-      "f1": 0.9073,
+      "f1": 0.908928,
       "requiredSnippetRecall": 1,
       "unwantedSnippetInclusion": 0,
-      "extractedCharacters": 7522,
+      "extractedCharacters": 7502,
       "referenceCharacters": 6191
     },
     {

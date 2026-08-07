@@ -13,6 +13,44 @@
 
 ---
 
+## Measured, not asserted
+
+Main-content extraction across all 511 pages of WCEB v1.0, with one scorer
+applied to every tool. Reproduce it with `npm run bench:public:comparison`.
+
+| Tool | Precision | Recall | F1 |
+| --- | --- | --- | --- |
+| trafilatura 2.2.0 | 0.8901 | 0.8683 | **0.8600** |
+| **cockroach-crawler 0.6.0** | 0.7749 | **0.8986** | 0.7895 |
+| readability-lxml | 0.8694 | 0.6263 | 0.6565 |
+
+**Cockroach Crawler does not win this benchmark.** Trafilatura leads macro F1
+by 0.071. It is published here because a comparison that only appears when it
+flatters the author is not evidence.
+
+What Cockroach Crawler does lead is recall, and by extension how much of the
+annotated content survives extraction. Tune that tradeoff with `boilerplate`:
+
+| `boilerplate` | Precision | Recall | F1 | Required-snippet | Unwanted |
+| --- | --- | --- | --- | --- | --- |
+| `off` | 0.7330 | **0.9100** | 0.7653 | **0.8713** | 0.3885 |
+| `structural` *(default)* | 0.7749 | 0.8986 | 0.7895 | 0.8579 | 0.2203 |
+| `balanced` | 0.8326 | 0.8606 | **0.8085** | 0.8178 | 0.1396 |
+| `aggressive` | **0.8401** | 0.8452 | 0.8030 | 0.8008 | **0.1331** |
+
+`aggressive` scores *worse* F1 than `balanced` — over-removal costs more recall
+than the precision buys. The default removes only landmarks the HTML
+specification already places outside main content.
+
+Other published evidence, all source-pinned and independently verifiable:
+25/25 Google robots dispatch vectors, 101/101 applicable WPT URL
+canonicalization cases, 381 tests. Method, page-class breakdown, and the
+claims these numbers do **not** support are in
+[docs/EXTRACTION-COMPARISON.md](./docs/EXTRACTION-COMPARISON.md).
+
+
+---
+
 **Give your AI agents the web. Keep the keys.** Crawl complete sites, render JavaScript, rank fetch-validated maps, extract structured data with CSS, XPath, restricted regex, or a schema-validated host model, parse PDFs, and return evidence without handing a model an unrestricted browser or network client.
 
 ```bash
@@ -24,36 +62,6 @@ Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for ag
 It is built to be **the best AI crawler for governed agents** that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus - not a claim that it replaces every distributed scraping cloud or bypasses site controls.
 
 Every capability stays behind creator-owned origin, request, byte, redirect, concurrency, and time limits. Use the hardened local crawler for bounded public-web collection, the source router for explicit provider capabilities, optional reach providers for reviewed no-developer-key or session-backed reads, and the restricted self-hosted Worker only for allowlisted sites you operate or trust.
-
-## Measured against other extractors
-
-Main-content extraction on all 511 pages of WCEB v1.0, one scorer applied to every tool:
-
-| Tool | Precision | Recall | F1 |
-| --- | --- | --- | --- |
-| trafilatura 2.2.0 | 0.8901 | 0.8683 | **0.8600** |
-| cockroach-crawler 0.6.0 | 0.7530 | **0.9038** | 0.7791 |
-| readability-lxml | 0.8694 | 0.6263 | 0.6565 |
-
-Cockroach Crawler has the highest recall and keeps the most annotated content.
-It does not win overall - trafilatura leads macro F1 by 0.081 because Cockroach
-Crawler still retains more boilerplate.
-
-Raising `boilerplate` from the default closes most of the remaining gap:
-
-| `boilerplate` | Precision | Recall | F1 | Unwanted |
-| --- | --- | --- | --- | --- |
-| `off` | 0.7330 | 0.9041 | 0.7653 | 0.3885 |
-| `structural` (default) | 0.7530 | 0.9038 | 0.7791 | 0.2870 |
-| `balanced` | 0.8283 | 0.8613 | **0.8095** | 0.1593 |
-| `aggressive` | 0.8360 | 0.8461 | 0.8050 | 0.1495 |
-
-The default removes only HTML landmarks the specification already places
-outside main content, which costs no measurable recall. `balanced` scores the
-best F1 but trades real recall, so it stays opt-in. `aggressive` scores worse
-than `balanced` - over-removal costs more recall than the precision buys.
-The page-class breakdown and reproduce steps are in
-[docs/EXTRACTION-COMPARISON.md](./docs/EXTRACTION-COMPARISON.md).
 
 ## Why developers choose Cockroach Crawler
 

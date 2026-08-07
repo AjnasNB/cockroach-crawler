@@ -195,3 +195,64 @@ export const boilerplateDefaults = Object.freeze({
   structuralSelectors: STRUCTURAL_SELECTORS,
   labelPatternCount: LABEL_PATTERNS.length
 });
+
+const NEGATIVE_LABEL = /nav|menu|sidebar|footer|header|banner|breadcrumb|comment|share|social|related|recommend|promo|advert|sponsor|popup|modal|cookie|consent|newsletter|subscribe|pagination|widget|masthead|toolbar|tag-cloud|meta|byline|caption|copyright/i;
+const POSITIVE_LABEL = /article|content|main|body|post|entry|story|text|prose|markdown|documentation|readme/i;
+
+function blockScore($, node, rootText) {
+  const selection = $(node);
+  const text = normalizedLength(selection.text());
+  if (!text) return Number.NEGATIVE_INFINITY;
+
+  const paragraphs = selection.find("p").length;
+  const anchors = selection.find("a").toArray()
+    .reduce((total, anchor) => total + normalizedLength($(anchor).text()), 0);
+  const listItems = selection.find("li").length;
+  const commas = (selection.text().match(/[,;:]/gu) || []).length;
+  const label = labelOf($, node);
+
+  let score = text * 0.25;
+  score += paragraphs * 30;
+  score += commas * 3;
+  score -= anchors * 1.5;
+  score -= listItems * 4;
+  if (NEGATIVE_LABEL.test(label)) score -= text * 0.6;
+  if (POSITIVE_LABEL.test(label)) score += text * 0.15;
+  // A block covering nearly the whole document is the document, not a finding.
+  if (rootText && text / rootText > 0.95) score -= text * 0.1;
+  return score;
+}
+
+/**
+ * Picks the subtree most likely to hold the main content.
+ *
+ * Used when the markup offers no main, article, or [role=main] landmark, where
+ * the previous behaviour was to take the entire body. Scoring is deliberately
+ * conservative: the chosen block must still carry a meaningful share of the
+ * document's text, otherwise the whole body is returned unchanged. Picking a
+ * small confident-looking block and being wrong costs far more than keeping
+ * some boilerplate.
+ */
+export function selectContentRoot($, root, options = {}) {
+  const settings = ownRecord(options, "selectContentRoot options", 8);
+  const minShare = finite(settings.minShare, "minShare", 0.2, 0, 1);
+  const maxCandidates = 4_000;
+
+  const rootText = normalizedLength(root.text());
+  if (rootText < 200) return { root, score: 0, selected: false };
+
+  const candidates = root.find("div, section, td, article").toArray().slice(0, maxCandidates);
+  let best = null;
+  for (const node of candidates) {
+    const text = normalizedLength($(node).text());
+    if (text / rootText < minShare) continue;
+    const score = blockScore($, node, rootText);
+    if (!best || score > best.score) best = { node, score, text };
+  }
+
+  if (!best) return { root, score: 0, selected: false };
+  const rootScore = blockScore($, root.get(0), rootText);
+  if (best.score <= rootScore) return { root, score: rootScore, selected: false };
+
+  return { root: $(best.node), score: best.score, selected: true };
+}

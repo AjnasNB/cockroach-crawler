@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import * as cheerio from "cheerio";
 
-import { boilerplateDefaults, normalizeBoilerplateOptions, stripBoilerplate } from "../src/boilerplate.js";
+import { boilerplateDefaults, normalizeBoilerplateOptions, selectContentRoot, stripBoilerplate } from "../src/boilerplate.js";
 import { extractPage } from "../src/index.js";
 
 const PAGE = `<html><body>
@@ -107,4 +107,55 @@ test("an empty root is handled without throwing", () => {
   const $ = cheerio.load("<html><body></body></html>");
   const result = stripBoilerplate($, $("body"), normalizeBoilerplateOptions("balanced"));
   assert.equal(result.removed, 0);
+});
+
+test("selectContentRoot picks the article block when there is no landmark", () => {
+  const html = `<html><body>
+    <div class="topbar"><a href="/1">Home</a> <a href="/2">Docs</a> <a href="/3">Pricing</a> <a href="/4">Blog</a></div>
+    <div class="post-body">
+      <p>${"Tokenizers split text into units, and the unit you choose changes everything downstream. ".repeat(6)}</p>
+      <p>${"Byte pair encoding merges the most frequent adjacent pair until the vocabulary is full. ".repeat(6)}</p>
+    </div>
+    <div class="footer-links"><a href="/a">Terms</a> <a href="/b">Privacy</a> <a href="/c">Contact us today</a></div>
+  </body></html>`;
+  const $ = cheerio.load(html);
+  const picked = selectContentRoot($, $("body"), {});
+  assert.equal(picked.selected, true, "a better block than body should be found");
+  const text = picked.root.text();
+  assert.match(text, /Byte pair encoding/);
+  assert.doesNotMatch(text, /Privacy/, "footer links should be outside the chosen block");
+});
+
+test("selectContentRoot keeps the body when no block is clearly better", () => {
+  const html = `<html><body><p>${"One continuous run of prose with no container structure at all. ".repeat(8)}</p></body></html>`;
+  const $ = cheerio.load(html);
+  const picked = selectContentRoot($, $("body"), {});
+  assert.equal(picked.selected, false);
+  assert.match(picked.root.text(), /continuous run of prose/);
+});
+
+test("selectContentRoot refuses a block below the share floor", () => {
+  const html = `<html><body>
+    <div class="tiny-widget"><p>Short aside.</p></div>
+    <p>${"The document body carries almost all of the text on this page by a wide margin. ".repeat(10)}</p>
+  </body></html>`;
+  const $ = cheerio.load(html);
+  const picked = selectContentRoot($, $("body"), { minShare: 0.5 });
+  assert.equal(picked.selected, false, "a small block must not be chosen");
+  assert.match(picked.root.text(), /wide margin/);
+});
+
+test("selectContentRoot leaves very short documents alone", () => {
+  const $ = cheerio.load("<html><body><div><p>Too short to score.</p></div></body></html>");
+  const picked = selectContentRoot($, $("body"), {});
+  assert.equal(picked.selected, false);
+});
+
+test("boilerplate off skips block selection entirely", () => {
+  const html = `<html><body>
+    <div class="nav-bar"><a href="/1">Alpha</a> <a href="/2">Beta</a> <a href="/3">Gamma links here</a></div>
+    <div class="article-body"><p>${"Real content that should dominate the scoring by a clear margin. ".repeat(8)}</p></div>
+  </body></html>`;
+  assert.match(extractPage(html, "https://x.test/p", { boilerplate: "off" }).text, /Gamma links here/);
+  assert.doesNotMatch(extractPage(html, "https://x.test/p").text, /Gamma links here/);
 });

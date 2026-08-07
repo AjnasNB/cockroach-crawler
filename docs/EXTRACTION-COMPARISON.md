@@ -15,7 +15,7 @@ WCEB v1.0, `test` split, all 511 pages, revision `62ff86d1`.
 | Tool | Precision | Recall | F1 | Required-snippet recall | Unwanted inclusion |
 | --- | --- | --- | --- | --- | --- |
 | trafilatura 2.2.0 | 0.8901 | 0.8683 | **0.8600** | 0.7966 | 0.0824 |
-| cockroach-crawler 0.6.0 | 0.7530 | **0.9038** | 0.7791 | **0.8713** | 0.2870 |
+| cockroach-crawler 0.6.0 | 0.7749 | **0.8986** | 0.7895 | **0.8579** | 0.2203 |
 | readability-lxml | 0.8694 | 0.6263 | 0.6565 | 0.5504 | **0.0517** |
 
 Read that honestly:
