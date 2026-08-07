@@ -48,7 +48,9 @@ jobs:
           [[ -n "${current}" ]] || { echo "Could not read package.json at ${GITHUB_SHA}." >&2; exit 1; }
           echo "current=${current} previous=${previous}"
           [[ "${current}" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]] || { echo "Invalid version." >&2; exit 1; }
-          if [[ "${current}" == "${previous}" ]]; then
+          # A manual dispatch means "publish the current version if npm does not
+          # already have it", so the parent comparison only gates pushes.
+          if [[ "${GITHUB_EVENT_NAME}" != "workflow_dispatch" && "${current}" == "${previous}" ]]; then
             echo "changed=false" >> "${GITHUB_OUTPUT}"
             echo "Version unchanged; nothing to publish."
             exit 0
@@ -80,6 +82,16 @@ jobs:
           node-version: 24
           cache: npm
 
+      # npm trusted publishing over OIDC needs a recent npm. Node 24 ships an
+      # older one that silently falls back to token auth, which the registry
+      # answers with a 404 on PUT. Both jobs pin the same version because they
+      # compare tarball digests, and different npm versions pack differently.
+      - name: Pin the npm used for packing and publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --global npm@12.0.1 --ignore-scripts --no-audit --no-fund
+          test "$(npm --version)" = "12.0.1"
       - name: Install
         run: npm ci
 
@@ -130,6 +142,16 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
 
+      # npm trusted publishing over OIDC needs a recent npm. Node 24 ships an
+      # older one that silently falls back to token auth, which the registry
+      # answers with a 404 on PUT. Both jobs pin the same version because they
+      # compare tarball digests, and different npm versions pack differently.
+      - name: Pin the npm used for packing and publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --global npm@12.0.1 --ignore-scripts --no-audit --no-fund
+          test "$(npm --version)" = "12.0.1"
       - name: Install
         run: npm ci
 
