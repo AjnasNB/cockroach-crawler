@@ -1,17 +1,45 @@
-# Cockroach Crawler
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/AjnasNB/cockroach-crawler/main/assets/banner.svg" alt="Cockroach Crawler - give your AI agents the web, keep the keys" width="100%">
 
 [![npm version](https://img.shields.io/npm/v/cockroach-crawler.svg)](https://www.npmjs.com/package/cockroach-crawler)
 [![CI](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml)
 [![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
 
+**[Documentation](https://cockroachcrawler.com/docs/)** · **[Quickstart](./docs/QUICKSTART.md)** · **[Why selectors break](https://cockroachcrawler.com/blog/why-css-selectors-break/)** · **[Benchmarks](https://cockroachcrawler.com/benchmark/)** · **[npm](https://www.npmjs.com/package/cockroach-crawler)**
+
+</div>
+
+---
+
 **Give your AI agents the web. Keep the keys.** Crawl complete sites, render JavaScript, rank fetch-validated maps, extract structured data with CSS, XPath, restricted regex, or a schema-validated host model, parse PDFs, and return evidence without handing a model an unrestricted browser or network client.
+
+```bash
+npm install cockroach-crawler
+```
 
 Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to run BFS, DFS, best-first, or adaptive traversal, build searchable fetch-validated site maps, extract bounded CSS, XPath, or restricted-regex fields, search YouTube without a developer API key through the optional reviewed route, render JavaScript pages, run bounded self-hosted jobs, and preserve source identity, redirects, hashes, warnings, artifacts, and provenance.
 
 It is built to be **the best AI crawler for governed agents** that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus - not a claim that it replaces every distributed scraping cloud or bypasses site controls.
 
 Every capability stays behind creator-owned origin, request, byte, redirect, concurrency, and time limits. Use the hardened local crawler for bounded public-web collection, the source router for explicit provider capabilities, optional reach providers for reviewed no-developer-key or session-backed reads, and the restricted self-hosted Worker only for allowlisted sites you operate or trust.
+
+## Measured against other extractors
+
+Main-content extraction on all 511 pages of WCEB v1.0, one scorer applied to every tool:
+
+| Tool | Precision | Recall | F1 |
+| --- | --- | --- | --- |
+| trafilatura 2.2.0 | 0.8901 | 0.8683 | **0.8600** |
+| cockroach-crawler 0.6.0 | 0.7330 | **0.9041** | 0.7653 |
+| readability-lxml | 0.8694 | 0.6263 | 0.6565 |
+
+Cockroach Crawler has the highest recall and keeps the most annotated content,
+and it does not win overall - trafilatura leads macro F1 by 0.095 because
+Cockroach Crawler retains more boilerplate. The full page-class breakdown, the
+reproduce steps, and what the number does not measure are in
+[docs/EXTRACTION-COMPARISON.md](./docs/EXTRACTION-COMPARISON.md).
 
 ## Why developers choose Cockroach Crawler
 
