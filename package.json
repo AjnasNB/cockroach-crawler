@@ -158,6 +158,7 @@
     "bench/public/",
     "bench/results/ci-validated.json",
     "bench/results/wceb-test-0.6.0.json",
+    "bench/results/extraction-comparison-0.6.0.json",
     "bench/results/public-conformance-0.6.0.json",
     "docs/RELEASE.md",
     "docs/DEPENDENCY_LICENSES.md",
@@ -176,6 +177,7 @@
     "docs/QUICKSTART.md",
     "docs/SELECTORS-AND-IDENTITY.md",
     "docs/SPIDER.md",
+    "docs/EXTRACTION-COMPARISON.md",
     "Dockerfile",
     "README.md",
     "SECURITY.md",
@@ -203,7 +205,8 @@
     "crawl": "node bin/cockroach-crawl.js",
     "mcp": "node bin/cockroach-mcp.js",
     "serve": "node bin/cockroach-server.js",
-    "shell": "node bin/cockroach-shell.js"
+    "shell": "node bin/cockroach-shell.js",
+    "bench:public:comparison": "node bench/public/extraction-comparison.mjs"
   },
   "keywords": [
     "crawler",
