@@ -2,6 +2,69 @@
 
 Use this checklist from a clean, reviewed commit. Never publish from a worktree containing unreviewed changes or credentials. Stable `0.5.2` requires advanced capability, provider/security, packed-consumer, and exact-artifact approval on the reviewed release commit.
 
+## npm trusted publishing: the one thing that will bite you
+
+npm authorises **one workflow filename per package**. The registration lives
+in the npm account, not in this repository:
+
+> npmjs.com -> cockroach-crawler -> Settings -> Trusted Publisher
+> Organization `AjnasNB`, Repository `cockroach-crawler`,
+> Workflow filename `publish-npm.yml`, Environment `npm-publish`
+
+**Every publishing path must therefore live in `publish-npm.yml`.** Adding a
+second workflow that runs `npm publish` does not work, and it fails in a way
+that sends you looking in the wrong place:
+
+```
+npm error code E404
+npm error 404 Not Found - PUT https://registry.npmjs.org/cockroach-crawler
+npm error 404  The requested resource 'cockroach-crawler@x.y.z' could not be
+npm error 404  found or you do not have permission to access it.
+```
+
+That is npm rejecting an OIDC token from an unregistered workflow. It is not a
+missing package, not a permissions problem on the account, and not a network
+fault. The package exists and you own it.
+
+This cost three failed publish attempts during 0.6.0. Two plausible-sounding
+diagnoses were investigated and both were wrong:
+
+- **"The workflow filename is untrusted."** Correct, but abandoned too early
+  when a second difference appeared.
+- **"The npm version is too old for OIDC."** The registered workflow does pin
+  `npm@12.0.1`, and the new one did not, which looked like the answer. Pinning
+  it changed nothing, because the filename was still unregistered.
+
+The fastest way to settle it is to open the Trusted Publisher page and read
+the workflow filename field. If it does not exactly match the workflow that is
+failing, that is the whole problem.
+
+### Why this file has two triggers
+
+Because the alternative is a second file, which cannot publish. `publish-npm.yml`
+accepts:
+
+- `workflow_dispatch` - strict. Version, commit, size, sha256, and integrity are
+  stated up front and everything is compared against them. Use this for releases
+  that need an explicit approval record.
+- `push` to `main` touching `package.json` - automatic when the version changes.
+  The verify job measures the artifact, the publish job re-measures and compares
+  against it, so the artifact is still pinned between the two jobs.
+
+Both paths run the full release gate, both require the `npm-publish` environment
+approval, and both verify the published result against the registry afterwards.
+
+### Other things that cost time here
+
+- **`{ tls: undefined }` is still an own key.** The URL security layer rejects
+  unknown options by enumerating own keys, so passing an optional field as
+  `undefined` fails exactly like passing a bad one.
+- **Do not reproduce the CI tarball locally to fill in dispatch inputs.** Line
+  endings and npm version both change the digest. Read the values from the
+  verify job summary instead.
+- **`dismiss_stale_reviews` is on.** Any push after an approval discards it.
+  Freeze a branch once it has been approved.
+
 ## Candidate gate
 
 1. Confirm `git status --short` contains only intended release changes and no `.env`, `.npmrc`, browser state, generated Wrangler output, tokens, or downloaded third-party source.
