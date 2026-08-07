@@ -21,7 +21,7 @@ applied to every tool. Reproduce it with `npm run bench:public:comparison`.
 | Tool | Precision | Recall | F1 |
 | --- | --- | --- | --- |
 | trafilatura 2.2.0 | 0.8901 | 0.8683 | **0.8600** |
-| **cockroach-crawler 0.6.0** | 0.7938 | **0.8738** | 0.7915 |
+| **cockroach-crawler 0.6.1** | 0.7938 | **0.8738** | 0.7915 |
 | readability-lxml | 0.8694 | 0.6263 | 0.6565 |
 
 **Cockroach Crawler does not win this benchmark.** Trafilatura leads macro F1
