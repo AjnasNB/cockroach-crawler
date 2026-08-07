@@ -21,11 +21,11 @@ applied to every tool. Reproduce it with `npm run bench:public:comparison`.
 | Tool | Precision | Recall | F1 |
 | --- | --- | --- | --- |
 | trafilatura 2.2.0 | 0.8901 | 0.8683 | **0.8600** |
-| **cockroach-crawler 0.6.0** | 0.7749 | **0.8986** | 0.7895 |
+| **cockroach-crawler 0.6.0** | 0.7938 | **0.8738** | 0.7915 |
 | readability-lxml | 0.8694 | 0.6263 | 0.6565 |
 
 **Cockroach Crawler does not win this benchmark.** Trafilatura leads macro F1
-by 0.071. It is published here because a comparison that only appears when it
+by 0.069. It is published here because a comparison that only appears when it
 flatters the author is not evidence.
 
 What Cockroach Crawler does lead is recall, and by extension how much of the
@@ -34,9 +34,9 @@ annotated content survives extraction. Tune that tradeoff with `boilerplate`:
 | `boilerplate` | Precision | Recall | F1 | Required-snippet | Unwanted |
 | --- | --- | --- | --- | --- | --- |
 | `off` | 0.7330 | **0.9100** | 0.7653 | **0.8713** | 0.3885 |
-| `structural` *(default)* | 0.7749 | 0.8986 | 0.7895 | 0.8579 | 0.2203 |
-| `balanced` | 0.8326 | 0.8606 | **0.8085** | 0.8178 | 0.1396 |
-| `aggressive` | **0.8401** | 0.8452 | 0.8030 | 0.8008 | **0.1331** |
+| `structural` *(default)* | 0.7938 | 0.8778 | 0.7915 | 0.8356 | 0.1787 |
+| `balanced` | 0.8354 | 0.8497 | **0.8044** | 0.8075 | 0.1354 |
+| `aggressive` | **0.8421** | 0.8391 | 0.8018 | 0.7956 | **0.1310** |
 
 `aggressive` scores *worse* F1 than `balanced` — over-removal costs more recall
 than the precision buys. The default removes only landmarks the HTML

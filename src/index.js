@@ -19,7 +19,7 @@ import {
 } from "./security.js";
 import { createTraversalQueue, normalizeTraversalOptions, scoreRelevance } from "./strategies.js";
 import { normalizeRequestPolicy, shouldBlockRequest } from "./blocklist.js";
-import { normalizeBoilerplateOptions, selectContentRoot, stripBoilerplate } from "./boilerplate.js";
+import { normalizeBoilerplateOptions, selectContentRoot, stripBoilerplate, stripNonProse } from "./boilerplate.js";
 import {
   applyChallengePolicy,
   detectChallenge,
@@ -1196,6 +1196,9 @@ export function extractPage(html, url, options = {}) {
     ? main
     : (boilerplate.mode === "off" ? $("body") : selectContentRoot($, $("body"), {}).root);
   const boilerplateResult = stripBoilerplate($, contentRoot, boilerplate);
+  if (boilerplate.prose > 0) {
+    stripNonProse($, contentRoot, { maxLinkDensity: boilerplate.prose });
+  }
   const htmlFragment = contentRoot.html() || "";
   const text = contentRoot.text().replace(/\s+/g, " ").trim();
   const turndown = new TurndownService({

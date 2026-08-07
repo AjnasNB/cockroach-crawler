@@ -69,7 +69,7 @@ function finite(value, label, fallback, minimum, maximum) {
 
 export function normalizeBoilerplateOptions(value) {
   if (value === null || value === false || value === "off") {
-    return Object.freeze({ mode: "off", maxTextShare: 0, labels: false, linkDensity: 0 });
+    return Object.freeze({ mode: "off", maxTextShare: 0, labels: false, linkDensity: 0, prose: 0 });
   }
   // The default removes only HTML landmarks the specification already defines
   // as outside main content. On the pinned WCEB split that costs no measurable
@@ -84,17 +84,17 @@ export function normalizeBoilerplateOptions(value) {
       throw new TypeError(`boilerplate must be one of: ${PRESETS.join(", ")}, or an object.`);
     }
     if (value === "structural") {
-      return Object.freeze({ mode: "structural", maxTextShare: 0.25, labels: false, linkDensity: 0 });
+      return Object.freeze({ mode: "structural", maxTextShare: 0.25, labels: false, linkDensity: 0, prose: 0.35 });
     }
     if (value === "aggressive") {
-      return Object.freeze({ mode: "aggressive", maxTextShare: 0.4, labels: true, linkDensity: 0.65 });
+      return Object.freeze({ mode: "aggressive", maxTextShare: 0.4, labels: true, linkDensity: 0.65, prose: 0.35 });
     }
-    return Object.freeze({ mode: "balanced", maxTextShare: 0.25, labels: true, linkDensity: 0.8 });
+    return Object.freeze({ mode: "balanced", maxTextShare: 0.25, labels: true, linkDensity: 0.8, prose: 0.4 });
   }
 
   const settings = ownRecord(value, "boilerplate", 8);
   const unknown = Object.keys(settings).filter(
-    (key) => !["mode", "maxTextShare", "labels", "linkDensity"].includes(key)
+    (key) => !["mode", "maxTextShare", "labels", "linkDensity", "prose"].includes(key)
   );
   if (unknown.length) throw new TypeError(`Unknown boilerplate option(s): ${unknown.join(", ")}.`);
 
@@ -108,7 +108,8 @@ export function normalizeBoilerplateOptions(value) {
     mode,
     maxTextShare: finite(settings.maxTextShare, "boilerplate.maxTextShare", 0.25, 0, 1),
     labels: settings.labels ?? mode !== "structural",
-    linkDensity: finite(settings.linkDensity, "boilerplate.linkDensity", mode === "aggressive" ? 0.65 : 0.8, 0, 1)
+    linkDensity: finite(settings.linkDensity, "boilerplate.linkDensity", mode === "aggressive" ? 0.65 : 0.8, 0, 1),
+    prose: finite(settings.prose, "boilerplate.prose", mode === "balanced" ? 0.4 : 0.35, 0, 1)
   });
 }
 
@@ -255,4 +256,58 @@ export function selectContentRoot($, root, options = {}) {
   if (best.score <= rootScore) return { root, score: rootScore, selected: false };
 
   return { root: $(best.node), score: best.score, selected: true };
+}
+
+const SENTENCE_MARK = /[.!?。！？]/gu;
+
+/**
+ * Drops blocks that read as navigation rather than prose.
+ *
+ * Link density alone is not enough: a paragraph citing six sources is dense
+ * with links and is still content, while a category menu is dense with links
+ * and is not. The separating signal is sentence punctuation. Menus, filter
+ * rails, and widget output run long without ever ending a sentence, so a block
+ * is only dropped when it is both link-heavy and punctuation-starved.
+ */
+export function stripNonProse($, root, options = {}) {
+  const settings = ownRecord(options, "stripNonProse options", 8);
+  const unknown = Object.keys(settings).filter(
+    (key) => !["minLength", "maxLinkDensity", "minSentenceRate", "maxTextShare"].includes(key)
+  );
+  if (unknown.length) throw new TypeError(`Unknown stripNonProse option(s): ${unknown.join(", ")}.`);
+  // Length is measured in characters rather than tokens on purpose. Anchor text
+  // concatenates without separators, so a long category menu reads as very few
+  // whitespace-delimited tokens ("BakewareBread pansBundt pans") and a token
+  // floor would let exactly the blocks this targets slip through.
+  const minLength = finite(settings.minLength, "minLength", 40, 1, 100_000);
+  const maxLinkDensity = finite(settings.maxLinkDensity, "maxLinkDensity", 0.5, 0, 1);
+  const minSentenceRate = finite(settings.minSentenceRate, "minSentenceRate", 0.004, 0, 1);
+  const maxTextShare = finite(settings.maxTextShare, "maxTextShare", 0.5, 0, 1);
+
+  const rootText = normalizedLength(root.text());
+  if (!rootText) return Object.freeze({ removed: 0 });
+
+  let removed = 0;
+  for (const node of root.find("ul, ol, nav, div, section, dl, table").toArray()) {
+    const selection = $(node);
+    if (!selection.length || !selection.parents("body").length) continue;
+
+    const text = selection.text().replace(/\s+/gu, " ").trim();
+    const length = text.length;
+    if (!length) continue;
+    if (length / rootText > maxTextShare) continue;
+    if (length < minLength) continue;
+
+    const anchored = selection.find("a").toArray()
+      .reduce((total, anchor) => total + normalizedLength($(anchor).text()), 0);
+    const density = anchored / length;
+    if (density < maxLinkDensity) continue;
+
+    const sentences = (text.match(SENTENCE_MARK) || []).length;
+    if (sentences / length >= minSentenceRate) continue;
+
+    selection.remove();
+    removed += 1;
+  }
+  return Object.freeze({ removed });
 }

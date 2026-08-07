@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import * as cheerio from "cheerio";
 
-import { boilerplateDefaults, normalizeBoilerplateOptions, selectContentRoot, stripBoilerplate } from "../src/boilerplate.js";
+import { boilerplateDefaults, normalizeBoilerplateOptions, selectContentRoot, stripBoilerplate, stripNonProse } from "../src/boilerplate.js";
 import { extractPage } from "../src/index.js";
 
 const PAGE = `<html><body>
@@ -158,4 +158,39 @@ test("boilerplate off skips block selection entirely", () => {
   </body></html>`;
   assert.match(extractPage(html, "https://x.test/p", { boilerplate: "off" }).text, /Gamma links here/);
   assert.doesNotMatch(extractPage(html, "https://x.test/p").text, /Gamma links here/);
+});
+
+test("stripNonProse removes link menus but keeps link-heavy prose", () => {
+  const html = `<html><body>
+    <ul class="cats"><li><a href="/1">Bakeware</a></li><li><a href="/2">Bread pans</a></li><li><a href="/3">Bundt pans</a></li><li><a href="/4">Cookie cutters</a></li><li><a href="/5">Cookie scoops</a></li></ul>
+    <div class="cited"><p>The <a href="/a">first study</a> disagreed with the <a href="/b">second study</a>, and a <a href="/c">later review</a> reconciled them. That reconciliation is what matters here.</p></div>
+  </body></html>`;
+  const $ = cheerio.load(html);
+  const before = $("body").text();
+  assert.match(before, /Bundt pans/);
+  stripNonProse($, $("body"), {});
+  const after = $("body").text();
+  assert.doesNotMatch(after, /Bundt pans/, "a category menu has no sentences and should go");
+  assert.match(after, /reconciliation is what matters/, "cited prose has sentences and must stay");
+});
+
+test("stripNonProse leaves short blocks and huge blocks alone", () => {
+  const short = cheerio.load(`<html><body><ul><li><a href="/1">One</a></li></ul></body></html>`);
+  assert.equal(stripNonProse(short, short("body"), {}).removed, 0, "too short to judge");
+
+  const dominant = cheerio.load(`<html><body><div><a href="/1">${"link text ".repeat(60)}</a></div></body></html>`);
+  assert.equal(stripNonProse(dominant, dominant("body"), { maxTextShare: 0.5 }).removed, 0, "a dominant block is the page");
+});
+
+test("stripNonProse validates its thresholds", () => {
+  const $ = cheerio.load("<html><body><p>x</p></body></html>");
+  assert.throws(() => stripNonProse($, $("body"), { maxLinkDensity: 3 }), /must be a finite number/);
+  assert.throws(() => stripNonProse($, $("body"), { nope: 1 }), /Unknown stripNonProse option/);
+});
+
+test("every preset publishes a prose threshold", () => {
+  assert.equal(normalizeBoilerplateOptions("off").prose, 0);
+  assert.ok(normalizeBoilerplateOptions("structural").prose > 0);
+  assert.ok(normalizeBoilerplateOptions("balanced").prose > 0);
+  assert.equal(normalizeBoilerplateOptions({ mode: "balanced", prose: 0.9 }).prose, 0.9);
 });

@@ -20,7 +20,7 @@
     "source": {
       "algorithm": "sha256",
       "normalization": "utf8-lf",
-      "value": "8bd00b99437eab8ef3e3545d86bfbf255044ed0fb64589046c9e8153295c2cc1",
+      "value": "d13ee0237624252fc0b5cac30daf052811d95e118051a9fb15e9882a04a57507",
       "inputs": [
         "src/index.js",
         "package.json",
