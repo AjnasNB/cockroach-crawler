@@ -1,4 +1,5 @@
 import type { RequestPolicyInput } from "./blocklist.js";
+import type { BoilerplateOptionsInput, BoilerplatePreset } from "./boilerplate.js";
 import type { ChallengePolicyInput, IdentityOverrides, IdentityProfileName } from "./identity.js";
 
 export type UrlPattern = string | RegExp;
@@ -176,6 +177,7 @@ export interface CrawlOptions {
   userAgent?: string;
   identity?: IdentityProfileName | (IdentityOverrides & { profile?: IdentityProfileName });
   challengePolicy?: ChallengePolicyInput | false | null;
+  boilerplate?: BoilerplatePreset | BoilerplateOptionsInput | boolean | null;
   delayMs?: number;
   timeoutMs?: number;
   maxDurationMs?: number;
@@ -267,7 +269,7 @@ export function extractStructured(
 export function extractPage(
   html: string,
   url: string,
-  options?: Pick<CrawlOptions, "maxLinksPerPage" | "maxUrlLength" | "extract">
+  options?: Pick<CrawlOptions, "maxLinksPerPage" | "maxUrlLength" | "extract" | "boilerplate">
 ): CrawlPage;
 export function normalizeUrl(value: string | URL, maxLength?: number): string;
 export function classifyIpAddress(value: string): IpClassification;
