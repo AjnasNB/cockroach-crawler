@@ -123,6 +123,9 @@ if (!llms.includes("Complete JavaScript and CLI reference: https://cockroachcraw
 for (const phrase of ["searchable fetch-validated site maps", "restricted regex extraction", "bounded process-local asynchronous jobs", "official Registry metadata"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must document ${phrase}`);
 }
+for (const phrase of ["stable 0.7.0", "0.894101 precision", "1,497-page WCEB development split", "43 abstentions", "trafilatura@0.2.0", "does not support a universal 0.90 claim"]) {
+  if (!llms.includes(phrase)) errors.push(`llms.txt must preserve scoped 0.7.0 evidence: ${phrase}`);
+}
 const packageReadme = await readFile(join(dist, "..", "..", "README.md"), "utf8");
 if (/assets\/readme-proof-still/i.test(packageReadme)) errors.push("npm README must not restore the oversized proof banner");
 if (!packageReadme.includes("Give your AI agents the web. Keep the keys.")) errors.push("npm README must lead with the creator-owned AI web crawler promise");
@@ -130,7 +133,7 @@ if (!packageReadme.includes("Look up every package subpath, crawl option, page f
   errors.push("npm README must retain the complete-reference documentation row");
 }
 const docsHtml = await readFile(join(dist, "docs", "index.html"), "utf8");
-if (!docsHtml.includes("Cockroach Crawler 0.6.1 documentation")) errors.push("docs must identify stable 0.6.1");
+if (!docsHtml.includes("Cockroach Crawler 0.7.0 documentation")) errors.push("docs must identify stable 0.7.0");
 if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
 if (!docsHtml.includes('href="/docs/capabilities/"')) errors.push("docs overview must link the dedicated capability library");
 if (!docsHtml.includes("docs-sidebar-nav")) errors.push("docs overview must use the persistent grouped documentation navigation");
@@ -178,8 +181,34 @@ for (const [route, proof] of [
   if (!html.includes(proof)) errors.push(`${route} docs are missing their reference proof`);
 }
 const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
-if (!releaseHtml.includes("npm install cockroach-crawler@0.6.1")) errors.push("release page must install stable 0.6.1");
+if (!releaseHtml.includes("npm install cockroach-crawler@0.7.0")) errors.push("release page must include the post-publication 0.7.0 install command");
+if (!releaseHtml.includes("Stable release") || !releaseHtml.includes("Install stable 0.7.0")) errors.push("release page must describe stable 0.7.0 consistently");
+if (!releaseHtml.includes("trafilatura@0.2.0") || !releaseHtml.includes("Alpine/musl")) errors.push("release page must document the exact native dependency and unsupported platform boundary");
 if (releaseHtml.includes("Release · 0.3.0")) errors.push("release page must not advertise 0.3.0 as current");
+const benchmarkHtml = await readFile(join(dist, "benchmark", "index.html"), "utf8");
+for (const proof of [
+  "observed development evidence",
+  "0.894101",
+  "0.926022",
+  "0.890524",
+  "0.852784",
+  "0.896259",
+  "0.847064",
+  "0.847901",
+  "0.875080",
+  "0.844935",
+  "0.812035",
+  "0.104207",
+  "43",
+  "wceb-quality-observed-0.7.0.json",
+  "trafilatura@0.2.0"
+]) {
+  if (!benchmarkHtml.includes(proof)) errors.push(`benchmark page is missing release evidence: ${proof}`);
+}
+if (benchmarkHtml.includes("511 held-out pages") || benchmarkHtml.includes("complete held-out")) errors.push("benchmark page must not present the observed 511-page corpus as untouched evidence");
+const benchmarkBlogHtml = await readFile(join(dist, "blog", "we-benchmarked-ourselves-and-lost", "index.html"), "utf8");
+if (!benchmarkBlogHtml.includes("From a noisy core extractor to an explicit quality path")) errors.push("benchmark blog must carry the 0.7.0 evidence update");
+if (!benchmarkBlogHtml.includes("0.892777") || !benchmarkBlogHtml.includes("0.873844")) errors.push("benchmark blog must retain corrected exact stage values");
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);
 const headerPolicy = await readFile(join(dist, "_headers"), "utf8");
 if (/\bimmutable\b/.test(headerPolicy)) errors.push("unversioned site assets must remain revalidatable");

@@ -2,7 +2,7 @@
 
 ## Release identity
 
-- [ ] `npm view cockroach-crawler@0.5.2 version gitHead dist.integrity` matches the reviewed `v0.5.2` tag.
+- [ ] `npm view cockroach-crawler@0.7.0 version dist.integrity` matches the reviewed `v0.7.0` release artifact and provenance.
 - [ ] A registry-only install passes the doctor, bounded crawl, package exports, and CLI-bin checks.
 - [ ] The website, captions, social card, and release links work signed out.
 

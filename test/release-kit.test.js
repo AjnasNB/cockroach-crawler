@@ -137,3 +137,35 @@ test("trusted npm publication binds dispatch approval to the exact reviewed comm
     assert.match(workflow, new RegExp(`${input}:`));
   }
 });
+
+test("release workflows retry transient registry propagation and still fail closed", async () => {
+  const [publishWorkflow, deployWorkflow] = await Promise.all([
+    readFile(path.join(ROOT, ".github", "workflows", "publish-npm.yml"), "utf8"),
+    readFile(path.join(ROOT, ".github", "workflows", "deploy-site.yml"), "utf8")
+  ]);
+
+  assert.match(publishWorkflow, /for attempt in \{1\.\.10\}/);
+  assert.match(publishWorkflow, /dist\.attestations\.provenance\.predicateType/);
+  assert.match(publishWorkflow, /signatures_verified=false/);
+  assert.match(publishWorkflow, /if npm audit signatures; then/);
+  assert.match(publishWorkflow, /await import\('cockroach-crawler\/quality'\)/);
+  assert.match(publishWorkflow, /Registry signature verification did not succeed after 10 attempts/);
+  assert.match(publishWorkflow, /if \[\[ "\$\{verified\}" != "true" \]\]; then/);
+
+  const waitIndex = deployWorkflow.indexOf("- name: Wait for the exact npm package version");
+  const buildIndex = deployWorkflow.indexOf("- name: Build");
+  const deployIndex = deployWorkflow.indexOf("- name: Deploy");
+  assert.ok(waitIndex >= 0 && waitIndex < buildIndex && buildIndex < deployIndex);
+  assert.match(deployWorkflow, /for attempt in \{1\.\.30\}/);
+  assert.match(deployWorkflow, /\[\[ "\$\{published_version\}" == "\$\{version\}" \]\]/);
+  assert.match(deployWorkflow, /refusing to build or deploy the site/);
+  assert.doesNotMatch(
+    deployWorkflow,
+    /^\s*(?:-\s+)?uses:\s+[^\s]+@(?![0-9a-f]{40}(?:\s|$))/m,
+    "every deploy-site action must use a full commit SHA"
+  );
+  assert.match(deployWorkflow, /actions\/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1/);
+  assert.match(deployWorkflow, /persist-credentials:\s*false/);
+  assert.match(deployWorkflow, /cloudflare\/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd/);
+  assert.match(publishWorkflow, /default:\s*0\.7\.0/);
+});

@@ -378,74 +378,71 @@ rotator.report(proxyUrl, false);        // three strikes, then cooled down`, "ja
 
     {
       slug: "blog/we-benchmarked-ourselves-and-lost",
-      cardTitle: "We benchmarked our extractor against trafilatura and lost",
+      cardTitle: "From a noisy core extractor to an explicit quality path",
       cardSummary:
-        "511 pages, one scorer, three tools, and a result that does not flatter us. Here is the number, why we published it anyway, and what it took to close the gap by a third.",
-      title: "We benchmarked our extractor against trafilatura and lost | Cockroach Crawler",
+        "Exact core stages, a Node-native quality surface, 511 observed pages, 1,497 development pages, and a fail-closed result that reports its 43 abstentions.",
+      title: "From core extraction to a measured Node quality path | Cockroach Crawler",
       description:
-        "A reproducible comparison of Cockroach Crawler, trafilatura, and readability-lxml on all 511 pages of WCEB v1.0 using one scorer, published including the result where Cockroach Crawler loses.",
+        "A reproducible WCEB study of Cockroach Crawler core and quality extraction, separately generated baselines evaluated by the same scorer, fail-closed admission, and the limits of observed development evidence.",
       body: article({
-        eyebrow: "Engineering · 7 August 2026",
-        title: "We benchmarked our extractor against trafilatura and lost",
+        eyebrow: "Engineering · updated 8 August 2026",
+        title: "From a noisy core extractor to an explicit quality path",
         lede:
-          "Content extraction comparisons are mostly unfalsifiable. Everyone picks their own corpus, their own scoring, and publishes the run that looked good. So we ran the tools that matter on one corpus with one scorer, and published what came back.",
+          "The first comparison exposed a real precision problem. Stable 0.7.0 keeps that history, adds a separately named Node quality backend, reports a broader development run, and makes abstention visible instead of turning every page into confident text.",
         body: `
-      <h2>The result</h2>
-      <p>All 511 pages of the WCEB v1.0 test split, pinned to revision <code>62ff86d1</code>, macro word precision, recall, and F1, one scorer applied identically to every tool.</p>
-      <table><thead><tr><th>Tool</th><th>Precision</th><th>Recall</th><th>F1</th></tr></thead><tbody>
-        <tr><td>trafilatura 2.2.0</td><td>0.8901</td><td>0.8683</td><td><strong>0.8600</strong></td></tr>
-        <tr><td>cockroach-crawler 0.6.0</td><td>0.7938</td><td><strong>0.8738</strong></td><td>0.7915</td></tr>
-        <tr><td>readability-lxml</td><td>0.8694</td><td>0.6263</td><td>0.6565</td></tr>
-      </tbody></table>
-      <p>Trafilatura wins by 0.069 macro F1. That is not a rounding difference and we are not going to describe it as one.</p>
+      <h2>First, correct the evidence label</h2>
+      <p>WCEB calls its 511-page partition <code>test</code>. We inspected those pages, analyzed their failures, and changed extraction behavior in response. That makes every 511-page number here <strong>observed development evidence</strong>, not fresh confirmatory evidence. The separate 1,497-page partition is the upstream WCEB development split.</p>
+      <p>This distinction matters more than the headline. A 0.894101 precision result on pages that influenced development is useful engineering evidence. It is not permission to write &quot;0.90 precision everywhere.&quot;</p>
 
-      <h2>Why publish a loss</h2>
-      <p>Because a benchmark that only appears when it flatters the author is marketing wearing a lab coat. The moment you publish only your wins, every number you produce becomes unfalsifiable, including the ones that are true.</p>
-      <p>There is a practical reason too. A measured gap is a work item. Before the comparison existed, &quot;our extraction is a bit noisy&quot; was a feeling. Afterwards it was 0.3885 unwanted-snippet inclusion against trafilatura's 0.0824, with a page-class breakdown pointing at product, article, and forum pages. That is something you can fix and re-measure.</p>
-
-      <h2>What the gap actually was</h2>
-      <p>The shape was consistent everywhere: highest recall of the three tools, lowest precision. We kept more of the annotated content than anyone, and a great deal else besides.</p>
-      <p>The cause was embarrassingly simple. Extraction picked <code>main</code>, <code>article</code>, or <code>[role=main]</code>, and when a page had none of those it took the entire <code>&lt;body&gt;</code>. Nothing removed navigation, footers, sidebars, or cookie banners. Nothing scored one block against another. The extractor was trusting the markup to be well behaved.</p>
-      <p>Splitting the corpus made the cost visible: 412 pages carrying a landmark scored 0.7810 precision, and the 99 without one scored 0.6368.</p>
-
-      <h2>Three changes, each measured</h2>
-      <p><strong>Landmark removal.</strong> Drop <code>nav</code>, <code>aside</code>, <code>footer</code>, and the equivalent ARIA roles. The specification already says these sit outside main content, so this costs no measurable recall: 0.9041 to 0.9038. Unwanted inclusion fell by a quarter.</p>
-      <p><strong>Block scoring.</strong> When there is no landmark, score candidate subtrees on text length, paragraph count, punctuation, link text, and class-name hints, then use the winner instead of the body. Precision 0.7530 to 0.7749.</p>
-      <p><strong>Sentence-aware filtering.</strong> This one needed looking at the failures rather than guessing. The worst pages were e-commerce menus surviving as prose:</p>
-      <pre tabindex="0" aria-label="Worst scoring pages and the boilerplate text that survived extraction"><code>0.021  shop all bakeware baking liners bread pans bundt pans cookie cutters
-0.051  filterscategorygamingwebcamswearablescell phone casesscreen protectors</code></pre>
-      <p>Link density alone cannot catch those, because a paragraph citing six sources is link-dense and is content. The separating signal is sentence punctuation. Menus and widget output run long without ever ending a sentence, so a block is removed only when it is both link-heavy and punctuation-starved. Precision 0.7749 to 0.7938.</p>
-      <p>One detail is load-bearing. The size floor counts characters, not tokens. Anchor text concatenates without separators, so that second example is a 200-character run of five whitespace-delimited tokens, and a token floor let exactly the blocks we were targeting slip through.</p>
-
-      <h2>Where it landed</h2>
+      <h2>The core improvements, with corrected values</h2>
       <table><thead><tr><th>Stage</th><th>Precision</th><th>Recall</th><th>F1</th><th>Unwanted</th></tr></thead><tbody>
-        <tr><td>Before</td><td>0.7330</td><td>0.9041</td><td>0.7653</td><td>0.3885</td></tr>
-        <tr><td>After</td><td>0.7938</td><td>0.8738</td><td>0.7915</td><td>0.1787</td></tr>
+        <tr><td>Whole-body baseline</td><td>0.733006</td><td>0.904131</td><td>0.765255</td><td>0.388454</td></tr>
+        <tr><td>Landmark removal</td><td>0.753037</td><td>0.903825</td><td>0.779079</td><td>0.287019</td></tr>
+        <tr><td>Content-block scoring</td><td>0.774856</td><td>0.892777</td><td>0.789532</td><td>0.220320</td></tr>
+        <tr><td>Sentence-aware structural filtering</td><td>0.793763</td><td>0.873844</td><td>0.791500</td><td>0.178735</td></tr>
       </tbody></table>
-      <p>Surviving boilerplate down 54% for 0.026 of recall. The gap to trafilatura closed from 0.095 to 0.069, and to 0.056 with the opt-in <code>balanced</code> preset.</p>
-      <p>We still lose. The remaining difference is that trafilatura filters at paragraph and sentence granularity throughout, where we now choose the right container and strip obvious non-prose but keep what remains inside it.</p>
+      <p>Earlier copy incorrectly listed 0.8986 recall after block scoring and 0.8778 for the structural result. The immutable rows above are the corrected values. Unverified historical core <code>balanced</code> and <code>aggressive</code> rows are no longer used as release evidence.</p>
 
-      <h2>The thing we did not do</h2>
-      <p>We did not tune against the corpus until the number looked good. Every threshold is a round default chosen for a stated reason, and the presets were compared as whole configurations rather than searched. It would have been straightforward to fit these 511 pages into the high 0.8s and meaningless the moment anyone ran it on their own pages.</p>
-      <p>Relatedly: <code>aggressive</code> scores <em>worse</em> F1 than <code>balanced</code>, in every version of the algorithm we tried. More removal is not monotonically better, and that stayed in the documentation because it is the kind of thing you only find by measuring.</p>
+      <h2>The product decision: keep core small, make quality explicit</h2>
+      <p>Trying to disguise a mature extraction engine as a few more home-grown heuristics would be the wrong architecture. Stable 0.7.0 instead exports <code>cockroach-crawler/quality</code>, a Node-only surface with bounded validation, named profiles, deterministic diagnostics, and optional fail-closed admission. It delegates main-content extraction to the exact native npm dependency <code>trafilatura@0.2.0</code>.</p>
+      <p>The dependency identity is part of the result. This is a Cockroach Crawler product surface, but not a claim that Cockroach Crawler invented the underlying extraction algorithm. Core and serverless do not import it, and an unavailable native backend throws instead of silently falling back.</p>
+
+      <h2>The named stable 0.7.0 results</h2>
+      <table><thead><tr><th>Profile</th><th>Precision</th><th>Recall</th><th>F1</th><th>Required</th><th>Unwanted</th><th>Abstained</th></tr></thead><tbody>
+        <tr><td>Core structural · observed 511</td><td>0.793763</td><td>0.873844</td><td>0.791500</td><td>0.835584</td><td>0.178735</td><td>-</td></tr>
+        <tr><td>Quality balanced · observed 511</td><td><strong>0.894101</strong></td><td><strong>0.926022</strong></td><td><strong>0.890524</strong></td><td>0.864090</td><td>0.111383</td><td>-</td></tr>
+        <tr><td>Quality balanced · WCEB development 1,497</td><td>0.852784</td><td>0.896259</td><td>0.847064</td><td>0.755867</td><td>0.096181</td><td>-</td></tr>
+        <tr><td>Quality balanced + fail-closed · observed 511</td><td>0.847901</td><td>0.875080</td><td>0.844935</td><td>0.812035</td><td>0.104207</td><td>43</td></tr>
+      </tbody></table>
+      <p>Fail-closed is not a free precision switch. It changes coverage: 43 pages return no admitted body because shell, challenge, size, quality, or output-budget conditions fired. Its abstention count belongs beside every quality number.</p>
+
+      <h2>What the separately generated comparison says</h2>
+      <p>On the same observed 511 pages and scorer, Python trafilatura 2.2.0 records 0.890108 precision, 0.868258 recall, and 0.860042 F1. Readability-lxml records 0.869408, 0.626326, and 0.656537. Quality balanced records 0.894101, 0.926022, and 0.890524.</p>
+      <p>Do not turn that into &quot;we beat trafilatura.&quot; The Node and Python packages have different identities and configurations, and the corpus influenced project development. The defensible claim is narrower: these exact composed outputs, on this exact observed workload, scored as reported under one public metric implementation.</p>
+
+      <h2>Native platform boundary</h2>
+      <p>The exact <code>trafilatura@0.2.0</code> package publishes binaries for Windows x64/ARM64, macOS x64/ARM64, and glibc Linux x64/ARM64. Alpine/musl, 32-bit, and other operating systems are unsupported by that release. Use core there, or deploy the quality subpath on a supported Node host.</p>
 
       <h2>Run it yourself</h2>
       ${codeBlock("bench-repro", "reproduce", `git clone https://github.com/Murrough-Foley/web-content-extraction-benchmark.git wceb
 git -C wceb checkout 62ff86d12ea72c80c31fb810ff1a724fad687bea
 
-pip install trafilatura readability-lxml
-python bench/public/baselines/extract_baselines.py --dataset ./wceb --out ./baselines
-npm run bench:public:comparison -- --dataset ./wceb --baselines ./baselines`, "shell")}
-      <p>Extraction and scoring are separate processes. The scorer never invokes another extractor; it only scores text files it is handed, so nobody has to trust that we ran the competition fairly. Baselines run at documented defaults, and trafilatura's recall-favouring mode was not used, which is disclosed because it might change the result.</p>
-      <p>Method, page-class breakdown, and the claims these numbers do <strong>not</strong> support are in the <a href="/docs/">comparison documentation</a>.</p>
+python -m venv .venv
+.venv/bin/pip install -r bench/public/baselines/requirements.lock.txt
+.venv/bin/python bench/public/baselines/extract_baselines.py --dataset ./wceb --out ./baselines
+
+npm run bench:public:comparison -- --dataset ./wceb --split test --boilerplate structural --baselines ./baselines --output bench/results/extraction-comparison-0.7.0.json
+npm run bench:public:verify`, "shell")}
+      <p>On Windows, use the executables under <code>.venv\\Scripts</code>. Extraction and scoring are separate processes. Artifact verification binds dataset identity, profile configuration, source fingerprints, baseline manifest, and baseline output digests.</p>
+      <p>The complete methods, raw artifact names, and claim boundaries are on the <a href="/benchmark/">benchmark page</a>.</p>
 `
       }),
       schema: techArticleSchema({
         siteUrl,
         slug: "blog/we-benchmarked-ourselves-and-lost",
-        headline: "We benchmarked our extractor against trafilatura and lost",
+        headline: "From a noisy core extractor to an explicit Node quality path",
         description:
-          "A reproducible comparison of Cockroach Crawler, trafilatura, and readability-lxml across all 511 pages of WCEB v1.0 with one scorer, published including the losing result.",
+          "A reproducible WCEB study of Cockroach Crawler core and quality extraction, separately generated baselines evaluated by the same scorer, fail-closed admission, and the limits of observed development evidence.",
         keywords: [
           "trafilatura vs readability",
           "content extraction benchmark",
@@ -460,7 +457,7 @@ npm run bench:public:comparison -- --dataset ./wceb --baselines ./baselines`, "s
           {
             question: "Which content extractor is most accurate: trafilatura, readability, or Cockroach Crawler?",
             answer:
-              "On all 511 pages of WCEB v1.0 scored with one metric implementation, trafilatura 2.2.0 leads with 0.8600 macro F1, Cockroach Crawler 0.6.0 follows at 0.7915, and readability-lxml scores 0.6565. Cockroach Crawler has the highest recall of the three at 0.8738, meaning it retains more annotated content, while trafilatura is better balanced overall."
+              "On 511 previously observed WCEB pages under one scorer, Cockroach Crawler quality balanced records 0.890524 F1, Python trafilatura 2.2.0 records 0.860042, core structural records 0.791500, and readability-lxml records 0.656537. Because the 511 pages influenced development and configurations differ, this is not a universal ranking."
           },
           {
             question: "How do you remove boilerplate from HTML without losing content?",
@@ -470,7 +467,12 @@ npm run bench:public:comparison -- --dataset ./wceb --baselines ./baselines`, "s
           {
             question: "Is there a Node.js alternative to trafilatura?",
             answer:
-              "Cockroach Crawler provides main-content extraction in Node.js alongside crawling, rendering, and structured extraction. On the WCEB benchmark it scores lower than trafilatura on macro F1 and higher on recall, so the choice depends on whether losing content or retaining boilerplate is the more expensive failure for your pipeline."
+              "Cockroach Crawler 0.7.0 exposes an opt-in Node-only quality subpath backed by exact trafilatura@0.2.0, with bounded validation, diagnostics, and optional fail-closed abstention. It never silently falls back when the native backend is unavailable."
+          },
+          {
+            question: "Does Cockroach Crawler guarantee 0.90 extraction precision?",
+            answer:
+              "No. Quality balanced records 0.894101 precision on 511 observed development pages and 0.852784 on the 1,497-page WCEB development split. Those exact workload results do not establish a universal guarantee."
           }
         ]
       })

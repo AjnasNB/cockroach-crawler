@@ -28,8 +28,8 @@ configuration are intentionally maintained outside the public repository.
 
 ## Content rules
 
-- Published npm capability and source-candidate capability must remain visibly
-  separate until registry verification passes.
+- Stable npm capability must match the exact package version verified by the
+  deployment workflow before the site is built.
 - Local Node DNS pinning must never be attributed to the serverless profile.
 - Benchmark pages must name the workload, environment, sample distribution,
   exclusions, and dirty-source status.

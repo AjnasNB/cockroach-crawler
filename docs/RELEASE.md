@@ -1,6 +1,9 @@
 # Release checklist
 
-Use this checklist from a clean, reviewed commit. Never publish from a worktree containing unreviewed changes or credentials. Stable `0.5.2` requires advanced capability, provider/security, packed-consumer, and exact-artifact approval on the reviewed release commit.
+Use this checklist from a clean, reviewed commit. Never publish from a worktree
+containing unreviewed changes or credentials. Release `0.7.0` requires
+quality-backend, benchmark-integrity, provider/security, packed-consumer, and
+exact-artifact approval on the reviewed release commit.
 
 ## npm trusted publishing: the one thing that will bite you
 
@@ -65,7 +68,7 @@ approval, and both verify the published result against the registry afterwards.
 - **`dismiss_stale_reviews` is on.** Any push after an approval discards it.
   Freeze a branch once it has been approved.
 
-## Candidate gate
+## Artifact gate
 
 1. Confirm `git status --short` contains only intended release changes and no `.env`, `.npmrc`, browser state, generated Wrangler output, tokens, or downloaded third-party source.
 2. Confirm `package.json`, `package-lock.json`, and `src/version.js` use the same version. `test/sources.test.js` enforces the runtime/package pair.
@@ -76,23 +79,34 @@ approval, and both verify the published result against the registry afterwards.
 7. Review `cockroach-sources doctor --json`. Missing social credentials are valid capability states, not release failures. Do not use maintainer credentials merely to make a release claim.
 8. Review the Worker bundle output. The serverless entry must not import Node DNS/net/Playwright, must retain the origin allowlist, bearer secret, Cloudflare rate limiter, robots checks, redirect checks, and hard budgets.
 9. Require Node 22, 24, 26, Chromium, CodeQL, package, and Worker checks on the exact commit. Require an independent review for security-sensitive releases.
-10. Exercise every `0.5.2` subpath from a packed consumer: strategies, cache,
-    documents, extractors, browser helpers, providers, server, and MCP.
+10. Exercise every `0.7.0` subpath from a packed consumer, including
+    `cockroach-crawler/quality`, strategies, cache, documents, extractors,
+    browser helpers, providers, serverless, server, and MCP. Confirm core and
+    serverless import without loading the native quality backend.
 11. Build the Docker image, start it with a disposable token and fixed local
     origin, verify health/playground/authenticated crawl, then remove the
     disposable container and token.
 12. Confirm browser integration covers screenshot/PDF artifacts, PDF parsing,
     virtual scroll, hooks, Shadow DOM, iframe flattening, and persistent
     profiles without weakening route enforcement.
+13. On at least one supported host, verify the exact `trafilatura@0.2.0`
+    backend, deterministic quality output, shell/challenge abstention, invalid
+    input rejection, and no silent core fallback. Record that published native
+    binaries cover Windows x64/ARM64, macOS x64/ARM64, and glibc Linux
+    x64/ARM64; Alpine/musl, 32-bit, and other operating systems are unsupported.
+14. Run `npm run bench:public:verify` and require all six 0.7.0 public evidence
+    files. Confirm the 511-page artifacts say observed development evidence,
+    the 1,497-page artifact says development evidence, and every artifact names
+    its engine/profile/fail-closed configuration.
 
-## Stable 0.5.2 publication
+## Stable 0.7.0 publication
 
-1. Publish a fresh `0.5.2` artifact through the npm trusted-publishing GitHub environment with provenance and `--tag latest`; never move an older tarball onto the stable tag.
+1. Publish a fresh `0.7.0` artifact through the npm trusted-publishing GitHub environment with provenance and `--tag latest`; never move an older tarball onto the stable tag.
 2. Download `package-artifact-<full-commit>` from the successful packed-consumer CI job for the exact reviewed `main` commit. Copy the full lowercase 40-character commit, byte size, SHA-256, and npm integrity from that job's summary, then independently verify the downloaded tarball before dispatching `publish-npm.yml`.
 3. The publish dispatch must receive those four exact values as `expected_git_commit`, `expected_size_bytes`, `expected_sha256`, and `expected_integrity`. The workflow fails unless the reviewed commit equals the immutable workflow commit and the freshly packed artifact matches every approved value both before and after the `npm-publish` environment approval.
 4. The workflow must verify the approved package name and version, use `id-token: write`, use no npm token secret, and have an npm trusted-publisher mapping restricted to `AjnasNB/cockroach-crawler`, `.github/workflows/publish-npm.yml`, and the `npm-publish` environment. The packed-consumer CI job retains the exact Ubuntu-built tarball for 90 days and records its byte size, SHA-256, npm integrity, commit, and npm CLI version for independent review.
 5. After publication, verify registry version, dist-tag, exact integrity, attestations, CLI bins, all exports/declarations, and a fresh registry-only install. The workflow publishes the reviewed tarball directly, so verification relies on its digest and Sigstore/SLSA provenance rather than npm's directory-publish-only `gitHead` field.
-6. Create an annotated `v0.5.2` tag only at the exact green published commit. Attach only release-owned assets and generate `SHA256SUMS.txt` from exactly those attachments.
+6. Create an annotated `v0.7.0` tag only at the exact green published commit. Attach only release-owned assets and generate `SHA256SUMS.txt` from exactly those attachments.
 7. Mark the GitHub release as stable and list every continuing boundary: no hidden cookie extraction, CAPTCHA or access-control bypass, hosted arbitrary-origin proxy fleet, distributed jobs, operating-system sandbox, or universal provider claim.
 
 ## Stable promotion

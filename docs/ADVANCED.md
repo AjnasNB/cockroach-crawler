@@ -1,6 +1,6 @@
 # Advanced AI crawler capabilities
 
-Cockroach Crawler `0.5.x` is the stable capability line for agents that need
+Cockroach Crawler `0.7.x` is the stable capability line for agents that need
 deep traversal, browser evidence, document parsing, structured extraction,
 local deployment, and MCP without losing the package's origin, robots,
 network, and resource boundaries.
@@ -360,7 +360,7 @@ credentials, or expand deployment budgets.
 Build:
 
 ```bash
-docker build -t cockroach-crawler:0.5.2 .
+docker build -t cockroach-crawler:0.7.0 .
 ```
 
 Run with an API token and fixed origins:
@@ -370,7 +370,7 @@ docker run --rm -p 3878:3878 \
   -e COCKROACH_API_TOKEN="replace-with-a-long-random-secret" \
   -e COCKROACH_ALLOWED_ORIGINS="https://docs.example.com" \
   -e COCKROACH_MAX_PAGES=20 \
-  cockroach-crawler:0.5.2
+  cockroach-crawler:0.7.0
 ```
 
 Endpoints:

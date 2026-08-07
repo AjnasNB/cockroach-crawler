@@ -5,7 +5,7 @@ router for agents. Its differentiator is not an unlimited scrape claim. It is
 that every fetch, redirect, provider choice, browser request, output record,
 and optional authority tier keeps a reviewable boundary.
 
-This document separates stable `0.5.x` behavior, optional adapters, planned
+This document separates stable `0.7.0` behavior, optional adapters, planned
 work, and deliberate exclusions. A capability
 becomes a release claim only after its code, tests, package artifact, public
 types, and documentation ship together.
@@ -29,6 +29,7 @@ types, and documentation ship together.
 | Docker API, playground, and MCP | Stable `0.5.x` | Deployment-owned origins and budgets; caller input can only narrow |
 | Named request identity profiles | Stable `0.6.x` | Coherent declared user agent, client hints, locale, and viewport across HTTP and browser tiers |
 | Access-challenge detection | Stable `0.6.x` | Vendor and kind reported as a first-class outcome; deny-by-default policy |
+| Node quality extraction | Stable `0.7.0` | Separate `cockroach-crawler/quality` export, exact `trafilatura@0.2.0`, named profiles, bounded validation, and optional fail-closed abstention; no silent core fallback |
 
 `mapSite` is deliberately a fetch-validated map. Entries identify pages that
 passed transport and content policy; it does not claim the completeness of a
@@ -67,6 +68,14 @@ matching, the fingerprint is scored against the new document and the element is
 recovered if it clears an explicit threshold. Relocation abstains rather than
 guessing: below threshold it reports a miss and returns no element. Every
 weight, threshold, and node ceiling is caller-visible.
+
+Stable `0.7.0` adds `extractPageQuality` through the Node-only
+`cockroach-crawler/quality` export. The dependency-light core and serverless
+entry points remain isolated from its exact native `trafilatura@0.2.0`
+dependency. Supported prebuilt targets are Windows, macOS, and glibc Linux on
+x64/ARM64; unsupported platforms receive an explicit backend-unavailable error.
+Optional fail-closed mode returns no body for named shell, challenge, size,
+quality, or output-budget failures and reports its abstention reasons.
 
 Export helpers in `cockroach-crawler/exporters` emit CSV, XML, JSON, and JSONL
 under column, row, and value ceilings. CSV neutralises spreadsheet formula

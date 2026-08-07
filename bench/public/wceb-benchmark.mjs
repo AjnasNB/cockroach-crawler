@@ -1,30 +1,41 @@
 #!/usr/bin/env node
 
 import { createHash } from "node:crypto";
-import { execFileSync } from "node:child_process";
 import { createReadStream } from "node:fs";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { createGunzip } from "node:zlib";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { extractPage } from "../../src/index.js";
+import { assertWcebCheckout } from "./wceb-integrity.mjs";
 
 const scriptPath = fileURLToPath(import.meta.url);
 const publicDirectory = path.dirname(scriptPath);
 const root = path.resolve(publicDirectory, "../..");
 const expectedRevision = "62ff86d12ea72c80c31fb810ff1a724fad687bea";
+const boilerplateProfiles = new Set(["off", "structural", "balanced", "aggressive"]);
+const engines = new Set(["core", "quality"]);
+const qualityProfiles = new Set(["balanced", "precision", "recall"]);
 
 function parseArguments(argv) {
   const options = {
     dataset: process.env.WCEB_DIR || process.env.WCXB_DIR || "",
     split: "test",
-    output: ""
+    output: "",
+    engine: "core",
+    boilerplate: "structural",
+    qualityProfile: "balanced",
+    failClosed: false
   };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     if (argument === "--dataset") options.dataset = argv[++index] || "";
     else if (argument === "--split") options.split = argv[++index] || "";
     else if (argument === "--output") options.output = argv[++index] || "";
+    else if (argument === "--engine") options.engine = argv[++index] || "";
+    else if (argument === "--boilerplate") options.boilerplate = argv[++index] || "";
+    else if (argument === "--quality-profile") options.qualityProfile = argv[++index] || "";
+    else if (argument === "--fail-closed") options.failClosed = true;
     else throw new TypeError(`Unknown argument: ${argument}`);
   }
   if (!options.dataset) {
@@ -33,19 +44,27 @@ function parseArguments(argv) {
   if (!["dev", "test"].includes(options.split)) {
     throw new TypeError("--split must be dev or test.");
   }
+  if (!boilerplateProfiles.has(options.boilerplate)) {
+    throw new TypeError(`--boilerplate must be one of: ${[...boilerplateProfiles].join(", ")}.`);
+  }
+  if (!engines.has(options.engine)) {
+    throw new TypeError(`--engine must be one of: ${[...engines].join(", ")}.`);
+  }
+  if (!qualityProfiles.has(options.qualityProfile)) {
+    throw new TypeError(`--quality-profile must be one of: ${[...qualityProfiles].join(", ")}.`);
+  }
+  if (options.engine === "core" && options.failClosed) {
+    throw new TypeError("--fail-closed is available only with --engine quality.");
+  }
   return {
     dataset: path.resolve(options.dataset),
     split: options.split,
-    output: options.output ? path.resolve(root, options.output) : ""
+    output: options.output ? path.resolve(root, options.output) : "",
+    engine: options.engine,
+    boilerplate: options.boilerplate,
+    qualityProfile: options.qualityProfile,
+    failClosed: options.failClosed
   };
-}
-
-function git(directory, ...args) {
-  return execFileSync("git", args, {
-    cwd: directory,
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"]
-  }).trim();
 }
 
 async function gunzipUtf8(filename) {
@@ -104,14 +123,17 @@ function average(rows, key) {
   return round(rows.reduce((total, row) => total + row[key], 0) / rows.length);
 }
 
-async function sourceFingerprint() {
+async function sourceFingerprint(engine) {
   const inputs = [
     "src/index.js",
+    "src/boilerplate.js",
     "package.json",
     "package-lock.json",
     "bench/public/sources.json",
-    "bench/public/wceb-benchmark.mjs"
+    "bench/public/wceb-benchmark.mjs",
+    "bench/public/wceb-integrity.mjs"
   ];
+  if (engine === "quality") inputs.splice(2, 0, "src/quality.js", "types/quality.d.ts");
   const hash = createHash("sha256");
   for (const relative of inputs) {
     hash.update(relative);
@@ -145,17 +167,20 @@ function summarize(rows) {
     f1: average(rows, "f1"),
     requiredSnippetRecall: average(rows, "requiredSnippetRecall"),
     unwantedSnippetInclusion: average(rows, "unwantedSnippetInclusion"),
+    accepted: rows.filter((row) => row.extractionStatus === "accepted").length,
+    abstained: rows.filter((row) => row.extractionStatus === "abstained").length,
     byPageType
   };
 }
 
 const options = parseArguments(process.argv.slice(2));
-const revision = git(options.dataset, "rev-parse", "HEAD");
-if (revision !== expectedRevision) {
-  throw new Error(`WCEB revision mismatch: expected ${expectedRevision}, received ${revision}.`);
-}
-const datasetChanges = git(options.dataset, "status", "--porcelain=v1", "--untracked-files=no");
-if (datasetChanges) throw new Error("WCEB checkout must be clean.");
+const quality = options.engine === "quality" ? await import("../../src/quality.js") : null;
+const revision = assertWcebCheckout({
+  dataset: options.dataset,
+  split: options.split,
+  expectedRevision,
+  output: options.output
+});
 
 const groundTruthDirectory = path.join(options.dataset, options.split, "ground-truth");
 const htmlDirectory = path.join(options.dataset, options.split, "html");
@@ -169,7 +194,26 @@ for (const filename of files) {
   const record = JSON.parse(await readFile(path.join(groundTruthDirectory, filename), "utf8"));
   const truth = record.ground_truth || {};
   const html = await gunzipUtf8(path.join(htmlDirectory, `${id}.html.gz`));
-  const extracted = extractPage(html, record.url, { maxLinksPerPage: 20_000 }).text;
+  let extracted;
+  let extractionStatus = "accepted";
+  let abstentionReasons = [];
+  if (options.engine === "quality") {
+    const sourceUrl = typeof record.url === "string" && record.url.trim() ? record.url : undefined;
+    const qualityResult = quality.extractPageQuality(html, {
+      ...(sourceUrl ? { url: sourceUrl } : {}),
+      profile: options.qualityProfile,
+      failClosed: options.failClosed,
+      diagnostics: true
+    });
+    extracted = qualityResult.text || "";
+    extractionStatus = qualityResult.status;
+    abstentionReasons = qualityResult.abstention?.reasons || [];
+  } else {
+    extracted = extractPage(html, record.url, {
+      maxLinksPerPage: 20_000,
+      boilerplate: options.boilerplate
+    }).text;
+  }
   const metrics = wordMetrics(extracted, truth.main_content || "");
   const pageTypeValue = record._internal?.page_type;
   const pageType = typeof pageTypeValue === "string"
@@ -183,6 +227,8 @@ for (const filename of files) {
     f1: round(metrics.f1),
     requiredSnippetRecall: round(snippetRate(extracted, truth.with || [])),
     unwantedSnippetInclusion: round(snippetRate(extracted, truth.without || [])),
+    extractionStatus,
+    abstentionReasons,
     extractedCharacters: extracted.length,
     referenceCharacters: String(truth.main_content || "").length
   });
@@ -193,7 +239,9 @@ const result = {
   benchmark: "cockroach-crawler-wceb-main-content",
   scope: {
     description: "Deterministic main-content extraction from cached public HTML against human-reviewed WCEB annotations.",
-    extractor: "cockroach-crawler extractPage(...).text",
+    extractor: options.engine === "quality"
+      ? "cockroach-crawler/quality extractPageQuality(...).text"
+      : "cockroach-crawler extractPage(...).text",
     metric: "Macro average of page-level Unicode word precision, recall, and F1; snippet rates use case-insensitive literal inclusion.",
     intendedClaims: [
       "main-content extraction quality on the pinned WCEB split",
@@ -205,7 +253,13 @@ const result = {
       "OCR quality",
       "universal extraction quality",
       "competitor ranking without an identical independently reviewed protocol"
-    ]
+    ],
+    evaluationStatus: options.split === "test"
+      ? "observed-development-evidence-after-project-iteration"
+      : "development-evidence",
+    confirmatoryEligible: false,
+    interpretation:
+      "The upstream split name is preserved, but this project previously inspected and iterated against the 511-page test split. Neither split is presented as fresh confirmatory evidence."
   },
   dataset: {
     name: "WCEB v1.0",
@@ -213,13 +267,20 @@ const result = {
     homepage: "https://webcontentextraction.org/",
     revision,
     split: options.split,
+    upstreamSplitName: options.split,
     license: "CC-BY-4.0",
     cleanCheckout: true
   },
   package: {
     name: "cockroach-crawler",
     version: JSON.parse(await readFile(path.join(root, "package.json"), "utf8")).version,
-    source: await sourceFingerprint()
+    source: await sourceFingerprint(options.engine)
+  },
+  configuration: {
+    engine: options.engine,
+    boilerplate: options.engine === "core" ? options.boilerplate : null,
+    qualityProfile: options.engine === "quality" ? options.qualityProfile : null,
+    failClosed: options.engine === "quality" ? options.failClosed : false
   },
   results: summarize(pages),
   pages

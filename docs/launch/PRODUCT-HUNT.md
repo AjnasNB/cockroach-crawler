@@ -16,7 +16,7 @@
 
 I built Cockroach Crawler because “browser access” is not one permission. An explicit public URL, a provider API, a logged-in read session, a browser action, and a serverless fetch all have different authority.
 
-Version `0.5.2` exposes those choices. The local crawler validates and pins admitted addresses. The provider doctor reports which route is available before dispatch. Optional no-key and session providers are separately installed and never silent fallbacks. The restricted Worker profile states that it does not have the local DNS boundary.
+Version `0.7.0` exposes those choices. The local crawler validates and pins admitted addresses. The provider doctor reports which route is available before dispatch. Optional no-key and session providers are separately installed and never silent fallbacks. The restricted Worker profile states that it does not have the local DNS boundary.
 
 The project is deliberately read-only and does not include cookie extraction, stealth, CAPTCHA/paywall/login bypass, or social write operations. I would value a reproducible provider, redirect, robots, SSRF, browser, or budget failure more than a generic feature request.
 
