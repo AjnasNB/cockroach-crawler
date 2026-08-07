@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - package.json
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -22,18 +23,29 @@ jobs:
       changed: ${{ steps.compare.outputs.changed }}
       version: ${{ steps.compare.outputs.version }}
       dist_tag: ${{ steps.compare.outputs.dist_tag }}
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 2
-
+      # This job deliberately uses no actions. "Failed to resolve action
+      # download info" is a control-plane failure during job setup, before any
+      # step runs, so the cheapest gate in the pipeline should not depend on
+      # resolving anything. gh, jq, and npm are preinstalled on the runner.
       - name: Compare package version against the previous commit
         id: compare
         shell: bash
         run: |
           set -euo pipefail
-          current="$(node -p 'require("./package.json").version')"
-          previous="$(git show HEAD~1:package.json 2>/dev/null | node -p 'JSON.parse(require("node:fs").readFileSync(0,"utf8")).version' || echo "")"
+          read_version() {
+            gh api "repos/${GITHUB_REPOSITORY}/contents/package.json?ref=$1" \
+              -H "Accept: application/vnd.github.raw" 2>/dev/null \
+              | node -pe 'try{JSON.parse(require("node:fs").readFileSync(0,"utf8")).version||""}catch{""}' 2>/dev/null \
+              || echo ""
+          }
+          current="$(read_version "${GITHUB_SHA}")"
+          parent="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}" --jq '.parents[0].sha // empty')"
+          previous=""
+          if [[ -n "${parent}" ]]; then previous="$(read_version "${parent}")"; fi
+          [[ -n "${current}" ]] || { echo "Could not read package.json at ${GITHUB_SHA}." >&2; exit 1; }
           echo "current=${current} previous=${previous}"
           [[ "${current}" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]] || { echo "Invalid version." >&2; exit 1; }
           if [[ "${current}" == "${previous}" ]]; then
