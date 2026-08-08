@@ -17,6 +17,15 @@ function sha256(value) {
   return createHash("sha256").update(value).digest("hex");
 }
 
+function canonicalTextBytes(value) {
+  const source = value.toString("utf8");
+  const withoutCrLf = source.replaceAll("\r\n", "\n");
+  if (withoutCrLf.includes("\r")) {
+    throw new Error("publication text inputs must use LF or Git-compatible CRLF line endings");
+  }
+  return Buffer.from(withoutCrLf, "utf8");
+}
+
 function requireValue(condition, message) {
   if (!condition) errors.push(message);
 }
@@ -62,8 +71,8 @@ requireValue(citation.includes('doi: "10.5281/zenodo.21851008"'), "CITATION.cff 
 const outputHash = sha256(outputPdf);
 requireValue(sha256(docsPdf) === outputHash, "docs PDF copy must be byte-identical");
 requireValue(sha256(sitePdf) === outputHash, "website PDF copy must be byte-identical");
-requireValue(receipt.inputs.manuscript.sha256 === sha256(manuscript), "receipt manuscript hash must match");
-requireValue(receipt.inputs.builder.sha256 === sha256(builder), "receipt builder hash must match");
+requireValue(receipt.inputs.manuscript.sha256 === sha256(canonicalTextBytes(manuscript)), "receipt manuscript hash must match canonical Git text bytes");
+requireValue(receipt.inputs.builder.sha256 === sha256(canonicalTextBytes(builder)), "receipt builder hash must match canonical Git text bytes");
 requireValue(receipt.output.sha256 === outputHash, "receipt PDF hash must match");
 requireValue(checksum === `${outputHash}  Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf`, "PDF checksum file must match");
 const depositedPdf = publication.files.find((file) => file.name.endsWith(".pdf"));

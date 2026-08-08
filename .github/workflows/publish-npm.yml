@@ -360,19 +360,23 @@ jobs:
             exit 1
           fi
           node --input-type=module -e "await import('cockroach-crawler'); await import('cockroach-crawler/agent'); await import('cockroach-crawler/sources'); await import('cockroach-crawler/serverless'); await import('cockroach-crawler/quality')"
+          # npm may expose package metadata and SLSA provenance several minutes
+          # before its attestations endpoint becomes readable. Keep the check
+          # fail-closed, but allow enough time for that independently observed
+          # registry propagation window instead of marking a valid publish red.
           signatures_verified=false
-          for attempt in {1..10}; do
+          for attempt in {1..20}; do
             if npm audit signatures; then
               signatures_verified=true
               break
             fi
-            if (( attempt < 10 )); then
+            if (( attempt < 20 )); then
               delay="$(retry_delay_seconds "${attempt}")"
-              echo "Registry signatures or attestations are not available yet (attempt ${attempt}/10); retrying in ${delay}s."
+              echo "Registry signatures or attestations are not available yet (attempt ${attempt}/20); retrying in ${delay}s."
               sleep "${delay}"
             fi
           done
           if [[ "${signatures_verified}" != "true" ]]; then
-            echo "Registry signature verification did not succeed after 10 attempts." >&2
+            echo "Registry signature verification did not succeed after 20 attempts." >&2
             exit 1
           fi

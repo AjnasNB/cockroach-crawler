@@ -155,11 +155,12 @@ test("release workflows retry transient registry propagation and still fail clos
   ]);
 
   assert.match(publishWorkflow, /for attempt in \{1\.\.10\}/);
+  assert.match(publishWorkflow, /for attempt in \{1\.\.20\}/);
   assert.match(publishWorkflow, /dist\.attestations\.provenance\.predicateType/);
   assert.match(publishWorkflow, /signatures_verified=false/);
   assert.match(publishWorkflow, /if npm audit signatures; then/);
   assert.match(publishWorkflow, /await import\('cockroach-crawler\/quality'\)/);
-  assert.match(publishWorkflow, /Registry signature verification did not succeed after 10 attempts/);
+  assert.match(publishWorkflow, /Registry signature verification did not succeed after 20 attempts/);
   assert.match(publishWorkflow, /if \[\[ "\$\{verified\}" != "true" \]\]; then/);
 
   const waitIndex = deployWorkflow.indexOf("- name: Wait for the exact npm package version");
@@ -178,4 +179,13 @@ test("release workflows retry transient registry propagation and still fail clos
   assert.match(deployWorkflow, /persist-credentials:\s*false/);
   assert.match(deployWorkflow, /cloudflare\/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd/);
   assert.match(publishWorkflow, /default:\s*0\.7\.0/);
+});
+
+test("publication validation accepts Git-compatible CRLF checkouts without weakening hashes", async () => {
+  const publicationCheck = await readFile(new URL("../scripts/check-publication.mjs", import.meta.url), "utf8");
+  assert.match(publicationCheck, /function canonicalTextBytes\(value\)/);
+  assert.match(publicationCheck, /source\.replaceAll\("\\r\\n", "\\n"\)/);
+  assert.match(publicationCheck, /withoutCrLf\.includes\("\\r"\)/);
+  assert.match(publicationCheck, /sha256\(canonicalTextBytes\(manuscript\)\)/);
+  assert.match(publicationCheck, /sha256\(canonicalTextBytes\(builder\)\)/);
 });
