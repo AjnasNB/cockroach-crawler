@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-08-08T13:05:34.055Z",
+  "record": {
+    "id": 21851008,
+    "url": "https://zenodo.org/records/21851008",
+    "doi": "10.5281/zenodo.21851008",
+    "doiUrl": "https://doi.org/10.5281/zenodo.21851008",
+    "published": true,
+    "publicationDate": "2026-08-08",
+    "version": "0.7.0-rc.1",
+    "resourceType": "publication/report",
+    "accessRight": "open",
+    "license": "cc-by-4.0",
+    "creator": "N B, Ajnas"
+  },
+  "source": {
+    "repository": "https://github.com/AjnasNB/cockroach-crawler",
+    "candidateCommit": "90825063d447f07345388d040b1428a311109c2b",
+    "depositPreparationCommit": "62e3a6c3c0e694176637a4723e688d641b31b489"
+  },
+  "claimBoundary": {
+    "softwareReleaseAuthorized": false,
+    "bestCrawlerClaimAuthorized": false,
+    "universalPrecisionClaimAuthorized": false,
+    "frozenEvaluationStatus": "rejected"
+  },
+  "files": [
+    {
+      "name": "CITATION.cff",
+      "bytes": 1123,
+      "md5": "c78349293c2d8319004e2382903b24e3",
+      "sha256": "e5ac6f55acf35b2e31fded4bc28113621c9c42be9b31dd45caba53009108a15c"
+    },
+    {
+      "name": "Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf",
+      "bytes": 164546,
+      "md5": "124bedc4ab39156a3f9fdbe311840c5c",
+      "sha256": "989e6d135b61a4702c85916f20ec2f7554b9cf85e1a96ab508f3dbf8f20bc14a"
+    },
+    {
+      "name": "Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.md",
+      "bytes": 21328,
+      "md5": "aec227cee6a41d1f8bff8e8b05f5ff53",
+      "sha256": "919ac735c6bc10cd5a76c72d9460d220a3d037ef26e67a971b24f17d4e59062c"
+    },
+    {
+      "name": "Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.sha256",
+      "bytes": 122,
+      "md5": "d319838a1b31dcfbcbde0b23c58801fa",
+      "sha256": "8e31c9fc0123755f0fae24928797bec05247fe7c6c8d4a2a155e19723ab15489"
+    },
+    {
+      "name": "Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.build.json",
+      "bytes": 1774,
+      "md5": "6157ef293cdb875d2c438b43729b89c3",
+      "sha256": "3c6dd672abdd6f68169d1c2c85cbd7034f5a9c63e336606917acbb041359802d"
+    },
+    {
+      "name": "Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.metadata.json",
+      "bytes": 1601,
+      "md5": "0a2d1cc92c71a67b6dea61c978eb1e05",
+      "sha256": "993b96edb1a620f19cdb866b6506c23318663bcdf5a33410534528543e1ab862"
+    },
+    {
+      "name": "build-crawler-whitepaper-pdf.py",
+      "bytes": 15742,
+      "md5": "8811896c40e572644b2ecd7b2b2155c7",
+      "sha256": "1fd7984fc3bffb3ef28ce95e421299966cffc2f0c5b4e506cc50f5cf6c391f61"
+    }
+  ]
+}
