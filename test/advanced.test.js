@@ -28,6 +28,18 @@ import { crawl } from "../src/index.js";
 let target;
 let targetUrl;
 
+async function waitForJobStatus(queue, id, expected, timeoutMs = 2_000) {
+  const deadline = Date.now() + timeoutMs;
+  let job = queue.get(id);
+  while (job?.status !== expected && Date.now() < deadline) {
+    if (["failed", "cancelled"].includes(job?.status)) break;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    job = queue.get(id);
+  }
+  assert.equal(job?.status, expected);
+  return job;
+}
+
 before(async () => {
   target = createServer((request, response) => {
     if (request.url === "/robots.txt") {
@@ -221,9 +233,8 @@ test("bounded self-hosted jobs expose status, cancellation, and result ceilings"
     }
   });
   const submitted = queue.submit({ value: 42 });
-  await new Promise((resolve) => setTimeout(resolve, 20));
-  assert.equal(queue.get(submitted.id).status, "succeeded");
-  assert.deepEqual(queue.get(submitted.id).result, { value: 42 });
+  const succeeded = await waitForJobStatus(queue, submitted.id, "succeeded");
+  assert.deepEqual(succeeded.result, { value: 42 });
   const cancelled = queue.submit({ value: 7 });
   assert.equal(queue.cancel(cancelled.id), true);
   assert.equal(queue.get(cancelled.id).status, "cancelled");
