@@ -35,6 +35,7 @@ let videoCount = 0;
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
   const label = file.slice(dist.length).replaceAll("\\", "/");
+  if (/\u2014|&mdash;|&#8212;|&#x2014;/i.test(html)) errors.push(`${label}: public pages must use a normal hyphen instead of an em dash`);
   const h1Count = (html.match(/<h1\b/g) ?? []).length;
   if (h1Count !== 1) errors.push(`${label}: expected one h1, found ${h1Count}`);
   if (!/<meta name="description"/.test(html) && !label.endsWith("404.html")) errors.push(`${label}: missing description`);
