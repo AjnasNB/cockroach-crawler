@@ -98,7 +98,7 @@ for (const file of htmlFiles) {
   }
 }
 
-const required = ["robots.txt", "sitemap.xml", "llms.txt", "site.webmanifest", "_headers", "_redirects", "assets/social-card.png", "paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf"];
+const required = ["robots.txt", "sitemap.xml", "llms.txt", "llms-full.txt", "site.webmanifest", "_headers", "_redirects", "assets/social-card.png", "paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf"];
 for (const path of required) if (!await exists(join(dist, path))) errors.push(`missing ${path}`);
 const sitemap = await readFile(join(dist, "sitemap.xml"), "utf8");
 if (!sitemap.includes("<loc>https://cockroachcrawler.com/compare/</loc>")) errors.push("sitemap must include the AI crawler comparison");
@@ -129,6 +129,14 @@ for (const phrase of ["searchable fetch-validated site maps", "restricted regex 
 }
 for (const phrase of ["npm latest tag is 0.6.1", "0.7.0 release candidate", "raw-DOM attempt 003 was rejected", "precision 0.860252", "five gates", "no integration, release, ranking, or best-crawler statement"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must preserve publication status: ${phrase}`);
+}
+const llmsFull = await readFile(join(dist, "llms-full.txt"), "utf8");
+if (!llmsFull.includes("## Complete public route index")) errors.push("llms-full.txt must include the complete public route index");
+for (const route of ["/docs/", "/compare/", "/benchmark/", "/paper/", "/release/"]) {
+  if (!llmsFull.includes(`https://cockroachcrawler.com${route}`)) errors.push(`llms-full.txt must include ${route}`);
+}
+if (!llmsFull.includes("no integration, release, ranking, or best-crawler statement")) {
+  errors.push("llms-full.txt must preserve the rejected-attempt claim boundary");
 }
 const packageReadme = await readFile(join(dist, "..", "..", "README.md"), "utf8");
 if (/assets\/readme-proof-still/i.test(packageReadme)) errors.push("npm README must not restore the oversized proof banner");
