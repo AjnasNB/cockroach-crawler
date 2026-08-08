@@ -7,7 +7,7 @@
 [![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
 
-**[Documentation](https://cockroachcrawler.com/docs/)** · **[Quickstart](./docs/QUICKSTART.md)** · **[Why selectors break](https://cockroachcrawler.com/blog/why-css-selectors-break/)** · **[Benchmarks](https://cockroachcrawler.com/benchmark/)** · **[npm](https://www.npmjs.com/package/cockroach-crawler)**
+**[Documentation](https://cockroachcrawler.com/docs/)** · **[White paper](https://cockroachcrawler.com/paper/)** · **[Quickstart](./docs/QUICKSTART.md)** · **[Benchmarks](https://cockroachcrawler.com/benchmark/)** · **[npm](https://www.npmjs.com/package/cockroach-crawler)**
 
 </div>
 
@@ -15,9 +15,9 @@
 
 ## Measured, not asserted
 
-The stable 0.7.0 release defines separate core, quality, and fail-closed
-extraction profiles. Every value below is a macro page-level WCEB v1.0 result
-from the same source-pinned scorer.
+The 0.7.0 release-candidate source defines separate core, quality, and
+fail-closed extraction profiles. Every value below is development evidence
+from the same source-pinned WCEB v1.0 scorer, not a published 0.7 result.
 
 | Surface and corpus | Precision | Recall | F1 | Required-snippet | Unwanted | Abstentions |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -31,6 +31,12 @@ previously inspected and iterated against it. We therefore label it
 **observed development evidence**, not an untouched held-out result. The
 1,497-page row is the upstream WCEB development split. These results do not
 support a universal 0.90 precision claim.
+
+A separately frozen raw-DOM attempt was rejected: precision 0.860252, recall
+0.884690, macro F1 0.844419, required-snippet recall 0.758829, and unwanted
+inclusion 0.092846. It violated five gates and improved precision in six of ten
+page types where eight were required. It authorizes no integration, release,
+ranking, or best-crawler statement. The npm `latest` baseline remains 0.6.1.
 
 The opt-in `cockroach-crawler/quality` surface uses the exact native
 `trafilatura@0.2.0` dependency; it is not presented as a new extraction
@@ -52,7 +58,7 @@ npm install cockroach-crawler
 
 Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to run BFS, DFS, best-first, or adaptive traversal, build searchable fetch-validated site maps, extract bounded CSS, XPath, or restricted-regex fields, search YouTube without a developer API key through the optional reviewed route, render JavaScript pages, run bounded self-hosted jobs, and preserve source identity, redirects, hashes, warnings, artifacts, and provenance.
 
-It is built to be **the best AI crawler for governed agents** that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus - not a claim that it replaces every distributed scraping cloud or bypasses site controls.
+It is designed for governed agents that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus, not a claim of universal superiority or access-control bypass.
 
 Every capability stays behind creator-owned origin, request, byte, redirect, concurrency, and time limits. Use the hardened local crawler for bounded public-web collection, the source router for explicit provider capabilities, optional reach providers for reviewed no-developer-key or session-backed reads, and the restricted self-hosted Worker only for allowlisted sites you operate or trust.
 
@@ -72,7 +78,7 @@ Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compa
 ## All 50 shipped capabilities
 
 Every item below has a public API, command, output contract, test, or dedicated
-documentation page in the stable `0.7.x` line.
+documentation page in the `0.7.0` source candidate.
 
 ### Crawl and discover - 15
 
@@ -183,10 +189,11 @@ case-sensitive registry identity
 publication proves control of that namespace, not additional crawler runtime
 authority.
 
-Version `0.7.0` is the current stable release represented by this source tree.
-Verify the immutable registry artifact with
-`npm view cockroach-crawler@0.7.0 version dist.integrity` and match its
-provenance to the reviewed release commit.
+Version `0.7.0` is a source candidate represented by commit
+`90825063d447f07345388d040b1428a311109c2b`. It has no matching npm package or
+release tag. Verify the current public baseline with
+`npm view cockroach-crawler version dist-tags`; it reports 0.6.1 on `latest` at
+this manuscript freeze.
 
 ## Public benchmark evidence
 
@@ -246,7 +253,7 @@ uses stable public exports and copyable examples from this package.
 The source registry reports what the current machine can use before an agent makes a request. This command reads configuration state only; it does not print secrets or contact a provider.
 
 ```bash
-npx -y --package cockroach-crawler@0.7.0 cockroach-sources doctor
+npx -y --package github:AjnasNB/cockroach-crawler#90825063d447f07345388d040b1428a311109c2b cockroach-sources doctor
 ```
 
 | Capability | No developer API key | Optional configuration | Honest boundary |
@@ -312,8 +319,8 @@ Read [SECURITY.md](./SECURITY.md) before exposing crawling to model-generated or
 | --- | --- |
 | Public documentation, blogs, help centers, and marketing pages | Strong |
 | JSONL/Markdown records for RAG and indexing | Strong |
-| Compact fetch-validated site maps | Stable 0.7.x; optional lexical search ranks only fetched entries |
-| Structured extraction | Stable 0.7.x; CSS, XPath, restricted regex, schema-validated host-model strategies, and an opt-in Node quality backend |
+| Compact fetch-validated site maps | 0.7 source candidate; optional lexical search ranks only fetched entries |
+| Structured extraction | 0.7 source candidate; CSS, XPath, restricted regex, schema-validated host-model strategies, and an opt-in Node quality backend |
 | Bounded local crawling from Node.js or a CLI | Strong |
 | A strictly limited crawler tool inside an agent runtime | Strong, with creator-owned origin and resource policy |
 | JavaScript-rendered pages with bounded explicit clicks | Optional Chromium mode; isolate it for untrusted targets |
@@ -330,13 +337,15 @@ Supports the maintained Node.js 22 LTS, 24 LTS, and 26 Current release lines.
 npm install cockroach-crawler
 ```
 
-Pin the exact stable release when reproducibility matters:
+Pin the current published stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@0.7.0
+npm install cockroach-crawler@0.6.1
 ```
 
-The stable `0.7.x` line includes advanced package subpaths:
+The `0.7.0` source candidate includes advanced package subpaths. Review it at
+the pinned commit; do not present these candidate surfaces as published npm
+0.6.1 features:
 
 ```js
 import { crawl } from "cockroach-crawler";

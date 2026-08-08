@@ -65,4 +65,4 @@ The Worker template adds a deployment bearer secret and Cloudflare Rate Limiting
 
 ## Website and media
 
-`website/` is a separately built static documentation site. `media/` contains release-video source and rendered assets. Neither belongs in the npm tarball. Public pages must identify the exact stable npm version that the deployment workflow verifies before building the site.
+`website/` is a separately built static documentation site. `media/` contains release-video source and rendered assets. Neither belongs in the npm tarball. Public pages must distinguish the exact published npm version from any source-level release candidate and must not promote a candidate before its package, tag, provenance, and frozen evidence agree.

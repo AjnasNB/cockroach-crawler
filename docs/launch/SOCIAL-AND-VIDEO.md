@@ -1,5 +1,9 @@
 # Social and video launch copy
 
+> **Held draft:** Do not publish this copy. npm `latest` is 0.6.1 and frozen
+> 0.7 attempt 003 was rejected. Re-run every precondition and replace candidate
+> commands only after a later frozen candidate passes the release gate.
+
 ## X thread
 
 1. AI agents need eyes on the web. They do not need the keys to your network. Cockroach Crawler gives Node.js agents bounded, read-only reach across public pages and explicit source providers.
@@ -17,7 +21,7 @@ Cockroach Crawler turns those decisions into a bounded reading layer. The local 
 
 It does not supply a model, proxy fleet, process sandbox, cookie extractor, or access-control bypass. The restricted serverless profile also states plainly that it lacks the local DNS boundary.
 
-Version `0.7.0` is MIT licensed and available on npm. I am looking for one reproducible provider, robots, redirect, SSRF, browser, extraction-quality, or resource-budget failure that should become the next fixture.
+The 0.7.0 source candidate is MIT licensed but is not available on npm. The current published baseline is 0.6.1. This paragraph must be rewritten only after a later candidate passes every release gate.
 
 ## Short launch post
 

@@ -21,7 +21,11 @@ const maqamRepository = "https://github.com/AjnasNB/maqam";
 const maqamDocs = "https://maqamagent.com/docs/";
 const productLoopRepository = "https://github.com/AjnasNB/productloop-os";
 const benchmarkRun = "https://github.com/AjnasNB/cockroach-crawler/actions/runs/29624859893";
-const stableVersion = "0.7.0";
+const publishedVersion = "0.6.1";
+const candidateVersion = "0.7.0";
+const candidateCommit = "90825063d447f07345388d040b1428a311109c2b";
+const candidateSource = `${repository}/tree/${candidateCommit}`;
+const stableVersion = candidateVersion;
 const assetVersion = createHash("sha256")
   .update(await readFile(join(root, "assets", "styles.css")))
   .update(await readFile(join(root, "assets", "app.js")))
@@ -95,7 +99,7 @@ const pages = [
           name: "Cockroach Crawler",
           applicationCategory: "DeveloperApplication",
           operatingSystem: "Node.js 22, 24, or 26",
-          softwareVersion: stableVersion,
+          softwareVersion: publishedVersion,
           license: "https://opensource.org/license/mit",
           codeRepository: repository,
           downloadUrl: npmPackage,
@@ -127,7 +131,9 @@ const pages = [
           codeSampleType: "full solution",
           programmingLanguage: ["JavaScript", "TypeScript"],
           license: "https://opensource.org/license/mit",
-          runtimePlatform: "Node.js 22, 24, or 26"
+          runtimePlatform: "Node.js 22, 24, or 26",
+          softwareVersion: candidateVersion,
+          identifier: candidateCommit
         },
         {
           "@type": "FAQPage",
@@ -136,7 +142,8 @@ const pages = [
             faqSchema("Can an agent expand its crawl permissions?", "No. The agent adapter treats creator-owned origins and limits as upper bounds and rejects undeclared policy overrides."),
             faqSchema("Does Cockroach Crawler require an API key?", "Public web crawling, public GitHub reads, and the optional pinned yt-dlp YouTube route work without a developer API key. Official API providers remain available when operators configure their credentials. Optional session-backed social reads require a separately installed, operator-controlled OpenCLI runtime."),
             faqSchema("Is browser mode a sandbox?", "No. Browser mode constrains network behavior and resource use, but Chromium still requires process or container isolation for untrusted targets."),
-            faqSchema("Does it provide GitHub, YouTube, X, or Reddit access?", "The stable 0.7.0 release includes public GitHub REST, official provider adapters, a pinned no-key YouTube route, optional read-only X and Reddit session routes, ordered provider fallback, and explicit doctor output. It does not extract cookies or expose social write operations.")
+            faqSchema("What is the current published version?", "The npm latest tag is 0.6.1. Version 0.7.0 is a source-level release candidate at the cited commit and is not presented as published until its package, tag, and release checks agree."),
+            faqSchema("Does the release candidate provide GitHub, YouTube, X, or Reddit access?", "The 0.7.0 release candidate includes public GitHub REST, official provider adapters, a pinned no-key YouTube route, optional read-only X and Reddit session routes, ordered provider fallback, and explicit doctor output. It does not extract cookies or expose social write operations.")
           ]
         }
       ]
@@ -272,6 +279,16 @@ const pages = [
     title: "Local benchmark - Cockroach Crawler",
     description: "Reproduce Cockroach Crawler's local 120-page fixture benchmark and understand what the result does - and does not - measure.",
     body: benchmarkPage()
+  },
+  {
+    slug: "paper",
+    nav: "Paper",
+    title: "Cockroach Crawler technical white paper | 0.7 release candidate",
+    description: "Architecture, trust boundaries, evidence protocol, and reproducibility plan for the Cockroach Crawler 0.7 release candidate. Numerical release claims remain pending the frozen gate.",
+    body: paperPage(),
+    ogType: "article",
+    pdfHref: "/paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf",
+    schema: paperSchema()
   },
   {
     slug: "media",
@@ -431,6 +448,53 @@ function comparisonSchema() {
   };
 }
 
+function paperSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ScholarlyArticle",
+        headline: "Cockroach Crawler: A governed, evidence-preserving web acquisition layer for AI agents",
+        alternativeHeadline: "Technical white paper for the 0.7.0 release candidate",
+        author: { "@type": "Person", name: "Ajnas N B" },
+        datePublished: "2026-08-08",
+        dateModified: "2026-08-08",
+        inLanguage: "en",
+        isAccessibleForFree: true,
+        license: "https://creativecommons.org/licenses/by/4.0/",
+        mainEntityOfPage: `${siteUrl}/paper/`,
+        url: `${siteUrl}/paper/`,
+        encoding: {
+          "@type": "MediaObject",
+          contentUrl: `${siteUrl}/paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf`,
+          encodingFormat: "application/pdf"
+        },
+        about: [
+          "governed web crawling",
+          "AI agent evidence",
+          "network policy",
+          "main-content extraction",
+          "reproducible software evaluation"
+        ],
+        citation: [
+          `${repository}/blob/${candidateCommit}/docs/ARCHITECTURE.md`,
+          `${repository}/blob/${candidateCommit}/docs/BENCHMARK.md`,
+          `${repository}/blob/${candidateCommit}/SECURITY.md`
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          faqSchema("Is Cockroach Crawler 0.7.0 published?", "No. The manuscript describes a release candidate pinned to commit 9082506. The current npm latest version is 0.6.1."),
+          faqSchema("Does this paper claim universal 0.90 crawler quality?", "No. A numerical release claim remains pending until a frozen, source-pinned evaluation passes every declared aggregate, page-type, and fold gate."),
+          faqSchema("Can the evaluation be reproduced?", "The paper identifies the source commit, evaluation boundaries, artifact requirements, and release checks. A final DOI and benchmark receipt are added only after the immutable candidate is verified."),
+          faqSchema("Is browser mode a security sandbox?", "No. Browser mode constrains network and resource behavior, but hostile JavaScript still requires process or container isolation.")
+        ]
+      }
+    ]
+  };
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -440,8 +504,8 @@ function escapeHtml(value) {
 }
 
 function nav(active) {
-  const primary = pages.filter((page) => ["Home", "Docs", "Providers", "Stack", "Security", "Benchmark"].includes(page.nav));
-  const secondary = pages.filter((page) => ["Compare", "Media", "Launch", "Roadmap", "Community", "Release"].includes(page.nav));
+  const primary = pages.filter((page) => ["Home", "Docs", "Providers", "Security", "Benchmark", "Paper"].includes(page.nav));
+  const secondary = pages.filter((page) => ["Stack", "Compare", "Media", "Launch", "Roadmap", "Community", "Release"].includes(page.nav));
   const link = (page) => {
     const href = page.slug ? `/${page.slug}/` : "/";
     const current = page.nav === active ? ' aria-current="page"' : "";
@@ -476,10 +540,10 @@ function footer() {
           <p>Bounded crawling for public or explicitly trusted HTTP(S) pages.</p>
         </div>
         <div><h2>Use</h2><a href="/docs/">Documentation</a><a href="/providers/">Provider status</a><a href="/compare/">Crawler comparison</a><a href="/stack/">Governed stack</a><a href="${npmPackage}">npm package</a></div>
-        <div><h2>Trust</h2><a href="/security/">Security model</a><a href="/benchmark/">Benchmark method</a><a href="${repository}/blob/main/SECURITY.md">Report privately</a></div>
+        <div><h2>Trust</h2><a href="/security/">Security model</a><a href="/benchmark/">Benchmark method</a><a href="/paper/">Technical paper</a><a href="${repository}/blob/main/SECURITY.md">Report privately</a></div>
         <div><h2>Project</h2><a href="/launch/">Launch kit</a><a href="/roadmap/">Roadmap</a><a href="/community/">Contribute</a><a href="${repository}">Source code</a><a href="${maqamDocs}">Govern with Maqam</a></div>
       </div>
-      <div class="shell legal"><span>MIT · stable 0.7.0 · Node.js 22 / 24 / 26</span><span>Site content last reviewed 8 August 2026</span></div>
+      <div class="shell legal"><span>MIT software · npm stable ${publishedVersion} · ${candidateVersion} release candidate</span><span>Site content last reviewed 8 August 2026</span></div>
     </footer>`;
 }
 
@@ -515,6 +579,9 @@ function pageTemplate(page) {
   <meta name="theme-color" content="#07100e" />
   <meta name="color-scheme" content="dark" />
   <link rel="canonical" href="${canonical}" />
+  <link rel="alternate" hreflang="en" href="${canonical}" />
+  <link rel="alternate" hreflang="x-default" href="${canonical}" />
+  ${page.pdfHref ? `<link rel="alternate" type="application/pdf" href="${page.pdfHref}" />` : ""}
   <link rel="icon" href="/assets/mark.svg" type="image/svg+xml" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta property="og:type" content="${page.ogType ?? "website"}" />
@@ -532,6 +599,10 @@ function pageTemplate(page) {
   <meta name="twitter:description" content="${escapeHtml(page.description)}" />
   <meta name="twitter:image" content="${siteUrl}/assets/social-card.png" />
   <meta name="twitter:image:alt" content="Cockroach Crawler bounded public-web crawl diagram" />
+  ${page.pdfHref ? `<meta name="citation_title" content="Cockroach Crawler: A governed, evidence-preserving web acquisition layer for AI agents" />
+  <meta name="citation_author" content="Ajnas N B" />
+  <meta name="citation_publication_date" content="2026/08/08" />
+  <meta name="citation_pdf_url" content="${siteUrl}${page.pdfHref}" />` : ""}
   <link rel="stylesheet" href="/assets/styles.css?v=${assetVersion}" />
   <script type="application/ld+json">${JSON.stringify(schema).replaceAll("<", "\\u003c")}</script>
   <script src="/assets/app.js?v=${assetVersion}" defer></script>
@@ -549,17 +620,14 @@ function homePage() {
   return `
     <section class="hero shell">
       <div class="hero-copy">
-        <p class="eyebrow">Open-source AI web crawler for governed agents</p>
-        <h1>Give your AI agents the web. Keep the keys.</h1>
-        <p class="lede">Crawl sites, map URLs, render JavaScript, extract structured fields, and turn permitted public sources into LLM-ready Markdown, JSON, or JSONL while creator-owned policy limits origins, redirects, robots, requests, bytes, depth, and time.</p>
-        <div class="button-row"><a class="button primary" href="/docs/">Start in five minutes</a><a class="button secondary" href="/compare/">Compare AI crawlers</a><a class="button secondary" href="${repository}">Inspect the source</a></div>
-        <ul class="signal-list" aria-label="Release facts"><li>Stable 0.7.0</li><li>Node.js 22 / 24 / 26</li><li>MIT</li><li>No signup</li></ul>
-        <div class="candidate-note"><span>Available on npm</span><p><strong>0.7.0</strong> adds an opt-in Node quality extractor with explicit fail-closed admission while preserving deep crawling, browser evidence, native MCP, Docker, provider routing, and the dependency-light core.</p></div>
+        <p class="eyebrow">Governed web acquisition for AI agents</p>
+        <h1>Reach the web.<br />Keep the boundary.</h1>
+        <p class="lede">Cockroach Crawler turns permitted public pages into source-linked Markdown, JSON, or JSONL while operator-owned policy bounds origins, redirects, robots, requests, bytes, depth, and time.</p>
+        <div class="button-row"><a class="button primary" href="/docs/">Read the documentation</a><a class="button secondary" href="/paper/">Open the technical paper</a><a class="text-link hero-source" href="${candidateSource}">Inspect candidate source →</a></div>
+        <ul class="signal-list" aria-label="Publication facts"><li>npm stable ${publishedVersion}</li><li>${candidateVersion} release candidate</li><li>Node.js 22 / 24 / 26</li><li>MIT</li></ul>
+        <div class="candidate-note"><span>Evidence gate</span><p>The candidate is pinned to <strong>${candidateCommit.slice(0, 7)}</strong>. Its final numerical release claim and DOI remain pending until the frozen evaluation, package, tag, and publication receipt agree.</p></div>
       </div>
-      <figure class="hero-visual">
-        <img src="/assets/crawl-gate.svg" width="720" height="600" alt="Isometric crawl gate showing a public URL entering policy checks before approved pages become structured records" />
-        <figcaption>Requests cross one reviewed boundary. Denied routes never reach the extractor.</figcaption>
-      </figure>
+      <div class="hero-rail" role="list" aria-label="Crawler execution boundary"><span role="listitem">01 normalize</span><span role="listitem">02 resolve</span><span role="listitem">03 respect</span><span role="listitem">04 record</span></div>
     </section>
     <section class="section shell" aria-labelledby="quality-title">
       <p class="eyebrow">New in 0.7.0 · measured on WCEB</p>
@@ -693,8 +761,8 @@ await locate("product-title", thursday, { selector: "h2.title" });
     <section class="section shell faq-section"><div><p class="eyebrow">Questions answered plainly</p><h2>Know the limits before installing.</h2></div><div class="faq-list">
       <details><summary>Does it bypass logins, CAPTCHA, or paywalls?</summary><p>No. Cockroach Crawler does not include stealth, CAPTCHA, paywall, authentication, or authorization bypasses.</p></details>
       <details><summary>Can a model enable private-network crawling?</summary><p>No. Private-network access is a trusted-operator library/CLI option and cannot be enabled through the strict agent input schema.</p></details>
-      <details><summary>Can it read GitHub, YouTube, X, or Reddit?</summary><p>The stable 0.7.0 release includes public GitHub REST, official provider adapters, a restricted no-key YouTube route, and optional read-only X and Reddit session providers. Session providers require explicit local installation and never expose posting, liking, following, messaging, deleting, cookie extraction, or profile-file import.</p></details>
-      <details><summary>Can I run it in a serverless edge function?</summary><p>The stable 0.7.0 release includes a self-hosted, token-authenticated, rate-limited Cloudflare Worker profile for deployment-configured HTTPS origins. It is bounded, but it does not resolve, classify, or pin DNS answers; an allowlisted hostname can resolve internally. Use operator-owned or independently trusted hostnames plus infrastructure egress policy.</p></details>
+      <details><summary>Can the 0.7 candidate read GitHub, YouTube, X, or Reddit?</summary><p>The 0.7 release candidate includes public GitHub REST, official provider adapters, a restricted no-key YouTube route, and optional read-only X and Reddit session providers. Session providers require explicit local installation and never expose posting, liking, following, messaging, deleting, cookie extraction, or profile-file import.</p></details>
+      <details><summary>Can the candidate run in a serverless edge function?</summary><p>The 0.7 release candidate includes a self-hosted, token-authenticated, rate-limited Cloudflare Worker profile for deployment-configured HTTPS origins. It is bounded, but it does not resolve, classify, or pin DNS answers; an allowlisted hostname can resolve internally. Use operator-owned or independently trusted hostnames plus infrastructure egress policy.</p></details>
     </div></section>`;
 }
 
@@ -719,7 +787,7 @@ function focusedDocsPage(eyebrow, title, lede, content) {
   const currentPath = {
     "Documentation · CLI": "/docs/cli/",
     "Documentation · JavaScript": "/docs/javascript/",
-    "Documentation · stable 0.7.0": "/docs/map-and-extract/",
+    "Documentation · 0.7.0 release candidate": "/docs/map-and-extract/",
     "Documentation · Agents": "/docs/agents/",
     "Documentation · Providers": "/docs/providers/",
     "Documentation · Serverless": "/docs/serverless/"
@@ -775,9 +843,9 @@ console.log(result.stats);`, "javascript")}</section>
 
 function mapAndExtractDocsPage() {
   return focusedDocsPage(
-    "Documentation · stable 0.7.0",
+    "Documentation · 0.7.0 release candidate",
     "Map a site or select exact fields without an extraction service.",
-    "The stable 0.7.0 release includes searchable fetch-validated maps, deterministic CSS/XPath/regex extraction, and an opt-in Node quality backend alongside PDF, browser, cache, and deep-crawl modules.",
+    "The 0.7.0 release candidate includes searchable fetch-validated maps, deterministic CSS/XPath/regex extraction, and an opt-in Node quality backend alongside PDF, browser, cache, and deep-crawl modules.",
     `<section><p class="eyebrow">01 · Searchable map</p><h2>Return the most relevant URL evidence without page bodies.</h2><p><code>mapSite</code> uses the normal crawler transport. Every entry passed robots, origin, redirect, DNS, sensitive-path, request, byte, queue, and duration policy before it was ranked and returned. Search only filters fetched entries; it never discovers an otherwise inadmissible URL.</p>${codeBlock("map-cli-guide", "CLI", `cockroach-crawl https://example.com/docs \\
   --map \\
   --map-search "authentication migration" \\
@@ -1625,7 +1693,7 @@ function apiReferenceDocsPage() {
   const table = (headers, rows, label) => `<div class="table-wrap" tabindex="0" role="region" aria-label="${label}"><table><thead><tr>${headers.map((header) => `<th>${header}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
   return docsManualPage({
     currentPath: "/docs/reference/",
-    eyebrow: "stable 0.7.0 · reference",
+    eyebrow: "0.7.0 release candidate · reference",
     title: "Complete JavaScript and CLI reference",
     lede: "Look up package exports, crawl options, page fields, statistics, CLI commands, MCP tools, environment variables, provider commands, and deployment entry points.",
     toc: [
@@ -2100,7 +2168,7 @@ const result = await crawlTool.execute({
   urls: ["https://example.com/docs"],
   maxPages: 5
 });`, "javascript")}</section>
-        <section id="sources"><p class="eyebrow">05 · Stable release · 0.7.0</p><h2>Inspect provider capability before dispatch.</h2><div class="callout candidate"><strong>Release status</strong><p>This contract ships in stable 0.7.0. The deployment workflow verifies the exact registry version before building this site.</p></div>${codeBlock("sources-doctor", "0.7.0", "npm install cockroach-crawler@0.7.0\nnpx cockroach-sources doctor --json\nnpx cockroach-reach doctor --json")}${codeBlock("sources-example", "sources.mjs", `import { createSourceRegistryFromEnv } from "cockroach-crawler/sources";
+        <section id="sources"><p class="eyebrow">05 · Release candidate · 0.7.0</p><h2>Inspect provider capability before dispatch.</h2><div class="callout candidate"><strong>Publication status</strong><p>This contract is present in candidate source commit <code>${candidateCommit.slice(0, 7)}</code>. npm <code>latest</code> remains ${publishedVersion}.</p></div>${codeBlock("sources-doctor", "candidate source", `npm install github:AjnasNB/cockroach-crawler#${candidateCommit}\nnpx cockroach-sources doctor --json\nnpx cockroach-reach doctor --json`)}${codeBlock("sources-example", "sources.mjs", `import { createSourceRegistryFromEnv } from "cockroach-crawler/sources";
 
 const sources = createSourceRegistryFromEnv(process.env);
 console.table(sources.doctor());
@@ -2111,7 +2179,7 @@ const repositories = await sources.search("github", {
 });
 
 console.log(repositories);`, "javascript")}<p>Public GitHub REST is ready with optional token authentication. YouTube metadata reads work through public oEmbed; search needs <code>YOUTUBE_API_KEY</code> and transcripts remain unavailable. X requires <code>X_BEARER_TOKEN</code>. Reddit requires official client credentials and a contact-aware user agent.</p></section>
-        <section id="serverless"><p class="eyebrow">06 · Serverless · stable 0.7.0</p><h2>A smaller edge boundary with named tradeoffs.</h2><p>The package includes a self-hosted Cloudflare Worker entry point. It accepts only token-authenticated <code>POST /v1/crawl</code>, requires configured HTTPS origins, and is rate-limited by the deployment. The Worker does not import the Node-native quality backend.</p>${codeBlock("serverless-config", "worker/wrangler.jsonc", `{
+        <section id="serverless"><p class="eyebrow">06 · Serverless · 0.7.0 release candidate</p><h2>A smaller edge boundary with named tradeoffs.</h2><p>The candidate includes a self-hosted Cloudflare Worker entry point. It accepts only token-authenticated <code>POST /v1/crawl</code>, requires configured HTTPS origins, and is rate-limited by the deployment. The Worker does not import the Node-native quality backend.</p>${codeBlock("serverless-config", "worker/wrangler.jsonc", `{
   "name": "cockroach-crawler-serverless",
   "main": "worker.js",
   "compatibility_date": "2026-07-18",
@@ -2173,7 +2241,7 @@ function securityPage() {
 
 function providersPage() {
   return `
-    <section class="page-hero shell"><p class="eyebrow">Provider coverage · stable 0.7.0</p><h1>Know what is public, keyed, and session-backed.</h1><p class="lede">Stable 0.7.0 combines the crawler with a tested provider registry, ordered routing, optional read-only reach providers, a Maqam-compatible browser-host contract, and a separate restricted serverless tier.</p><div class="page-actions"><a class="button primary" href="/docs/providers/">Inspect the API</a><a class="button secondary" href="${repository}/issues">Propose an adapter</a></div></section>
+    <section class="page-hero shell"><p class="eyebrow">Provider coverage · 0.7.0 release candidate</p><h1>Know what is public, keyed, and session-backed.</h1><p class="lede">The 0.7.0 candidate combines the crawler with a tested provider registry, ordered routing, optional read-only reach providers, a Maqam-compatible browser-host contract, and a separate restricted serverless tier.</p><div class="page-actions"><a class="button primary" href="/docs/providers/">Inspect the API</a><a class="button secondary" href="${repository}/issues">Propose an adapter</a></div></section>
     <section class="section shell feature-stage"><figure><img src="/assets/provider-map.svg" width="720" height="560" alt="Provider coverage map distinguishing public web, GitHub, official APIs, no-key YouTube, and optional read-only session routes" /><figcaption>Doctor status is capability-based: public, keyed, credentialed, no-key, session-backed, partial, and unavailable states remain distinct.</figcaption></figure><div><p class="eyebrow">Know before dispatch</p><h2>Every adapter reports its exact access state.</h2><p>Each adapter reports its authority and availability before dispatch, together with its rate-limit and data-shape contract.</p><div class="candidate-note compact"><span>Stable contract</span><p><code>cockroach-sources doctor --json</code> and <code>cockroach-reach doctor --json</code> report runtime status without serializing secrets.</p></div></div></section>
     <section class="section shell"><div class="table-wrap" tabindex="0" role="region" aria-label="Provider capability status table"><table class="status-table"><thead><tr><th>Surface</th><th>0.7.0 source status</th><th>Access path</th></tr></thead><tbody>
       <tr><td>Hardened public web</td><td><span class="status shipped">Ready</span></td><td>Explicit URLs, robots, sitemaps, Markdown/JSONL, Node DNS pinning.</td></tr>
@@ -2205,7 +2273,7 @@ function comparePage() {
       </div>
     </section>
     <section class="section shell" id="matrix">
-      <div class="section-head"><div><p class="eyebrow">Capability matrix</p><h2>Compare the complete developer surface.</h2></div><p>Stable 0.7.0 brings mapping, adaptive crawling, browser evidence, core and quality extraction, MCP, Docker, source routing, and the Node.js network boundary into one reviewed package.</p></div>
+      <div class="section-head"><div><p class="eyebrow">Capability matrix</p><h2>Compare the complete developer surface.</h2></div><p>The 0.7.0 release candidate brings mapping, adaptive crawling, browser evidence, core and quality extraction, MCP, Docker, source routing, and the Node.js network boundary into one reviewable source tree.</p></div>
       <div class="table-wrap" tabindex="0" role="region" aria-label="Cockroach Crawler, Firecrawl, and Crawl4AI comparison table">
         <table class="status-table">
           <thead><tr><th>Capability</th><th>Cockroach Crawler</th><th>Firecrawl</th><th>Crawl4AI</th></tr></thead>
@@ -2277,7 +2345,7 @@ function stackPage() {
 
 function benchmarkPage() {
   return `
-    <section class="page-hero shell"><p class="eyebrow">Stable 0.7.0 evidence · WCEB v1.0</p><h1>Two corpora. Four named profiles. Every raw row.</h1><p class="lede">The Node quality <code>balanced</code> path records ${qualityPrecision} precision, ${qualityRecall} recall, and ${qualityF1} F1 on 511 observed development pages, plus ${qualityDevelopmentPrecision} precision, ${qualityDevelopmentRecall} recall, and ${qualityDevelopmentF1} F1 on the 1,497-page WCEB development split.</p><div class="page-actions"><a class="button primary" href="#public-quality">Inspect the results</a><a class="button secondary" href="${repository}/blob/main/bench/results/wceb-quality-observed-0.7.0.json">Open raw JSON</a><a class="button secondary" href="${repository}/blob/main/docs/BENCHMARK.md">Read the method</a></div></section>
+    <section class="page-hero shell"><p class="eyebrow">0.7.0 candidate development evidence · WCEB v1.0</p><h1>Two corpora. Four named profiles. Every raw row.</h1><p class="lede">These values describe observed development workloads, not a published release. The Node quality <code>balanced</code> path records ${qualityPrecision} precision, ${qualityRecall} recall, and ${qualityF1} F1 on 511 observed development pages, plus ${qualityDevelopmentPrecision} precision, ${qualityDevelopmentRecall} recall, and ${qualityDevelopmentF1} F1 on the 1,497-page WCEB development split.</p><div class="page-actions"><a class="button primary" href="#public-quality">Inspect the results</a><a class="button secondary" href="${repository}/blob/main/bench/results/wceb-quality-observed-0.7.0.json">Open raw JSON</a><a class="button secondary" href="${repository}/blob/main/docs/BENCHMARK.md">Read the method</a></div></section>
     <section class="section shell" id="public-quality"><div class="section-head"><div><p class="eyebrow">Human-reviewed cached HTML</p><h2>Quality and admission are separate measurements.</h2></div><p>WCEB calls the 511-page partition <code>test</code>, but this project previously inspected it and iterated against its failures. We report it as observed development evidence, not untouched held-out proof. The 1,497-page partition is upstream development evidence. No row establishes universal 0.90 precision.</p></div><div class="table-wrap" tabindex="0" role="region" aria-label="WCEB extraction profile results"><table><thead><tr><th>Surface and corpus</th><th>Precision</th><th>Recall</th><th>F1</th><th>Required</th><th>Unwanted</th><th>Abstained</th></tr></thead><tbody><tr><td>Core structural · observed 511</td><td>${corePrecision}</td><td>${coreRecall}</td><td>${coreF1}</td><td>0.835584</td><td>0.178735</td><td>-</td></tr><tr><td>Quality balanced · observed 511</td><td><strong>${qualityPrecision}</strong></td><td><strong>${qualityRecall}</strong></td><td><strong>${qualityF1}</strong></td><td>${qualityRequiredRecall}</td><td>${qualityUnwanted}</td><td>-</td></tr><tr><td>Quality balanced · WCEB development 1,497</td><td>${qualityDevelopmentPrecision}</td><td>${qualityDevelopmentRecall}</td><td>${qualityDevelopmentF1}</td><td>${qualityDevelopmentRequired}</td><td>${qualityDevelopmentUnwanted}</td><td>-</td></tr><tr><td>Quality balanced + fail-closed · observed 511</td><td>${failClosedPrecision}</td><td>${failClosedRecall}</td><td>${failClosedF1}</td><td>${failClosedRequired}</td><td>${failClosedUnwanted}</td><td>${failClosedAbstentions}</td></tr></tbody></table></div><div class="callout warning"><strong>Native quality boundary</strong><p>The quality surface uses exact <code>trafilatura@0.2.0</code> and never silently falls back. Its prebuilt matrix covers Windows, macOS, and glibc Linux on x64/ARM64; Alpine/musl, 32-bit, and other operating systems are unsupported. Core and serverless remain isolated.</p></div></section>
     <section class="section shell"><div class="section-head"><div><p class="eyebrow">Observed comparison</p><h2>Core, quality, and separately generated baselines.</h2></div><p>Under the same scorer on the observed 511 pages, Python trafilatura 2.2.0 records 0.890108 precision, 0.868258 recall, and 0.860042 F1; readability-lxml records 0.869408, 0.626326, and 0.656537. The Node quality path records ${qualityPrecision}, ${qualityRecall}, and ${qualityF1}. Baseline text was generated in a separate Python process, then evaluated by that shared scorer. Similar package names do not imply identical implementations or configurations.</p></div><div class="page-actions"><a class="button secondary" href="${repository}/blob/main/bench/results/extraction-comparison-0.7.0.json">Open comparison JSON</a><a class="button secondary" href="${repository}/blob/main/docs/EXTRACTION-COMPARISON.md">Read comparison scope</a></div></section>
     <section class="section shell"><div class="section-head"><div><p class="eyebrow">Public-source conformance</p><h2>Policy and URL behavior have their own proof.</h2></div><p>These checks run independently of extraction quality and throughput.</p></div><div class="fit-grid"><article class="fit-yes"><span>Robots dispatch</span><h3>${robotsPassed}/${robotsCases} passed</h3><p>Adapted Google vectors exercise precedence, wildcards, anchors, groups, comments, and case behavior through the real HTTP dispatch path.</p></article><article class="fit-yes"><span>HTTP(S) canonicalization</span><h3>${wptPassed}/${wptCases} passed</h3><p>Applicable credential-free cases come from an exact, SHA-256-verified Web Platform Tests URL corpus revision.</p></article><article><span>Exact scope</span><h3>Source-pinned, not self-certified</h3><p>The result does not claim complete RFC, WHATWG, browser-engine, OCR, or hosted-network certification.</p></article></div></section>
@@ -2301,6 +2369,24 @@ function localBenchmarkPage() {
   "policyProbes": "passed"
 }`, "json")}</section>
     <section class="section shell card-grid"><article><p class="eyebrow">Before publishing</p><h2>Use a distribution, not one lucky run.</h2><p>Warm up, run multiple samples, report median and variability, pin dependencies, and attach raw JSON.</p></article><article><p class="eyebrow">Before comparing</p><h2>Match the contract.</h2><p>Use the same pages, rendering mode, concurrency, output fields, robots policy, retry policy, and network conditions.</p></article></section>`;
+}
+
+function paperPage() {
+  return `
+    <article class="paper-page">
+      <header class="paper-hero shell">
+        <p class="eyebrow">Technical white paper · release candidate</p>
+        <h1>A governed, evidence-preserving web acquisition layer for AI agents.</h1>
+        <p class="lede">This manuscript describes the architecture, trust boundaries, evaluation protocol, and publication gate for Cockroach Crawler ${candidateVersion}. It is pinned to source commit <code>${candidateCommit.slice(0, 7)}</code>; npm <code>latest</code> remains ${publishedVersion}.</p>
+        <div class="page-actions"><a class="button primary" href="/paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf">Read the PDF</a><a class="button secondary" href="${repository}/blob/main/docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.md">Inspect the manuscript source</a><a class="text-link" href="${candidateSource}">Review exact candidate →</a></div>
+        <dl class="paper-facts"><div><dt>Status</dt><dd>Release-candidate manuscript</dd></div><div><dt>Stable package</dt><dd>${publishedVersion}</dd></div><div><dt>Candidate source</dt><dd>${candidateCommit.slice(0, 12)}</dd></div><div><dt>DOI</dt><dd>Not reserved or published</dd></div></dl>
+      </header>
+      <section class="section shell paper-answer" aria-labelledby="paper-answer-title"><p class="eyebrow">Plain-language answer</p><h2 id="paper-answer-title">What does Cockroach Crawler do?</h2><p>Cockroach Crawler is a Node.js acquisition layer that reads permitted HTTP(S) resources for AI workflows. It validates targets, applies robots and resource budgets, records provenance, and keeps browser, provider, quality, and serverless authority in separate entry points.</p></section>
+      <section class="section shell"><div class="section-head"><div><p class="eyebrow">Architecture</p><h2>Five paths. No hidden authority merge.</h2></div><p>The design separates local crawling, source routing, optional browser-host integration, opt-in main-content extraction, and a deliberately narrower serverless profile.</p></div><ol class="paper-architecture"><li><span>01</span><div><h3>Admit</h3><p>Normalize URLs, reject credential-bearing or disallowed targets, validate every redirect, and retain creator-owned limits.</p></div></li><li><span>02</span><div><h3>Acquire</h3><p>Resolve and pin public addresses in the Node transport, apply robots and sensitive-path policy, and enforce request, byte, queue, retry, depth, concurrency, and deadline ceilings.</p></div></li><li><span>03</span><div><h3>Extract</h3><p>Return bounded records from the dependency-light core or call the explicit Node-only quality subpath. Backend failure is an error, not a silent substitution.</p></div></li><li><span>04</span><div><h3>Govern</h3><p>Expose a strict agent schema and a separate Maqam-compatible browser-host contract. Model input cannot widen creator-owned origins or budgets.</p></div></li><li><span>05</span><div><h3>Record</h3><p>Preserve source URLs, hashes, warnings, failures, statistics, and retrieval provenance so downstream reasoning can distinguish evidence from instructions.</p></div></li></ol></section>
+      <section class="section shell" aria-labelledby="paper-evidence-title"><div class="section-head"><div><p class="eyebrow">Frozen evaluation outcome</p><h2 id="paper-evidence-title">The latest candidate was rejected.</h2></div><p>Attempt 003 was executed under the frozen raw-DOM protocol. It violated five declared gates and therefore supplies negative development evidence only; it does not authorize a release claim.</p></div><div class="table-wrap" tabindex="0" role="region" aria-label="Rejected frozen development evaluation"><table><thead><tr><th>Precision</th><th>Recall</th><th>F1</th><th>Required recall</th><th>Unwanted inclusion</th><th>Page-type precision improvement</th></tr></thead><tbody><tr><td>0.860252</td><td>0.884690</td><td>0.844419</td><td>0.758829</td><td>0.092846</td><td>6 of 10 types; 8 required</td></tr></tbody></table></div><div class="callout warning"><strong>Publication consequence</strong><p>No candidate integration, no ${candidateVersion} release, no best-crawler statement, and no universal 0.90 claim follow from this result. A later candidate must be frozen and evaluated independently against the same declared gate before any numerical release language is reconsidered.</p></div></section>
+      <section class="section shell"><div class="section-head"><div><p class="eyebrow">Claim ledger</p><h2>Every statement has a status.</h2></div><p>The paper treats implementation facts, development observations, and release claims as different evidence classes.</p></div><div class="claim-ledger"><article><span class="status shipped">Verified in source</span><h3>Architecture and bounded interfaces</h3><p>Review the pinned source, tests, package exports, and generated documentation.</p></article><article><span class="status conditional">Development only</span><h3>Frozen attempt 003</h3><p>The negative result is retained with its protocol and gate failure. It is not promoted into product positioning.</p></article><article><span class="status planned">Unset</span><h3>Release benchmark and DOI</h3><p>Both remain absent until a clean candidate, final PDF, hashes, metadata, and authorized Zenodo draft agree.</p></article></div></section>
+      <section class="section shell faq-section"><div><p class="eyebrow">Research questions</p><h2>Answers without marketing drift.</h2></div><div class="faq-list"><details open><summary>Is ${candidateVersion} a stable release?</summary><p>No. The npm registry currently exposes ${publishedVersion} as <code>latest</code>. This page and paper describe source-level candidate architecture.</p></details><details><summary>Did the frozen crawler reach 0.90 precision?</summary><p>No. Attempt 003 was rejected and cannot support that claim.</p></details><details><summary>Why publish a rejected result?</summary><p>Negative evidence makes the gate auditable, prevents selective reporting, and states exactly why a candidate was not promoted.</p></details><details><summary>Has a Zenodo record been published?</summary><p>No. Metadata and files are prepared locally. Publication requires an authorized account, a reserved DOI, a final cross-file review, and an explicit publish action.</p></details></div></section>
+    </article>`;
 }
 
 function mediaSchema() {
@@ -2370,7 +2456,7 @@ function roadmapPage() {
   return `
     <section class="page-hero shell"><p class="eyebrow">Public roadmap</p><h1>Expand reach without hiding authority.</h1><p class="lede">Roadmap items become release claims only after code, tests, documentation, and reproducible evidence land together.</p><div class="page-actions"><a class="button primary" href="${contributorTestIssue}">Test one contract</a><a class="button secondary" href="${repository}/issues">Browse open issues</a></div></section>
     <section class="section shell roadmap-list">
-      <article><div><span class="status stable">Stable · 0.7.0</span><h2>Node quality extraction</h2></div><ul><li>Exact <code>trafilatura@0.2.0</code> backend behind a separate Node-only export</li><li>Balanced, precision, and recall profiles with bounded validation</li><li>Optional fail-closed abstention with explicit reasons and no silent core fallback</li><li>Observed 511-page, development 1,497-page, comparison, and conformance artifacts with verified source fingerprints</li></ul></article>
+      <article><div><span class="status planned">Candidate · 0.7.0</span><h2>Node quality extraction</h2></div><ul><li>Exact <code>trafilatura@0.2.0</code> backend behind a separate Node-only export</li><li>Balanced, precision, and recall profiles with bounded validation</li><li>Optional fail-closed abstention with explicit reasons and no silent core fallback</li><li>Observed 511-page, development 1,497-page, comparison, and conformance artifacts retained as development evidence</li></ul></article>
       <article><div><span class="status shipped">Released · 0.6.1</span><h2>Deep AI crawler</h2></div><ul><li>BFS, DFS, best-first, and adaptive relevance traversal</li><li>Persistent cache, compact mapping, robots, sitemaps, and exact crawl budgets</li><li>CLI, typed JavaScript API, strict agent adapter, and normalized evidence records</li><li>Public-network admission, DNS pinning, and validated redirects in the Node transport</li></ul></article>
       <article><div><span class="status shipped">Released · 0.6.1</span><h2>Browser and extraction suite</h2></div><ul><li>JavaScript rendering, waits, clicks, virtual scroll, Shadow DOM, and same-origin iframes</li><li>Screenshots, PDF generation and parsing, dedicated persistent profiles, and reviewed page hooks</li><li>Markdown, CSS, XPath, and optional schema-validated host LLM extraction</li><li>Artifact sizes, SHA-256 hashes, metadata, failures, and crawl statistics</li></ul></article>
       <article><div><span class="status shipped">Released · 0.6.1</span><h2>Agent and deployment surfaces</h2></div><ul><li>Native MCP crawl, mapping, extraction, and capability resource</li><li>Authenticated Docker/Node API, responsive dashboard, and playground</li><li>Maqam-compatible structural browser host and registered-tool composition</li><li>Fetch-only Cloudflare Worker profile for fixed deployment origins</li></ul></article>
@@ -2465,12 +2551,12 @@ await locate("product-title", after, { selector: "h2.title" });
 
 function releasePage() {
   return `
-    <section class="page-hero shell"><p class="eyebrow">Stable release · 0.7.0 · 8 August 2026</p><h1>Measured Node quality extraction with an honest abstention path.</h1><p class="lede">Stable 0.7.0 adds a bounded Node-only quality surface backed by exact <code>trafilatura@0.2.0</code>, while keeping the core and serverless exports isolated. The deployment gate verifies the exact npm version before this site is built.</p><div class="page-actions"><a class="button primary" href="${repository}">Inspect the source</a><a class="button secondary" href="/benchmark/">Review benchmark evidence</a></div></section>
-    <section class="release-banner"><div class="shell"><span>Install stable 0.7.0</span><code>npm install cockroach-crawler@0.7.0</code><button type="button" class="copy-button" data-copy-value="npm install cockroach-crawler@0.7.0" aria-describedby="release-copy-status">Copy</button><span class="sr-only" id="release-copy-status" aria-live="polite"></span></div></section>
-    <section class="section shell"><div class="section-head"><div><p class="eyebrow">What changed</p><h2>Quality extraction is explicit, bounded, and optional.</h2></div><p>Import <code>cockroach-crawler/quality</code> when native main-content quality matters; retain the dependency-light core everywhere else.</p></div><div class="fit-grid"><article class="fit-yes"><span>Balanced</span><h3>${qualityPrecision} observed precision</h3><p>${qualityRecall} recall and ${qualityF1} F1 on 511 observed development pages.</p></article><article class="fit-yes"><span>Broader development</span><h3>${qualityDevelopmentF1} F1</h3><p>${qualityDevelopmentPrecision} precision and ${qualityDevelopmentRecall} recall across 1,497 WCEB development pages.</p></article><article class="fit-yes"><span>Fail closed</span><h3>${failClosedAbstentions} abstentions</h3><p>${failClosedPrecision} precision, ${failClosedRecall} recall, and ${failClosedF1} F1 on the observed 511-page profile.</p></article></div><div class="callout warning"><strong>Evidence boundary</strong><p>The 511-page corpus was previously inspected and used for iteration. It is observed development evidence, not untouched held-out proof. No universal 0.90 claim is made.</p></div></section>
-    <section class="section shell"><div class="table-wrap" tabindex="0" role="region" aria-label="Release facts table"><table><thead><tr><th>Release fact</th><th>Stable 0.7.0</th></tr></thead><tbody><tr><td>Registry status</td><td>Published stable package; the deployment gate verifies the exact version before site build</td></tr><tr><td>Node runtime</td><td>Maintained Node.js 22, 24, and 26 lines</td></tr><tr><td>Package license</td><td>MIT</td></tr><tr><td>Quality dependency</td><td>Exact <code>trafilatura@0.2.0</code></td></tr><tr><td>Native matrix</td><td>Windows, macOS, glibc Linux · x64/ARM64; no Alpine/musl or 32-bit support</td></tr><tr><td>Optional browser peer</td><td>Playwright ≥ 1.48.0 and &lt; 2</td></tr><tr><td>Verification</td><td>Release gate, packed TypeScript consumer, native isolation, source-pinned evidence, browser, Docker, MCP, Worker, audit, and dry-run tarball</td></tr><tr><td>Registry page</td><td><a href="${npmPackage}">npmjs.com/package/cockroach-crawler</a></td></tr><tr><td>Source and issues</td><td><a href="${repository}">github.com/AjnasNB/cockroach-crawler</a></td></tr></tbody></table></div></section>
-    <section class="section shell candidate-release"><div><p class="eyebrow">Stable release evidence</p><h2>0.7.0 keeps every extraction path named.</h2><p>Core structural, quality balanced, and quality fail-closed results have separate immutable artifacts. Engine, profile, abstention state, source fingerprint, and corpus status travel with each result.</p></div><div class="candidate-facts"><div><span>Core</span><strong>No native import</strong></div><div><span>Quality</span><strong>Exact native backend</strong></div><div><span>Safety</span><strong>Explicit abstention</strong></div><div><span>Evidence</span><strong>Observed + development</strong></div></div></section>
-    <section class="section shell proof-section"><div><p class="eyebrow">Release proof</p><h2>Verify source, browser, audit, MCP, Docker, and tarball.</h2><p>The package's <code>prepublishOnly</code> script runs the complete release gate, and npm Trusted Publishing attaches provenance to the immutable artifact.</p></div>${codeBlock("release-check", "terminal", "npm ci --ignore-scripts\nnpm run release:check\nnpm audit signatures")}</section>
+    <section class="page-hero shell"><p class="eyebrow">Release-candidate dossier · ${candidateVersion}</p><h1>Implementation ready for review. Promotion blocked by evidence.</h1><p class="lede">The candidate adds a bounded Node-only quality surface backed by exact <code>trafilatura@0.2.0</code>, while keeping core and serverless exports isolated. It is not published and has no release tag.</p><div class="page-actions"><a class="button primary" href="${candidateSource}">Inspect candidate source</a><a class="button secondary" href="/paper/">Read the white paper</a><a class="button secondary" href="/benchmark/">Review development evidence</a></div></section>
+    <section class="release-banner"><div class="shell"><span>Install current npm stable ${publishedVersion}</span><code>npm install cockroach-crawler@${publishedVersion}</code><button type="button" class="copy-button" data-copy-value="npm install cockroach-crawler@${publishedVersion}" aria-describedby="release-copy-status">Copy</button><span class="sr-only" id="release-copy-status" aria-live="polite"></span></div></section>
+    <section class="section shell"><div class="section-head"><div><p class="eyebrow">Candidate outcome</p><h2>The frozen quality attempt did not pass.</h2></div><p>Attempt 003 violated five gates and improved precision in six of ten page types where eight were required. It remains negative development evidence.</p></div><div class="callout warning"><strong>No promotion</strong><p>The rejected result authorizes no candidate integration, no ${candidateVersion} package or tag, no best-crawler statement, and no universal 0.90 claim.</p></div></section>
+    <section class="section shell"><div class="table-wrap" tabindex="0" role="region" aria-label="Release status table"><table><thead><tr><th>Publication item</th><th>Status</th></tr></thead><tbody><tr><td>npm stable</td><td>${publishedVersion} on the <code>latest</code> tag</td></tr><tr><td>${candidateVersion} source</td><td>Release candidate pinned to <code>${candidateCommit.slice(0, 12)}</code></td></tr><tr><td><code>v${candidateVersion}</code> tag</td><td>Absent</td></tr><tr><td>Frozen attempt 003</td><td>Rejected; five gate violations</td></tr><tr><td>White-paper DOI</td><td>Not reserved or published</td></tr><tr><td>Promotion gate</td><td>Blocked until a later frozen candidate passes every declared gate and all release checks agree</td></tr></tbody></table></div></section>
+    <section class="section shell candidate-release"><div><p class="eyebrow">Reviewable architecture</p><h2>The candidate keeps every extraction path named.</h2><p>Core structural, quality balanced, and quality fail-closed paths stay separate. Engine, profile, abstention state, source fingerprint, and corpus status travel with each evidence artifact.</p><div class="callout warning"><strong>Native boundary</strong><p>The exact <code>trafilatura@0.2.0</code> backend targets Windows, macOS, and glibc Linux on its documented architectures. Alpine/musl, 32-bit, and other operating systems are unsupported; core and serverless stay isolated from the native import.</p></div></div><div class="candidate-facts"><div><span>Core</span><strong>No native import</strong></div><div><span>Quality</span><strong>Exact native backend</strong></div><div><span>Safety</span><strong>Explicit abstention</strong></div><div><span>Evidence</span><strong>Gate-controlled</strong></div></div></section>
+    <section class="section shell proof-section"><div><p class="eyebrow">Candidate proof</p><h2>Verify source, browser, audit, MCP, Docker, and tarball.</h2><p>The complete gate checks the candidate artifact but cannot publish it or override a failed frozen evaluation.</p></div>${codeBlock("release-check", "terminal", "npm ci --ignore-scripts\nnpm run release:check\nnpm audit signatures")}</section>
     <section class="section shell card-grid"><article><p class="eyebrow">Upgrade</p><h2>Adopt features incrementally.</h2><p>Existing crawl calls continue to work. Add traversal, cache, browser artifacts, extractors, MCP, or Docker only where the application needs them.</p></article><article><p class="eyebrow">Contribute</p><h2>Bring a real web fixture.</h2><p>Open an issue with a reproducible page, expected record, Node version, and the smallest configuration that demonstrates the improvement.</p><a class="text-link" href="${repository}/issues">Open an issue →</a></article></section>`;
 }
 
@@ -2479,6 +2565,7 @@ const notFound = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><me
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
 await cp(join(root, "assets"), join(dist, "assets"), { recursive: true });
+await cp(join(root, "paper"), join(dist, "paper"), { recursive: true });
 await mkdir(join(dist, "schemas"), { recursive: true });
 await cp(join(root, "..", "schemas", "source-record.schema.json"), join(dist, "schemas", "source-record.schema.json"));
 const siteMediaFiles = [
@@ -2513,14 +2600,16 @@ await writeFile(
 );
 await writeFile(join(dist, "site.webmanifest"), JSON.stringify({ name: "Cockroach Crawler", short_name: "Crawler", start_url: "/", display: "standalone", background_color: "#07100e", theme_color: "#07100e", icons: [{ src: "/assets/mark.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }] }, null, 2), "utf8");
 await writeFile(join(dist, "_headers"), `/*\n  Cache-Control: public, max-age=0, s-maxage=300, must-revalidate, no-transform\n  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()\n\n/assets/*\n  Cache-Control: public, max-age=300, must-revalidate, no-transform\n\n/media/*\n  Cache-Control: public, max-age=3600, must-revalidate, no-transform\n`, "utf8");
-await writeFile(join(dist, "_redirects"), `/docs /docs/ 301\n/docs/cli /docs/cli/ 301\n/docs/javascript /docs/javascript/ 301\n/docs/crawling /docs/crawling/ 301\n/docs/browser /docs/browser/ 301\n/docs/extraction /docs/extraction/ 301\n/docs/map-and-extract /docs/map-and-extract/ 301\n/docs/agents /docs/agents/ 301\n/docs/mcp /docs/mcp/ 301\n/docs/docker /docs/docker/ 301\n/docs/providers /docs/providers/ 301\n/docs/serverless /docs/serverless/ 301\n/docs/reference /docs/reference/ 301\n/security /security/ 301\n/providers /providers/ 301\n/compare /compare/ 301\n/benchmark /benchmark/ 301\n/media /media/ 301\n/launch /launch/ 301\n/roadmap /roadmap/ 301\n/community /community/ 301\n/release /release/ 301\n`, "utf8");
+await writeFile(join(dist, "_redirects"), `/docs /docs/ 301\n/docs/cli /docs/cli/ 301\n/docs/javascript /docs/javascript/ 301\n/docs/crawling /docs/crawling/ 301\n/docs/browser /docs/browser/ 301\n/docs/extraction /docs/extraction/ 301\n/docs/map-and-extract /docs/map-and-extract/ 301\n/docs/agents /docs/agents/ 301\n/docs/mcp /docs/mcp/ 301\n/docs/docker /docs/docker/ 301\n/docs/providers /docs/providers/ 301\n/docs/serverless /docs/serverless/ 301\n/docs/reference /docs/reference/ 301\n/security /security/ 301\n/providers /providers/ 301\n/compare /compare/ 301\n/benchmark /benchmark/ 301\n/paper /paper/ 301\n/media /media/ 301\n/launch /launch/ 301\n/roadmap /roadmap/ 301\n/community /community/ 301\n/release /release/ 301\n`, "utf8");
 await writeFile(join(dist, "llms.txt"), `# Cockroach Crawler
 
-Cockroach Crawler 0.7.0 is the stable release of an open-source Node.js web toolkit for AI agents, RAG pipelines, documentation indexing, research, content inventory, and QA. Its deployment gate verifies the exact npm version before building the public site.
+Cockroach Crawler is an open-source Node.js web toolkit for AI agents, RAG pipelines, documentation indexing, research, content inventory, and QA. The npm latest tag is ${publishedVersion}. Source commit ${candidateCommit} is a ${candidateVersion} release candidate; it is not a published package or release tag.
 
 The package crawls static and rendered pages and emits LLM-ready Markdown, JSON, or JSONL with canonical URLs, redirect history, content hashes, retrieval metadata, failures, warnings, and provenance. It supports BFS, DFS, best-first, and adaptive traversal; robots and sitemap discovery; validated redirects; persistent cache; searchable fetch-validated site maps; JavaScript rendering; screenshots; PDFs; CSS, XPath, and restricted regex extraction; and optional host-model extraction with JSON Schema validation.
 
-The stable 0.7.0 release adds an opt-in Node-only quality surface backed by exact trafilatura@0.2.0. Balanced quality records ${qualityPrecision} precision, ${qualityRecall} recall, ${qualityF1} macro F1, ${qualityRequiredRecall} required-snippet recall, and ${qualityUnwanted} unwanted inclusion on 511 observed development pages. On the 1,497-page WCEB development split it records ${qualityDevelopmentPrecision} precision, ${qualityDevelopmentRecall} recall, ${qualityDevelopmentF1} F1, ${qualityDevelopmentRequired} required-snippet recall, and ${qualityDevelopmentUnwanted} unwanted inclusion. The 511-page partition influenced prior project iteration, so it is not fresh confirmatory evidence and does not support a universal 0.90 claim.
+The ${candidateVersion} source candidate adds an opt-in Node-only quality surface backed by exact trafilatura@0.2.0. Historical balanced results are development evidence because the project inspected and iterated against the corpus; they are not fresh confirmation and do not support a universal 0.90 claim.
+
+The separately frozen raw-DOM attempt 003 was rejected: precision 0.860252, recall 0.884690, F1 0.844419, required-snippet recall 0.758829, and unwanted inclusion 0.092846. It violated five gates and improved precision in 6 of 10 page types where 8 were required. It authorizes no integration, release, ranking, or best-crawler statement.
 
 The dependency-light core structural path remains separately measured at ${corePrecision} precision, ${coreRecall} recall, and ${coreF1} F1 on the observed 511 pages. Quality balanced with fail-closed admission records ${failClosedPrecision} precision, ${failClosedRecall} recall, ${failClosedF1} F1, ${failClosedRequired} required-snippet recall, ${failClosedUnwanted} unwanted inclusion, and ${failClosedAbstentions} abstentions. Fail-closed is a separate safety profile; abstained pages return no admitted body.
 
@@ -2549,7 +2638,8 @@ Public conformance evidence records ${robotsPassed}/${robotsCases} adapted Googl
 - Complete JavaScript and CLI reference: ${siteUrl}/docs/reference/
 - Security: ${siteUrl}/security/
 - Provider status: ${siteUrl}/providers/
-- Stable release 0.7.0: ${siteUrl}/release/
+- Technical white paper and frozen-gate status: ${siteUrl}/paper/
+- Stable ${publishedVersion} and ${candidateVersion} release-candidate status: ${siteUrl}/release/
 - Maqam documentation: ${maqamDocs}
 - Source: ${repository}
 - npm registry: ${npmPackage}

@@ -1,6 +1,12 @@
 # Cockroach Crawler 0.7.0 launch kit
 
-Last verified: 2026-07-22.
+Last verified: 2026-08-08.
+
+> **Publication hold:** npm `latest` is 0.6.1. The 0.7.0 source candidate has no
+> matching package or tag, and frozen raw-DOM attempt 003 failed five gates.
+> Do not use the launch copy or commands below until a later frozen candidate
+> passes every declared gate and the package, tag, provenance, site, and paper
+> are re-verified together.
 
 ## The one-line story
 
@@ -48,4 +54,4 @@ Run `cockroach-reach setup` without `--apply` to inspect an optional-provider pl
 - [Claims checklist](CLAIMS-CHECKLIST.md)
 - [Contributor issues](CONTRIBUTOR-ISSUES.md)
 
-The current npm and website release is stable `0.7.0`. Do not reuse prerelease wording from older screenshots or drafts.
+The current npm stable is `0.6.1`. Every 0.7 launch asset remains a held draft.

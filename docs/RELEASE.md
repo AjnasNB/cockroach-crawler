@@ -5,6 +5,11 @@ containing unreviewed changes or credentials. Release `0.7.0` requires
 quality-backend, benchmark-integrity, provider/security, packed-consumer, and
 exact-artifact approval on the reviewed release commit.
 
+> **Current hold (8 August 2026):** npm `latest` is 0.6.1, no `v0.7.0` tag or
+> package exists, and frozen raw-DOM attempt 003 was rejected after five gate
+> violations. Do not execute the publication section until a later immutable
+> candidate passes every declared benchmark gate.
+
 ## npm trusted publishing: the one thing that will bite you
 
 npm authorises **one workflow filename per package**. The registration lives
@@ -99,7 +104,7 @@ approval, and both verify the published result against the registry afterwards.
     the 1,497-page artifact says development evidence, and every artifact names
     its engine/profile/fail-closed configuration.
 
-## Stable 0.7.0 publication
+## Target 0.7.0 publication after every gate passes
 
 1. Publish a fresh `0.7.0` artifact through the npm trusted-publishing GitHub environment with provenance and `--tag latest`; never move an older tarball onto the stable tag.
 2. Download `package-artifact-<full-commit>` from the successful packed-consumer CI job for the exact reviewed `main` commit. Copy the full lowercase 40-character commit, byte size, SHA-256, and npm integrity from that job's summary, then independently verify the downloaded tarball before dispatching `publish-npm.yml`.

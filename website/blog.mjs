@@ -388,7 +388,7 @@ rotator.report(proxyUrl, false);        // three strikes, then cooled down`, "ja
         eyebrow: "Engineering · updated 8 August 2026",
         title: "From a noisy core extractor to an explicit quality path",
         lede:
-          "The first comparison exposed a real precision problem. Stable 0.7.0 keeps that history, adds a separately named Node quality backend, reports a broader development run, and makes abstention visible instead of turning every page into confident text.",
+          "The first comparison exposed a real precision problem. The 0.7.0 release candidate keeps that history, adds a separately named Node quality backend, reports a broader development run, and makes abstention visible instead of turning every page into confident text.",
         body: `
       <h2>First, correct the evidence label</h2>
       <p>WCEB calls its 511-page partition <code>test</code>. We inspected those pages, analyzed their failures, and changed extraction behavior in response. That makes every 511-page number here <strong>observed development evidence</strong>, not fresh confirmatory evidence. The separate 1,497-page partition is the upstream WCEB development split.</p>
@@ -404,10 +404,10 @@ rotator.report(proxyUrl, false);        // three strikes, then cooled down`, "ja
       <p>Earlier copy incorrectly listed 0.8986 recall after block scoring and 0.8778 for the structural result. The immutable rows above are the corrected values. Unverified historical core <code>balanced</code> and <code>aggressive</code> rows are no longer used as release evidence.</p>
 
       <h2>The product decision: keep core small, make quality explicit</h2>
-      <p>Trying to disguise a mature extraction engine as a few more home-grown heuristics would be the wrong architecture. Stable 0.7.0 instead exports <code>cockroach-crawler/quality</code>, a Node-only surface with bounded validation, named profiles, deterministic diagnostics, and optional fail-closed admission. It delegates main-content extraction to the exact native npm dependency <code>trafilatura@0.2.0</code>.</p>
+      <p>Trying to disguise a mature extraction engine as a few more home-grown heuristics would be the wrong architecture. The 0.7.0 release candidate instead exports <code>cockroach-crawler/quality</code>, a Node-only surface with bounded validation, named profiles, deterministic diagnostics, and optional fail-closed admission. It delegates main-content extraction to the exact native npm dependency <code>trafilatura@0.2.0</code>.</p>
       <p>The dependency identity is part of the result. This is a Cockroach Crawler product surface, but not a claim that Cockroach Crawler invented the underlying extraction algorithm. Core and serverless do not import it, and an unavailable native backend throws instead of silently falling back.</p>
 
-      <h2>The named stable 0.7.0 results</h2>
+      <h2>The named 0.7.0 development results</h2>
       <table><thead><tr><th>Profile</th><th>Precision</th><th>Recall</th><th>F1</th><th>Required</th><th>Unwanted</th><th>Abstained</th></tr></thead><tbody>
         <tr><td>Core structural · observed 511</td><td>0.793763</td><td>0.873844</td><td>0.791500</td><td>0.835584</td><td>0.178735</td><td>-</td></tr>
         <tr><td>Quality balanced · observed 511</td><td><strong>0.894101</strong></td><td><strong>0.926022</strong></td><td><strong>0.890524</strong></td><td>0.864090</td><td>0.111383</td><td>-</td></tr>

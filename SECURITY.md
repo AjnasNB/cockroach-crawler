@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are provided for the latest published stable minor release. Version `0.7.0` is the stable package line for the local crawler, Node-only quality extractor, provider registry, optional reach providers, browser-host contract, and restricted serverless profile. Verify the current registry tag with `npm view cockroach-crawler version dist-tags`.
+Security fixes are provided for the latest published stable minor release. The current npm `latest` baseline is version `0.6.1` as of 8 August 2026. Version `0.7.0` is a source-level release candidate at commit `90825063d447f07345388d040b1428a311109c2b`; it is not a published package or release tag. Verify current registry state with `npm view cockroach-crawler version dist-tags`.
 
 Report a suspected vulnerability privately through the GitHub repository's security-advisory form. Do not include credentials, session state, private page content, or cloud metadata in a public issue. If the advisory form is unavailable, contact `ajnasnb@gmail.com` with a minimal reproduction.
 
