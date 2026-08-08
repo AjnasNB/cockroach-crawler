@@ -141,6 +141,11 @@ test("trusted npm publication binds dispatch approval to the exact reviewed comm
     /- name: Check out approved commit[\s\S]*?fetch-depth:\s*0[\s\S]*?persist-credentials:\s*false/,
     "release verification must fetch immutable historical evidence before running the full gate"
   );
+  assert.match(
+    workflow,
+    /- name: Verify published benchmark evidence\s+run: npm run bench:public:verify -- --historical-source/,
+    "release publication must verify the unchanged benchmark against its immutable source commit"
+  );
 });
 
 test("release workflows retry transient registry propagation and still fail closed", async () => {
