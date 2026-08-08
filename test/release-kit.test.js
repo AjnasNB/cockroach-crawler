@@ -136,6 +136,11 @@ test("trusted npm publication binds dispatch approval to the exact reviewed comm
   for (const input of ["expected_size_bytes", "expected_sha256", "expected_integrity"]) {
     assert.match(workflow, new RegExp(`${input}:`));
   }
+  assert.match(
+    workflow,
+    /- name: Check out approved commit[\s\S]*?fetch-depth:\s*0[\s\S]*?persist-credentials:\s*false/,
+    "release verification must fetch immutable historical evidence before running the full gate"
+  );
 });
 
 test("release workflows retry transient registry propagation and still fail closed", async () => {
