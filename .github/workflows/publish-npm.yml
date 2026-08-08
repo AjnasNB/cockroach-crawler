@@ -203,7 +203,7 @@ jobs:
       - name: Run complete release gate
         run: npm run release:check
       - name: Verify published benchmark evidence
-        run: npm run bench:public:verify
+        run: npm run bench:public:verify -- --historical-source
       - name: Confirm version is unpublished
         shell: bash
         run: |
