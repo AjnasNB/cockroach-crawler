@@ -141,6 +141,7 @@ test("0.7.0 benchmark evidence is packaged, versioned, and independently verifia
     }
   );
   assert.match(verification, /immutable historical evidence/iu);
+  assert.match(verification, /research-crawler-0\.7\.0-evidence-source/iu);
   assert.match(verification, /90825063d447f07345388d040b1428a311109c2b/iu);
   assert.match(verification, /current source was not asserted/iu);
 });
