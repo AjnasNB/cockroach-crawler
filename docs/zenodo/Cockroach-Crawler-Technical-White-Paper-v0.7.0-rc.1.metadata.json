@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "title": "Cockroach Crawler: A governed, evidence-preserving web acquisition layer for AI agents",
+    "upload_type": "publication",
+    "publication_type": "report",
+    "description": "Technical white paper for the Cockroach Crawler 0.7 release candidate pinned to source commit 90825063d447f07345388d040b1428a311109c2b. It documents the architecture, trust boundaries, reproducibility protocol, and the rejection of frozen raw-DOM attempt 003. The result supplies negative development evidence only and supports no 0.7 release, ranking, best-crawler statement, or universal 0.90 claim.",
+    "creators": [
+      {
+        "name": "NB, Ajnas"
+      }
+    ],
+    "publication_date": "2026-08-08",
+    "access_right": "open",
+    "license": "cc-by-4.0",
+    "language": "eng",
+    "version": "0.7.0-rc.1",
+    "keywords": [
+      "governed web crawling",
+      "AI agents",
+      "evidence provenance",
+      "network policy",
+      "main-content extraction",
+      "reproducible evaluation",
+      "negative results"
+    ],
+    "related_identifiers": [
+      {
+        "identifier": "https://github.com/AjnasNB/cockroach-crawler/tree/90825063d447f07345388d040b1428a311109c2b",
+        "relation": "documents",
+        "resource_type": "software"
+      }
+    ],
+    "prereserve_doi": true,
+    "notes": "Draft metadata only. Reserve the DOI before the final PDF freeze, then update the manuscript, citation metadata, and deposit consistently. Publication requires an authorized maintainer review and explicit publish action."
+  }
+}

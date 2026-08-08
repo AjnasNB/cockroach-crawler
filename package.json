@@ -192,6 +192,9 @@
     "docs/SPIDER.md",
     "docs/QUALITY.md",
     "docs/EXTRACTION-COMPARISON.md",
+    "docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.md",
+    "CITATION.cff",
+    "codemeta.json",
     "Dockerfile",
     "README.md",
     "SECURITY.md",
@@ -220,7 +223,9 @@
     "mcp": "node bin/cockroach-mcp.js",
     "serve": "node bin/cockroach-server.js",
     "shell": "node bin/cockroach-shell.js",
-    "bench:public:comparison": "node bench/public/extraction-comparison.mjs"
+    "bench:public:comparison": "node bench/public/extraction-comparison.mjs",
+    "paper:build": "python scripts/build-crawler-whitepaper-pdf.py",
+    "publication:check": "node scripts/check-publication.mjs"
   },
   "keywords": [
     "crawler",

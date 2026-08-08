@@ -1,0 +1,44 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "name": "Cockroach Crawler",
+  "description": "A governed Node.js web acquisition layer for AI agents with explicit network, browser, provider, extraction, resource, and evidence boundaries.",
+  "version": "0.7.0-rc.1",
+  "identifier": "90825063d447f07345388d040b1428a311109c2b",
+  "dateModified": "2026-08-08",
+  "developmentStatus": "https://www.repostatus.org/#active",
+  "codeRepository": "https://github.com/AjnasNB/cockroach-crawler",
+  "url": "https://cockroachcrawler.com",
+  "issueTracker": "https://github.com/AjnasNB/cockroach-crawler/issues",
+  "license": "https://spdx.org/licenses/MIT.html",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Ajnas",
+      "familyName": "NB"
+    }
+  ],
+  "programmingLanguage": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "runtimePlatform": [
+    "Node.js 22",
+    "Node.js 24",
+    "Node.js 26"
+  ],
+  "operatingSystem": [
+    "Windows",
+    "macOS",
+    "Linux"
+  ],
+  "keywords": [
+    "web crawler",
+    "AI agents",
+    "evidence provenance",
+    "network policy",
+    "main-content extraction",
+    "reproducible evaluation"
+  ],
+  "referencePublication": "https://cockroachcrawler.com/paper/"
+}
