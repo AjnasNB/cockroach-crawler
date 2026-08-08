@@ -5,7 +5,7 @@ type: software
 version: 0.7.0-rc.1
 date-released: 2026-08-08
 authors:
-  - family-names: "NB"
+  - family-names: "N B"
     given-names: "Ajnas"
 repository-code: "https://github.com/AjnasNB/cockroach-crawler"
 url: "https://cockroachcrawler.com"
@@ -25,10 +25,11 @@ preferred-citation:
   type: report
   title: "Cockroach Crawler: A governed, evidence-preserving web acquisition layer for AI agents"
   authors:
-    - family-names: "NB"
+    - family-names: "N B"
       given-names: "Ajnas"
   year: 2026
   month: 8
   version: 0.7.0-rc.1
-  url: "https://cockroachcrawler.com/paper/"
+  doi: "10.5281/zenodo.21851008"
+  url: "https://doi.org/10.5281/zenodo.21851008"
   license: CC-BY-4.0

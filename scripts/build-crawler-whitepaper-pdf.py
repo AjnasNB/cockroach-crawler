@@ -364,8 +364,9 @@ def cover_story() -> list:
             "<b>Published npm baseline:</b> 0.6.1<br/>"
             "<b>Software:</b> MIT<br/>"
             "<b>Paper:</b> Creative Commons Attribution 4.0 International<br/>"
+            "<b>DOI:</b> 10.5281/zenodo.21851008 (reserved)<br/>"
             "<b>Status:</b> Implementation-backed release-candidate white paper. "
-            "No independent peer review, independent security certification, reserved DOI, or 0.7 release.",
+            "No independent peer review, independent security certification, 0.7 software release, or best-crawler claim.",
             STYLES["cover-meta"],
         ),
         NextPageTemplate("Body"),

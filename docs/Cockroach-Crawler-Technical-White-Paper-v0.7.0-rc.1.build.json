@@ -20,16 +20,16 @@
   "inputs": {
     "manuscript": {
       "path": "docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.md",
-      "sha256": "7953229d8f9e5f14e1f3a7170de5023b9d9b1de938a83014253ed3ae5899fa1d"
+      "sha256": "919ac735c6bc10cd5a76c72d9460d220a3d037ef26e67a971b24f17d4e59062c"
     },
     "builder": {
       "path": "scripts/build-crawler-whitepaper-pdf.py",
-      "sha256": "bdae90cdde272e9157d6dd7d0b9b86ad51d5aa1bfb8a49a560a2d66c29cbe818"
+      "sha256": "1fd7984fc3bffb3ef28ce95e421299966cffc2f0c5b4e506cc50f5cf6c391f61"
     }
   },
   "output": {
     "path": "output/pdf/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf",
-    "sha256": "a6d27b83c55d93bd5cbab9811ebb236b5a9937d71309b198a3044852775c4a14",
+    "sha256": "989e6d135b61a4702c85916f20ec2f7554b9cf85e1a96ab508f3dbf8f20bc14a",
     "copies": [
       "docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf",
       "website/paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf"
@@ -51,7 +51,8 @@
   },
   "archive": {
     "zenodoMetadataPrepared": true,
-    "doiReserved": false,
+    "doi": "10.5281/zenodo.21851008",
+    "doiReserved": true,
     "published": false
   }
 }

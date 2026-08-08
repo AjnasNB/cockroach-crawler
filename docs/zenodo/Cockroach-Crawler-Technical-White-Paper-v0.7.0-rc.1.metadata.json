@@ -6,7 +6,7 @@
     "description": "Technical white paper for the Cockroach Crawler 0.7 release candidate pinned to source commit 90825063d447f07345388d040b1428a311109c2b. It documents the architecture, trust boundaries, reproducibility protocol, and the rejection of frozen raw-DOM attempt 003. The result supplies negative development evidence only and supports no 0.7 release, ranking, best-crawler statement, or universal 0.90 claim.",
     "creators": [
       {
-        "name": "NB, Ajnas"
+        "name": "N B, Ajnas"
       }
     ],
     "publication_date": "2026-08-08",
@@ -30,7 +30,8 @@
         "resource_type": "software"
       }
     ],
-    "prereserve_doi": true,
-    "notes": "Draft metadata only. Reserve the DOI before the final PDF freeze, then update the manuscript, citation metadata, and deposit consistently. Publication requires an authorized maintainer review and explicit publish action."
+    "doi": "10.5281/zenodo.21851008",
+    "prereserve_doi": false,
+    "notes": "DOI reserved in Zenodo draft 21851008 before this final PDF freeze. The archived report preserves a rejected development result and does not authorize a 0.7 software release, a best-crawler statement, or a universal 0.90 claim."
   }
 }

@@ -48,11 +48,12 @@ requireValue(!JSON.stringify(softwareZenodo).includes('"doi"'), ".zenodo.json mu
 requireValue(codeMeta["@type"] === "SoftwareSourceCode", "codemeta.json must describe source code");
 requireValue(codeMeta.identifier === "90825063d447f07345388d040b1428a311109c2b", "codemeta.json must pin the candidate commit");
 requireValue(paperZenodo.metadata.upload_type === "publication" && paperZenodo.metadata.publication_type === "report", "paper Zenodo metadata must describe a report");
-requireValue(paperZenodo.metadata.prereserve_doi === true, "paper Zenodo draft must request DOI reservation");
-requireValue(!Object.hasOwn(paperZenodo.metadata, "doi"), "paper Zenodo draft must not invent a DOI");
+requireValue(paperZenodo.metadata.prereserve_doi === false, "paper Zenodo metadata must not request a second DOI");
+requireValue(paperZenodo.metadata.doi === "10.5281/zenodo.21851008", "paper Zenodo metadata must bind the reserved DOI");
 requireValue(!/orcid:/i.test(citation), "CITATION.cff must not invent an ORCID");
 requireValue(citation.includes("version: 0.7.0-rc.1"), "CITATION.cff must identify the manuscript version");
 requireValue(citation.includes("preferred-citation:"), "CITATION.cff must provide the paper citation");
+requireValue(citation.includes('doi: "10.5281/zenodo.21851008"'), "CITATION.cff must bind the reserved paper DOI");
 
 const outputHash = sha256(outputPdf);
 requireValue(sha256(docsPdf) === outputHash, "docs PDF copy must be byte-identical");
@@ -62,7 +63,7 @@ requireValue(receipt.inputs.builder.sha256 === sha256(builder), "receipt builder
 requireValue(receipt.output.sha256 === outputHash, "receipt PDF hash must match");
 requireValue(checksum === `${outputHash}  Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf`, "PDF checksum file must match");
 requireValue(receipt.frozenEvaluation.status === "rejected" && receipt.frozenEvaluation.authorizesReleaseClaim === false, "receipt must preserve the rejected gate");
-requireValue(receipt.archive.doiReserved === false && receipt.archive.published === false, "receipt must preserve draft-only archive status");
+requireValue(receipt.archive.doi === "10.5281/zenodo.21851008" && receipt.archive.doiReserved === true && receipt.archive.published === false, "receipt must preserve the reserved, unpublished archive status");
 
 const publicationSources = await Promise.all([
   "README.md",
@@ -96,6 +97,6 @@ if (errors.length) {
     candidateCommit: receipt.implementation.candidateCommit,
     frozenEvaluation: receipt.frozenEvaluation.status,
     pdfSha256: outputHash,
-    zenodo: "draft_metadata_only"
+    zenodo: "doi_reserved_draft"
   }, null, 2));
 }

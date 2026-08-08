@@ -15,7 +15,7 @@
     {
       "@type": "Person",
       "givenName": "Ajnas",
-      "familyName": "NB"
+      "familyName": "N B"
     }
   ],
   "programmingLanguage": [
@@ -40,5 +40,5 @@
     "main-content extraction",
     "reproducible evaluation"
   ],
-  "referencePublication": "https://cockroachcrawler.com/paper/"
+  "referencePublication": "https://doi.org/10.5281/zenodo.21851008"
 }

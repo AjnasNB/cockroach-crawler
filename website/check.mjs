@@ -186,7 +186,7 @@ for (const [route, proof] of [
 const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
 if (!releaseHtml.includes("npm install cockroach-crawler@0.6.1")) errors.push("release page must install the current published stable");
 if (!releaseHtml.includes("Release-candidate dossier") || !releaseHtml.includes("Install current npm stable 0.6.1")) errors.push("release page must separate stable and candidate status");
-if (!releaseHtml.includes("five gate violations") || !releaseHtml.includes("Not reserved or published")) errors.push("release page must preserve the failed gate and DOI status");
+if (!releaseHtml.includes("five gate violations") || !releaseHtml.includes("10.5281/zenodo.21851008") || !releaseHtml.includes("reserved")) errors.push("release page must preserve the failed gate and reserved DOI status");
 if (!releaseHtml.includes("trafilatura@0.2.0") || !releaseHtml.includes("Alpine/musl")) errors.push("release page must document the exact native dependency and unsupported platform boundary");
 if (releaseHtml.includes("Release · 0.3.0")) errors.push("release page must not advertise 0.3.0 as current");
 const benchmarkHtml = await readFile(join(dist, "benchmark", "index.html"), "utf8");
@@ -223,7 +223,7 @@ for (const proof of [
   "The latest candidate was rejected.",
   "0.860252",
   "five declared gates",
-  "Not reserved or published",
+  "10.5281/zenodo.21851008",
   "npm <code>latest</code> remains 0.6.1"
 ]) {
   if (!paperHtml.includes(proof)) errors.push(`paper page is missing research-publication proof: ${proof}`);

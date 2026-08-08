@@ -7,7 +7,8 @@
 **Published npm baseline:** `cockroach-crawler@0.6.1`  
 **Software license:** MIT  
 **Paper license:** Creative Commons Attribution 4.0 International  
-**Status:** Implementation-backed release-candidate white paper. The manuscript has not undergone independent peer review or independent security certification. No DOI has been reserved or published.
+**DOI:** [10.5281/zenodo.21851008](https://doi.org/10.5281/zenodo.21851008) (reserved; registration completes when the Zenodo record is published)<br>
+**Status:** Implementation-backed release-candidate white paper. The manuscript has not undergone independent peer review or independent security certification. The DOI is reserved; the 0.7 software remains an unpublished release candidate.
 
 ## Abstract
 
@@ -200,17 +201,17 @@ For a future frozen evaluation, the release owner must preserve:
 
 ## 11. Archival and citation protocol
 
-The manuscript source, deterministic PDF, PDF SHA-256, build receipt, `CITATION.cff`, `codemeta.json`, and Zenodo draft metadata are versioned together. The paper uses CC BY 4.0; the software remains MIT licensed. The absence of an ORCID, affiliation, or DOI is not filled with invented metadata.
+The manuscript source, deterministic PDF, PDF SHA-256, build receipt, `CITATION.cff`, `codemeta.json`, and Zenodo draft metadata are versioned together. The paper uses CC BY 4.0; the software remains MIT licensed. The absence of an ORCID or affiliation is not filled with invented metadata. The reserved DOI is `10.5281/zenodo.21851008`.
 
 Zenodo publication is a separate authorized action. A DOI should be reserved before the final PDF is frozen so the DOI can be included consistently in the manuscript, citation metadata, and deposition. Publication must not occur until the final files, hashes, creator metadata, license, related identifiers, and preview have been reviewed. Once a record is published, file changes require a new version rather than silent replacement.
 
-At the present candidate state no DOI is claimed. The repository metadata is a draft and must not be interpreted as an existing archival record.
+The DOI has been reserved in Zenodo draft `21851008`; it does not resolve as a registered public record until publication. The repository metadata therefore distinguishes the reserved identifier from the final public archival state.
 
 ## 12. Conclusion
 
 Cockroach Crawler's architectural claim is deliberately narrower than "access the web." It provides bounded acquisition paths whose network, credential, browser, extraction, and deployment authorities remain visible. The candidate also demonstrates a research practice: a frozen score that misses its gate is recorded as a rejection, not repaired by rounding or marketing language.
 
-The 0.7 architecture is available for review at the cited commit. The published npm baseline remains 0.6.1. Release promotion, a numerical headline, and a DOI remain blocked until a later immutable candidate passes the declared frozen protocol and the full publication chain agrees.
+The 0.7 architecture is available for review at the cited commit. The published npm baseline remains 0.6.1. Release promotion and a numerical headline remain blocked until a later immutable candidate passes the declared frozen protocol. Archiving this release-candidate report does not authorize the software release or a best-crawler claim.
 
 ## References
 
