@@ -2709,6 +2709,11 @@ tr:last-child td {
     overflow-wrap: anywhere;
   }
 
+  .release-hero h1 {
+    overflow-wrap: anywhere;
+    font-size: clamp(1.8rem, 9.2vw, 2.5rem);
+  }
+
   .legal {
     flex-direction: column;
   }
