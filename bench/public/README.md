@@ -87,11 +87,19 @@ HTTP server and the actual `crawlDetailed` robots path.
 ## Verify committed evidence
 
 ```sh
+# Strictly compare the evidence with this checkout. This remains fail-closed.
 npm run bench:public:verify
+
+# Reconstruct and verify the archived evidence at its immutable source commit.
+npm run bench:public:verify -- --historical-source
 ```
 
 Verification covers schemas, corpus identities, row counts, metric ranges,
 configuration/profile identity, baseline output digests, and engine-specific
-source fingerprints. Extractor logic mutations or profile mismatches invalidate
-the evidence. Local throughput remains a separate benchmark because pages per
-second and extraction F1 answer different questions.
+source fingerprints. The default command validates the current checkout and fails
+after any covered source drift. Historical mode instead requires a full Git history,
+the exact commit `90825063d447f07345388d040b1428a311109c2b`, tree
+`167311df2a0b4ad20005c441d60d1e435e64a781`, unchanged evidence blobs, and source
+fingerprints reconstructed from that commit. A historical pass does not validate the
+current implementation or authorize a release. Local throughput remains a separate
+benchmark because pages per second and extraction F1 answer different questions.

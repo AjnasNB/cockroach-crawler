@@ -131,13 +131,31 @@ test("0.7.0 benchmark evidence is packaged, versioned, and independently verifia
   assert.equal(observed.scope.evaluationStatus, "observed-development-evidence-after-project-iteration");
   assert.ok(observed.results.precision < 0.9, "0.894101 must not be rounded into a 0.90 claim.");
 
-  assert.doesNotThrow(() => {
-    execFileSync(process.execPath, ["bench/public/verify-results.mjs"], {
+  const verification = execFileSync(
+    process.execPath,
+    ["bench/public/verify-results.mjs", "--historical-source"],
+    {
       cwd: root,
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"]
-    });
+    }
+  );
+  assert.match(verification, /immutable historical evidence/iu);
+  assert.match(verification, /90825063d447f07345388d040b1428a311109c2b/iu);
+  assert.match(verification, /current source was not asserted/iu);
+});
+
+test("historical evidence verification does not waive current-source drift", () => {
+  const verification = spawnSync(process.execPath, ["bench/public/verify-results.mjs"], {
+    cwd: root,
+    encoding: "utf8"
   });
+
+  assert.notEqual(verification.status, 0);
+  assert.match(
+    verification.stderr,
+    /source fingerprint does not match current implementation/iu
+  );
 });
 
 test("benchmark verification fails closed on profile, implementation, or metric drift", async () => {
@@ -162,7 +180,12 @@ test("benchmark verification fails closed on profile, implementation, or metric 
     await writeFile(observedPath, `${JSON.stringify(profileDrift, null, 2)}\n`, "utf8");
     let verification = spawnSync(
       process.execPath,
-      ["bench/public/verify-results.mjs", "--results-dir", temporaryDirectory],
+      [
+        "bench/public/verify-results.mjs",
+        "--historical-source",
+        "--results-dir",
+        temporaryDirectory
+      ],
       { cwd: root, encoding: "utf8" }
     );
     assert.notEqual(verification.status, 0);
@@ -175,7 +198,12 @@ test("benchmark verification fails closed on profile, implementation, or metric 
     await writeFile(observedPath, `${JSON.stringify(uncovered, null, 2)}\n`, "utf8");
     verification = spawnSync(
       process.execPath,
-      ["bench/public/verify-results.mjs", "--results-dir", temporaryDirectory],
+      [
+        "bench/public/verify-results.mjs",
+        "--historical-source",
+        "--results-dir",
+        temporaryDirectory
+      ],
       { cwd: root, encoding: "utf8" }
     );
     assert.notEqual(verification.status, 0);
@@ -186,7 +214,12 @@ test("benchmark verification fails closed on profile, implementation, or metric 
     await writeFile(observedPath, `${JSON.stringify(inflated, null, 2)}\n`, "utf8");
     verification = spawnSync(
       process.execPath,
-      ["bench/public/verify-results.mjs", "--results-dir", temporaryDirectory],
+      [
+        "bench/public/verify-results.mjs",
+        "--historical-source",
+        "--results-dir",
+        temporaryDirectory
+      ],
       { cwd: root, encoding: "utf8" }
     );
     assert.notEqual(verification.status, 0);

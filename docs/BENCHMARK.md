@@ -141,8 +141,18 @@ certification.
 ```sh
 npm run bench:public:conformance -- \
   --output bench/results/public-conformance-0.7.0.json
+# Strict current-checkout validation:
 npm run bench:public:verify
+# Archived evidence reconstruction from its immutable source commit:
+npm run bench:public:verify -- --historical-source
 ```
+
+Current-source validation remains fail-closed when any covered input drifts.
+Historical mode requires a full Git history and verifies the unchanged evidence
+blobs plus their source fingerprints at commit
+`90825063d447f07345388d040b1428a311109c2b` and tree
+`167311df2a0b4ad20005c441d60d1e435e64a781`; it does not assert that the current
+checkout produced those results.
 
 ## Local regression benchmark
 

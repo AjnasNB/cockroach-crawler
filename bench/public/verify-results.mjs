@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -10,6 +11,10 @@ const publicDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(publicDirectory, "../..");
 const version = "0.7.0";
 const revision = "62ff86d12ea72c80c31fb810ff1a724fad687bea";
+const historicalEvidence = Object.freeze({
+  commit: "90825063d447f07345388d040b1428a311109c2b",
+  tree: "167311df2a0b4ad20005c441d60d1e435e64a781"
+});
 const resultFiles = Object.freeze({
   coreObserved: "wceb-core-observed-0.7.0.json",
   qualityDevelopment: "wceb-quality-development-0.7.0.json",
@@ -21,26 +26,122 @@ const resultFiles = Object.freeze({
 
 function parseArguments(argv) {
   let resultsDirectory = path.join(root, "bench/results");
+  let sourceMode = "current";
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
-    if (argument !== "--results-dir") throw new TypeError(`Unknown argument: ${argument}`);
-    const value = argv[++index] || "";
-    if (!value) throw new TypeError("--results-dir requires a path.");
-    resultsDirectory = path.resolve(value);
+    if (argument === "--historical-source") {
+      sourceMode = "historical";
+    } else if (argument === "--results-dir") {
+      const value = argv[++index] || "";
+      if (!value) throw new TypeError("--results-dir requires a path.");
+      resultsDirectory = path.resolve(value);
+    } else {
+      throw new TypeError(`Unknown argument: ${argument}`);
+    }
   }
-  return { resultsDirectory };
+  return { resultsDirectory, sourceMode };
 }
 
-async function fingerprint(inputs) {
+function assertSafeSourcePath(relative) {
+  assert.equal(typeof relative, "string", "Source fingerprint paths must be strings.");
+  assert.match(relative, /^[A-Za-z0-9][A-Za-z0-9._/-]*$/u, `Unsafe source path: ${relative}`);
+  assert.equal(path.posix.normalize(relative), relative, `Non-canonical source path: ${relative}`);
+}
+
+function appendFingerprintInput(hash, relative, text) {
+  hash.update(relative);
+  hash.update("\0");
+  hash.update(text.replace(/\r\n?/gu, "\n"));
+  hash.update("\0");
+}
+
+async function currentSourceFingerprint(inputs) {
   const hash = createHash("sha256");
   for (const relative of inputs) {
-    hash.update(relative);
-    hash.update("\0");
+    assertSafeSourcePath(relative);
     const text = await readFile(path.join(root, relative), "utf8");
-    hash.update(text.replace(/\r\n?/gu, "\n"));
-    hash.update("\0");
+    appendFingerprintInput(hash, relative, text);
   }
   return hash.digest("hex");
+}
+
+function gitBuffer(args) {
+  try {
+    return execFileSync("git", args, {
+      cwd: root,
+      maxBuffer: 64 * 1024 * 1024,
+      stdio: ["ignore", "pipe", "pipe"],
+      windowsHide: true
+    });
+  } catch (error) {
+    const detail = error?.stderr?.toString("utf8").trim() || error?.message || "unknown Git error";
+    throw new Error(
+      `Historical source commit ${historicalEvidence.commit} is unavailable; `
+      + `verify from a full Git checkout. ${detail}`
+    );
+  }
+}
+
+function gitText(args) {
+  return gitBuffer(args).toString("utf8").trim();
+}
+
+function assertHistoricalCommit() {
+  assert.equal(
+    gitText(["rev-parse", `${historicalEvidence.commit}^{commit}`]),
+    historicalEvidence.commit,
+    "Historical evidence commit identity drifted."
+  );
+  assert.equal(
+    gitText(["rev-parse", `${historicalEvidence.commit}^{tree}`]),
+    historicalEvidence.tree,
+    "Historical evidence tree identity drifted."
+  );
+  gitBuffer(["merge-base", "--is-ancestor", historicalEvidence.commit, "HEAD"]);
+}
+
+function historicalSourceFingerprint(inputs) {
+  const hash = createHash("sha256");
+  for (const relative of inputs) {
+    assertSafeSourcePath(relative);
+    const text = gitBuffer(["show", `${historicalEvidence.commit}:${relative}`]).toString("utf8");
+    appendFingerprintInput(hash, relative, text);
+  }
+  return hash.digest("hex");
+}
+
+function gitBlobId(bytes) {
+  return createHash("sha1")
+    .update(`blob ${bytes.length}\0`)
+    .update(bytes)
+    .digest("hex");
+}
+
+async function assertSourceBinding(directory, filename, source, sourceMode) {
+  if (sourceMode === "current") {
+    assert.equal(
+      await currentSourceFingerprint(source.inputs),
+      source.value,
+      `${filename} source fingerprint does not match current implementation.`
+    );
+    return;
+  }
+
+  assertHistoricalCommit();
+  const artifactPath = `bench/results/${filename}`;
+  const historicalBlob = gitText(["rev-parse", `${historicalEvidence.commit}:${artifactPath}`]);
+  const artifactText = await readFile(path.join(directory, filename), "utf8");
+  const canonicalArtifactBytes = Buffer.from(artifactText.replace(/\r\n?/gu, "\n"), "utf8");
+  assert.equal(
+    gitBlobId(canonicalArtifactBytes),
+    historicalBlob,
+    `${filename} canonical UTF-8/LF bytes do not match the immutable historical artifact.`
+  );
+  assert.equal(
+    historicalSourceFingerprint(source.inputs),
+    source.value,
+    `${filename} source fingerprint does not match immutable historical source commit ${historicalEvidence.commit}.`
+  );
 }
 
 function assertUnit(value, label) {
@@ -72,7 +173,7 @@ async function readResult(directory, filename) {
   return JSON.parse(await readFile(path.join(directory, filename), "utf8"));
 }
 
-async function verifyWceb(directory, filename, expected) {
+async function verifyWceb(directory, filename, expected, sourceMode) {
   const artifact = await readResult(directory, filename);
   assert.equal(artifact.schemaVersion, 1);
   assert.equal(artifact.benchmark, "cockroach-crawler-wceb-main-content");
@@ -120,15 +221,11 @@ async function verifyWceb(directory, filename, expected) {
       "WCEB fingerprint must cover the quality implementation and declaration."
     );
   }
-  assert.equal(
-    await fingerprint(artifact.package.source.inputs),
-    artifact.package.source.value,
-    `${filename} source fingerprint does not match current implementation.`
-  );
+  await assertSourceBinding(directory, filename, artifact.package.source, sourceMode);
   return artifact;
 }
 
-const { resultsDirectory } = parseArguments(process.argv.slice(2));
+const { resultsDirectory, sourceMode } = parseArguments(process.argv.slice(2));
 
 const coreObserved = await verifyWceb(resultsDirectory, resultFiles.coreObserved, {
   split: "test",
@@ -146,7 +243,7 @@ const coreObserved = await verifyWceb(resultsDirectory, resultFiles.coreObserved
     requiredSnippetRecall: 0.835584,
     unwantedSnippetInclusion: 0.178735
   }
-});
+}, sourceMode);
 
 const qualityDevelopment = await verifyWceb(resultsDirectory, resultFiles.qualityDevelopment, {
   split: "dev",
@@ -164,7 +261,7 @@ const qualityDevelopment = await verifyWceb(resultsDirectory, resultFiles.qualit
     requiredSnippetRecall: 0.755867,
     unwantedSnippetInclusion: 0.096181
   }
-});
+}, sourceMode);
 
 const qualityObserved = await verifyWceb(resultsDirectory, resultFiles.qualityObserved, {
   split: "test",
@@ -182,7 +279,7 @@ const qualityObserved = await verifyWceb(resultsDirectory, resultFiles.qualityOb
     requiredSnippetRecall: 0.86409,
     unwantedSnippetInclusion: 0.111383
   }
-});
+}, sourceMode);
 
 const qualityFailClosedObserved = await verifyWceb(
   resultsDirectory,
@@ -203,7 +300,8 @@ const qualityFailClosedObserved = await verifyWceb(
       requiredSnippetRecall: 0.812035,
       unwantedSnippetInclusion: 0.104207
     }
-  }
+  },
+  sourceMode
 );
 
 assert.ok(qualityDevelopment.results.precision > coreObserved.results.precision);
@@ -295,10 +393,11 @@ assert.ok(
     && comparison.package.source.inputs.includes("bench/public/baselines/requirements.lock.txt"),
   "Comparison fingerprint must cover both extractors, checkout integrity, and the exact baseline environment."
 );
-assert.equal(
-  await fingerprint(comparison.package.source.inputs),
-  comparison.package.source.value,
-  "Comparison source fingerprint drifted."
+await assertSourceBinding(
+  resultsDirectory,
+  resultFiles.comparison,
+  comparison.package.source,
+  sourceMode
 );
 
 const conformance = await readResult(resultsDirectory, resultFiles.conformance);
@@ -313,10 +412,13 @@ assert.ok(conformance.robots.cases >= 20);
 assert.equal(conformance.robots.passed, conformance.robots.cases);
 assert.equal(conformance.wptUrl.cases, 101);
 assert.equal(conformance.wptUrl.passed, conformance.wptUrl.cases);
-assert.equal(
-  await fingerprint(conformance.package.source.inputs),
-  conformance.package.source.value,
-  "Conformance source fingerprint drifted."
+await assertSourceBinding(
+  resultsDirectory,
+  resultFiles.conformance,
+  conformance.package.source,
+  sourceMode
 );
 
-process.stdout.write("Cockroach Crawler 0.7.0 public benchmark evidence verified.\n");
+process.stdout.write(sourceMode === "historical"
+  ? `Cockroach Crawler 0.7.0 public benchmark evidence verified as immutable historical evidence from ${historicalEvidence.commit} (${historicalEvidence.tree}); current source was not asserted.\n`
+  : "Cockroach Crawler 0.7.0 public benchmark evidence verified against current source.\n");
