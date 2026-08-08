@@ -106,15 +106,22 @@ for (const [title, pagesWithTitle] of publicTitles) {
   if (pagesWithTitle.length > 1) errors.push(`duplicate title "${title}" on ${pagesWithTitle.join(", ")}`);
 }
 
-const required = ["robots.txt", "sitemap.xml", "llms.txt", "llms-full.txt", "site.webmanifest", "_headers", "_redirects", "assets/social-card.png", "paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf"];
+const required = ["robots.txt", "sitemap.xml", "search.json", "llms.txt", "llms-full.txt", "site.webmanifest", "_headers", "_redirects", "assets/social-card.png", "paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf"];
 for (const path of required) if (!await exists(join(dist, path))) errors.push(`missing ${path}`);
 const sitemap = await readFile(join(dist, "sitemap.xml"), "utf8");
 if (!sitemap.includes("<loc>https://cockroachcrawler.com/compare/</loc>")) errors.push("sitemap must include the AI crawler comparison");
+if (!sitemap.includes("<loc>https://cockroachcrawler.com/ecosystem/</loc><lastmod>2026-08-09</lastmod>")) errors.push("sitemap must include the dated governed-agent ecosystem article");
 if (!sitemap.includes("<loc>https://cockroachcrawler.com/paper/</loc>")) errors.push("sitemap must include the technical white paper");
 const sitemapLocations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 if (sitemapLocations.length !== htmlFiles.length - 1) errors.push(`sitemap must include every public HTML page; expected ${htmlFiles.length - 1}, found ${sitemapLocations.length}`);
 if (sitemapLocations.filter((location) => /\/docs\/capabilities\/[^/]+\/[^/]+\/$/.test(location)).length !== 50) {
   errors.push("sitemap must include all 50 capability detail pages");
+}
+const searchIndex = JSON.parse(await readFile(join(dist, "search.json"), "utf8"));
+if (!Array.isArray(searchIndex) || searchIndex.length !== sitemapLocations.length) errors.push("search.json must index every public route");
+const ecosystemSearch = searchIndex.find((entry) => entry.url === "https://cockroachcrawler.com/ecosystem/");
+if (!ecosystemSearch || ecosystemSearch.updated !== "2026-08-09" || !ecosystemSearch.description.includes("Qarinah")) {
+  errors.push("search.json must index the dated source-linked ecosystem article");
 }
 for (const route of ["crawling", "browser", "extraction", "mcp", "docker", "reference"]) {
   if (!sitemap.includes(`<loc>https://cockroachcrawler.com/docs/${route}/</loc>`)) {
@@ -131,6 +138,7 @@ const dockerHtml = await readFile(join(dist, "docs", "docker", "index.html"), "u
 if (!dockerHtml.includes("/v1/jobs")) errors.push("Docker guide must document bounded asynchronous jobs");
 const llms = await readFile(join(dist, "llms.txt"), "utf8");
 if (!llms.includes("AI crawler comparison: https://cockroachcrawler.com/compare/")) errors.push("llms.txt must link the factual crawler comparison");
+if (!llms.includes("Open-source governed-agent ecosystem: https://cockroachcrawler.com/ecosystem/")) errors.push("llms.txt must link the governed-agent ecosystem article");
 if (!llms.includes("Complete JavaScript and CLI reference: https://cockroachcrawler.com/docs/reference/")) errors.push("llms.txt must link the complete reference");
 for (const phrase of ["searchable fetch-validated site maps", "restricted regex extraction", "bounded process-local asynchronous jobs", "official Registry metadata"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must document ${phrase}`);
@@ -138,9 +146,12 @@ for (const phrase of ["searchable fetch-validated site maps", "restricted regex 
 for (const phrase of ["npm latest is 0.6.1", "0.7.0-rc.1 prerelease", "raw-DOM attempt 003 was rejected", "precision 0.860252", "five gates", "no integration, release, ranking, or best-crawler statement"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must preserve publication status: ${phrase}`);
 }
+for (const phrase of ["Cockroach Browser uses playwright-core", "Cockroach Crawler's opt-in quality option is Trafilatura-backed", "This is a category map, not a ranking"]) {
+  if (!llms.includes(phrase)) errors.push(`llms.txt must preserve the ecosystem boundary: ${phrase}`);
+}
 const llmsFull = await readFile(join(dist, "llms-full.txt"), "utf8");
 if (!llmsFull.includes("## Complete public route index")) errors.push("llms-full.txt must include the complete public route index");
-for (const route of ["/docs/", "/compare/", "/benchmark/", "/paper/", "/release/"]) {
+for (const route of ["/docs/", "/compare/", "/ecosystem/", "/benchmark/", "/paper/", "/release/"]) {
   if (!llmsFull.includes(`https://cockroachcrawler.com${route}`)) errors.push(`llms-full.txt must include ${route}`);
 }
 if (!llmsFull.includes("no integration, release, ranking, or best-crawler statement")) {
@@ -251,6 +262,35 @@ for (const proof of [
 if (compareHtml.includes("best crawler") && !compareHtml.includes("There is no universal best")) {
   errors.push("comparison page must not emit an unqualified best-crawler claim");
 }
+const ecosystemHtml = await readFile(join(dist, "ecosystem", "index.html"), "utf8");
+for (const proof of [
+  "Open-source toolkit for governed AI agents",
+  "By Ajnas N B",
+  "Qarinah",
+  "Maqam",
+  "Cockroach Browser",
+  "Cockroach Crawler",
+  "Playwright",
+  "Puppeteer",
+  "Trafilatura",
+  "Firecrawl",
+  "Browser Use",
+  "Stagehand",
+  "LangGraph",
+  "OpenAI Agents SDK",
+  "Docling",
+  "It uses <code>playwright-core</code>",
+  "quality option is Trafilatura-backed",
+  "This page maps product centers and composition boundaries",
+  '"@type":"Article"',
+  '"@type":"ItemList"',
+  '"@type":"BreadcrumbList"',
+  '"@type":"FAQPage"',
+  'rel="canonical" href="https://cockroachcrawler.com/ecosystem/"'
+]) {
+  if (!ecosystemHtml.includes(proof)) errors.push(`ecosystem page is missing source, boundary, or discovery proof: ${proof}`);
+}
+if (/[\u2013\u2014]/.test(ecosystemHtml)) errors.push("ecosystem page must use ASCII hyphens instead of en or em dashes");
 const benchmarkBlogHtml = await readFile(join(dist, "blog", "we-benchmarked-ourselves-and-lost", "index.html"), "utf8");
 if (!benchmarkBlogHtml.includes("From a noisy core extractor to an explicit quality path")) errors.push("benchmark blog must carry the 0.7.0 evidence update");
 if (!benchmarkBlogHtml.includes("0.892777") || !benchmarkBlogHtml.includes("0.873844")) errors.push("benchmark blog must retain corrected exact stage values");

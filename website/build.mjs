@@ -21,6 +21,15 @@ const playwrightRepository = "https://github.com/microsoft/playwright";
 const puppeteerRepository = "https://github.com/puppeteer/puppeteer";
 const apifyDocs = "https://docs.apify.com/get-started";
 const scrapingBeeDocs = "https://www.scrapingbee.com/documentation/";
+const qarinahSite = "https://qarinah.io";
+const qarinahRepository = "https://github.com/AjnasNB/qarinah";
+const cockroachBrowserSite = "https://cockroachbrowser.com";
+const cockroachBrowserRepository = "https://github.com/AjnasNB/cockroach-browser";
+const browserUseRepository = "https://github.com/browser-use/browser-use";
+const stagehandSite = "https://www.stagehand.dev/";
+const langGraphDocs = "https://docs.langchain.com/oss/javascript/langgraph/overview";
+const openAiAgentsDocs = "https://openai.github.io/openai-agents-js/";
+const doclingDocs = "https://docling-project.github.io/docling/";
 const contributorTestIssue = `${repository}/issues/20`;
 const goodFirstIssues = `${repository}/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22`;
 const helpWantedIssues = `${repository}/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22`;
@@ -279,6 +288,16 @@ const pages = [
     ogType: "article"
   },
   {
+    slug: "ecosystem",
+    nav: "Ecosystem",
+    title: "Open-source toolkit for governed AI agents | Cockroach Crawler",
+    description: "A source-linked map of Qarinah, Maqam, Cockroach Browser, Cockroach Crawler, and adjacent open-source agent, browser, web, extraction, and document tools.",
+    body: ecosystemPage(),
+    schema: ecosystemSchema(),
+    ogType: "article",
+    lastModified: "2026-08-09"
+  },
+  {
     slug: "stack",
     nav: "Stack",
     title: "Governed agent stack | Cockroach Crawler",
@@ -467,6 +486,70 @@ function comparisonSchema() {
   };
 }
 
+function ecosystemSchema() {
+  const entries = [
+    ["Qarinah", qarinahSite],
+    ["Maqam", "https://maqamagent.com"],
+    ["Cockroach Browser", cockroachBrowserSite],
+    ["Cockroach Crawler", siteUrl],
+    ["Playwright", playwrightRepository],
+    ["Puppeteer", puppeteerRepository],
+    ["Trafilatura", trafilaturaDocs],
+    ["Firecrawl", firecrawlDocs],
+    ["Browser Use", browserUseRepository],
+    ["Stagehand", stagehandSite],
+    ["LangGraph", langGraphDocs],
+    ["OpenAI Agents SDK", openAiAgentsDocs],
+    ["Docling", doclingDocs]
+  ];
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: "An open-source toolkit for governed AI agents",
+        description: "A source-linked guide to composing agent runtimes, project memory, action governance, browser execution, web acquisition, main-content extraction, and document conversion.",
+        datePublished: "2026-08-09",
+        dateModified: "2026-08-09",
+        inLanguage: "en",
+        author: { "@type": "Person", name: "Ajnas N B" },
+        publisher: { "@type": "Organization", name: "Cockroach Crawler", url: siteUrl },
+        mainEntityOfPage: `${siteUrl}/ecosystem/`,
+        about: entries.map(([name, url]) => ({ "@type": "SoftwareApplication", name, url }))
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${siteUrl}/ecosystem/#projects`,
+        name: "Open-source tools for governed AI agent systems",
+        numberOfItems: entries.length,
+        itemListElement: entries.map(([name, url], index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name,
+          url
+        }))
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Cockroach Crawler", item: `${siteUrl}/` },
+          { "@type": "ListItem", position: 2, name: "Ecosystem", item: `${siteUrl}/ecosystem/` }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          faqSchema("Do these projects form one automatic control plane?", "No. They are independent projects with different contracts. A deployment must explicitly connect the selected layers and still own identity, secrets, isolation, storage, and operations."),
+          faqSchema("Does Cockroach Browser replace Playwright?", "No. Cockroach Browser uses playwright-core and adds an operator-owned authority, evidence, and integration boundary above that browser-automation primitive."),
+          faqSchema("Is Cockroach Crawler's quality extractor independent of Trafilatura?", "No. The opt-in Node quality path delegates main-content extraction to exact trafilatura@0.2.0 and adds crawling, rendering, policy, structured extraction, and evidence around that backend."),
+          faqSchema("Where do LangGraph and the OpenAI Agents SDK fit?", "They are agent runtime and orchestration choices. They can call governed browser or crawler tools, but neither is replaced by the evidence, memory, or approval layers on this page."),
+          faqSchema("When should a team use Firecrawl or Docling?", "Consider Firecrawl when managed web acquisition and hosted operations are central. Consider Docling when document conversion, layout, tables, images, or complex PDF structure are the main problem. Test the exact workload before choosing.")
+        ]
+      }
+    ]
+  };
+}
+
 function paperSchema() {
   return {
     "@context": "https://schema.org",
@@ -524,7 +607,7 @@ function escapeHtml(value) {
 
 function nav(active) {
   const primary = pages.filter((page) => ["Home", "Docs", "Providers", "Security", "Benchmark", "Paper"].includes(page.nav));
-  const secondary = pages.filter((page) => ["Stack", "Compare", "Media", "Launch", "Roadmap", "Community", "Release"].includes(page.nav));
+  const secondary = pages.filter((page) => ["Ecosystem", "Stack", "Compare", "Media", "Launch", "Roadmap", "Community", "Release"].includes(page.nav));
   const link = (page) => {
     const href = page.slug ? `/${page.slug}/` : "/";
     const current = page.nav === active ? ' aria-current="page"' : "";
@@ -558,7 +641,7 @@ function footer() {
           <a class="brand" href="/"><img src="/assets/mark.svg" width="28" height="28" alt="" /><span>Cockroach Crawler</span></a>
           <p>Bounded crawling for public or explicitly trusted HTTP(S) pages.</p>
         </div>
-        <div><h2>Use</h2><a href="/docs/">Documentation</a><a href="/providers/">Provider status</a><a href="/compare/">Crawler comparison</a><a href="/stack/">Governed stack</a><a href="${npmPackage}">npm package</a></div>
+        <div><h2>Use</h2><a href="/docs/">Documentation</a><a href="/providers/">Provider status</a><a href="/compare/">Crawler comparison</a><a href="/ecosystem/">Open-source ecosystem</a><a href="/stack/">Governed stack</a><a href="${npmPackage}">npm package</a></div>
         <div><h2>Trust</h2><a href="/security/">Security model</a><a href="/benchmark/">Benchmark method</a><a href="/paper/">Technical paper</a><a href="${repository}/blob/main/SECURITY.md">Report privately</a></div>
         <div><h2>Project</h2><a href="/launch/">Launch kit</a><a href="/roadmap/">Roadmap</a><a href="/community/">Contribute</a><a href="${repository}">Source code</a><a href="${maqamDocs}">Govern with Maqam</a></div>
       </div>
@@ -2347,6 +2430,109 @@ function comparePage() {
     </div></section>`;
 }
 
+function ecosystemPage() {
+  return `
+    <article class="ecosystem-page">
+      <header class="page-hero shell ecosystem-hero">
+        <nav class="article-breadcrumbs" aria-label="Breadcrumb"><a href="/">Cockroach Crawler</a><span aria-hidden="true">/</span><span>Open-source ecosystem</span></nav>
+        <p class="eyebrow">Open-source toolkit for governed AI agents</p>
+        <h1>Choose a layer, then keep its authority visible.</h1>
+        <p class="lede">A useful agent system may need orchestration, project memory, approval, browser execution, web acquisition, main-content extraction, and document conversion. These projects solve different jobs. The safest composition starts by naming each boundary.</p>
+        <div class="article-byline"><span>By Ajnas N B</span><span>Reviewed 9 August 2026</span><span>13 official project sources</span></div>
+        <div class="page-actions"><a class="button primary" href="#first-party">Map the four local layers</a><a class="button secondary" href="#project-map">Compare adjacent projects</a></div>
+      </header>
+
+      <section class="section shell ecosystem-principle" aria-labelledby="ecosystem-principle-title">
+        <p class="eyebrow">Short answer</p>
+        <h2 id="ecosystem-principle-title">No single package owns the whole agent.</h2>
+        <p>Qarinah compiles cited project memory. Maqam governs selected registered actions. Cockroach Browser runs permitted browser work above Playwright. Cockroach Crawler acquires bounded web evidence. An agent runtime such as LangGraph or the OpenAI Agents SDK can call these layers, but installation alone does not connect or secure them.</p>
+        <aside><strong>Deployment rule</strong><p>The host still owns identity, credentials, process isolation, durable storage, model choice, network placement, and every route that bypasses the registered boundary.</p></aside>
+      </section>
+
+      <section class="section shell" id="first-party" aria-labelledby="first-party-title">
+        <div class="section-head"><div><p class="eyebrow">Four inspectable responsibilities</p><h2 id="first-party-title">The local toolkit keeps memory, action, browser, and web evidence separate.</h2></div><p>Each project is independently installable and reviewable. Use only the responsibilities the deployment actually needs.</p></div>
+        <div class="ecosystem-core" id="projects">
+          <article class="memory"><span>01 - memory</span><h3>Qarinah</h3><p>Local-first, evidence-linked project memory for coding agents. It records permitted project events and compiles compact, cited context and handoff artifacts.</p><div class="source-links"><a href="${qarinahSite}">Official site</a><a href="${qarinahRepository}">Source</a></div></article>
+          <article class="governance"><span>02 - action</span><h3>Maqam</h3><p>A compact TypeScript boundary for registered actions with policy, exact-input approval, one-use consumption, execution, and receipts.</p><div class="source-links"><a href="https://maqamagent.com">Official site</a><a href="${maqamRepository}">Source</a></div></article>
+          <article class="browser"><span>03 - browser</span><h3>Cockroach Browser</h3><p>An operator-controlled browser runtime for agents with scoped capabilities and evidence. It uses <code>playwright-core</code>. It is not a new browser engine and does not replace Playwright.</p><div class="source-links"><a href="${cockroachBrowserSite}">Official site</a><a href="${cockroachBrowserRepository}">Source</a></div></article>
+          <article class="crawler"><span>04 - web evidence</span><h3>Cockroach Crawler</h3><p>Bounded local web acquisition with explicit origin, redirect, robots, request, byte, depth, and time controls. Its opt-in quality option is Trafilatura-backed and delegates main-content extraction to exact <code>trafilatura@0.2.0</code>.</p><div class="source-links"><a href="${siteUrl}">Official site</a><a href="${repository}">Source</a></div></article>
+        </div>
+      </section>
+
+      <section class="section shell" id="project-map" aria-labelledby="project-map-title">
+        <div class="section-head"><div><p class="eyebrow">Adjacent open-source centers</p><h2 id="project-map-title">Start with the primary job, not a universal ranking.</h2></div><p>The tools below can be alternatives at one layer and complements at another. Every name links to the project's own documentation or source.</p></div>
+        <ol class="ecosystem-layers">
+          <li>
+            <div class="layer-index">A</div>
+            <div class="layer-copy"><span>Agent runtime and orchestration</span><h3>Build the loop, state, and workflow first.</h3><p><a href="${openAiAgentsDocs}">OpenAI Agents SDK</a> provides agent loops, tools, handoffs, guardrails, sessions, tracing, and human involvement. <a href="${langGraphDocs}">LangGraph</a> centers long-running stateful workflows, durable execution, streaming, and human-in-the-loop control. Neither is replaced by a memory, approval, browser, or crawler layer.</p></div>
+          </li>
+          <li>
+            <div class="layer-index">B</div>
+            <div class="layer-copy"><span>Browser automation primitives</span><h3>Control browsers directly when code is the product center.</h3><p><a href="${playwrightRepository}">Playwright</a> automates Chromium, Firefox, and WebKit through a cross-browser API. <a href="${puppeteerRepository}">Puppeteer</a> automates Chrome and Firefox through browser protocols. Cockroach Browser uses Playwright and adds a narrower operator-owned authority and evidence contract above it.</p></div>
+          </li>
+          <li>
+            <div class="layer-index">C</div>
+            <div class="layer-copy"><span>AI browser frameworks</span><h3>Add model-directed observation and action when the workflow needs it.</h3><p><a href="${browserUseRepository}">Browser Use</a> is an open-source Python framework for agents that interact with websites. <a href="${stagehandSite}">Stagehand</a> is an open-source AI browser automation framework that combines code with AI-powered observation, action, and extraction. Evaluate their model, browser, cloud, and credential boundaries separately from Cockroach Browser.</p></div>
+          </li>
+          <li>
+            <div class="layer-index">D</div>
+            <div class="layer-copy"><span>Web acquisition and extraction</span><h3>Choose local evidence or managed reach by deployment need.</h3><p><a href="${firecrawlDocs}">Firecrawl</a> centers a web API for search, scrape, crawl, map, and interaction. Cockroach Crawler centers bounded local acquisition and normalized evidence. <a href="${trafilaturaDocs}">Trafilatura</a> specializes in web text, metadata, comments, discovery, and structured output. Cockroach Crawler's quality path delegates main-content extraction to its exact Trafilatura backend rather than claiming an independent extractor.</p></div>
+          </li>
+          <li>
+            <div class="layer-index">E</div>
+            <div class="layer-copy"><span>Document conversion</span><h3>Use a document specialist for complex files.</h3><p><a href="${doclingDocs}">Docling</a> converts PDFs, office documents, images, HTML, and Markdown into a structured document representation and export formats. It is a stronger category match when layout, tables, images, OCR, or complex document structure is the main problem. Cockroach Crawler's PDF path is not presented as a Docling replacement.</p></div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section shell ecosystem-route" aria-labelledby="ecosystem-route-title">
+        <div><p class="eyebrow">One explicit composition</p><h2 id="ecosystem-route-title">The host connects the route and preserves every handoff.</h2><p>This is an architecture example, not an automatic bundled pipeline.</p></div>
+        <ol>
+          <li><span>01</span><div><strong>Plan</strong><p>LangGraph, the OpenAI Agents SDK, or another runtime chooses a task and tool call.</p></div></li>
+          <li><span>02</span><div><strong>Contextualize</strong><p>Qarinah can supply compact cited project context when the task needs local history.</p></div></li>
+          <li><span>03</span><div><strong>Authorize</strong><p>Maqam can gate a selected registered effect with policy and exact-input approval.</p></div></li>
+          <li><span>04</span><div><strong>Acquire</strong><p>Cockroach Browser handles permitted interaction, or Cockroach Crawler reads permitted web resources.</p></div></li>
+          <li><span>05</span><div><strong>Transform</strong><p>The host may use Trafilatura-backed extraction, Docling, Firecrawl, or another explicit specialist route.</p></div></li>
+          <li><span>06</span><div><strong>Return proof</strong><p>Source records, browser evidence, execution receipts, and cited context return to the agent runtime.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="section shell" aria-labelledby="decision-guide-title">
+        <div class="section-head"><div><p class="eyebrow">Decision guide</p><h2 id="decision-guide-title">Pick the smallest contract that covers the job.</h2></div><p>No row is a benchmark result or a claim of product superiority.</p></div>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Open-source governed agent toolkit decision guide"><table><thead><tr><th>Primary need</th><th>Start with</th><th>Keep explicit</th></tr></thead><tbody>
+          <tr><td>Agent loop, handoffs, tools, or tracing</td><td>OpenAI Agents SDK</td><td>Model, session, sandbox, and provider authority</td></tr>
+          <tr><td>Durable stateful workflow orchestration</td><td>LangGraph</td><td>Checkpoint storage and side-effect boundaries</td></tr>
+          <tr><td>Evidence-linked local coding memory</td><td>Qarinah</td><td>Workspace consent, capture, disclosure, and trust checkpoint</td></tr>
+          <tr><td>Exact registered-action approval</td><td>Maqam</td><td>Every real effect must pass through the gateway</td></tr>
+          <tr><td>Direct cross-browser automation</td><td>Playwright</td><td>Browser process, profile, credentials, and target isolation</td></tr>
+          <tr><td>Agent browser authority and evidence above Playwright</td><td>Cockroach Browser</td><td>Allowed origins, capabilities, profiles, and artifact handling</td></tr>
+          <tr><td>Natural-language browser automation</td><td>Browser Use or Stagehand</td><td>Model calls, browser provider, credentials, and action review</td></tr>
+          <tr><td>Bounded local web evidence</td><td>Cockroach Crawler</td><td>Origins, redirects, robots, limits, and browser isolation</td></tr>
+          <tr><td>Managed web API and operations</td><td>Firecrawl</td><td>Service plan, data handling, network policy, and provider limits</td></tr>
+          <tr><td>Main-content extraction</td><td>Trafilatura</td><td>Corpus, configuration, output contract, and scorer</td></tr>
+          <tr><td>Complex document conversion</td><td>Docling</td><td>Format pipeline, models, OCR, resources, and output validation</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section shell ecosystem-method" aria-labelledby="ecosystem-method-title">
+        <div><p class="eyebrow">Method and limits</p><h2 id="ecosystem-method-title">Official sources, one review date, no hidden benchmark.</h2></div>
+        <div><p>Descriptions were reviewed against the linked official sites, documentation, or source repositories on 9 August 2026. External projects change independently. Verify the current license, release, hosted-service terms, security model, and exact integration before adoption.</p><p>This page maps product centers and composition boundaries. It does not establish a matched performance comparison, security certification, production capacity result, or universal best choice.</p></div>
+      </section>
+
+      <section class="section shell" aria-labelledby="ecosystem-faq-title">
+        <div class="section-head"><div><p class="eyebrow">Visible FAQ</p><h2 id="ecosystem-faq-title">Direct answers before you compose the stack.</h2></div></div>
+        <div class="ecosystem-faq">
+          <article><h3>Do these projects form one automatic control plane?</h3><p>No. They are independent projects. The deployment must explicitly connect selected layers and still owns identity, secrets, isolation, storage, and operations.</p></article>
+          <article><h3>Does Cockroach Browser replace Playwright?</h3><p>No. Cockroach Browser uses <code>playwright-core</code> and adds an operator-owned authority, evidence, and integration boundary above Playwright.</p></article>
+          <article><h3>Is Cockroach Crawler's quality extractor independent of Trafilatura?</h3><p>No. The opt-in Node quality path delegates main-content extraction to exact <code>trafilatura@0.2.0</code>. Crawler policy and evidence wrap that backend.</p></article>
+          <article><h3>Where do LangGraph and the OpenAI Agents SDK fit?</h3><p>They are runtime and orchestration choices. They can call governed browser or crawler tools, but they are not replaced by the memory, approval, or evidence layers.</p></article>
+          <article><h3>When should a team use Firecrawl or Docling?</h3><p>Consider Firecrawl for managed web acquisition. Consider Docling for document conversion and complex layout. Test the exact workload and deployment boundary before choosing.</p></article>
+          <article><h3>Is this a best-tools ranking?</h3><p>No. It is a category and architecture map built from official product sources. It contains no matched cross-project benchmark.</p></article>
+        </div>
+      </section>
+    </article>`;
+}
+
 function stackPage() {
   return `
     <section class="page-hero shell"><p class="eyebrow">Governed agent stack</p><h1>One agent stack. Four explicit controls.</h1><p class="lede">Reach, action, context, and evidence compose without pretending that installation alone governs every call.</p><div class="page-actions"><a class="button primary" href="/docs/agents/">Govern a crawler tool</a><a class="button secondary" href="${productLoopRepository}">Inspect ProductLoop OS</a></div></section>
@@ -2626,12 +2812,22 @@ await writeFile(join(dist, "404.html"), notFound, "utf8");
 await writeFile(join(dist, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`, "utf8");
 await writeFile(
   join(dist, "sitemap.xml"),
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.map((page) => `  <url><loc>${siteUrl}${page.slug ? `/${page.slug}/` : "/"}</loc><lastmod>2026-07-24</lastmod></url>`).join("\n")}\n</urlset>\n`,
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.map((page) => `  <url><loc>${siteUrl}${page.slug ? `/${page.slug}/` : "/"}</loc><lastmod>${page.lastModified ?? "2026-08-08"}</lastmod></url>`).join("\n")}\n</urlset>\n`,
+  "utf8"
+);
+await writeFile(
+  join(dist, "search.json"),
+  JSON.stringify(pages.map((page) => ({
+    title: page.title,
+    description: page.description,
+    url: `${siteUrl}${page.slug ? `/${page.slug}/` : "/"}`,
+    updated: page.lastModified ?? "2026-08-08"
+  })), null, 2),
   "utf8"
 );
 await writeFile(join(dist, "site.webmanifest"), JSON.stringify({ name: "Cockroach Crawler", short_name: "Crawler", start_url: "/", display: "standalone", background_color: "#07100e", theme_color: "#07100e", icons: [{ src: "/assets/mark.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }] }, null, 2), "utf8");
 await writeFile(join(dist, "_headers"), `/*\n  Cache-Control: public, max-age=0, s-maxage=300, must-revalidate, no-transform\n  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()\n\n/assets/*\n  Cache-Control: public, max-age=300, must-revalidate, no-transform\n\n/media/*\n  Cache-Control: public, max-age=3600, must-revalidate, no-transform\n`, "utf8");
-await writeFile(join(dist, "_redirects"), `/docs /docs/ 301\n/docs/cli /docs/cli/ 301\n/docs/javascript /docs/javascript/ 301\n/docs/crawling /docs/crawling/ 301\n/docs/browser /docs/browser/ 301\n/docs/extraction /docs/extraction/ 301\n/docs/map-and-extract /docs/map-and-extract/ 301\n/docs/agents /docs/agents/ 301\n/docs/mcp /docs/mcp/ 301\n/docs/docker /docs/docker/ 301\n/docs/providers /docs/providers/ 301\n/docs/serverless /docs/serverless/ 301\n/docs/reference /docs/reference/ 301\n/security /security/ 301\n/providers /providers/ 301\n/compare /compare/ 301\n/benchmark /benchmark/ 301\n/paper /paper/ 301\n/media /media/ 301\n/launch /launch/ 301\n/roadmap /roadmap/ 301\n/community /community/ 301\n/release /release/ 301\n`, "utf8");
+await writeFile(join(dist, "_redirects"), `/docs /docs/ 301\n/docs/cli /docs/cli/ 301\n/docs/javascript /docs/javascript/ 301\n/docs/crawling /docs/crawling/ 301\n/docs/browser /docs/browser/ 301\n/docs/extraction /docs/extraction/ 301\n/docs/map-and-extract /docs/map-and-extract/ 301\n/docs/agents /docs/agents/ 301\n/docs/mcp /docs/mcp/ 301\n/docs/docker /docs/docker/ 301\n/docs/providers /docs/providers/ 301\n/docs/serverless /docs/serverless/ 301\n/docs/reference /docs/reference/ 301\n/security /security/ 301\n/providers /providers/ 301\n/compare /compare/ 301\n/ecosystem /ecosystem/ 301\n/benchmark /benchmark/ 301\n/paper /paper/ 301\n/media /media/ 301\n/launch /launch/ 301\n/roadmap /roadmap/ 301\n/community /community/ 301\n/release /release/ 301\n`, "utf8");
 await writeFile(join(dist, "llms.txt"), `# Cockroach Crawler
 
 Cockroach Crawler is an open-source Node.js web toolkit for AI agents, RAG pipelines, documentation indexing, research, content inventory, and QA. npm latest is ${publishedVersion}; the reviewed ${candidateVersion} prerelease at commit ${candidateCommit} is published on npm next for opt-in evaluation.
@@ -2648,6 +2844,8 @@ The native quality backend never silently falls back. Upstream prebuilt binaries
 
 Alternatives belong to different layers. Firecrawl, Apify, and ScrapingBee center managed web acquisition; Crawlee and Scrapy are programmable crawler frameworks; Crawl4AI is a broad Python LLM crawler; Trafilatura is a specialist main-content extractor; Playwright and Puppeteer are browser-automation primitives. Cockroach Crawler centers bounded local acquisition and normalized evidence. No universal best-crawler or cross-benchmark superiority claim is made.
 
+The governed-agent ecosystem guide maps thirteen source-linked projects by layer. Qarinah supplies evidence-linked project memory, Maqam governs selected registered actions, Cockroach Browser supplies an operator-owned browser authority and evidence runtime, and Cockroach Crawler supplies bounded web acquisition. Cockroach Browser uses playwright-core and does not replace Playwright. Cockroach Crawler's opt-in quality option is Trafilatura-backed and delegates main-content extraction to exact trafilatura@0.2.0. LangGraph and the OpenAI Agents SDK remain orchestration choices; Browser Use and Stagehand remain AI browser frameworks; Firecrawl remains a managed web-acquisition option; Docling remains a document-conversion specialist. This is a category map, not a ranking.
+
 Agent and deployment surfaces include a typed JavaScript API, CLI, strict agent tool, native MCP stdio service with official Registry metadata, authenticated Docker/Node API, bounded process-local asynchronous jobs, dashboard and playground, a fixed operator-owned proxy gateway adapter, a Maqam-compatible browser host, and a restricted Cloudflare Worker profile. Model-facing inputs can narrow but cannot expand deployment-owned origins, credentials, proxy endpoints, browser hooks, profiles, or resource ceilings.
 
 Public conformance evidence records ${robotsPassed}/${robotsCases} adapted Google robots dispatch vectors and ${wptPassed}/${wptCases} applicable credential-free HTTP(S) cases from the pinned WPT URL corpus. Extraction quality, fail-closed coverage, conformance, and local throughput remain separate evidence tracks.
@@ -2657,6 +2855,7 @@ Public conformance evidence records ${robotsPassed}/${robotsCases} adapted Googl
 - Extraction engineering history: ${siteUrl}/blog/we-benchmarked-ourselves-and-lost/
 - Why CSS selectors break: ${siteUrl}/blog/why-css-selectors-break/
 - AI crawler comparison: ${siteUrl}/compare/
+- Open-source governed-agent ecosystem: ${siteUrl}/ecosystem/
 - CLI guide: ${siteUrl}/docs/cli/
 - JavaScript guide: ${siteUrl}/docs/javascript/
 - Deep crawling and cache: ${siteUrl}/docs/crawling/
