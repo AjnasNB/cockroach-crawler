@@ -2647,4 +2647,13 @@ Public conformance evidence records ${robotsPassed}/${robotsCases} adapted Googl
 - Source: ${repository}
 - npm registry: ${npmPackage}
 `, "utf8");
+const llmsSummary = await readFile(join(dist, "llms.txt"), "utf8");
+const publicRouteIndex = pages
+  .map((page) => `- ${page.title}: ${siteUrl}${page.slug ? `/${page.slug}/` : "/"}`)
+  .join("\n");
+await writeFile(
+  join(dist, "llms-full.txt"),
+  `${llmsSummary}\n## Complete public route index\n\n${publicRouteIndex}\n`,
+  "utf8"
+);
 console.log(`Built ${pages.length} pages in ${dist}`);
