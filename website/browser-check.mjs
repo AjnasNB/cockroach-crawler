@@ -61,6 +61,7 @@ const routes = [
   "/security/",
   "/providers/",
   "/compare/",
+  "/ecosystem/",
   "/stack/",
   "/benchmark/",
   "/paper/",
@@ -123,6 +124,7 @@ try {
     if (route === "/docs/reference/") await page.screenshot({ path: `${output}/docs-reference-desktop.png`, fullPage: true });
     if (route === "/providers/") await page.screenshot({ path: `${output}/providers-desktop.png`, fullPage: true });
     if (route === "/compare/") await page.screenshot({ path: `${output}/compare-desktop.png`, fullPage: true });
+    if (route === "/ecosystem/") await page.screenshot({ path: `${output}/ecosystem-desktop.png`, fullPage: true });
     if (route === "/stack/") await page.screenshot({ path: `${output}/stack-desktop.png`, fullPage: true });
     if (route === "/paper/") await page.screenshot({ path: `${output}/paper-desktop.png`, fullPage: true });
     if (route === "/release/") await page.screenshot({ path: `${output}/release-desktop.png`, fullPage: true });
@@ -205,7 +207,7 @@ try {
         }
       });
       mobileResults.push({ width, route, status: response?.status(), ...metrics, errors });
-      if (route === "/" || route === "/docs/" || route === "/media/") {
+      if (route === "/" || route === "/docs/" || route === "/ecosystem/" || route === "/media/") {
         const name = route === "/" ? "home" : route.slice(1, -1);
         await mobile.screenshot({ path: `${output}/${name}-${width}.png`, fullPage: true });
       }
