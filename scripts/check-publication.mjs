@@ -35,7 +35,7 @@ const docsPdf = await bytes("docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0
 const sitePdf = await bytes("website/paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf");
 const checksum = (await text("docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.sha256")).trim();
 
-requireValue(packageJson.version === "0.7.0", "package source version must remain 0.7.0 for this candidate");
+requireValue(packageJson.version === "0.7.0-rc.1", "package source version must identify the reviewed release candidate");
 for (const path of ["CITATION.cff", "codemeta.json", "docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.md"]) {
   requireValue(packageJson.files.includes(path), `npm files must include ${path}`);
 }

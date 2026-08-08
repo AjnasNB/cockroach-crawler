@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.7.0 - 2026-08-08
+## 0.7.0-rc.1 - 2026-08-08
+
+This prerelease makes the reviewed 0.7 source available through the npm
+`next` tag for opt-in evaluation. It does not replace 0.6.1 on `latest`, and it
+does not promote the development evidence below into a best-crawler claim.
 
 ### Added
 

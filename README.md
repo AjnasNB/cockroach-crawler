@@ -19,6 +19,12 @@ The 0.7.0 release-candidate source defines separate core, quality, and
 fail-closed extraction profiles. Every value below is development evidence
 from the same source-pinned WCEB v1.0 scorer, not a published 0.7 result.
 
+Install the reviewed candidate without replacing the stable channel:
+
+```bash
+npm install cockroach-crawler@next
+```
+
 | Surface and corpus | Precision | Recall | F1 | Required-snippet | Unwanted | Abstentions |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Core `structural`, observed 511 | 0.793763 | 0.873844 | 0.791500 | 0.835584 | 0.178735 | - |
@@ -35,8 +41,10 @@ support a universal 0.90 precision claim.
 A separately frozen raw-DOM attempt was rejected: precision 0.860252, recall
 0.884690, macro F1 0.844419, required-snippet recall 0.758829, and unwanted
 inclusion 0.092846. It violated five gates and improved precision in six of ten
-page types where eight were required. It authorizes no integration, release,
-ranking, or best-crawler statement. The npm `latest` baseline remains 0.6.1.
+page types where eight were required. It authorizes no algorithm integration,
+stable promotion, ranking, or best-crawler statement. The npm `next` channel
+exists for opt-in evaluation of the reviewed 0.7 source; `latest` remains
+0.6.1.
 
 The opt-in `cockroach-crawler/quality` surface uses the exact native
 `trafilatura@0.2.0` dependency; it is not presented as a new extraction

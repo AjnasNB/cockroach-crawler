@@ -5,10 +5,15 @@ containing unreviewed changes or credentials. Release `0.7.0` requires
 quality-backend, benchmark-integrity, provider/security, packed-consumer, and
 exact-artifact approval on the reviewed release commit.
 
-> **Current hold (8 August 2026):** npm `latest` is 0.6.1, no `v0.7.0` tag or
-> package exists, and frozen raw-DOM attempt 003 was rejected after five gate
-> violations. Do not execute the publication section until a later immutable
-> candidate passes every declared benchmark gate.
+> **Stable hold (8 August 2026):** npm `latest` remains 0.6.1, no `v0.7.0` tag
+> or stable package exists, and frozen raw-DOM attempt 003 was rejected after
+> five gate violations. Do not execute the stable publication section until a
+> later immutable candidate passes every declared benchmark gate.
+
+The separately reviewed `0.7.0-rc.1` package may be published only with the
+npm `next` tag. It exposes the already reviewed 0.7 source for opt-in product
+evaluation while preserving every benchmark artifact and limitation. It must
+not create or move `latest`, create `v0.7.0`, or claim benchmark leadership.
 
 ## npm trusted publishing: the one thing that will bite you
 
