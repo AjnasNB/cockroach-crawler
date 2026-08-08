@@ -1941,7 +1941,7 @@ function capabilityDocsPages() {
   return features.map((feature, index) => ({
     slug: capabilityPath(feature).replace(/^\/|\/$/g, ""),
     active: "Docs",
-    title: `${feature[1]} - Cockroach Crawler`,
+    title: `${feature[1]} capability - Cockroach Crawler`,
     description: feature[2],
     body: capabilityDetailPage(feature, index, features)
   }));

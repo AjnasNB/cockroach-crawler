@@ -32,6 +32,7 @@ if (wranglerConfig.assets?.run_worker_first !== true || wranglerConfig.assets?.n
   errors.push("website Wrangler config must run cache/security middleware first and serve the custom 404 page");
 }
 let videoCount = 0;
+const publicTitles = new Map();
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
   const label = file.slice(dist.length).replaceAll("\\", "/");
@@ -41,6 +42,9 @@ for (const file of htmlFiles) {
   if (!/<meta name="description"/.test(html) && !label.endsWith("404.html")) errors.push(`${label}: missing description`);
   if (!/<link rel="canonical"/.test(html) && !label.endsWith("404.html")) errors.push(`${label}: missing canonical`);
   if (!label.endsWith("404.html")) {
+    const title = html.match(/<title>([^<]+)<\/title>/)?.[1]?.trim();
+    if (!title) errors.push(`${label}: missing title`);
+    else publicTitles.set(title, [...(publicTitles.get(title) ?? []), label]);
     for (const [pattern, name] of [
       [/<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">/, "indexing policy"],
       [/<meta property="og:title" content="[^"]+">/, "Open Graph title"],
@@ -96,6 +100,10 @@ for (const file of htmlFiles) {
     if (path.endsWith("/")) target = join(target, "index.html");
     if (!await exists(target)) errors.push(`${label}: broken internal asset or route ${value}`);
   }
+}
+
+for (const [title, pagesWithTitle] of publicTitles) {
+  if (pagesWithTitle.length > 1) errors.push(`duplicate title "${title}" on ${pagesWithTitle.join(", ")}`);
 }
 
 const required = ["robots.txt", "sitemap.xml", "llms.txt", "llms-full.txt", "site.webmanifest", "_headers", "_redirects", "assets/social-card.png", "paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf"];
