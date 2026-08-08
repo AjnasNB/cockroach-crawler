@@ -6,13 +6,12 @@
 // runs in a separate process. This script never invokes another extractor: it
 // only scores plain-text files it is handed. A comparison whose author also
 // controls how the opposing tool is invoked is not worth much, so the two
-// halves stay separable and independently runnable.
+// halves stay separable and can be run separately.
 //
 //   python bench/public/baselines/extract_baselines.py --dataset <wceb> --out <dir>
 //   node bench/public/extraction-comparison.mjs --dataset <wceb> --baselines <dir>
 
 import { createHash } from "node:crypto";
-import { execFileSync } from "node:child_process";
 import { createReadStream } from "node:fs";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -20,32 +19,42 @@ import { fileURLToPath } from "node:url";
 import { createGunzip } from "node:zlib";
 
 import { extractPage } from "../../src/index.js";
+import { extractPageQuality } from "../../src/quality.js";
+import { assertWcebCheckout } from "./wceb-integrity.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const expectedRevision = "62ff86d12ea72c80c31fb810ff1a724fad687bea";
+const boilerplateProfiles = new Set(["off", "structural", "balanced", "aggressive"]);
 
 function parseArguments(argv) {
-  const options = { dataset: process.env.WCEB_DIR || "", baselines: "", split: "test", output: "" };
+  const options = {
+    dataset: process.env.WCEB_DIR || "",
+    baselines: "",
+    split: "test",
+    output: "",
+    boilerplate: "structural"
+  };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     if (argument === "--dataset") options.dataset = argv[++index] || "";
     else if (argument === "--baselines") options.baselines = argv[++index] || "";
     else if (argument === "--split") options.split = argv[++index] || "";
     else if (argument === "--output") options.output = argv[++index] || "";
+    else if (argument === "--boilerplate") options.boilerplate = argv[++index] || "";
     else throw new TypeError(`Unknown argument '${argument}'.`);
   }
   if (!options.dataset) throw new TypeError("Pass --dataset <WCEB v1.0 checkout> or set WCEB_DIR.");
   if (!["dev", "test"].includes(options.split)) throw new TypeError("--split must be dev or test.");
+  if (!boilerplateProfiles.has(options.boilerplate)) {
+    throw new TypeError(`--boilerplate must be one of: ${[...boilerplateProfiles].join(", ")}.`);
+  }
   return {
     dataset: path.resolve(options.dataset),
     baselines: options.baselines ? path.resolve(options.baselines) : "",
     split: options.split,
-    output: options.output ? path.resolve(root, options.output) : ""
+    output: options.output ? path.resolve(root, options.output) : "",
+    boilerplate: options.boilerplate
   };
-}
-
-function git(cwd, ...args) {
-  return execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
 }
 
 async function gunzipUtf8(file) {
@@ -112,13 +121,12 @@ async function fingerprint(inputs) {
 
 const options = parseArguments(process.argv.slice(2));
 
-const revision = git(options.dataset, "rev-parse", "HEAD");
-if (revision !== expectedRevision) {
-  throw new Error(`WCEB revision mismatch: expected ${expectedRevision}, received ${revision}.`);
-}
-if (git(options.dataset, "status", "--porcelain=v1", "--untracked-files=no")) {
-  throw new Error("WCEB checkout must be clean.");
-}
+const revision = assertWcebCheckout({
+  dataset: options.dataset,
+  split: options.split,
+  expectedRevision,
+  output: options.output
+});
 
 const groundTruthDirectory = path.join(options.dataset, options.split, "ground-truth");
 const htmlDirectory = path.join(options.dataset, options.split, "html");
@@ -129,14 +137,30 @@ const baselineNames = options.baselines
     .map((entry) => entry.name)
     .sort((left, right) => left.localeCompare(right, "en"))
   : [];
+const baselineManifest = options.baselines
+  ? JSON.parse(await readFile(path.join(options.baselines, "_manifest.json"), "utf8"))
+  : null;
 
 const files = (await readdir(groundTruthDirectory))
   .filter((filename) => filename.endsWith(".json"))
   .sort((left, right) => left.localeCompare(right, "en"));
 
-const tools = ["cockroach-crawler", ...baselineNames];
+if (baselineManifest) {
+  if (baselineManifest.schemaVersion !== 1
+      || baselineManifest.datasetRevision !== revision
+      || baselineManifest.split !== options.split
+      || baselineManifest.pages !== files.length) {
+    throw new Error("Baseline manifest does not match the pinned WCEB dataset and split.");
+  }
+  if (JSON.stringify([...baselineManifest.tools].sort()) !== JSON.stringify(baselineNames)) {
+    throw new Error("Baseline manifest tools do not match the supplied output directories.");
+  }
+}
+
+const tools = ["cockroach-crawler-core", "cockroach-crawler-quality", ...baselineNames];
 const rows = new Map(tools.map((tool) => [tool, []]));
 const missing = new Map(baselineNames.map((tool) => [tool, 0]));
+const baselineDigests = new Map(baselineNames.map((tool) => [tool, createHash("sha256")]));
 
 for (const filename of files) {
   const id = path.basename(filename, ".json");
@@ -150,7 +174,15 @@ for (const filename of files) {
   const html = await gunzipUtf8(path.join(htmlDirectory, `${id}.html.gz`));
 
   const outputs = new Map();
-  outputs.set("cockroach-crawler", extractPage(html, record.url, { maxLinksPerPage: 20_000 }).text);
+  outputs.set("cockroach-crawler-core", extractPage(html, record.url, {
+    maxLinksPerPage: 20_000,
+    boilerplate: options.boilerplate
+  }).text);
+  const sourceUrl = typeof record.url === "string" && record.url.trim() ? record.url : undefined;
+  outputs.set("cockroach-crawler-quality", extractPageQuality(html, {
+    ...(sourceUrl ? { url: sourceUrl } : {}),
+    profile: "balanced"
+  }).text || "");
   for (const tool of baselineNames) {
     let text = "";
     try {
@@ -158,6 +190,10 @@ for (const filename of files) {
     } catch {
       missing.set(tool, missing.get(tool) + 1);
     }
+    baselineDigests.get(tool).update(id, "utf8");
+    baselineDigests.get(tool).update("\0", "utf8");
+    baselineDigests.get(tool).update(text.replace(/\r\n?/gu, "\n"), "utf8");
+    baselineDigests.get(tool).update("\0", "utf8");
     outputs.set(tool, text);
   }
 
@@ -177,7 +213,16 @@ for (const filename of files) {
   }
 }
 
-const pageTypes = [...new Set(rows.get("cockroach-crawler").map((row) => row.pageType))].sort();
+if (baselineManifest) {
+  for (const tool of baselineNames) {
+    const observed = baselineDigests.get(tool).digest("hex");
+    if (baselineManifest.outputSha256?.[tool] !== observed) {
+      throw new Error(`Baseline output digest mismatch for ${tool}.`);
+    }
+  }
+}
+
+const pageTypes = [...new Set(rows.get("cockroach-crawler-core").map((row) => row.pageType))].sort();
 
 function summarize(list) {
   const byPageType = {};
@@ -209,7 +254,7 @@ const result = {
   benchmark: "cockroach-crawler-extraction-comparison",
   scope: {
     description:
-      "Main-content extraction quality for Cockroach Crawler and independently produced baseline outputs, scored by one metric implementation on the pinned WCEB split.",
+      "Main-content extraction quality for Cockroach Crawler and separately generated baseline outputs, all scored by the same metric implementation on the pinned WCEB split.",
     metric:
       "Macro average of page-level Unicode word precision, recall, and F1. Snippet rates use case-insensitive literal inclusion.",
     intendedClaims: [
@@ -222,7 +267,13 @@ const result = {
       "that the baseline tools were tuned or configured optimally"
     ],
     baselineNote:
-      "Baseline outputs are produced by bench/public/baselines/extract_baselines.py at each tool's documented defaults. A tool configured differently may score differently; the extraction script is published so that can be checked and disputed."
+      "Baseline outputs are generated in a separate Python process by bench/public/baselines/extract_baselines.py, then evaluated by this same published scorer in an exact recorded dependency environment. This is not third-party independent validation. A tool configured differently may score differently; the extraction script and output manifest are published so that can be checked and disputed.",
+    evaluationStatus: options.split === "test"
+      ? "observed-development-evidence-after-project-iteration"
+      : "development-evidence",
+    confirmatoryEligible: false,
+    interpretation:
+      "The upstream split name is preserved, but this project previously inspected and iterated against the 511-page test split. This comparison is not fresh confirmatory evidence."
   },
   dataset: {
     name: "Web Content Extraction Benchmark",
@@ -236,14 +287,38 @@ const result = {
     source: {
       algorithm: "sha256",
       normalization: "utf8-lf",
-      inputs: ["src/index.js", "bench/public/extraction-comparison.mjs", "bench/public/baselines/extract_baselines.py"],
+      inputs: [
+        "src/index.js",
+        "src/boilerplate.js",
+        "src/quality.js",
+        "types/quality.d.ts",
+        "package.json",
+        "package-lock.json",
+        "bench/public/extraction-comparison.mjs",
+        "bench/public/wceb-integrity.mjs",
+        "bench/public/baselines/extract_baselines.py",
+        "bench/public/baselines/requirements.lock.txt"
+      ],
       value: await fingerprint([
         "src/index.js",
+        "src/boilerplate.js",
+        "src/quality.js",
+        "types/quality.d.ts",
+        "package.json",
+        "package-lock.json",
         "bench/public/extraction-comparison.mjs",
-        "bench/public/baselines/extract_baselines.py"
+        "bench/public/wceb-integrity.mjs",
+        "bench/public/baselines/extract_baselines.py",
+        "bench/public/baselines/requirements.lock.txt"
       ])
     }
   },
+  configuration: {
+    coreBoilerplate: options.boilerplate,
+    qualityProfile: "balanced",
+    qualityFailClosed: false
+  },
+  baselineManifest,
   tools,
   missingBaselineOutputs: Object.fromEntries(missing),
   summaries,
@@ -266,4 +341,7 @@ for (const tool of tools) {
     + `${summary.f1.toFixed(4).padEnd(9)}  ${summary.requiredSnippetRecall.toFixed(4).padEnd(10)}  ${summary.unwantedSnippetInclusion.toFixed(4)}`
   );
 }
-console.log(`\n${files.length} pages, WCEB ${revision.slice(0, 10)}, split ${options.split}`);
+console.log(
+  `\n${files.length} pages, WCEB ${revision.slice(0, 10)}, split ${options.split}, `
+  + `boilerplate ${options.boilerplate}`
+);

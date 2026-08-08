@@ -6,7 +6,7 @@ A crawler that runs on a developer machine can inspect DNS answers, pin a connec
 
 Treating both environments as equivalent creates a dangerous documentation problem: the convenient tier inherits the security reputation of the hardened tier without inheriting its controls.
 
-Cockroach Crawler `0.5.2` takes the opposite approach. It exposes two crawler tiers, returns their capabilities, and keeps official and optional read-only source providers separate from both.
+Cockroach Crawler `0.7.0` takes the opposite approach. It exposes two crawler tiers, returns their capabilities, and keeps official and optional read-only source providers separate from both.
 
 ## The first boundary: what may be contacted?
 
@@ -63,7 +63,7 @@ Reading a website and reading a provider API have different rules. Cockroach Cra
 After installing the stable CLI globally, run:
 
 ```bash
-npm install --global cockroach-crawler@0.5.2
+npm install --global cockroach-crawler@0.7.0
 cockroach-sources doctor
 ```
 
@@ -128,7 +128,7 @@ Cockroach Crawler is designed for a common agent integration: an explicit read r
 From npm `latest`:
 
 ```bash
-npm install --global cockroach-crawler@0.5.2
+npm install --global cockroach-crawler@0.7.0
 cockroach-sources doctor
 cockroach-crawl https://example.com/docs --max-pages 10 --jsonl
 ```

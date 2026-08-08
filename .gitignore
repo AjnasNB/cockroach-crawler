@@ -4,6 +4,8 @@ node_modules/
 .wrangler-dist-site/
 worker/env.d.ts
 coverage/
+__pycache__/
+*.py[cod]
 *.tgz
 npm-debug.log*
 .npmrc

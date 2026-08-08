@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.7.0 - 2026-08-08
+
+### Added
+
+- An opt-in Node-only `cockroach-crawler/quality` export backed by the exact
+  native `trafilatura@0.2.0` dependency. The existing core and serverless
+  exports remain isolated from the native backend.
+- `balanced`, `precision`, and `recall` quality profiles with bounded inputs and
+  outputs, deterministic metadata, and explicit diagnostics.
+- Optional fail-closed quality admission for application shells, challenge
+  pages, empty or undersized output, low backend quality, and output-budget
+  violations. The API returns an abstention with no body instead of silently
+  substituting the core extractor.
+- Versioned WCEB evidence for core structural, quality balanced, quality
+  fail-closed, the 1,497-page development split, extractor comparison, and
+  public-source conformance.
+
+### Evidence
+
+- Core structural, observed 511 pages: precision 0.793763, recall 0.873844, F1
+  0.791500, required-snippet recall 0.835584, unwanted inclusion 0.178735.
+- Quality balanced, observed 511 pages: precision 0.894101, recall 0.926022, F1
+  0.890524, required-snippet recall 0.864090, unwanted inclusion 0.111383.
+- Quality balanced, WCEB development 1,497 pages: precision 0.852784, recall
+  0.896259, F1 0.847064, required-snippet recall 0.755867, unwanted inclusion
+  0.096181.
+- Quality balanced with fail-closed admission, observed 511 pages: precision
+  0.847901, recall 0.875080, F1 0.844935, required-snippet recall 0.812035,
+  unwanted inclusion 0.104207, with 43 abstentions.
+- The upstream 511-page `test` partition is explicitly classified as observed
+  development evidence because this project previously inspected and iterated
+  against it. No untouched held-out or universal 0.90 claim is made.
+
+### Platform boundary
+
+- Native quality extraction supports the upstream prebuilt matrix: Windows
+  x64/ARM64, macOS x64/ARM64, and glibc Linux x64/ARM64. Alpine/musl, 32-bit,
+  and other operating systems are unsupported by `trafilatura@0.2.0`; importing
+  the quality subpath fails explicitly when the native backend is unavailable.
+
 ## 0.6.1 - 2026-08-07
 
 ### Added
@@ -18,9 +58,10 @@
 ### Changed
 
 - Default extraction output now excludes landmark boilerplate. Measured across
-  all 511 pages of the pinned WCEB split, precision moves 0.7330 to 0.7938 and
-  unwanted-boilerplate inclusion falls from 0.3885 to 0.1787, for 0.026 of
-  recall. Set `boilerplate: "off"` to restore the previous behaviour.
+  all 511 observed WCEB pages, precision moves 0.733006 to 0.793763 and
+  unwanted-boilerplate inclusion falls from 0.388454 to 0.178735, while recall
+  moves from 0.904131 to 0.873844. Set `boilerplate: "off"` to restore the
+  previous behavior.
 - Every npm publishing path now lives in `publish-npm.yml`, the only workflow
   filename npm trusts for this package. `docs/RELEASE.md` explains why a second
   publishing workflow fails with a misleading registry 404.

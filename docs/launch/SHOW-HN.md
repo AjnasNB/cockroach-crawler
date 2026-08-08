@@ -4,7 +4,7 @@ Hacker News asks users not to post generated or AI-edited text. Do not paste thi
 
 ## Preconditions
 
-- `cockroach-crawler@0.5.2` resolves from npm `latest` and matches the reviewed GitHub tag;
+- `cockroach-crawler@0.7.0` resolves from npm `latest` and matches the reviewed GitHub release artifact and provenance;
 - the repository and website work without signup;
 - the two-command proof works from a clean install;
 - the maintainer is available for the discussion; and
@@ -32,8 +32,8 @@ Hacker News asks users not to post generated or AI-edited text. Do not paste thi
 ## Runnable proof
 
 ```sh
-npx -y --package cockroach-crawler@0.5.2 cockroach-sources doctor
-npx -y --package cockroach-crawler@0.5.2 cockroach-crawl https://example.com \
+npx -y --package cockroach-crawler@0.7.0 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.7.0 cockroach-crawl https://example.com \
   --map --map-search "example domain" --map-results 3 --json
 ```
 

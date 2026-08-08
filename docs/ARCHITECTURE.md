@@ -28,6 +28,19 @@ browser      normalized    no auth drift   small budgets
 
 `cockroach-crawler` is the main Node.js transport. It validates complete DNS answers, pins requests to the validated address, checks every redirect and robots target, applies sensitive-path and origin policy, and enforces request, page, queue, byte, concurrency, retry, and deadline budgets. Optional Playwright rendering routes HTTP(S) through that transport, but Chromium remains untrusted code and still needs process or container isolation.
 
+## Optional Node quality extraction
+
+`cockroach-crawler/quality` is a separate extraction-only entry point. It
+validates bounded inactive HTML and delegates main-content extraction to exact
+`trafilatura@0.2.0`, then returns deterministic text, Markdown, metadata,
+warnings, diagnostics, and optional fail-closed abstention. It does not fetch a
+URL or inherit crawler authority. Core and serverless do not import it, and an
+unavailable native backend is an explicit error rather than a fallback.
+
+The upstream native matrix covers Windows x64/ARM64, macOS x64/ARM64, and
+glibc Linux x64/ARM64. Alpine/musl, 32-bit, and other operating systems are not
+supported by that dependency release.
+
 ## Source registry
 
 `cockroach-crawler/sources` exposes a read-only registry with `doctor`, `search`, and `read`. Web requests delegate to the hardened crawler. GitHub, YouTube, X, and Reddit use their documented APIs and normalize results into immutable records. Capability status is explicit: missing credentials are not replaced with cookies or scraping fallbacks.
@@ -52,4 +65,4 @@ The Worker template adds a deployment bearer secret and Cloudflare Rate Limiting
 
 ## Website and media
 
-`website/` is a separately built static documentation site. `media/` contains release-video source and rendered assets. Neither belongs in the npm tarball. Public pages must identify the currently published stable version separately from source-only candidates.
+`website/` is a separately built static documentation site. `media/` contains release-video source and rendered assets. Neither belongs in the npm tarball. Public pages must distinguish the exact published npm version from any source-level release candidate and must not promote a candidate before its package, tag, provenance, and frozen evidence agree.

@@ -20,7 +20,7 @@ on:
       version:
         description: Exact package version to publish
         required: true
-        default: 0.4.2
+        default: 0.7.0
         type: string
       expected_git_commit:
         description: Exact reviewed lowercase 40-character commit SHA
@@ -302,22 +302,76 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for attempt in {1..36}; do
+          retry_delay_seconds() {
+            local attempt="$1"
+            local delay=$((2 ** (attempt - 1)))
+            if (( delay > 30 )); then delay=30; fi
+            printf '%s' "${delay}"
+          }
+          verified=false
+          for attempt in {1..10}; do
             version="$(npm view "cockroach-crawler@${EXPECTED_VERSION}" version 2>/dev/null || true)"
             integrity="$(npm view "cockroach-crawler@${EXPECTED_VERSION}" dist.integrity 2>/dev/null || true)"
             predicate="$(npm view "cockroach-crawler@${EXPECTED_VERSION}" dist.attestations.provenance.predicateType 2>/dev/null || true)"
             tag_version="$(npm view "cockroach-crawler@${DIST_TAG}" version 2>/dev/null || true)"
-            if [[ "${version}" == "${EXPECTED_VERSION}" && "${integrity}" == "${EXPECTED_INTEGRITY}" && "${predicate}" == "https://slsa.dev/provenance/v1" && "${tag_version}" == "${EXPECTED_VERSION}" ]]; then break; fi
-            sleep 5
+            if [[ "${version}" == "${EXPECTED_VERSION}" && "${integrity}" == "${EXPECTED_INTEGRITY}" && "${predicate}" == "https://slsa.dev/provenance/v1" && "${tag_version}" == "${EXPECTED_VERSION}" ]]; then
+              verified=true
+              break
+            fi
+            if (( attempt < 10 )); then
+              delay="$(retry_delay_seconds "${attempt}")"
+              echo "Registry identity or provenance is not coherent yet (attempt ${attempt}/10); retrying in ${delay}s."
+              sleep "${delay}"
+            fi
           done
-          [[ "${version}" == "${EXPECTED_VERSION}" && "${integrity}" == "${EXPECTED_INTEGRITY}" && "${predicate}" == "https://slsa.dev/provenance/v1" && "${tag_version}" == "${EXPECTED_VERSION}" ]] || exit 1
+          if [[ "${verified}" != "true" ]]; then
+            echo "Registry identity and provenance did not converge after 10 attempts." >&2
+            echo "Observed version=${version:-missing} tag=${tag_version:-missing} integrity=${integrity:-missing} predicate=${predicate:-missing}" >&2
+            exit 1
+          fi
           printf '## Publication verified\n\n- Version: `%s`\n- Dist-tag: `%s`\n- Integrity: `%s`\n- Provenance: `%s`\n- Workflow commit: `%s`\n' "${version}" "${DIST_TAG}" "${integrity}" "${predicate}" "${GITHUB_SHA}" >> "${GITHUB_STEP_SUMMARY}"
       - name: Verify installed signatures and exports
         shell: bash
         run: |
           set -euo pipefail
+          retry_delay_seconds() {
+            local attempt="$1"
+            local delay=$((2 ** (attempt - 1)))
+            if (( delay > 30 )); then delay=30; fi
+            printf '%s' "${delay}"
+          }
           consumer="${RUNNER_TEMP}/consumer"; mkdir -p "${consumer}"; cd "${consumer}"
           npm init --yes >/dev/null
-          npm install "cockroach-crawler@${EXPECTED_VERSION}" --ignore-scripts
-          node --input-type=module -e "await import('cockroach-crawler'); await import('cockroach-crawler/agent'); await import('cockroach-crawler/sources'); await import('cockroach-crawler/serverless')"
-          npm audit signatures
+          installed=false
+          for attempt in {1..10}; do
+            if npm install "cockroach-crawler@${EXPECTED_VERSION}" --ignore-scripts; then
+              installed=true
+              break
+            fi
+            if (( attempt < 10 )); then
+              delay="$(retry_delay_seconds "${attempt}")"
+              echo "Registry install is not available yet (attempt ${attempt}/10); retrying in ${delay}s."
+              sleep "${delay}"
+            fi
+          done
+          if [[ "${installed}" != "true" ]]; then
+            echo "Registry install did not succeed after 10 attempts." >&2
+            exit 1
+          fi
+          node --input-type=module -e "await import('cockroach-crawler'); await import('cockroach-crawler/agent'); await import('cockroach-crawler/sources'); await import('cockroach-crawler/serverless'); await import('cockroach-crawler/quality')"
+          signatures_verified=false
+          for attempt in {1..10}; do
+            if npm audit signatures; then
+              signatures_verified=true
+              break
+            fi
+            if (( attempt < 10 )); then
+              delay="$(retry_delay_seconds "${attempt}")"
+              echo "Registry signatures or attestations are not available yet (attempt ${attempt}/10); retrying in ${delay}s."
+              sleep "${delay}"
+            fi
+          done
+          if [[ "${signatures_verified}" != "true" ]]; then
+            echo "Registry signature verification did not succeed after 10 attempts." >&2
+            exit 1
+          fi

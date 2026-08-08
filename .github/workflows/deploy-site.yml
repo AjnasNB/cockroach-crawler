@@ -25,12 +25,43 @@ jobs:
       name: website
       url: https://cockroachcrawler.com
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-node@v6.0.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
-          cache: npm
+          package-manager-cache: false
+
+      - name: Wait for the exact npm package version
+        shell: bash
+        run: |
+          set -euo pipefail
+          retry_delay_seconds() {
+            local attempt="$1"
+            local delay=$((2 ** (attempt - 1)))
+            if (( delay > 30 )); then delay=30; fi
+            printf '%s' "${delay}"
+          }
+          version="$(node -p 'require("./package.json").version')"
+          published_version=""
+          for attempt in {1..30}; do
+            published_version="$(npm view "cockroach-crawler@${version}" version 2>/dev/null || true)"
+            if [[ "${published_version}" == "${version}" ]]; then
+              echo "cockroach-crawler@${version} is published; website verification may proceed."
+              break
+            fi
+            if (( attempt < 30 )); then
+              delay="$(retry_delay_seconds "${attempt}")"
+              echo "cockroach-crawler@${version} is not visible yet (attempt ${attempt}/30); retrying in ${delay}s."
+              sleep "${delay}"
+            fi
+          done
+          if [[ "${published_version}" != "${version}" ]]; then
+            echo "cockroach-crawler@${version} was not available after 30 attempts; refusing to build or deploy the site." >&2
+            exit 1
+          fi
 
       - name: Install
         run: npm ci
@@ -47,25 +78,8 @@ jobs:
       - name: Verify rendered pages in a browser
         run: npm --prefix website run check:browser
 
-      - name: Confirm the site does not advertise an unpublished version
-        shell: bash
-        run: |
-          set -euo pipefail
-          version="$(node -p 'require("./package.json").version')"
-          if ! grep -rq "cockroach-crawler@${version}" website/dist; then
-            echo "Site does not reference ${version}; nothing to cross-check."
-            exit 0
-          fi
-          if npm view "cockroach-crawler@${version}" version >/dev/null 2>&1; then
-            echo "cockroach-crawler@${version} is published; site copy is safe to ship."
-          else
-            echo "Site advertises ${version} but npm does not have it yet." >&2
-            echo "Let the publish workflow finish, then re-run this deploy." >&2
-            exit 1
-          fi
-
       - name: Deploy
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

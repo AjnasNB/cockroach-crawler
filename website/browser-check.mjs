@@ -63,6 +63,7 @@ const routes = [
   "/compare/",
   "/stack/",
   "/benchmark/",
+  "/paper/",
   "/media/",
   "/launch/",
   "/roadmap/",
@@ -123,6 +124,7 @@ try {
     if (route === "/providers/") await page.screenshot({ path: `${output}/providers-desktop.png`, fullPage: true });
     if (route === "/compare/") await page.screenshot({ path: `${output}/compare-desktop.png`, fullPage: true });
     if (route === "/stack/") await page.screenshot({ path: `${output}/stack-desktop.png`, fullPage: true });
+    if (route === "/paper/") await page.screenshot({ path: `${output}/paper-desktop.png`, fullPage: true });
     if (route === "/release/") await page.screenshot({ path: `${output}/release-desktop.png`, fullPage: true });
     results.push({ route, status: response?.status(), ...metrics, badImages: metrics.images.filter((image) => !image.ok || !image.alt), errors });
     await page.close();

@@ -1,6 +1,6 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "mcpName": "io.github.AjnasNB/cockroach-crawler",
   "description": "Give AI agents superpowers on the web: crawl, render, map, extract, and verify evidence through one governed Node.js crawler.",
   "license": "MIT",
@@ -149,6 +149,11 @@
       "types": "./types/boilerplate.d.ts",
       "import": "./src/boilerplate.js",
       "default": "./src/boilerplate.js"
+    },
+    "./quality": {
+      "types": "./types/quality.d.ts",
+      "import": "./src/quality.js",
+      "default": "./src/quality.js"
     }
   },
   "files": [
@@ -162,9 +167,12 @@
     "bench/local-benchmark.mjs",
     "bench/public/",
     "bench/results/ci-validated.json",
-    "bench/results/wceb-test-0.6.1.json",
-    "bench/results/extraction-comparison-0.6.1.json",
-    "bench/results/public-conformance-0.6.1.json",
+    "bench/results/wceb-core-observed-0.7.0.json",
+    "bench/results/wceb-quality-development-0.7.0.json",
+    "bench/results/wceb-quality-observed-0.7.0.json",
+    "bench/results/wceb-quality-fail-closed-observed-0.7.0.json",
+    "bench/results/extraction-comparison-0.7.0.json",
+    "bench/results/public-conformance-0.7.0.json",
     "docs/RELEASE.md",
     "docs/DEPENDENCY_LICENSES.md",
     "docs/PROVENANCE.md",
@@ -182,7 +190,11 @@
     "docs/QUICKSTART.md",
     "docs/SELECTORS-AND-IDENTITY.md",
     "docs/SPIDER.md",
+    "docs/QUALITY.md",
     "docs/EXTRACTION-COMPARISON.md",
+    "docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.md",
+    "CITATION.cff",
+    "codemeta.json",
     "Dockerfile",
     "README.md",
     "SECURITY.md",
@@ -194,7 +206,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/adaptive.test.js test/advanced.test.js test/blocklist.test.js test/boilerplate.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/exporters.test.js test/external-sources-cli.test.js test/external-sources.test.js test/identity-crawl.test.js test/identity.test.js test/limits.test.js test/mcp-tools.test.js test/parser.test.js test/public-benchmark.test.js test/release-kit.test.js test/security.test.js test/session.test.js test/spider.test.js test/shell.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
+    "test": "node --test test/adaptive.test.js test/advanced.test.js test/blocklist.test.js test/boilerplate.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/exporters.test.js test/external-sources-cli.test.js test/external-sources.test.js test/identity-crawl.test.js test/identity.test.js test/limits.test.js test/mcp-tools.test.js test/parser.test.js test/public-benchmark.test.js test/quality.test.js test/release-kit.test.js test/security.test.js test/session.test.js test/spider.test.js test/shell.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
     "test:browser": "node --test browser-test/integration.test.js browser-test/xhr-capture.test.js",
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
@@ -211,7 +223,9 @@
     "mcp": "node bin/cockroach-mcp.js",
     "serve": "node bin/cockroach-server.js",
     "shell": "node bin/cockroach-shell.js",
-    "bench:public:comparison": "node bench/public/extraction-comparison.mjs"
+    "bench:public:comparison": "node bench/public/extraction-comparison.mjs",
+    "paper:build": "python scripts/build-crawler-whitepaper-pdf.py",
+    "publication:check": "node scripts/check-publication.mjs"
   },
   "keywords": [
     "crawler",
@@ -270,6 +284,7 @@
     "ipaddr.js": "^2.4.0",
     "pdf-parse": "^2.4.5",
     "robots-parser": "^3.0.1",
+    "trafilatura": "0.2.0",
     "turndown": "^7.2.0",
     "undici": "^7.28.0",
     "zod": "^4.4.3"

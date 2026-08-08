@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "Cite the software and its release-candidate white paper using this metadata."
+title: "Cockroach Crawler"
+type: software
+version: 0.7.0-rc.1
+date-released: 2026-08-08
+authors:
+  - family-names: "N B"
+    given-names: "Ajnas"
+repository-code: "https://github.com/AjnasNB/cockroach-crawler"
+url: "https://cockroachcrawler.com"
+license: MIT
+abstract: >-
+  A governed Node.js web acquisition layer for AI agents with explicit network,
+  browser, provider, extraction, resource, and evidence boundaries. Version
+  0.7.0-rc.1 describes source commit 90825063d447f07345388d040b1428a311109c2b;
+  the current published npm baseline remains 0.6.1.
+keywords:
+  - web crawler
+  - AI agents
+  - evidence provenance
+  - network policy
+  - reproducible evaluation
+preferred-citation:
+  type: report
+  title: "Cockroach Crawler: A governed, evidence-preserving web acquisition layer for AI agents"
+  authors:
+    - family-names: "N B"
+      given-names: "Ajnas"
+  year: 2026
+  month: 8
+  version: 0.7.0-rc.1
+  doi: "10.5281/zenodo.21851008"
+  url: "https://doi.org/10.5281/zenodo.21851008"
+  license: CC-BY-4.0

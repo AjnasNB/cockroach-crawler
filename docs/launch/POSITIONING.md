@@ -8,9 +8,9 @@ An agent needs eyes on the web, but it should not receive an unrestricted browse
 
 > Give your AI agents the web. Keep the keys.
 
-The narrower product position is: **built to be the best AI crawler for
-governed agents.** This describes the package's chosen boundary; it is not a
-universal fastest, cheapest, or highest-quality crawler claim.
+The narrower product position is: **built for governed AI crawling with an
+inspectable network and evidence boundary.** This describes the package's
+chosen use case without implying universal superiority.
 
 ## Proof points
 
@@ -78,15 +78,14 @@ No. It enforces an HTTPS origin allowlist and strict budgets but cannot provide 
 
 ### Does it write to a provider?
 
-No built-in or optional provider in `0.5.2` posts, comments, likes, follows, edits, submits, or deletes.
+No built-in or optional provider in `0.7.0` posts, comments, likes, follows, edits, submits, or deletes.
 
 ## Approved descriptions
 
 **Short:** Give your AI agents the web. Keep the keys.
 
-**Medium:** Cockroach Crawler is built to be the best AI crawler for governed
-agents: a Node.js toolkit for deep crawl, browser rendering, searched maps,
-structured extraction, public sources, and evidence under creator-owned
-network and resource policy.
+**Medium:** Cockroach Crawler is a Node.js toolkit for governed agents that
+need deep crawl, browser rendering, searched maps, structured extraction,
+public sources, and evidence under creator-owned network and resource policy.
 
 **Boilerplate:** Cockroach Crawler is an MIT-licensed Node.js reading layer for agent workflows. It combines a hardened local crawler, capability-aware source routing, optional explicit reach providers, a governed browser-host contract, and a deliberately restricted serverless profile. It does not bypass authentication or hide provider authority.

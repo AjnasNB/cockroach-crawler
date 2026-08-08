@@ -35,6 +35,7 @@ let videoCount = 0;
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
   const label = file.slice(dist.length).replaceAll("\\", "/");
+  if (/\u2014|&mdash;|&#8212;|&#x2014;/i.test(html)) errors.push(`${label}: public pages must use a normal hyphen instead of an em dash`);
   const h1Count = (html.match(/<h1\b/g) ?? []).length;
   if (h1Count !== 1) errors.push(`${label}: expected one h1, found ${h1Count}`);
   if (!/<meta name="description"/.test(html) && !label.endsWith("404.html")) errors.push(`${label}: missing description`);
@@ -49,7 +50,9 @@ for (const file of htmlFiles) {
       [/<meta name="twitter:card" content="summary_large_image">/, "Twitter card"],
       [/<meta name="twitter:title" content="[^"]+">/, "Twitter title"],
       [/<meta name="twitter:description" content="[^"]+">/, "Twitter description"],
-      [/<meta name="twitter:image" content="https:\/\/cockroachcrawler\.com\/assets\/social-card\.png">/, "Twitter image"]
+      [/<meta name="twitter:image" content="https:\/\/cockroachcrawler\.com\/assets\/social-card\.png">/, "Twitter image"],
+      [/<link rel="alternate" hreflang="en" href="https:\/\/cockroachcrawler\.com\/[^\"]*">/, "English hreflang"],
+      [/<link rel="alternate" hreflang="x-default" href="https:\/\/cockroachcrawler\.com\/[^\"]*">/, "x-default hreflang"]
     ]) {
       if (!pattern.test(html)) errors.push(`${label}: missing ${name}`);
     }
@@ -95,10 +98,11 @@ for (const file of htmlFiles) {
   }
 }
 
-const required = ["robots.txt", "sitemap.xml", "llms.txt", "site.webmanifest", "_headers", "_redirects", "assets/social-card.png"];
+const required = ["robots.txt", "sitemap.xml", "llms.txt", "site.webmanifest", "_headers", "_redirects", "assets/social-card.png", "paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf"];
 for (const path of required) if (!await exists(join(dist, path))) errors.push(`missing ${path}`);
 const sitemap = await readFile(join(dist, "sitemap.xml"), "utf8");
 if (!sitemap.includes("<loc>https://cockroachcrawler.com/compare/</loc>")) errors.push("sitemap must include the AI crawler comparison");
+if (!sitemap.includes("<loc>https://cockroachcrawler.com/paper/</loc>")) errors.push("sitemap must include the technical white paper");
 const sitemapLocations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 if (sitemapLocations.length !== htmlFiles.length - 1) errors.push(`sitemap must include every public HTML page; expected ${htmlFiles.length - 1}, found ${sitemapLocations.length}`);
 if (sitemapLocations.filter((location) => /\/docs\/capabilities\/[^/]+\/[^/]+\/$/.test(location)).length !== 50) {
@@ -123,6 +127,9 @@ if (!llms.includes("Complete JavaScript and CLI reference: https://cockroachcraw
 for (const phrase of ["searchable fetch-validated site maps", "restricted regex extraction", "bounded process-local asynchronous jobs", "official Registry metadata"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must document ${phrase}`);
 }
+for (const phrase of ["npm latest tag is 0.6.1", "0.7.0 release candidate", "raw-DOM attempt 003 was rejected", "precision 0.860252", "five gates", "no integration, release, ranking, or best-crawler statement"]) {
+  if (!llms.includes(phrase)) errors.push(`llms.txt must preserve publication status: ${phrase}`);
+}
 const packageReadme = await readFile(join(dist, "..", "..", "README.md"), "utf8");
 if (/assets\/readme-proof-still/i.test(packageReadme)) errors.push("npm README must not restore the oversized proof banner");
 if (!packageReadme.includes("Give your AI agents the web. Keep the keys.")) errors.push("npm README must lead with the creator-owned AI web crawler promise");
@@ -130,7 +137,7 @@ if (!packageReadme.includes("Look up every package subpath, crawl option, page f
   errors.push("npm README must retain the complete-reference documentation row");
 }
 const docsHtml = await readFile(join(dist, "docs", "index.html"), "utf8");
-if (!docsHtml.includes("Cockroach Crawler 0.6.1 documentation")) errors.push("docs must identify stable 0.6.1");
+if (!docsHtml.includes("Cockroach Crawler 0.7.0 documentation")) errors.push("docs must identify the 0.7.0 candidate documentation set");
 if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
 if (!docsHtml.includes('href="/docs/capabilities/"')) errors.push("docs overview must link the dedicated capability library");
 if (!docsHtml.includes("docs-sidebar-nav")) errors.push("docs overview must use the persistent grouped documentation navigation");
@@ -178,8 +185,54 @@ for (const [route, proof] of [
   if (!html.includes(proof)) errors.push(`${route} docs are missing their reference proof`);
 }
 const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
-if (!releaseHtml.includes("npm install cockroach-crawler@0.6.1")) errors.push("release page must install stable 0.6.1");
+if (!releaseHtml.includes("npm install cockroach-crawler@0.6.1")) errors.push("release page must install the current published stable");
+if (!releaseHtml.includes("Release-candidate dossier") || !releaseHtml.includes("Install current npm stable 0.6.1")) errors.push("release page must separate stable and candidate status");
+if (!releaseHtml.includes("five gate violations") || !releaseHtml.includes("10.5281/zenodo.21851008") || !releaseHtml.includes("published")) errors.push("release page must preserve the failed gate and published DOI status");
+if (!releaseHtml.includes("trafilatura@0.2.0") || !releaseHtml.includes("Alpine/musl")) errors.push("release page must document the exact native dependency and unsupported platform boundary");
 if (releaseHtml.includes("Release · 0.3.0")) errors.push("release page must not advertise 0.3.0 as current");
+const benchmarkHtml = await readFile(join(dist, "benchmark", "index.html"), "utf8");
+for (const proof of [
+  "observed development evidence",
+  "0.894101",
+  "0.926022",
+  "0.890524",
+  "0.852784",
+  "0.896259",
+  "0.847064",
+  "0.847901",
+  "0.875080",
+  "0.844935",
+  "0.812035",
+  "0.104207",
+  "43",
+  "wceb-quality-observed-0.7.0.json",
+  "trafilatura@0.2.0"
+]) {
+  if (!benchmarkHtml.includes(proof)) errors.push(`benchmark page is missing scoped development evidence: ${proof}`);
+}
+if (benchmarkHtml.includes("511 held-out pages") || benchmarkHtml.includes("complete held-out")) errors.push("benchmark page must not present the observed 511-page corpus as untouched evidence");
+const benchmarkBlogHtml = await readFile(join(dist, "blog", "we-benchmarked-ourselves-and-lost", "index.html"), "utf8");
+if (!benchmarkBlogHtml.includes("From a noisy core extractor to an explicit quality path")) errors.push("benchmark blog must carry the 0.7.0 evidence update");
+if (!benchmarkBlogHtml.includes("0.892777") || !benchmarkBlogHtml.includes("0.873844")) errors.push("benchmark blog must retain corrected exact stage values");
+const paperHtml = await readFile(join(dist, "paper", "index.html"), "utf8");
+for (const proof of [
+  '"@type":"ScholarlyArticle"',
+  '"@type":"FAQPage"',
+  'name="citation_title"',
+  'name="citation_pdf_url"',
+  'rel="alternate" type="application/pdf"',
+  "The latest candidate was rejected.",
+  "0.860252",
+  "five declared gates",
+  "10.5281/zenodo.21851008",
+  "npm <code>latest</code> remains 0.6.1"
+]) {
+  if (!paperHtml.includes(proof)) errors.push(`paper page is missing research-publication proof: ${proof}`);
+}
+const homeHtml = await readFile(join(dist, "index.html"), "utf8");
+for (const proof of ["Reach the web.", "npm stable 0.6.1", "0.7.0 release candidate", "9082506", '"softwareVersion":"0.6.1"', '"identifier":"90825063d447f07345388d040b1428a311109c2b"']) {
+  if (!homeHtml.includes(proof)) errors.push(`home page is missing centered publication proof: ${proof}`);
+}
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);
 const headerPolicy = await readFile(join(dist, "_headers"), "utf8");
 if (/\bimmutable\b/.test(headerPolicy)) errors.push("unversioned site assets must remain revalidatable");
