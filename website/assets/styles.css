@@ -2695,13 +2695,18 @@ tr:last-child td {
   }
 
   .release-banner .shell {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 12px;
     padding-block: 15px;
   }
 
   .release-banner span {
     grid-column: 1 / -1;
+  }
+
+  .release-banner code {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .legal {
