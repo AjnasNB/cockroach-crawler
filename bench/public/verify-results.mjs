@@ -12,6 +12,8 @@ const root = path.resolve(publicDirectory, "../..");
 const version = "0.7.0";
 const revision = "62ff86d12ea72c80c31fb810ff1a724fad687bea";
 const historicalEvidence = Object.freeze({
+  tag: "research-crawler-0.7.0-evidence-source",
+  tagObject: "6605495e1c7d811ed72ec3a82d6389e04e117672",
   commit: "90825063d447f07345388d040b1428a311109c2b",
   tree: "167311df2a0b4ad20005c441d60d1e435e64a781"
 });
@@ -76,7 +78,7 @@ function gitBuffer(args) {
   } catch (error) {
     const detail = error?.stderr?.toString("utf8").trim() || error?.message || "unknown Git error";
     throw new Error(
-      `Historical source commit ${historicalEvidence.commit} is unavailable; `
+      `Historical source tag ${historicalEvidence.tag} and commit ${historicalEvidence.commit} are unavailable; `
       + `verify from a full Git checkout. ${detail}`
     );
   }
@@ -88,16 +90,25 @@ function gitText(args) {
 
 function assertHistoricalCommit() {
   assert.equal(
-    gitText(["rev-parse", `${historicalEvidence.commit}^{commit}`]),
+    gitText(["cat-file", "-t", historicalEvidence.tag]),
+    "tag",
+    "Historical evidence tag must remain annotated."
+  );
+  assert.equal(
+    gitText(["rev-parse", historicalEvidence.tag]),
+    historicalEvidence.tagObject,
+    "Historical evidence tag object drifted."
+  );
+  assert.equal(
+    gitText(["rev-parse", `${historicalEvidence.tag}^{commit}`]),
     historicalEvidence.commit,
     "Historical evidence commit identity drifted."
   );
   assert.equal(
-    gitText(["rev-parse", `${historicalEvidence.commit}^{tree}`]),
+    gitText(["rev-parse", `${historicalEvidence.tag}^{tree}`]),
     historicalEvidence.tree,
     "Historical evidence tree identity drifted."
   );
-  gitBuffer(["merge-base", "--is-ancestor", historicalEvidence.commit, "HEAD"]);
 }
 
 function historicalSourceFingerprint(inputs) {
@@ -420,5 +431,5 @@ await assertSourceBinding(
 );
 
 process.stdout.write(sourceMode === "historical"
-  ? `Cockroach Crawler 0.7.0 public benchmark evidence verified as immutable historical evidence from ${historicalEvidence.commit} (${historicalEvidence.tree}); current source was not asserted.\n`
+  ? `Cockroach Crawler 0.7.0 public benchmark evidence verified as immutable historical evidence from annotated tag ${historicalEvidence.tag}, commit ${historicalEvidence.commit}, and tree ${historicalEvidence.tree}; current source was not asserted.\n`
   : "Cockroach Crawler 0.7.0 public benchmark evidence verified against current source.\n");
