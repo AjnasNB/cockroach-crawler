@@ -116,6 +116,10 @@ approval, and both verify the published result against the registry afterwards.
 3. The publish dispatch must receive those four exact values as `expected_git_commit`, `expected_size_bytes`, `expected_sha256`, and `expected_integrity`. The workflow fails unless the reviewed commit equals the immutable workflow commit and the freshly packed artifact matches every approved value both before and after the `npm-publish` environment approval.
 4. The workflow must verify the approved package name and version, use `id-token: write`, use no npm token secret, and have an npm trusted-publisher mapping restricted to `AjnasNB/cockroach-crawler`, `.github/workflows/publish-npm.yml`, and the `npm-publish` environment. The packed-consumer CI job retains the exact Ubuntu-built tarball for 90 days and records its byte size, SHA-256, npm integrity, commit, and npm CLI version for independent review.
 5. After publication, verify registry version, dist-tag, exact integrity, attestations, CLI bins, all exports/declarations, and a fresh registry-only install. The workflow publishes the reviewed tarball directly, so verification relies on its digest and Sigstore/SLSA provenance rather than npm's directory-publish-only `gitHead` field.
+   npm can expose the package and provenance metadata before the attestations
+   endpoint is readable. The workflow therefore retries the final signature
+   audit for a bounded propagation window and still fails closed if signatures
+   and attestations do not verify.
 6. Create an annotated `v0.7.0` tag only at the exact green published commit. Attach only release-owned assets and generate `SHA256SUMS.txt` from exactly those attachments.
 7. Mark the GitHub release as stable and list every continuing boundary: no hidden cookie extraction, CAPTCHA or access-control bypass, hosted arbitrary-origin proxy fleet, distributed jobs, operating-system sandbox, or universal provider claim.
 

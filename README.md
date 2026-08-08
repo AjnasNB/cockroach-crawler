@@ -3,6 +3,7 @@
 <img src="https://raw.githubusercontent.com/AjnasNB/cockroach-crawler/main/assets/banner.svg" alt="Cockroach Crawler - give your AI agents the web, keep the keys" width="100%">
 
 [![npm version](https://img.shields.io/npm/v/cockroach-crawler.svg)](https://www.npmjs.com/package/cockroach-crawler)
+[![npm next](https://img.shields.io/npm/v/cockroach-crawler/next.svg?label=npm%20next)](https://www.npmjs.com/package/cockroach-crawler/v/0.7.0-rc.1)
 [![CI](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml)
 [![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
@@ -15,14 +16,15 @@
 
 ## Measured, not asserted
 
-The 0.7.0 release-candidate source defines separate core, quality, and
+The published 0.7.0-rc.1 prerelease defines separate core, quality, and
 fail-closed extraction profiles. Every value below is development evidence
-from the same source-pinned WCEB v1.0 scorer, not a published 0.7 result.
+from the same source-pinned WCEB v1.0 scorer, not held-out confirmation or a
+stable-release performance claim.
 
 Install the reviewed candidate without replacing the stable channel:
 
 ```bash
-npm install cockroach-crawler@next
+npm install cockroach-crawler@0.7.0-rc.1
 ```
 
 | Surface and corpus | Precision | Recall | F1 | Required-snippet | Unwanted | Abstentions |
@@ -81,7 +83,7 @@ Every capability stays behind creator-owned origin, request, byte, redirect, con
 - **Proof travels with the content:** canonical URLs, redirect history, content hashes, retrieval metadata, failures, warnings, and provenance stay attached to results.
 - **No-key routes are explicit:** public GitHub reads and an optional reviewed YouTube route work without developer API credentials; session-backed providers remain separately installed and operator controlled.
 
-Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [factual comparison with Firecrawl and Crawl4AI](https://cockroachcrawler.com/compare/) before choosing a crawler.
+Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [category-based alternatives guide](https://cockroachcrawler.com/compare/) covering Firecrawl, Crawl4AI, Crawlee, Scrapy, Trafilatura, Playwright, Puppeteer, Apify, and ScrapingBee before choosing a crawler.
 
 ## All 50 shipped capabilities
 
@@ -197,11 +199,10 @@ case-sensitive registry identity
 publication proves control of that namespace, not additional crawler runtime
 authority.
 
-Version `0.7.0` is a source candidate represented by commit
-`90825063d447f07345388d040b1428a311109c2b`. It has no matching npm package or
-release tag. Verify the current public baseline with
-`npm view cockroach-crawler version dist-tags`; it reports 0.6.1 on `latest` at
-this manuscript freeze.
+Version `0.7.0-rc.1` is the reviewed prerelease represented by commit
+`62f270636a019c9bcc617a13fe254640bcd06925`. It is published on npm under
+`next`; `latest` remains the stable `0.6.1` line. Verify both channels with
+`npm view cockroach-crawler dist-tags`.
 
 ## Public benchmark evidence
 
@@ -610,7 +611,7 @@ Run `cockroach-crawl --help` for the complete browser and output option list.
 `cockroach-sources` is read-only. It never accepts secrets on command-line flags, extracts browser cookies, installs provider tools, or silently falls back from an official API to session scraping.
 
 ```bash
-npm install cockroach-crawler@next
+npm install cockroach-crawler@0.7.0-rc.1
 npx cockroach-sources doctor
 npx cockroach-sources search github "secure web crawler" --max-results 5
 npx cockroach-sources read github AjnasNB/cockroach-crawler
