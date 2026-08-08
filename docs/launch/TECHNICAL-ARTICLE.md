@@ -6,7 +6,7 @@ A crawler that runs on a developer machine can inspect DNS answers, pin a connec
 
 Treating both environments as equivalent creates a dangerous documentation problem: the convenient tier inherits the security reputation of the hardened tier without inheriting its controls.
 
-Cockroach Crawler `0.7.0` takes the opposite approach. It exposes two crawler tiers, returns their capabilities, and keeps official and optional read-only source providers separate from both.
+Cockroach Crawler `0.7.0-rc.1` takes the opposite approach. The published npm prerelease exposes two crawler tiers, returns their capabilities, and keeps official and optional read-only source providers separate from both.
 
 ## The first boundary: what may be contacted?
 
@@ -60,10 +60,10 @@ If a deployment needs stronger destination control, the correct answer is to use
 
 Reading a website and reading a provider API have different rules. Cockroach Crawler's source registry exposes them through a shared record format without pretending their availability is identical.
 
-After installing the stable CLI globally, run:
+After installing the reviewed prerelease globally, run:
 
 ```bash
-npm install --global cockroach-crawler@0.7.0
+npm install --global cockroach-crawler@0.7.0-rc.1
 cockroach-sources doctor
 ```
 
@@ -85,7 +85,7 @@ One number cannot establish crawler quality. The repository therefore keeps thre
 
 1. **Local regression:** a synthetic 120-page IPv4-loopback site measures the non-browser Node path across two warmups and seven recorded runs. The current development capture on Node 24 and an AMD Ryzen 7 4800H reports a 508.5 pages/second median, while checking the exact URL set, request count, robots behavior, sensitive-path denial, extracted fields, and content hashes.
 2. **Security and conformance:** deterministic tests exercise DNS classes, redirect escapes, robots failures, resource ceilings, provider authentication states, browser egress controls, and the weaker serverless contract. These are pass/fail boundary checks, not throughput results.
-3. **Extraction quality:** a future WCXB profile can measure word-level extraction F1 across its seven annotated page types. WCXB is useful complementary evidence, not an industry certification or a replacement for the project's security fixtures.
+3. **Extraction quality:** the pinned WCEB scorer reports exact development rows separately. The Trafilatura-backed Node quality profile records precision 0.894101, recall 0.926022, and F1 0.890524 on 511 previously observed pages, and 0.852784, 0.896259, and 0.847064 on the broader 1,497-page development split. The 511 pages influenced development, so neither row is untouched confirmation or an industry certification.
 
 The 508.5 result is a project-local development baseline, not a competitor score, public-internet speed, production-capacity claim, or SLA. Release CI regenerates an exact-commit artifact, and the repository records the machine, Node version, samples, exclusions, source fingerprint, and dirty-source state needed to interpret it. Reproduce the method with `npm run bench` and read `docs/BENCHMARK.md` before quoting any result.
 
@@ -123,12 +123,12 @@ provider-specific search/read/authentication capabilities
 
 Cockroach Crawler is designed for a common agent integration: an explicit read request enters a creator-owned boundary, consumes a known budget, and returns a record with enough provenance to audit what happened. Distributed queues, proxy infrastructure, hosted search indexes, and large-scale browser orchestration belong in a separate deployment layer.
 
-## Try the stable release
+## Try the published prerelease
 
-From npm `latest`:
+From npm `next` while `latest` remains 0.6.1:
 
 ```bash
-npm install --global cockroach-crawler@0.7.0
+npm install --global cockroach-crawler@0.7.0-rc.1
 cockroach-sources doctor
 cockroach-crawl https://example.com/docs --max-pages 10 --jsonl
 ```
