@@ -11,6 +11,7 @@ COPY bin ./bin
 COPY src ./src
 COPY types ./types
 COPY schemas ./schemas
+COPY scripts/mcp-glama-smoke.mjs ./scripts/mcp-glama-smoke.mjs
 COPY LICENSE README.md SECURITY.md ./
 
 USER node
