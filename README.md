@@ -42,8 +42,14 @@ support a universal 0.90 precision claim.
 
 **Published evidence receipt:** the immutable npm prerelease contains
 [`wceb-quality-observed-0.7.0.json`](./bench/results/wceb-quality-observed-0.7.0.json)
-unchanged from source commit
+unchanged from benchmark-generation commit
+[`90825063d447f07345388d040b1428a311109c2b`](https://github.com/AjnasNB/cockroach-crawler/tree/90825063d447f07345388d040b1428a311109c2b)
+(`research-crawler-0.7.0-evidence-source`). The JSON records source version
+`0.7.0`; it was later packaged byte-for-byte in `cockroach-crawler@0.7.0-rc.1`
+at commit
 [`62f270636a019c9bcc617a13fe254640bcd06925`](https://github.com/AjnasNB/cockroach-crawler/tree/62f270636a019c9bcc617a13fe254640bcd06925).
+That package commit has a valid GitHub signature. `v0.7.0-rc.1` is an annotated
+tag without a cryptographic tag signature.
 The result artifact has SHA-256
 `a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535`,
 pins WCEB v1.0 revision `62ff86d12ea72c80c31fb810ff1a724fad687bea`,

@@ -25,9 +25,13 @@ the exact source-pinned observed-development artifact below:
 | Quality `balanced` | 511 | **0.894101** | **0.926022** | **0.890524** |
 
 The receipt is
-`bench/results/wceb-quality-observed-0.7.0.json` at source commit
+`bench/results/wceb-quality-observed-0.7.0.json`, generated at evidence commit
+`90825063d447f07345388d040b1428a311109c2b` with embedded package version
+`0.7.0`, then packaged byte-for-byte at prerelease commit
 `62f270636a019c9bcc617a13fe254640bcd06925`, SHA-256
 `a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535`.
+The package commit has a valid GitHub signature. `v0.7.0-rc.1` is an annotated
+tag without a cryptographic tag signature.
 It pins WCEB v1.0 revision `62ff86d12ea72c80c31fb810ff1a724fad687bea`
 and uses the exact `trafilatura@0.2.0` quality backend. The 511 pages influenced
 development, so this is not untouched held-out confirmation. Publishing this

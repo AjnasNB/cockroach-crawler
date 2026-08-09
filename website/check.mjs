@@ -150,7 +150,18 @@ for (const phrase of ["searchable fetch-validated site maps", "restricted regex 
 for (const phrase of ["npm latest is 0.6.2", "0.7.0-rc.1 prerelease", "raw-DOM attempt 003 was rejected", "precision 0.860252", "five gates", "no integration, release, ranking, or best-crawler statement"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must preserve publication status: ${phrase}`);
 }
-for (const phrase of ["0.894101 precision", "0.926022 recall", "0.890524 macro F1", "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535", "Download the published 511-page result"]) {
+for (const phrase of [
+  "0.894101 precision",
+  "0.926022 recall",
+  "0.890524 macro F1",
+  "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535",
+  "90825063d447f07345388d040b1428a311109c2b",
+  "62f270636a019c9bcc617a13fe254640bcd06925",
+  "source version 0.7.0",
+  "valid GitHub signature",
+  "annotated tag without a cryptographic tag signature",
+  "Download the published 511-page result"
+]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must publish the exact RC benchmark: ${phrase}`);
 }
 for (const phrase of ["Cockroach Browser uses playwright-core", "Cockroach Crawler's opt-in quality option is Trafilatura-backed", "This is a category map, not a ranking"]) {
@@ -224,7 +235,21 @@ for (const [route, proof] of [
 const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
 if (!releaseHtml.includes("npm install cockroach-crawler@next")) errors.push("release page must install the reviewed npm-next prerelease");
 if (!releaseHtml.includes("Published prerelease") || !releaseHtml.includes("Install reviewed npm next 0.7.0-rc.1")) errors.push("release page must separate stable and prerelease status");
-for (const proof of ["0.894101", "0.926022", "0.890524", "511 observed-development", "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535", "Download benchmark JSON", "SHA256SUMS", "10.5281/zenodo.21851008"]) {
+for (const proof of [
+  "0.894101",
+  "0.926022",
+  "0.890524",
+  "511 observed-development",
+  "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535",
+  "90825063d447f07345388d040b1428a311109c2b",
+  "62f270636a019c9bcc617a13fe254640bcd06925",
+  "source version <code>0.7.0</code>",
+  "valid GitHub signature",
+  "annotated tag without a cryptographic tag signature",
+  "Download benchmark JSON",
+  "SHA256SUMS",
+  "10.5281/zenodo.21851008"
+]) {
   if (!releaseHtml.includes(proof)) errors.push(`release page must publish the exact prerelease benchmark: ${proof}`);
 }
 if (!releaseHtml.includes("trafilatura@0.2.0") || !releaseHtml.includes("Alpine/musl")) errors.push("release page must document the exact native dependency and unsupported platform boundary");
@@ -248,6 +273,12 @@ for (const proof of [
   "trafilatura@0.2.0",
   "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535",
   '"@type":"Dataset"',
+  '"version":"0.7.0"',
+  "90825063d447f07345388d040b1428a311109c2b",
+  "62f270636a019c9bcc617a13fe254640bcd06925",
+  "source version <code>0.7.0</code>",
+  "valid GitHub signature",
+  "annotated tag without a cryptographic tag signature",
   '"value":0.894101',
   '"value":0.926022',
   '"value":0.890524'
@@ -255,6 +286,10 @@ for (const proof of [
   if (!benchmarkHtml.includes(proof)) errors.push(`benchmark page is missing scoped development evidence: ${proof}`);
 }
 if (benchmarkHtml.includes("511 held-out pages") || benchmarkHtml.includes("complete held-out")) errors.push("benchmark page must not present the observed 511-page corpus as untouched evidence");
+const providerMapSvg = await readFile(join(dist, "assets", "provider-map.svg"), "utf8");
+if (!providerMapSvg.includes("npm latest 0.6.2") || providerMapSvg.includes("npm latest 0.6.1")) {
+  errors.push("provider map must identify npm 0.6.2 as the current stable release");
+}
 const compareHtml = await readFile(join(dist, "compare", "index.html"), "utf8");
 for (const proof of [
   "Five categories - not one interchangeable market.",
