@@ -2,7 +2,7 @@
 
 This is the source-backed inventory for the `0.7.0` release candidate. The
 candidate package, declarations, tests, documentation, and benchmark evidence
-are reviewed together. The npm `latest` tag remains `0.6.1`.
+are reviewed together. The npm `latest` tag is `0.6.2`.
 
 Status terms:
 

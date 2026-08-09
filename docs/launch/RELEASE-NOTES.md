@@ -1,7 +1,7 @@
 # Cockroach Crawler 0.7.0 release reference
 
 No stable 0.7.0 record exists. The target release process is maintained in
-[../RELEASE.md](../RELEASE.md); npm `latest` remains 0.6.1. The reviewed
+[../RELEASE.md](../RELEASE.md); npm `latest` is 0.6.2. The reviewed
 `0.7.0-rc.1` package is published on npm `next`, while frozen raw-DOM attempt
 003 was rejected. A future `v0.7.0` remains a separate verification target.
 

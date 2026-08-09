@@ -1479,6 +1479,100 @@ code {
   background: var(--line-bright);
 }
 
+.home-capability-inventory {
+  padding-top: clamp(72px, 9vw, 124px);
+}
+
+.home-capability-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 36px;
+  border: 1px solid var(--line-bright);
+  background: var(--line-bright);
+}
+
+.home-capability-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(24px, 3vw, 36px);
+  background: var(--surface);
+}
+
+.home-capability-group:first-child {
+  grid-row: span 2;
+}
+
+.home-capability-group > header {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 14px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.home-capability-group > header > span {
+  color: var(--green);
+  font: 700 0.72rem/1.4 var(--mono);
+  letter-spacing: 0.08em;
+}
+
+.home-capability-group h3 {
+  margin: 0;
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+  letter-spacing: -0.025em;
+}
+
+.home-capability-group header p {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+.home-capability-group ol {
+  display: grid;
+  gap: 0;
+  margin: 20px 0 26px;
+  padding: 0;
+  list-style: none;
+  counter-reset: capability;
+}
+
+.home-capability-group li {
+  counter-increment: capability;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.home-capability-group li::before {
+  content: counter(capability, decimal-leading-zero);
+  padding-top: 2px;
+  color: var(--muted);
+  font: 600 0.66rem/1.5 var(--mono);
+}
+
+.home-capability-group li a {
+  color: var(--text);
+  text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent);
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+
+.home-capability-group li a:hover {
+  color: var(--green);
+}
+
+.home-capability-group > .text-link {
+  margin-top: auto;
+}
+
+.home-capability-actions {
+  margin-top: 30px;
+}
+
 .capability-category-grid > a {
   display: grid;
   align-content: start;
@@ -1919,6 +2013,11 @@ code {
 
 .callout p {
   margin: 0;
+}
+
+.section p code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .table-wrap {
@@ -2827,6 +2926,14 @@ tr:last-child td {
 
   .capability-category-grid {
     grid-template-columns: 1fr;
+  }
+
+  .home-capability-groups {
+    grid-template-columns: 1fr;
+  }
+
+  .home-capability-group:first-child {
+    grid-row: auto;
   }
 
   .capability-category-grid > a {

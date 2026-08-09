@@ -11,6 +11,9 @@ test("the packed feature inventory stays complete and release-honest", async () 
   const manifest = JSON.parse(await readFile(path.join(ROOT, "package.json"), "utf8"));
   const readme = await readFile(path.join(ROOT, "README.md"), "utf8");
   const features = await readFile(path.join(ROOT, "docs", "FEATURES.md"), "utf8");
+  const sources = await readFile(path.join(ROOT, "docs", "SOURCES.md"), "utf8");
+  const benchmark = await readFile(path.join(ROOT, "docs", "BENCHMARK.md"), "utf8");
+  const release = await readFile(path.join(ROOT, "docs", "RELEASE.md"), "utf8");
 
   assert.ok(manifest.files.includes("docs/FEATURES.md"));
   assert.ok(
@@ -19,6 +22,19 @@ test("the packed feature inventory stays complete and release-honest", async () 
   );
   assert.doesNotMatch(readme, /assets\/readme-proof-still/i);
   assert.match(readme, /complete feature inventory/i);
+  assert.match(readme, /npm install cockroach-crawler@0\.6\.2/);
+  assert.match(readme, /0\.6\.2 features:/);
+  assert.doesNotMatch(readme, /npm install cockroach-crawler@0\.6\.1/);
+  assert.match(sources, /npm install cockroach-crawler@0\.6\.2/);
+  assert.doesNotMatch(sources, /npm install cockroach-crawler@0\.6\.1/);
+  for (const publicationCopy of [readme, benchmark, release]) {
+    assert.match(publicationCopy, /90825063d447f07345388d040b1428a311109c2b/);
+    assert.match(publicationCopy, /62f270636a019c9bcc617a13fe254640bcd06925/);
+    assert.match(publicationCopy, /0\.7\.0/);
+    assert.match(publicationCopy, /valid GitHub signature/i);
+    assert.match(publicationCopy, /annotated\s+tag\s+without a cryptographic tag signature/i);
+    assert.doesNotMatch(publicationCopy, /signed tag/i);
+  }
   for (const section of [
     "Public-web crawl and discovery",
     "Page extraction and output",

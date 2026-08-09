@@ -39,13 +39,26 @@ previously inspected and iterated against it. We therefore label it
 1,497-page row is the upstream WCEB development split. These results do not
 support a universal 0.90 precision claim.
 
-A separately frozen raw-DOM attempt was rejected: precision 0.860252, recall
-0.884690, macro F1 0.844419, required-snippet recall 0.758829, and unwanted
-inclusion 0.092846. It violated five gates and improved precision in six of ten
-page types where eight were required. It authorizes no algorithm integration,
-stable promotion, ranking, or best-crawler statement. The npm `next` channel
-exists for opt-in evaluation of the reviewed 0.7 source; `latest` remains
-0.6.1.
+**Published evidence receipt:** the immutable npm prerelease contains
+[`wceb-quality-observed-0.7.0.json`](./bench/results/wceb-quality-observed-0.7.0.json)
+unchanged from benchmark-generation commit
+[`90825063d447f07345388d040b1428a311109c2b`](https://github.com/AjnasNB/cockroach-crawler/tree/90825063d447f07345388d040b1428a311109c2b)
+(`research-crawler-0.7.0-evidence-source`). The JSON records source version
+`0.7.0`; it was later packaged byte-for-byte in `cockroach-crawler@0.7.0-rc.1`
+at commit
+[`62f270636a019c9bcc617a13fe254640bcd06925`](https://github.com/AjnasNB/cockroach-crawler/tree/62f270636a019c9bcc617a13fe254640bcd06925).
+That package commit has a valid GitHub signature. `v0.7.0-rc.1` is an annotated
+tag without a cryptographic tag signature.
+The result artifact has SHA-256
+`a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535`,
+pins WCEB v1.0 revision `62ff86d12ea72c80c31fb810ff1a724fad687bea`,
+and uses macro averages of page-level Unicode-word precision, recall, and F1.
+All 511 pages were accepted by this non-fail-closed profile.
+
+This published result remains valid within that observed-development scope. A
+separate later raw-DOM experiment was rejected after five gates failed; it did
+not replace, retract, or modify the benchmark shipped in `0.7.0-rc.1`. npm
+`latest` is the stable `0.6.2` line, while this candidate remains on `next`.
 
 The opt-in `cockroach-crawler/quality` surface uses the exact native
 `trafilatura@0.2.0` dependency; it is not presented as a new extraction
@@ -200,7 +213,7 @@ authority.
 
 Version `0.7.0-rc.1` is the reviewed prerelease represented by commit
 `62f270636a019c9bcc617a13fe254640bcd06925`. It is published on npm under
-`next`; `latest` remains the stable `0.6.1` line. Verify both channels with
+`next`; `latest` is the stable `0.6.2` line. Verify both channels with
 `npm view cockroach-crawler dist-tags`.
 
 ## Public benchmark evidence
@@ -346,12 +359,12 @@ npm install cockroach-crawler
 Pin the current published stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@0.6.1
+npm install cockroach-crawler@0.6.2
 ```
 
 The `0.7.0` source candidate includes advanced package subpaths. Review it at
 the pinned commit; do not present these candidate surfaces as published npm
-0.6.1 features:
+0.6.2 features:
 
 ```js
 import { crawl } from "cockroach-crawler";

@@ -1,5 +1,33 @@
 # Cockroach Crawler benchmarks
 
+## Published 0.7.0-rc.1 result
+
+The reviewed npm `next` prerelease publishes the following exact
+observed-development result for its opt-in Node quality `balanced` path:
+
+| Version | Corpus | Pages | Precision | Recall | Macro F1 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `0.7.0-rc.1` | WCEB v1.0, observed partition | 511 | **0.894101** | **0.926022** | **0.890524** |
+
+This is a positive, reproducible prerelease benchmark within its declared
+scope. It is not untouched held-out confirmation. Publication reports the
+measured values directly; it does not round precision to 0.90 or turn the row
+into a universal crawler ranking.
+
+- npm package: `cockroach-crawler@0.7.0-rc.1` on `next`
+- benchmark-generation commit: `90825063d447f07345388d040b1428a311109c2b`
+  (`research-crawler-0.7.0-evidence-source`)
+- embedded benchmark package version: `0.7.0`
+- package/tag commit: `62f270636a019c9bcc617a13fe254640bcd06925`
+- signature state: the package commit has a valid GitHub signature;
+  `v0.7.0-rc.1` is an annotated tag without a cryptographic tag signature
+- result: `bench/results/wceb-quality-observed-0.7.0.json`
+- result SHA-256: `a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535`
+- WCEB revision: `62ff86d12ea72c80c31fb810ff1a724fad687bea`
+- scorer: macro average of page-level Unicode-word precision, recall, and F1
+- quality backend: exact native `trafilatura@0.2.0`, with Cockroach Crawler's
+  validation, profiles, diagnostics, and evidence contract around it
+
 Cockroach Crawler keeps extraction quality, fail-closed admission, standards
 conformance, and local performance in separate evidence tracks. They answer
 different questions and must not be combined into one headline score.
