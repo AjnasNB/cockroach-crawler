@@ -31,6 +31,9 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm test
+      - name: Verify Glama stdio MCP transport
+        if: ${{ matrix.node == 24 }}
+        run: npm run mcp:glama:smoke
       - run: npm run test:types
       - run: npm run bench
       - run: npm run audit:licenses
@@ -167,6 +170,10 @@ jobs:
           persist-credentials: false
       - name: Build image
         run: docker build --tag cockroach-crawler:${{ github.sha }} .
+      - name: Build Glama MCP image
+        run: docker build --file Dockerfile.glama --tag cockroach-crawler-glama:${{ github.sha }} .
+      - name: Verify Glama MCP protocol inside its image
+        run: docker run --rm --entrypoint node cockroach-crawler-glama:${{ github.sha }} scripts/mcp-glama-smoke.mjs
       - name: Verify authenticated API
         shell: bash
         run: |
