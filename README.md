@@ -29,7 +29,6 @@ npm install cockroach-crawler@0.7.0-rc.1
 
 | Surface and corpus | Precision | Recall | F1 | Required-snippet | Unwanted | Abstentions |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Core `structural`, observed 511 | 0.793763 | 0.873844 | 0.791500 | 0.835584 | 0.178735 | - |
 | Node quality `balanced`, observed 511 | **0.894101** | **0.926022** | **0.890524** | **0.864090** | 0.111383 | - |
 | Node quality `balanced`, WCEB development 1,497 | 0.852784 | 0.896259 | 0.847064 | 0.755867 | **0.096181** | - |
 | Node quality `balanced` + fail-closed, observed 511 | 0.847901 | 0.875080 | 0.844935 | 0.812035 | 0.104207 | 43 |
@@ -209,9 +208,7 @@ Version `0.7.0-rc.1` is the reviewed prerelease represented by commit
 The source-pinned quality `balanced` profile produced **0.894101 precision**,
 **0.926022 recall**, and **0.890524 macro word F1** on the observed 511-page
 partition. On the 1,497-page WCEB development split it produced **0.852784
-precision**, **0.896259 recall**, and **0.847064 F1**. The core structural
-extractor remains available and separately measured at **0.793763
-precision**, **0.873844 recall**, and **0.791500 F1** on the observed 511 pages.
+precision**, **0.896259 recall**, and **0.847064 F1**.
 
 Separate public-source conformance probes passed **25/25 adapted Google
 robots.txt dispatch vectors** and **101/101 applicable credential-free HTTP(S)
