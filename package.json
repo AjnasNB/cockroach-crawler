@@ -288,7 +288,7 @@
     "robots-parser": "^3.0.1",
     "trafilatura": "0.2.0",
     "turndown": "^7.2.0",
-    "undici": "^7.28.0",
+    "undici": "^8.10.0",
     "zod": "^4.4.3"
   },
   "peerDependencies": {
