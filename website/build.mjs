@@ -18,7 +18,6 @@ const scrapyRepository = "https://github.com/scrapy/scrapy";
 const trafilaturaDocs = "https://trafilatura.readthedocs.io/en/latest/";
 const trafilaturaEvaluation = "https://trafilatura.readthedocs.io/en/latest/evaluation.html";
 const playwrightRepository = "https://github.com/microsoft/playwright";
-const puppeteerRepository = "https://github.com/puppeteer/puppeteer";
 const apifyDocs = "https://docs.apify.com/get-started";
 const scrapingBeeDocs = "https://www.scrapingbee.com/documentation/";
 const qarinahSite = "https://qarinah.io";
@@ -293,7 +292,7 @@ const pages = [
     slug: "compare",
     nav: "Compare",
     title: "Cockroach Crawler alternatives | Crawlers, extractors, browsers, APIs",
-    description: "Compare Cockroach Crawler with Firecrawl, Crawl4AI, Crawlee, Scrapy, Trafilatura, Playwright, Puppeteer, Apify, and ScrapingBee by product category and evidence boundary.",
+    description: "Compare Cockroach Crawler with Firecrawl, Crawl4AI, Crawlee, Scrapy, Trafilatura, Playwright, Apify, and ScrapingBee by product category and evidence boundary.",
     body: comparePage(),
     schema: comparisonSchema(),
     ogType: "article"
@@ -482,7 +481,6 @@ function comparisonSchema() {
           { "@type": "SoftwareApplication", name: "Scrapy", url: scrapyRepository },
           { "@type": "SoftwareApplication", name: "Trafilatura", url: trafilaturaDocs },
           { "@type": "SoftwareApplication", name: "Playwright", url: playwrightRepository },
-          { "@type": "SoftwareApplication", name: "Puppeteer", url: puppeteerRepository },
           { "@type": "SoftwareApplication", name: "Apify", url: apifyDocs },
           { "@type": "SoftwareApplication", name: "ScrapingBee", url: scrapingBeeDocs }
         ]
@@ -492,8 +490,8 @@ function comparisonSchema() {
         mainEntity: [
           faqSchema("What is the best AI web crawler for agents?", "There is no universal best crawler. Choose by required layer: managed acquisition, programmable crawling, browser automation, main-content extraction, or governed evidence."),
           faqSchema("Is Cockroach Crawler better than Trafilatura?", "No universal ranking is established. Cockroach Crawler's opt-in Node quality surface is Trafilatura-backed and adds crawling, rendering, policy, structured extraction, and evidence around that extractor."),
-          faqSchema("Is Cockroach Crawler better than Puppeteer or Playwright?", "That is not a like-for-like comparison. Puppeteer and Playwright are browser-automation primitives; Cockroach Crawler composes bounded crawling and evidence above browser automation."),
-          faqSchema("Which crawler should I choose for an AI agent?", "Choose the smallest tested contract that matches the job: Cockroach Crawler for bounded local evidence, Firecrawl or Apify for managed reach, Crawlee or Scrapy for custom crawler systems, Crawl4AI for Python LLM crawling, and Playwright or Puppeteer for direct browser automation.")
+          faqSchema("Is Cockroach Crawler better than a browser automation library?", "That is not a like-for-like comparison. Browser automation libraries expose low-level page and browser primitives; Cockroach Crawler composes bounded crawling and evidence above optional browser automation."),
+          faqSchema("Which crawler should I choose for an AI agent?", "Choose the smallest tested contract that matches the job: Cockroach Crawler for bounded local evidence, Firecrawl or Apify for managed reach, Crawlee or Scrapy for custom crawler systems, Crawl4AI for Python LLM crawling, and a direct browser automation library when low-level page control is the product center.")
         ]
       }
     ]
@@ -577,7 +575,6 @@ function ecosystemSchema() {
     ["Cockroach Browser", cockroachBrowserSite],
     ["Cockroach Crawler", siteUrl],
     ["Playwright", playwrightRepository],
-    ["Puppeteer", puppeteerRepository],
     ["Trafilatura", trafilaturaDocs],
     ["Firecrawl", firecrawlDocs],
     ["Browser Use", browserUseRepository],
@@ -2515,7 +2512,7 @@ function comparePage() {
         <article class="fit-yes"><span>Governed local evidence</span><h3>Cockroach Crawler</h3><p>Node-first crawling, mapping, rendering, structured extraction, explicit network ceilings, and normalized source evidence in one bounded package.</p></article>
         <article><span>Managed web data</span><h3>Firecrawl, Apify, ScrapingBee</h3><p>Hosted acquisition, search, proxy infrastructure, asynchronous jobs, actors, and operational scale.</p></article>
         <article><span>Programmable crawler systems</span><h3>Crawlee, Scrapy, Crawl4AI</h3><p>Broader queues, routers, browser pools, storage, deep strategies, and language-native customization.</p></article>
-        <article><span>Specialist primitives</span><h3>Trafilatura, Playwright, Puppeteer</h3><p>Main-content extraction or direct browser automation that a larger acquisition system can compose.</p></article>
+        <article><span>Specialist primitives</span><h3>Trafilatura and browser automation libraries</h3><p>Main-content extraction or direct browser automation that a larger acquisition system can compose.</p></article>
       </div>
     </section>
     <section class="section shell" id="matrix">
@@ -2530,7 +2527,7 @@ function comparePage() {
             <tr><th scope="row"><a href="${crawleeRepository}">Crawlee</a></th><td>Programmable crawler framework</td><td>You want queues, routers, sessions, storage, proxies, and HTTP/browser engines to build a custom system</td><td>Lower-level and more extensible; application code defines the final evidence contract</td></tr>
             <tr><th scope="row"><a href="${scrapyRepository}">Scrapy</a></th><td>Python crawler framework</td><td>High-volume asynchronous Python crawling and mature middleware, pipelines, scheduling, and extensions are central</td><td>Framework rather than an agent-specific normalized evidence product</td></tr>
             <tr><th scope="row"><a href="${trafilaturaDocs}">Trafilatura</a></th><td>Main-content extractor</td><td>Python crawling/discovery and high-quality text/metadata extraction are the primary job</td><td>Cockroach's opt-in Node quality surface is Trafilatura-backed; it is not an independent extractor beating Trafilatura</td></tr>
-            <tr><th scope="row"><a href="${playwrightRepository}">Playwright</a> / <a href="${puppeteerRepository}">Puppeteer</a></th><td>Browser-automation primitives</td><td>You need direct page, browser, testing, or automation control</td><td>Not like-for-like extraction products; Cockroach composes a bounded crawler above optional browser automation</td></tr>
+            <tr><th scope="row"><a href="${playwrightRepository}">Playwright</a> and comparable browser libraries</th><td>Browser-automation primitives</td><td>You need direct page, browser, testing, or automation control</td><td>Not like-for-like extraction products; Cockroach composes a bounded crawler above optional browser automation</td></tr>
             <tr><th scope="row"><a href="${apifyDocs}">Apify</a></th><td>Managed actors and data platform</td><td>Hosted actors, schedules, datasets, proxy infrastructure, and operational deployment are the job</td><td>Cockroach does not claim distributed cloud or marketplace scale</td></tr>
             <tr><th scope="row"><a href="${scrapingBeeDocs}">ScrapingBee</a></th><td>Managed scraping API</td><td>JavaScript rendering, proxy rotation, and anti-block infrastructure should be externally operated</td><td>Hosted acquisition service rather than a local evidence and policy runtime</td></tr>
           </tbody>
@@ -2557,7 +2554,7 @@ function comparePage() {
         <article><h3>Choose Firecrawl for managed operations</h3><p>Hosted search, proxy and anti-block infrastructure, large asynchronous jobs, managed browser interaction, document parsing, and operational scale remain outside Cockroach Crawler's compact package.</p><a class="text-link" href="${firecrawlDocs}">Read Firecrawl documentation →</a></article>
         <article><h3>Choose Crawl4AI for broad Python workflows</h3><p>Adaptive crawling, session-rich browser control, policy-aware caching, PDF and media processing, multiple extraction strategies, and Python-native orchestration are broader in Crawl4AI today.</p><a class="text-link" href="${crawl4aiDocs}">Read Crawl4AI documentation →</a></article>
         <article><h3>Choose Crawlee or Scrapy to build the crawler</h3><p>Both are mature programmable frameworks with queues, routing, hooks, storage, retry, and extension surfaces that can support architectures beyond one opinionated evidence product.</p><a class="text-link" href="${crawleeRepository}">Inspect Crawlee →</a></article>
-        <article><h3>Choose Playwright or Puppeteer for direct automation</h3><p>They expose browser primitives and testing APIs. Cockroach Browser and Crawler use established browser automation rather than pretending to replace the engine.</p><a class="text-link" href="${playwrightRepository}">Inspect Playwright →</a></article>
+        <article><h3>Choose a browser automation library for direct control</h3><p>These libraries expose browser primitives and testing APIs. Cockroach Browser and Crawler use established browser automation rather than pretending to replace the engine.</p><a class="text-link" href="${playwrightRepository}">Inspect one established browser library →</a></article>
       </div>
     </section>
     <section class="section shell proof-section">
@@ -2565,9 +2562,9 @@ function comparePage() {
       ${codeBlock("compare-proof", "stable npm package", `npm install cockroach-crawler@${publishedVersion}\nnpx cockroach-sources doctor --json\nnpx cockroach-crawl https://example.com/docs --max-pages 20 --jsonl`)}
     </section>
     <section class="section shell faq-section"><div><p class="eyebrow">Crawler selection FAQ</p><h2>Choose the smallest trustworthy surface.</h2></div><div class="faq-list">
-      <details><summary>What is the best AI web crawler for agents?</summary><p>There is no universal best. Choose by layer: Cockroach for bounded local evidence, Firecrawl or Apify for managed reach, Crawlee or Scrapy for a custom crawler system, Crawl4AI for Python LLM crawling, Trafilatura for specialist extraction, or Playwright/Puppeteer for direct browser automation.</p></details>
+      <details><summary>What is the best AI web crawler for agents?</summary><p>There is no universal best. Choose by layer: Cockroach for bounded local evidence, Firecrawl or Apify for managed reach, Crawlee or Scrapy for a custom crawler system, Crawl4AI for Python LLM crawling, Trafilatura for specialist extraction, or a browser automation library for direct page control.</p></details>
       <details><summary>Is Cockroach Crawler better than Trafilatura?</summary><p>No universal ranking is established. Cockroach's quality surface delegates main-content extraction to exact <code>trafilatura@0.2.0</code> and adds crawling, rendering, policy, structured extraction, and evidence around it.</p></details>
-      <details><summary>Is Cockroach Crawler better than Puppeteer or Playwright?</summary><p>That is a category error. Puppeteer and Playwright are browser-automation primitives. Cockroach Crawler composes a bounded acquisition and evidence contract above optional browser automation.</p></details>
+      <details><summary>Is Cockroach Crawler better than a browser automation library?</summary><p>That is a category error. Browser automation libraries expose low-level page and browser primitives. Cockroach Crawler composes a bounded acquisition and evidence contract above optional browser automation.</p></details>
       <details><summary>Can I replace either product without testing?</summary><p>No. Match URL sets, rendering mode, output fields, robots policy, retries, concurrency, network conditions, and deployment requirements before migrating.</p></details>
       <details><summary>Where did the comparison data come from?</summary><p>Product claims were reviewed against the linked official repositories and documentation on 8 August 2026. Benchmark rows come from Cockroach Crawler's pinned WCEB artifacts; Trafilatura's separate official study is linked only to explain why its scorer is not directly comparable.</p></details>
     </div></section>`;
@@ -2611,7 +2608,7 @@ function ecosystemPage() {
           </li>
           <li>
             <div class="layer-index">B</div>
-            <div class="layer-copy"><span>Browser automation primitives</span><h3>Control browsers directly when code is the product center.</h3><p><a href="${playwrightRepository}">Playwright</a> automates Chromium, Firefox, and WebKit through a cross-browser API. <a href="${puppeteerRepository}">Puppeteer</a> automates Chrome and Firefox through browser protocols. Cockroach Browser uses Playwright and adds a narrower operator-owned authority and evidence contract above it.</p></div>
+            <div class="layer-copy"><span>Browser automation primitives</span><h3>Control browsers directly when code is the product center.</h3><p><a href="${playwrightRepository}">Playwright</a> automates Chromium, Firefox, and WebKit through a cross-browser API. Cockroach Browser uses that engine and adds a narrower operator-owned authority and evidence contract above it.</p></div>
           </li>
           <li>
             <div class="layer-index">C</div>
@@ -2986,7 +2983,7 @@ Quality balanced with fail-closed admission records ${failClosedPrecision} preci
 
 The native quality backend never silently falls back. Upstream prebuilt binaries cover Windows x64/ARM64, macOS x64/ARM64, and glibc Linux x64/ARM64. Alpine/musl, 32-bit, and other operating systems are unsupported. Core and serverless do not import the native backend.
 
-Alternatives belong to different layers. Firecrawl, Apify, and ScrapingBee center managed web acquisition; Crawlee and Scrapy are programmable crawler frameworks; Crawl4AI is a broad Python LLM crawler; Trafilatura is a specialist main-content extractor; Playwright and Puppeteer are browser-automation primitives. Cockroach Crawler centers bounded local acquisition and normalized evidence. No universal best-crawler or cross-benchmark superiority claim is made.
+Alternatives belong to different layers. Firecrawl, Apify, and ScrapingBee center managed web acquisition; Crawlee and Scrapy are programmable crawler frameworks; Crawl4AI is a broad Python LLM crawler; Trafilatura is a specialist main-content extractor; browser automation libraries expose direct page and browser primitives. Cockroach Crawler centers bounded local acquisition and normalized evidence. No universal best-crawler or cross-benchmark superiority claim is made.
 
 The governed-agent ecosystem guide maps thirteen source-linked projects by layer. Qarinah supplies evidence-linked project memory, Maqam governs selected registered actions, Cockroach Browser supplies an operator-owned browser authority and evidence runtime, and Cockroach Crawler supplies bounded web acquisition. Cockroach Browser uses playwright-core and does not replace Playwright. Cockroach Crawler's opt-in quality option is Trafilatura-backed and delegates main-content extraction to exact trafilatura@0.2.0. LangGraph and the OpenAI Agents SDK remain orchestration choices; Browser Use and Stagehand remain AI browser frameworks; Firecrawl remains a managed web-acquisition option; Docling remains a document-conversion specialist. This is a category map, not a ranking.
 
