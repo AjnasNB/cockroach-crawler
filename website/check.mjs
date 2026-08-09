@@ -174,6 +174,20 @@ for (const group of ["Start", "Crawl and extract", "Agents and sources", "Deploy
   if (!docsHtml.includes(`>${group}</h2>`)) errors.push(`docs navigation must expose the ${group} group heading`);
 }
 if (docsHtml.includes("data-feature-entry")) errors.push("docs overview must not restore the giant inline capability wall");
+const capabilityHomeHtml = await readFile(join(dist, "index.html"), "utf8");
+if (!capabilityHomeHtml.includes("data-home-capability-inventory")) errors.push("homepage must expose the complete capability inventory immediately after the hero");
+if ((capabilityHomeHtml.match(/data-home-capability(?:>|\s)/g) ?? []).length !== 50) errors.push("homepage must expose all 50 capability links");
+if ((capabilityHomeHtml.match(/data-home-capability-group=/g) ?? []).length !== 7) errors.push("homepage must preserve all seven capability groups");
+if (capabilityHomeHtml.indexOf("data-home-capability-inventory") > capabilityHomeHtml.indexOf("quality-title")) errors.push("homepage capability inventory must appear before benchmark marketing");
+for (const heading of ["Crawl and discover", "Render and capture", "Extract agent-ready data", "Reach public sources", "Connect agents and MCP", "Deploy and operate", "Keep authority bounded"]) {
+  if (!capabilityHomeHtml.includes(`>${heading}</h3>`)) errors.push(`homepage capability inventory must include ${heading}`);
+}
+const homeSchema = [...capabilityHomeHtml.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((match) => JSON.parse(match[1]));
+const homeGraph = homeSchema.flatMap((schema) => schema["@graph"] ?? []);
+const capabilityItemList = homeGraph.find((entry) => entry["@type"] === "ItemList" && entry.name === "Cockroach Crawler complete capability inventory");
+if (!capabilityItemList || capabilityItemList.numberOfItems !== 50 || capabilityItemList.itemListElement?.length !== 50) {
+  errors.push("homepage structured data must publish all 50 capabilities");
+}
 const capabilityIndexHtml = await readFile(join(dist, "docs", "capabilities", "index.html"), "utf8");
 if ((capabilityIndexHtml.match(/data-feature-entry/g) ?? []).length !== 50) errors.push("capability library must expose all 50 indexed capabilities");
 if (!capabilityIndexHtml.includes("data-feature-search")) errors.push("capability library must retain the searchable feature index");
