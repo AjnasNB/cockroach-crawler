@@ -1,0 +1,18 @@
+FROM node:24-bookworm-slim
+
+ENV NODE_ENV=production
+ENV COCKROACH_ALLOWED_ORIGINS=https://example.com
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts
+
+COPY bin ./bin
+COPY src ./src
+COPY types ./types
+COPY schemas ./schemas
+COPY scripts/mcp-glama-smoke.mjs ./scripts/mcp-glama-smoke.mjs
+COPY LICENSE README.md SECURITY.md ./
+
+USER node
+CMD ["node", "bin/cockroach-mcp.js"]

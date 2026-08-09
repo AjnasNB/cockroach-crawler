@@ -1,6 +1,6 @@
 # Social and video launch copy
 
-> **Prerelease draft:** npm `latest` is 0.6.1 and `0.7.0-rc.1` is published on
+> **Prerelease draft:** npm `latest` is 0.6.2 and `0.7.0-rc.1` is published on
 > `next`. Use only as disclosed maintainer-authored prerelease copy. Do not call
 > the package stable, best, or 0.90 precision; frozen attempt 003 was rejected.
 
@@ -21,7 +21,7 @@ Cockroach Crawler turns those decisions into a bounded reading layer. The local 
 
 It does not supply a model, proxy fleet, process sandbox, cookie extractor, or access-control bypass. The restricted serverless profile also states plainly that it lacks the local DNS boundary.
 
-The reviewed `0.7.0-rc.1` package is published on npm `next`; npm `latest` remains 0.6.1. Its opt-in quality surface uses exact `trafilatura@0.2.0`. The observed quality row and rejected raw-DOM experiment are development evidence, not a stable-release or universal leadership claim.
+The reviewed `0.7.0-rc.1` package is published on npm `next`; npm `latest` is 0.6.2. Its opt-in quality surface uses exact `trafilatura@0.2.0`. The observed quality row and rejected raw-DOM experiment are development evidence, not a stable-release or universal leadership claim.
 
 ## Short launch post
 
