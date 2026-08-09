@@ -38,11 +38,17 @@ const maqamRepository = "https://github.com/AjnasNB/maqam";
 const maqamDocs = "https://maqamagent.com/docs/";
 const productLoopRepository = "https://github.com/AjnasNB/productloop-os";
 const benchmarkRun = "https://github.com/AjnasNB/cockroach-crawler/actions/runs/29624859893";
-const publishedVersion = "0.6.1";
+const publishedVersion = "0.6.2";
 const candidateVersion = "0.7.0-rc.1";
 const candidateCommit = "62f270636a019c9bcc617a13fe254640bcd06925";
 const candidateSource = `${repository}/tree/${candidateCommit}`;
 const candidatePackage = `${npmPackage}/v/${candidateVersion}`;
+const candidateRelease = `${repository}/releases/tag/v${candidateVersion}`;
+const benchmarkArtifactPath = "bench/results/wceb-quality-observed-0.7.0.json";
+const benchmarkArtifactUrl = `${repository}/blob/${candidateCommit}/${benchmarkArtifactPath}`;
+const benchmarkArtifactDownload = `${repository}/releases/download/v${candidateVersion}/wceb-quality-observed-0.7.0.json`;
+const benchmarkArtifactSha256 = "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535";
+const wcebRevision = "62ff86d12ea72c80c31fb810ff1a724fad687bea";
 const paperDoi = "10.5281/zenodo.21851008";
 const paperDoiUrl = `https://doi.org/${paperDoi}`;
 const paperRecord = "https://zenodo.org/records/21851008";
@@ -163,7 +169,7 @@ const pages = [
             faqSchema("Can an agent expand its crawl permissions?", "No. The agent adapter treats creator-owned origins and limits as upper bounds and rejects undeclared policy overrides."),
             faqSchema("Does Cockroach Crawler require an API key?", "Public web crawling, public GitHub reads, and the optional pinned yt-dlp YouTube route work without a developer API key. Official API providers remain available when operators configure their credentials. Optional session-backed social reads require a separately installed, operator-controlled OpenCLI runtime."),
             faqSchema("Is browser mode a sandbox?", "No. Browser mode constrains network behavior and resource use, but Chromium still requires process or container isolation for untrusted targets."),
-            faqSchema("What is the current published version?", "The npm latest tag is 0.6.1. The reviewed 0.7.0-rc.1 prerelease is also published for opt-in testing on the npm next tag."),
+            faqSchema("What is the current published version?", `The npm latest tag is ${publishedVersion}. The reviewed ${candidateVersion} prerelease is also published for opt-in testing on the npm next tag.`),
             faqSchema("Does the release candidate provide GitHub, YouTube, X, or Reddit access?", "The 0.7.0 release candidate includes public GitHub REST, official provider adapters, a pinned no-key YouTube route, optional read-only X and Reddit session routes, ordered provider fallback, and explicit doctor output. It does not extract cookies or expose social write operations.")
           ]
         }
@@ -307,15 +313,17 @@ const pages = [
   {
     slug: "benchmark",
     nav: "Benchmark",
-    title: "Local benchmark - Cockroach Crawler",
-    description: "Reproduce Cockroach Crawler's local 120-page fixture benchmark and understand what the result does - and does not - measure.",
-    body: benchmarkPage()
+    title: "0.7.0-rc.1 extraction benchmark | Cockroach Crawler",
+    description: "Published Cockroach Crawler 0.7.0-rc.1 observed-development benchmark: 0.894101 precision, 0.926022 recall, and 0.890524 macro F1 on 511 WCEB pages.",
+    body: benchmarkPage(),
+    schema: benchmarkSchema(),
+    lastModified: "2026-08-09"
   },
   {
     slug: "paper",
     nav: "Paper",
     title: "Cockroach Crawler technical white paper | 0.7 release candidate",
-    description: "Architecture, trust boundaries, evidence protocol, and reproducibility plan for the Cockroach Crawler 0.7 release candidate. Numerical release claims remain pending the frozen gate.",
+    description: "Architecture, trust boundaries, exact observed-development metrics, and reproducibility protocol for the published Cockroach Crawler 0.7.0-rc.1 prerelease.",
     body: paperPage(),
     ogType: "article",
     pdfHref: "/paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf",
@@ -353,9 +361,10 @@ const pages = [
   {
     slug: "release",
     nav: "Release",
-    title: "Release 0.7.0 - Cockroach Crawler",
-    description: "Cockroach Crawler 0.7.0 release notes, Node quality extraction, fail-closed admission, benchmark evidence, platform limits, and verification commands.",
-    body: releasePage()
+    title: "Cockroach Crawler 0.7.0-rc.1 prerelease",
+    description: "Published Cockroach Crawler 0.7.0-rc.1 prerelease, including its exact 511-page quality benchmark, provenance, Node quality path, platform limits, and verification commands.",
+    body: releasePage(),
+    lastModified: "2026-08-09"
   },
   {
     slug: "blog/why-css-selectors-break",
@@ -486,6 +495,75 @@ function comparisonSchema() {
   };
 }
 
+function benchmarkSchema() {
+  const benchmarkId = `${siteUrl}/benchmark/#wceb-quality-observed`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Dataset",
+        "@id": benchmarkId,
+        name: `Cockroach Crawler ${candidateVersion} quality balanced observed-development benchmark`,
+        description: `${qualityPrecision} precision, ${qualityRecall} recall, and ${qualityF1} macro F1 across 511 observed-development WCEB v1.0 pages using the published Node quality balanced path.`,
+        url: `${siteUrl}/benchmark/`,
+        version: candidateVersion,
+        identifier: `sha256:${benchmarkArtifactSha256}`,
+        datePublished: "2026-08-08",
+        dateModified: "2026-08-09",
+        isAccessibleForFree: true,
+        creator: { "@type": "Person", name: "Ajnas N B" },
+        about: {
+          "@type": "SoftwareApplication",
+          name: "Cockroach Crawler",
+          softwareVersion: candidateVersion,
+          codeRepository: repository,
+          downloadUrl: candidatePackage
+        },
+        isBasedOn: [
+          `https://github.com/Murrough-Foley/web-content-extraction-benchmark/tree/${wcebRevision}`,
+          candidateSource
+        ],
+        measurementTechnique: "Macro average of page-level Unicode-word precision, recall, and F1 over cached HTML and human-reviewed WCEB annotations.",
+        variableMeasured: [
+          { "@type": "PropertyValue", name: "Pages", value: 511 },
+          { "@type": "PropertyValue", name: "Precision", value: Number(qualityPrecision) },
+          { "@type": "PropertyValue", name: "Recall", value: Number(qualityRecall) },
+          { "@type": "PropertyValue", name: "Macro F1", value: Number(qualityF1) },
+          { "@type": "PropertyValue", name: "Required-snippet recall", value: Number(qualityRequiredRecall) },
+          { "@type": "PropertyValue", name: "Unwanted inclusion", value: Number(qualityUnwanted) }
+        ],
+        distribution: {
+          "@type": "DataDownload",
+          contentUrl: benchmarkArtifactDownload,
+          encodingFormat: "application/json",
+          sha256: benchmarkArtifactSha256
+        }
+      },
+      {
+        "@type": "TechArticle",
+        headline: `Cockroach Crawler ${candidateVersion} extraction benchmark`,
+        description: "A reproducible, source-pinned report of observed-development extraction quality, fail-closed admission, conformance, and local regression measurements.",
+        datePublished: "2026-08-08",
+        dateModified: "2026-08-09",
+        author: { "@type": "Person", name: "Ajnas N B" },
+        publisher: { "@type": "Organization", name: "Cockroach Crawler", url: siteUrl },
+        mainEntityOfPage: `${siteUrl}/benchmark/`,
+        mainEntity: { "@id": benchmarkId },
+        citation: [benchmarkArtifactUrl, `${repository}/blob/${candidateCommit}/docs/BENCHMARK.md`, candidateRelease]
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          faqSchema("What is the published 0.7.0-rc.1 benchmark?", `The Node quality balanced path records ${qualityPrecision} precision, ${qualityRecall} recall, and ${qualityF1} macro F1 on 511 observed-development WCEB v1.0 pages.`),
+          faqSchema("Is the 511-page result held-out confirmation?", "No. The project previously inspected the upstream test partition and iterated against it, so the result is explicitly observed-development evidence."),
+          faqSchema("What extractor powers the quality path?", "The opt-in Node quality path delegates main-content extraction to exact native trafilatura@0.2.0, then adds Cockroach Crawler validation, named profiles, diagnostics, fail-closed admission, and evidence metadata."),
+          faqSchema("Does this benchmark prove Cockroach Crawler is universally best?", "No. It measures cached-HTML main-content extraction under one pinned scorer and corpus revision; it is not a browser-automation, public-network, OCR, capacity, or universal product ranking.")
+        ]
+      }
+    ]
+  };
+}
+
 function ecosystemSchema() {
   const entries = [
     ["Qarinah", qarinahSite],
@@ -587,9 +665,9 @@ function paperSchema() {
       {
         "@type": "FAQPage",
         mainEntity: [
-          faqSchema("Is Cockroach Crawler 0.7 published?", "The reviewed 0.7.0-rc.1 package is published on npm next at commit 62f2706. It is not the stable latest release; npm latest remains 0.6.1."),
-          faqSchema("Does this paper claim universal 0.90 crawler quality?", "No. A numerical release claim remains pending until a frozen, source-pinned evaluation passes every declared aggregate, page-type, and fold gate."),
-          faqSchema("Can the evaluation be reproduced?", "The paper identifies the source commit, evaluation boundaries, artifact requirements, and release checks. A final DOI and benchmark receipt are added only after the immutable candidate is verified."),
+          faqSchema("Is Cockroach Crawler 0.7 published?", `The reviewed ${candidateVersion} package is published on npm next at commit ${candidateCommit.slice(0, 7)}. It is not the stable latest release; npm latest is ${publishedVersion}.`),
+          faqSchema("Does this paper claim universal 0.90 crawler quality?", `No. The published prerelease reports ${qualityPrecision} precision, ${qualityRecall} recall, and ${qualityF1} macro F1 on 511 observed-development WCEB pages. Those exact scoped values are not rounded into a universal 0.90 claim.`),
+          faqSchema("Can the evaluation be reproduced?", `Yes. The published paper DOI is ${paperDoi}; the release links the exact source commit, WCEB revision, machine-readable benchmark artifacts, SHA-256 checksums, and reproduction commands.`),
           faqSchema("Is browser mode a security sandbox?", "No. Browser mode constrains network and resource behavior, but hostile JavaScript still requires process or container isolation.")
         ]
       }
@@ -651,7 +729,7 @@ function footer() {
           <img src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&amp;theme=light" width="120" height="51" alt="Fazier badge" />
         </a>
       </div>
-      <div class="shell legal"><span>MIT software · npm latest ${publishedVersion} · npm next ${candidateVersion}</span><span>Site content last reviewed 8 August 2026</span></div>
+      <div class="shell legal"><span>MIT software · npm latest ${publishedVersion} · npm next ${candidateVersion}</span><span>Site content last reviewed 9 August 2026</span></div>
     </footer>`;
 }
 
@@ -733,7 +811,7 @@ function homePage() {
         <p class="lede">Cockroach Crawler turns permitted public pages into source-linked Markdown, JSON, or JSONL while operator-owned policy bounds origins, redirects, robots, requests, bytes, depth, and time.</p>
         <div class="button-row"><a class="button primary" href="/docs/">Read the documentation</a><a class="button secondary" href="/paper/">Open the technical paper</a><a class="text-link hero-source" href="${candidateSource}">Inspect candidate source →</a></div>
         <ul class="signal-list" aria-label="Publication facts"><li>npm latest ${publishedVersion}</li><li>npm next ${candidateVersion}</li><li>Node.js 22 / 24 / 26</li><li>MIT</li></ul>
-        <div class="candidate-note"><span>Published prerelease</span><p>The reviewed package is on <a href="${candidatePackage}">npm <code>next</code></a> at <strong>${candidateCommit.slice(0, 7)}</strong>. Stable promotion and numerical leadership claims remain blocked because the frozen evaluation did not pass every gate.</p></div>
+        <div class="candidate-note"><span>Published prerelease</span><p>The reviewed package is on <a href="${candidatePackage}">npm <code>next</code></a> at <strong>${candidateCommit.slice(0, 7)}</strong> and includes the exact benchmark artifacts below. npm <code>latest</code> is ${publishedVersion}.</p></div>
       </div>
       <div class="hero-rail" role="list" aria-label="Crawler execution boundary"><span role="listitem">01 normalize</span><span role="listitem">02 resolve</span><span role="listitem">03 respect</span><span role="listitem">04 record</span></div>
     </section>
@@ -750,7 +828,7 @@ const result = extractPageQuality(html, {
   failClosed: true,
   diagnostics: true
 });`, "javascript")}
-      <div class="callout warning"><strong>Exact scope</strong><p>The 511-page partition is observed development evidence because this project previously iterated against it; it is not untouched held-out proof and does not support a universal 0.90 claim. The native backend supports Windows, macOS, and glibc Linux on x64/ARM64, not Alpine/musl, 32-bit, or other operating systems.</p></div>
+      <div class="callout warning"><strong>Exact scope</strong><p>The 511-page partition is observed-development evidence because this project previously iterated against it; it is not untouched held-out proof. The published claim is the exact measured row - not a rounded 0.90 or universal ranking. The native backend supports Windows, macOS, and glibc Linux on x64/ARM64, not Alpine/musl, 32-bit, or other operating systems.</p></div>
       <div class="button-row"><a class="button primary" href="/benchmark/">Inspect every result</a><a class="button secondary" href="${repository}/blob/main/docs/QUALITY.md">Read the quality API</a></div>
     </section>
     <section class="section shell" aria-labelledby="adaptive-title">
@@ -2568,9 +2646,10 @@ function stackPage() {
 
 function benchmarkPage() {
   return `
-    <section class="page-hero shell"><p class="eyebrow">0.7.0 candidate development evidence · WCEB v1.0</p><h1>Two corpora. Four named profiles. Every raw row.</h1><p class="lede">These values describe observed development workloads, not a published release. The Node quality <code>balanced</code> path records ${qualityPrecision} precision, ${qualityRecall} recall, and ${qualityF1} F1 on 511 observed development pages, plus ${qualityDevelopmentPrecision} precision, ${qualityDevelopmentRecall} recall, and ${qualityDevelopmentF1} F1 on the 1,497-page WCEB development split.</p><div class="page-actions"><a class="button primary" href="#public-quality">Inspect the results</a><a class="button secondary" href="${repository}/blob/main/bench/results/wceb-quality-observed-0.7.0.json">Open raw JSON</a><a class="button secondary" href="${repository}/blob/main/docs/BENCHMARK.md">Read the method</a></div></section>
-    <section class="section shell" id="public-quality"><div class="section-head"><div><p class="eyebrow">Human-reviewed cached HTML</p><h2>Quality and admission are separate measurements.</h2></div><p>WCEB calls the 511-page partition <code>test</code>, but this project previously inspected it and iterated against its failures. We report it as observed development evidence, not untouched held-out proof. The 1,497-page partition is upstream development evidence. No row establishes universal 0.90 precision.</p></div><div class="table-wrap" tabindex="0" role="region" aria-label="WCEB extraction profile results"><table><thead><tr><th>Surface and corpus</th><th>Precision</th><th>Recall</th><th>F1</th><th>Required</th><th>Unwanted</th><th>Abstained</th></tr></thead><tbody><tr><td>Core structural · observed 511</td><td>${corePrecision}</td><td>${coreRecall}</td><td>${coreF1}</td><td>0.835584</td><td>0.178735</td><td>-</td></tr><tr><td>Quality balanced · observed 511</td><td><strong>${qualityPrecision}</strong></td><td><strong>${qualityRecall}</strong></td><td><strong>${qualityF1}</strong></td><td>${qualityRequiredRecall}</td><td>${qualityUnwanted}</td><td>-</td></tr><tr><td>Quality balanced · WCEB development 1,497</td><td>${qualityDevelopmentPrecision}</td><td>${qualityDevelopmentRecall}</td><td>${qualityDevelopmentF1}</td><td>${qualityDevelopmentRequired}</td><td>${qualityDevelopmentUnwanted}</td><td>-</td></tr><tr><td>Quality balanced + fail-closed · observed 511</td><td>${failClosedPrecision}</td><td>${failClosedRecall}</td><td>${failClosedF1}</td><td>${failClosedRequired}</td><td>${failClosedUnwanted}</td><td>${failClosedAbstentions}</td></tr></tbody></table></div><div class="callout warning"><strong>Native quality boundary</strong><p>The quality surface uses exact <code>trafilatura@0.2.0</code> and never silently falls back. Its prebuilt matrix covers Windows, macOS, and glibc Linux on x64/ARM64; Alpine/musl, 32-bit, and other operating systems are unsupported. Core and serverless remain isolated.</p></div></section>
-    <section class="section shell"><div class="section-head"><div><p class="eyebrow">Observed comparison</p><h2>Core, quality, and separately generated baselines.</h2></div><p>Under the same scorer on the observed 511 pages, Python trafilatura 2.2.0 records 0.890108 precision, 0.868258 recall, and 0.860042 F1; readability-lxml records 0.869408, 0.626326, and 0.656537. The Node quality path records ${qualityPrecision}, ${qualityRecall}, and ${qualityF1}. Baseline text was generated in a separate Python process, then evaluated by that shared scorer. Similar package names do not imply identical implementations or configurations.</p></div><div class="page-actions"><a class="button secondary" href="${repository}/blob/main/bench/results/extraction-comparison-0.7.0.json">Open comparison JSON</a><a class="button secondary" href="${repository}/blob/main/docs/EXTRACTION-COMPARISON.md">Read comparison scope</a></div></section>
+    <section class="page-hero shell"><p class="eyebrow">Published prerelease benchmark · ${candidateVersion} · WCEB v1.0</p><h1>${qualityPrecision} precision. ${qualityRecall} recall. ${qualityF1} macro F1.</h1><p class="lede">These exact metrics ship with the published npm <code>next</code> prerelease. They measure the Node quality <code>balanced</code> path on 511 observed-development pages. The broader 1,497-page WCEB development split records ${qualityDevelopmentPrecision} precision, ${qualityDevelopmentRecall} recall, and ${qualityDevelopmentF1} F1.</p><div class="page-actions"><a class="button primary" href="${benchmarkArtifactDownload}">Download benchmark JSON</a><a class="button secondary" href="${candidateRelease}">Open the prerelease</a><a class="button secondary" href="${repository}/blob/${candidateCommit}/docs/BENCHMARK.md">Read the method</a></div></section>
+    <section class="section shell proof-section"><div><p class="eyebrow">Immutable evidence receipt</p><h2>The npm artifact, signed tag, and downloadable JSON agree.</h2><p>The result is unchanged from source commit <code>${candidateCommit}</code>. Its JSON SHA-256 is <code>${benchmarkArtifactSha256}</code>; it pins WCEB revision <code>${wcebRevision}</code> and reports macro averages of page-level Unicode-word precision, recall, and F1. All 511 pages were accepted by this non-fail-closed profile.</p><div class="page-actions"><a class="button secondary" href="${benchmarkArtifactUrl}">Inspect tagged source</a><a class="button secondary" href="${candidateRelease}">Verify all release assets</a></div></div><div class="candidate-facts"><div><span>Release</span><strong>${candidateVersion}</strong></div><div><span>Source</span><strong>${candidateCommit.slice(0, 12)}</strong></div><div><span>WCEB revision</span><strong>${wcebRevision.slice(0, 12)}</strong></div><div><span>Backend</span><strong>trafilatura@0.2.0</strong></div></div></section>
+    <section class="section shell" id="public-quality"><div class="section-head"><div><p class="eyebrow">Human-reviewed cached HTML</p><h2>Quality and admission are separate measurements.</h2></div><p>WCEB calls the 511-page partition <code>test</code>, but this project previously inspected it and iterated against its failures. We report it as observed-development evidence, not untouched held-out proof. The 1,497-page partition is upstream development evidence. The published claim is each exact row, without rounding to 0.90 or generalizing it into a universal ranking.</p></div><div class="table-wrap" tabindex="0" role="region" aria-label="WCEB extraction profile results"><table><thead><tr><th>Surface and corpus</th><th>Precision</th><th>Recall</th><th>F1</th><th>Required</th><th>Unwanted</th><th>Abstained</th></tr></thead><tbody><tr><td>Core structural · observed 511</td><td>${corePrecision}</td><td>${coreRecall}</td><td>${coreF1}</td><td>0.835584</td><td>0.178735</td><td>-</td></tr><tr><td>Quality balanced · observed 511</td><td><strong>${qualityPrecision}</strong></td><td><strong>${qualityRecall}</strong></td><td><strong>${qualityF1}</strong></td><td>${qualityRequiredRecall}</td><td>${qualityUnwanted}</td><td>-</td></tr><tr><td>Quality balanced · WCEB development 1,497</td><td>${qualityDevelopmentPrecision}</td><td>${qualityDevelopmentRecall}</td><td>${qualityDevelopmentF1}</td><td>${qualityDevelopmentRequired}</td><td>${qualityDevelopmentUnwanted}</td><td>-</td></tr><tr><td>Quality balanced + fail-closed · observed 511</td><td>${failClosedPrecision}</td><td>${failClosedRecall}</td><td>${failClosedF1}</td><td>${failClosedRequired}</td><td>${failClosedUnwanted}</td><td>${failClosedAbstentions}</td></tr></tbody></table></div><div class="callout warning"><strong>Native quality boundary</strong><p>The quality surface delegates main-content extraction to exact <code>trafilatura@0.2.0</code> and never silently falls back. Cockroach Crawler adds validation, named profiles, diagnostics, fail-closed admission, and evidence metadata around that backend. Its prebuilt matrix covers Windows, macOS, and glibc Linux on x64/ARM64; Alpine/musl, 32-bit, and other operating systems are unsupported. Core and serverless remain isolated.</p></div></section>
+    <section class="section shell"><div class="section-head"><div><p class="eyebrow">Observed comparison</p><h2>Core, quality, and separately generated baselines.</h2></div><p>Under the same scorer on the observed 511 pages, Python trafilatura 2.2.0 records 0.890108 precision, 0.868258 recall, and 0.860042 F1; readability-lxml records 0.869408, 0.626326, and 0.656537. The Node quality path records ${qualityPrecision}, ${qualityRecall}, and ${qualityF1}. Baseline text was generated in a separate Python process, then evaluated by that shared scorer. The quality path itself is Trafilatura-backed; similar package names do not imply identical wrappers or configurations.</p></div><div class="page-actions"><a class="button secondary" href="${repository}/releases/download/v${candidateVersion}/extraction-comparison-0.7.0.json">Download comparison JSON</a><a class="button secondary" href="${repository}/blob/${candidateCommit}/docs/EXTRACTION-COMPARISON.md">Read comparison scope</a></div></section>
     <section class="section shell"><div class="section-head"><div><p class="eyebrow">Public-source conformance</p><h2>Policy and URL behavior have their own proof.</h2></div><p>These checks run independently of extraction quality and throughput.</p></div><div class="fit-grid"><article class="fit-yes"><span>Robots dispatch</span><h3>${robotsPassed}/${robotsCases} passed</h3><p>Adapted Google vectors exercise precedence, wildcards, anchors, groups, comments, and case behavior through the real HTTP dispatch path.</p></article><article class="fit-yes"><span>HTTP(S) canonicalization</span><h3>${wptPassed}/${wptCases} passed</h3><p>Applicable credential-free cases come from an exact, SHA-256-verified Web Platform Tests URL corpus revision.</p></article><article><span>Exact scope</span><h3>Source-pinned, not self-certified</h3><p>The result does not claim complete RFC, WHATWG, browser-engine, OCR, or hosted-network certification.</p></article></div></section>
     <section class="section shell"><div class="section-head"><div><p class="eyebrow">Four evidence tracks</p><h2>Do not mix unlike measurements.</h2></div><p>Extraction quality, fail-closed coverage, conformance pass rates, and local pages per second answer different questions.</p></div><div class="fit-grid"><article class="fit-yes"><span>Measured</span><h3>Cached-HTML extraction</h3><p>Human-reviewed precision, recall, F1, and snippet rates for exact engine/profile pairs.</p></article><article class="fit-yes"><span>Measured</span><h3>Fail-closed admission</h3><p>Quality metrics plus abstention count and reasons; 43 observed pages returned no admitted body.</p></article><article class="fit-yes"><span>Measured</span><h3>Public-vector conformance</h3><p>Named Google robots and WPT URL cases at exact source revisions and hashes.</p></article><article class="fit-yes"><span>Measured</span><h3>Local crawler regression</h3><p>Traversal and extraction across 120 deterministic loopback pages under one environment.</p></article></div></section>
     ${localBenchmarkPage()}
@@ -2774,12 +2853,12 @@ await locate("product-title", after, { selector: "h2.title" });
 
 function releasePage() {
   return `
-    <section class="page-hero shell release-hero"><p class="eyebrow">Published prerelease · ${candidateVersion}</p><h1>Test the complete 0.7 surface without moving stable.</h1><p class="lede">The reviewed npm <code>next</code> package adds a bounded Node-only quality surface backed by exact <code>trafilatura@0.2.0</code>, while keeping core and serverless exports isolated. npm <code>latest</code> remains ${publishedVersion}.</p><div class="page-actions"><a class="button primary" href="${candidatePackage}">Open npm prerelease</a><a class="button secondary" href="${candidateSource}">Inspect exact source</a><a class="button secondary" href="/benchmark/">Review development evidence</a></div></section>
+    <section class="page-hero shell release-hero"><p class="eyebrow">Published prerelease · ${candidateVersion}</p><h1>The measured Node quality path is ready to test.</h1><p class="lede">The reviewed npm <code>next</code> package publishes ${qualityPrecision} precision, ${qualityRecall} recall, and ${qualityF1} macro F1 on 511 observed-development WCEB pages. It uses exact <code>trafilatura@0.2.0</code> while keeping core and serverless exports isolated. npm <code>latest</code> is ${publishedVersion}.</p><div class="page-actions"><a class="button primary" href="${candidatePackage}">Open npm prerelease</a><a class="button secondary" href="${benchmarkArtifactDownload}">Download benchmark JSON</a><a class="button secondary" href="${candidateRelease}">Verify release assets</a></div></section>
     <section class="release-banner"><div class="shell"><span>Install reviewed npm next ${candidateVersion}</span><code>npm install cockroach-crawler@next</code><button type="button" class="copy-button" data-copy-value="npm install cockroach-crawler@next" aria-describedby="release-copy-status">Copy</button><span class="sr-only" id="release-copy-status" aria-live="polite"></span></div></section>
-    <section class="section shell"><div class="section-head"><div><p class="eyebrow">Evaluation outcome</p><h2>The frozen raw-DOM attempt did not pass.</h2></div><p>Attempt 003 violated five gates and improved precision in six of ten page types where eight were required. It remains negative development evidence and was not integrated into the prerelease.</p></div><div class="callout warning"><strong>No ranking claim</strong><p>The rejected result authorizes no algorithm integration, no stable promotion, no best-crawler statement, and no universal 0.90 claim. The prerelease publishes the separately reviewed product surface for opt-in evaluation.</p></div></section>
-    <section class="section shell"><div class="table-wrap" tabindex="0" role="region" aria-label="Release status table"><table><thead><tr><th>Publication item</th><th>Status</th></tr></thead><tbody><tr><td>npm stable</td><td>${publishedVersion} on <code>latest</code></td></tr><tr><td>npm prerelease</td><td><a href="${candidatePackage}">${candidateVersion}</a> on <code>next</code></td></tr><tr><td>Reviewed source</td><td><code>${candidateCommit.slice(0, 12)}</code></td></tr><tr><td>Frozen attempt 003</td><td>Rejected; five gate violations; not integrated</td></tr><tr><td>White-paper DOI</td><td><a href="${paperRecord}">${paperDoi}</a> · published</td></tr><tr><td>Stable promotion gate</td><td>Blocked until a later frozen candidate passes every declared gate and all release checks agree</td></tr></tbody></table></div></section>
-    <section class="section shell candidate-release"><div><p class="eyebrow">Reviewable architecture</p><h2>The candidate keeps every extraction path named.</h2><p>Core structural, quality balanced, and quality fail-closed paths stay separate. Engine, profile, abstention state, source fingerprint, and corpus status travel with each evidence artifact.</p><div class="callout warning"><strong>Native boundary</strong><p>The exact <code>trafilatura@0.2.0</code> backend targets Windows, macOS, and glibc Linux on its documented architectures. Alpine/musl, 32-bit, and other operating systems are unsupported; core and serverless stay isolated from the native import.</p></div></div><div class="candidate-facts"><div><span>Core</span><strong>No native import</strong></div><div><span>Quality</span><strong>Exact native backend</strong></div><div><span>Safety</span><strong>Explicit abstention</strong></div><div><span>Evidence</span><strong>Gate-controlled</strong></div></div></section>
-    <section class="section shell proof-section"><div><p class="eyebrow">Candidate proof</p><h2>Verify source, browser, audit, MCP, Docker, and tarball.</h2><p>The complete gate checks the candidate artifact but cannot publish it or override a failed frozen evaluation.</p></div>${codeBlock("release-check", "terminal", "npm ci --ignore-scripts\nnpm run release:check\nnpm audit signatures")}</section>
+    <section class="section shell"><div class="section-head"><div><p class="eyebrow">Published benchmark</p><h2>Exact values, exact corpus, downloadable evidence.</h2></div><p>The release claim is the measured row below. It is not rounded into a 0.90 precision claim and is not generalized into a universal ranking.</p></div><div class="candidate-facts"><div><span>Observed pages</span><strong>511</strong></div><div><span>Precision</span><strong>${qualityPrecision}</strong></div><div><span>Recall</span><strong>${qualityRecall}</strong></div><div><span>Macro F1</span><strong>${qualityF1}</strong></div></div><div class="callout warning"><strong>Observed-development scope</strong><p>The upstream partition is named <code>test</code>, but this project previously inspected it and iterated against its failures. The exact result is valid development evidence, not untouched held-out confirmation. The release JSON pins source commit <code>${candidateCommit}</code>, WCEB revision <code>${wcebRevision}</code>, and artifact SHA-256 <code>${benchmarkArtifactSha256}</code>.</p></div><div class="page-actions"><a class="button primary" href="${benchmarkArtifactDownload}">Download observed result</a><a class="button secondary" href="${repository}/releases/download/v${candidateVersion}/SHA256SUMS.txt">Download checksums</a><a class="button secondary" href="/benchmark/">Read the full benchmark</a></div></section>
+    <section class="section shell"><div class="table-wrap" tabindex="0" role="region" aria-label="Release status table"><table><thead><tr><th>Publication item</th><th>Status</th></tr></thead><tbody><tr><td>npm stable</td><td>${publishedVersion} on <code>latest</code></td></tr><tr><td>npm prerelease</td><td><a href="${candidatePackage}">${candidateVersion}</a> on <code>next</code></td></tr><tr><td>Reviewed source</td><td><code>${candidateCommit.slice(0, 12)}</code></td></tr><tr><td>Quality benchmark</td><td>${qualityPrecision} precision · ${qualityRecall} recall · ${qualityF1} macro F1 · 511 observed-development pages</td></tr><tr><td>Release assets</td><td><a href="${candidateRelease}">Four benchmark JSON files and SHA256SUMS</a></td></tr><tr><td>White-paper DOI</td><td><a href="${paperRecord}">${paperDoi}</a> · published</td></tr></tbody></table></div></section>
+    <section class="section shell candidate-release"><div><p class="eyebrow">Reviewable architecture</p><h2>The candidate keeps every extraction path named.</h2><p>Core structural, quality balanced, and quality fail-closed paths stay separate. Engine, profile, abstention state, source fingerprint, and corpus status travel with each evidence artifact.</p><div class="callout warning"><strong>Native boundary</strong><p>The exact <code>trafilatura@0.2.0</code> backend targets Windows, macOS, and glibc Linux on its documented architectures. Alpine/musl, 32-bit, and other operating systems are unsupported; core and serverless stay isolated from the native import.</p></div></div><div class="candidate-facts"><div><span>Core</span><strong>No native import</strong></div><div><span>Quality</span><strong>Exact native backend</strong></div><div><span>Safety</span><strong>Explicit abstention</strong></div><div><span>Evidence</span><strong>Source-pinned</strong></div></div></section>
+    <section class="section shell proof-section"><div><p class="eyebrow">Candidate proof</p><h2>Verify source, browser, audit, MCP, Docker, and tarball.</h2><p>The complete gate checks the candidate artifact while the release downloads make the benchmark inputs and digests independently inspectable.</p></div>${codeBlock("release-check", "terminal", "npm ci --ignore-scripts\nnpm run release:check\nnpm audit signatures")}</section>
     <section class="section shell card-grid"><article><p class="eyebrow">Upgrade</p><h2>Adopt features incrementally.</h2><p>Existing crawl calls continue to work. Add traversal, cache, browser artifacts, extractors, MCP, or Docker only where the application needs them.</p></article><article><p class="eyebrow">Contribute</p><h2>Bring a real web fixture.</h2><p>Open an issue with a reproducible page, expected record, Node version, and the smallest configuration that demonstrates the improvement.</p><a class="text-link" href="${repository}/issues">Open an issue →</a></article></section>`;
 }
 
@@ -2840,7 +2919,7 @@ Cockroach Crawler is an open-source Node.js web toolkit for AI agents, RAG pipel
 
 The package crawls static and rendered pages and emits LLM-ready Markdown, JSON, or JSONL with canonical URLs, redirect history, content hashes, retrieval metadata, failures, warnings, and provenance. It supports BFS, DFS, best-first, and adaptive traversal; robots and sitemap discovery; validated redirects; persistent cache; searchable fetch-validated site maps; JavaScript rendering; screenshots; PDFs; CSS, XPath, and restricted regex extraction; and optional host-model extraction with JSON Schema validation.
 
-The ${candidateVersion} prerelease adds an opt-in Node-only quality surface backed by exact trafilatura@0.2.0. Historical balanced results are development evidence because the project inspected and iterated against the corpus; they are not fresh confirmation and do not support a universal 0.90 claim.
+The published ${candidateVersion} prerelease adds an opt-in Node-only quality surface backed by exact trafilatura@0.2.0. On 511 observed-development WCEB v1.0 pages, quality balanced records ${qualityPrecision} precision, ${qualityRecall} recall, and ${qualityF1} macro F1. This exact result is included in the immutable npm artifact and attached to the GitHub prerelease. The result JSON SHA-256 is ${benchmarkArtifactSha256}; the WCEB revision is ${wcebRevision}; scoring uses macro averages of page-level Unicode-word precision, recall, and F1. The pages influenced development, so the row is not fresh held-out confirmation and is not rounded into a universal 0.90 claim.
 
 The separately frozen raw-DOM attempt 003 was rejected: precision 0.860252, recall 0.884690, F1 0.844419, required-snippet recall 0.758829, and unwanted inclusion 0.092846. It violated five gates and improved precision in 6 of 10 page types where 8 were required. It authorizes no integration, release, ranking, or best-crawler statement.
 
@@ -2858,6 +2937,8 @@ Public conformance evidence records ${robotsPassed}/${robotsCases} adapted Googl
 
 - Complete documentation and searchable 50-capability index: ${siteUrl}/docs/
 - Extraction benchmark and scope: ${siteUrl}/benchmark/
+- Download the published 511-page result: ${benchmarkArtifactDownload}
+- Verify the ${candidateVersion} release assets: ${candidateRelease}
 - Extraction engineering history: ${siteUrl}/blog/we-benchmarked-ourselves-and-lost/
 - Why CSS selectors break: ${siteUrl}/blog/why-css-selectors-break/
 - AI crawler comparison: ${siteUrl}/compare/

@@ -125,7 +125,7 @@ Cockroach Crawler is designed for a common agent integration: an explicit read r
 
 ## Try the published prerelease
 
-From npm `next` while `latest` remains 0.6.1:
+From npm `next` while `latest` is 0.6.2:
 
 ```bash
 npm install --global cockroach-crawler@0.7.0-rc.1

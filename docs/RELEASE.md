@@ -5,7 +5,7 @@ containing unreviewed changes or credentials. Release `0.7.0` requires
 quality-backend, benchmark-integrity, provider/security, packed-consumer, and
 exact-artifact approval on the reviewed release commit.
 
-> **Stable hold (8 August 2026):** npm `latest` remains 0.6.1, no `v0.7.0` tag
+> **Stable hold (9 August 2026):** npm `latest` is 0.6.2, no `v0.7.0` tag
 > or stable package exists, and frozen raw-DOM attempt 003 was rejected after
 > five gate violations. Do not execute the stable publication section until a
 > later immutable candidate passes every declared benchmark gate.
@@ -14,6 +14,25 @@ The separately reviewed `0.7.0-rc.1` package may be published only with the
 npm `next` tag. It exposes the already reviewed 0.7 source for opt-in product
 evaluation while preserving every benchmark artifact and limitation. It must
 not create or move `latest`, create `v0.7.0`, or claim benchmark leadership.
+
+## Published prerelease benchmark
+
+`cockroach-crawler@0.7.0-rc.1` is already published on npm `next` and contains
+the exact source-pinned observed-development artifact below:
+
+| Path | Pages | Precision | Recall | Macro F1 |
+| --- | ---: | ---: | ---: | ---: |
+| Quality `balanced` | 511 | **0.894101** | **0.926022** | **0.890524** |
+
+The receipt is
+`bench/results/wceb-quality-observed-0.7.0.json` at source commit
+`62f270636a019c9bcc617a13fe254640bcd06925`, SHA-256
+`a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535`.
+It pins WCEB v1.0 revision `62ff86d12ea72c80c31fb810ff1a724fad687bea`
+and uses the exact `trafilatura@0.2.0` quality backend. The 511 pages influenced
+development, so this is not untouched held-out confirmation. Publishing this
+exact scoped result does not require a 0.90 threshold; it requires retaining
+the measured values, provenance, and limitations without rounding or ranking.
 
 ## npm trusted publishing: the one thing that will bite you
 

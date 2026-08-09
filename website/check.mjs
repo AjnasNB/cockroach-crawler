@@ -119,6 +119,10 @@ if (sitemapLocations.filter((location) => /\/docs\/capabilities\/[^/]+\/[^/]+\/$
 }
 const searchIndex = JSON.parse(await readFile(join(dist, "search.json"), "utf8"));
 if (!Array.isArray(searchIndex) || searchIndex.length !== sitemapLocations.length) errors.push("search.json must index every public route");
+const benchmarkSearch = searchIndex.find((entry) => entry.url === "https://cockroachcrawler.com/benchmark/");
+if (!benchmarkSearch || !benchmarkSearch.description.includes("0.894101 precision") || !benchmarkSearch.description.includes("0.926022 recall") || !benchmarkSearch.description.includes("0.890524 macro F1")) {
+  errors.push("search.json must publish the exact 0.7.0-rc.1 benchmark in the benchmark route description");
+}
 const ecosystemSearch = searchIndex.find((entry) => entry.url === "https://cockroachcrawler.com/ecosystem/");
 if (!ecosystemSearch || ecosystemSearch.updated !== "2026-08-09" || !ecosystemSearch.description.includes("Qarinah")) {
   errors.push("search.json must index the dated source-linked ecosystem article");
@@ -143,8 +147,11 @@ if (!llms.includes("Complete JavaScript and CLI reference: https://cockroachcraw
 for (const phrase of ["searchable fetch-validated site maps", "restricted regex extraction", "bounded process-local asynchronous jobs", "official Registry metadata"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must document ${phrase}`);
 }
-for (const phrase of ["npm latest is 0.6.1", "0.7.0-rc.1 prerelease", "raw-DOM attempt 003 was rejected", "precision 0.860252", "five gates", "no integration, release, ranking, or best-crawler statement"]) {
+for (const phrase of ["npm latest is 0.6.2", "0.7.0-rc.1 prerelease", "raw-DOM attempt 003 was rejected", "precision 0.860252", "five gates", "no integration, release, ranking, or best-crawler statement"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must preserve publication status: ${phrase}`);
+}
+for (const phrase of ["0.894101 precision", "0.926022 recall", "0.890524 macro F1", "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535", "Download the published 511-page result"]) {
+  if (!llms.includes(phrase)) errors.push(`llms.txt must publish the exact RC benchmark: ${phrase}`);
 }
 for (const phrase of ["Cockroach Browser uses playwright-core", "Cockroach Crawler's opt-in quality option is Trafilatura-backed", "This is a category map, not a ranking"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must preserve the ecosystem boundary: ${phrase}`);
@@ -214,12 +221,14 @@ for (const [route, proof] of [
 const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
 if (!releaseHtml.includes("npm install cockroach-crawler@next")) errors.push("release page must install the reviewed npm-next prerelease");
 if (!releaseHtml.includes("Published prerelease") || !releaseHtml.includes("Install reviewed npm next 0.7.0-rc.1")) errors.push("release page must separate stable and prerelease status");
-if (!releaseHtml.includes("five gate violations") || !releaseHtml.includes("10.5281/zenodo.21851008") || !releaseHtml.includes("published")) errors.push("release page must preserve the failed gate and published DOI status");
+for (const proof of ["0.894101", "0.926022", "0.890524", "511 observed-development", "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535", "Download benchmark JSON", "SHA256SUMS", "10.5281/zenodo.21851008"]) {
+  if (!releaseHtml.includes(proof)) errors.push(`release page must publish the exact prerelease benchmark: ${proof}`);
+}
 if (!releaseHtml.includes("trafilatura@0.2.0") || !releaseHtml.includes("Alpine/musl")) errors.push("release page must document the exact native dependency and unsupported platform boundary");
 if (releaseHtml.includes("Release · 0.3.0")) errors.push("release page must not advertise 0.3.0 as current");
 const benchmarkHtml = await readFile(join(dist, "benchmark", "index.html"), "utf8");
 for (const proof of [
-  "observed development evidence",
+  "observed-development evidence",
   "0.894101",
   "0.926022",
   "0.890524",
@@ -233,7 +242,12 @@ for (const proof of [
   "0.104207",
   "43",
   "wceb-quality-observed-0.7.0.json",
-  "trafilatura@0.2.0"
+  "trafilatura@0.2.0",
+  "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535",
+  '"@type":"Dataset"',
+  '"value":0.894101',
+  '"value":0.926022',
+  '"value":0.890524'
 ]) {
   if (!benchmarkHtml.includes(proof)) errors.push(`benchmark page is missing scoped development evidence: ${proof}`);
 }
@@ -305,12 +319,12 @@ for (const proof of [
   "0.860252",
   "five declared gates",
   "10.5281/zenodo.21851008",
-  "npm <code>latest</code> remains 0.6.1"
+  "npm <code>latest</code> remains 0.6.2"
 ]) {
   if (!paperHtml.includes(proof)) errors.push(`paper page is missing research-publication proof: ${proof}`);
 }
 const homeHtml = await readFile(join(dist, "index.html"), "utf8");
-for (const proof of ["Reach the web.", "npm latest 0.6.1", "npm next 0.7.0-rc.1", "62f2706", '"softwareVersion":"0.6.1"', '"identifier":"62f270636a019c9bcc617a13fe254640bcd06925"']) {
+for (const proof of ["Reach the web.", "npm latest 0.6.2", "npm next 0.7.0-rc.1", "62f2706", '"softwareVersion":"0.6.2"', '"identifier":"62f270636a019c9bcc617a13fe254640bcd06925"']) {
   if (!homeHtml.includes(proof)) errors.push(`home page is missing centered publication proof: ${proof}`);
 }
 for (const recognition of [
