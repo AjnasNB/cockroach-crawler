@@ -255,7 +255,10 @@ for (const proof of [
   "0.860252",
   "Rejected after five gate violations",
   "different 750-document segment corpus and scorer",
-  "not an independent extractor beating Trafilatura"
+  "not an independent extractor beating Trafilatura",
+  'href="https://cockroachbrowser.com/alternatives/#puppeteer-comparison"',
+  "Read the source-linked Browser and Crawler vs Puppeteer layer comparison.",
+  '"citation":"https://cockroachbrowser.com/alternatives/#puppeteer-comparison"'
 ]) {
   if (!compareHtml.includes(proof)) errors.push(`comparison page is missing category or evidence boundary: ${proof}`);
 }

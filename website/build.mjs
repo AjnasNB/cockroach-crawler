@@ -24,6 +24,7 @@ const scrapingBeeDocs = "https://www.scrapingbee.com/documentation/";
 const qarinahSite = "https://qarinah.io";
 const qarinahRepository = "https://github.com/AjnasNB/qarinah";
 const cockroachBrowserSite = "https://cockroachbrowser.com";
+const cockroachBrowserPuppeteerComparison = `${cockroachBrowserSite}/alternatives/#puppeteer-comparison`;
 const cockroachBrowserRepository = "https://github.com/AjnasNB/cockroach-browser";
 const browserUseRepository = "https://github.com/browser-use/browser-use";
 const stagehandSite = "https://www.stagehand.dev/";
@@ -285,7 +286,8 @@ const pages = [
     description: "Compare Cockroach Crawler with Firecrawl, Crawl4AI, Crawlee, Scrapy, Trafilatura, Playwright, Puppeteer, Apify, and ScrapingBee by product category and evidence boundary.",
     body: comparePage(),
     schema: comparisonSchema(),
-    ogType: "article"
+    ogType: "article",
+    lastModified: "2026-08-09"
   },
   {
     slug: "ecosystem",
@@ -456,10 +458,11 @@ function comparisonSchema() {
         headline: "Cockroach Crawler alternatives by product category",
         description: "A factual comparison of crawler frameworks, main-content extractors, browser-automation primitives, managed web-data APIs, and Cockroach Crawler's governed evidence surface.",
         datePublished: "2026-07-24",
-        dateModified: "2026-08-08",
+        dateModified: "2026-08-09",
         author: { "@type": "Person", name: "Ajnas N B" },
         publisher: { "@type": "Organization", name: "Cockroach Crawler", url: siteUrl },
         mainEntityOfPage: `${siteUrl}/compare/`,
+        citation: cockroachBrowserPuppeteerComparison,
         about: [
           { "@type": "SoftwareApplication", name: "Cockroach Crawler", url: siteUrl },
           { "@type": "SoftwareApplication", name: "Firecrawl", url: firecrawlRepository },
@@ -2387,7 +2390,7 @@ function comparePage() {
             <tr><th scope="row"><a href="${crawleeRepository}">Crawlee</a></th><td>Programmable crawler framework</td><td>You want queues, routers, sessions, storage, proxies, and HTTP/browser engines to build a custom system</td><td>Lower-level and more extensible; application code defines the final evidence contract</td></tr>
             <tr><th scope="row"><a href="${scrapyRepository}">Scrapy</a></th><td>Python crawler framework</td><td>High-volume asynchronous Python crawling and mature middleware, pipelines, scheduling, and extensions are central</td><td>Framework rather than an agent-specific normalized evidence product</td></tr>
             <tr><th scope="row"><a href="${trafilaturaDocs}">Trafilatura</a></th><td>Main-content extractor</td><td>Python crawling/discovery and high-quality text/metadata extraction are the primary job</td><td>Cockroach's opt-in Node quality surface is Trafilatura-backed; it is not an independent extractor beating Trafilatura</td></tr>
-            <tr><th scope="row"><a href="${playwrightRepository}">Playwright</a> / <a href="${puppeteerRepository}">Puppeteer</a></th><td>Browser-automation primitives</td><td>You need direct page, browser, testing, or automation control</td><td>Not like-for-like extraction products; Cockroach composes a bounded crawler above optional browser automation</td></tr>
+            <tr><th scope="row"><a href="${playwrightRepository}">Playwright</a> / <a href="${puppeteerRepository}">Puppeteer</a></th><td>Browser-automation primitives</td><td>You need direct page, browser, testing, or automation control</td><td>Not like-for-like extraction products; Cockroach composes a bounded crawler above optional browser automation. <a href="${cockroachBrowserPuppeteerComparison}">Read the source-linked Browser and Crawler vs Puppeteer layer comparison.</a></td></tr>
             <tr><th scope="row"><a href="${apifyDocs}">Apify</a></th><td>Managed actors and data platform</td><td>Hosted actors, schedules, datasets, proxy infrastructure, and operational deployment are the job</td><td>Cockroach does not claim distributed cloud or marketplace scale</td></tr>
             <tr><th scope="row"><a href="${scrapingBeeDocs}">ScrapingBee</a></th><td>Managed scraping API</td><td>JavaScript rendering, proxy rotation, and anti-block infrastructure should be externally operated</td><td>Hosted acquisition service rather than a local evidence and policy runtime</td></tr>
           </tbody>
