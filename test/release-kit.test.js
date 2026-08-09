@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -7,6 +7,37 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+function extractDeployReleaseGate(workflow) {
+  const match = /node --input-type=module <<'NODE'\r?\n([\s\S]*?)\r?\n {10}NODE/.exec(workflow);
+  assert.ok(match, "deploy-site must contain the stable-release JavaScript gate");
+  return match[1].replace(/^ {10}/gm, "");
+}
+
+function runDeployReleaseGate(source, { targetSha, expectedSha, status, headSha }) {
+  const assets = [
+    "SHA256SUMS.txt",
+    "extraction-comparison-0.7.0.json",
+    "wceb-quality-observed-0.7.0.json"
+  ].map((name) => ({ name, state: "uploaded", size: 1 }));
+  return spawnSync(process.execPath, ["--input-type=module"], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      RELEASE_JSON: JSON.stringify({ tag_name: "v0.7.0", draft: false, prerelease: false, assets }),
+      REF_JSON: JSON.stringify({ object: { type: "commit", sha: targetSha } }),
+      TAG_JSON: "null",
+      COMPARE_JSON: JSON.stringify({
+        status,
+        base_commit: { sha: targetSha },
+        head_commit: headSha === null ? null : { sha: headSha }
+      }),
+      EXPECTED_VERSION: "0.7.0",
+      EXPECTED_SHA: expectedSha
+    },
+    input: source
+  });
+}
 
 test("the packed feature inventory stays complete and release-honest", async () => {
   const manifest = JSON.parse(await readFile(path.join(ROOT, "package.json"), "utf8"));
@@ -225,7 +256,8 @@ test("release workflows retry transient registry propagation and still fail clos
   assert.match(deployWorkflow, /compare\/\$\{target_sha\}\.\.\.\$\{GITHUB_SHA\}/);
   assert.match(deployWorkflow, /\['identical', 'ahead'\]\.includes\(compare\?\.status\)/);
   assert.match(deployWorkflow, /compare\?\.base_commit\?\.sha !== targetSha/);
-  assert.match(deployWorkflow, /compare\?\.head_commit\?\.sha !== process\.env\.EXPECTED_SHA/);
+  assert.match(deployWorkflow, /compare\.status === 'identical' && targetSha !== process\.env\.EXPECTED_SHA/);
+  assert.match(deployWorkflow, /compare\.status === 'ahead' && compare\?\.head_commit\?\.sha !== process\.env\.EXPECTED_SHA/);
   assert.match(deployWorkflow, /timeout-minutes:\s*60/);
   for (const asset of ["SHA256SUMS.txt", "extraction-comparison-0.7.0.json", "wceb-quality-observed-0.7.0.json"]) {
     assert.match(deployWorkflow, new RegExp(asset.replaceAll(".", "\\.")));
@@ -241,6 +273,53 @@ test("release workflows retry transient registry propagation and still fail clos
   assert.match(deployWorkflow, /persist-credentials:\s*false/);
   assert.match(deployWorkflow, /cloudflare\/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd/);
   assert.match(publishWorkflow, /default:\s*0\.7\.0/);
+});
+
+test("deploy release gate accepts an exact tag or an ancestor tag, and nothing else", async () => {
+  const workflow = await readFile(path.join(ROOT, ".github", "workflows", "deploy-site.yml"), "utf8");
+  const gate = extractDeployReleaseGate(workflow);
+  const exactSha = "a".repeat(40);
+  const ancestorSha = "b".repeat(40);
+
+  const identical = runDeployReleaseGate(gate, {
+    targetSha: exactSha,
+    expectedSha: exactSha,
+    status: "identical",
+    headSha: null
+  });
+  assert.equal(identical.status, 0, identical.stderr);
+
+  const ahead = runDeployReleaseGate(gate, {
+    targetSha: ancestorSha,
+    expectedSha: exactSha,
+    status: "ahead",
+    headSha: exactSha
+  });
+  assert.equal(ahead.status, 0, ahead.stderr);
+
+  const mismatchedIdentical = runDeployReleaseGate(gate, {
+    targetSha: ancestorSha,
+    expectedSha: exactSha,
+    status: "identical",
+    headSha: null
+  });
+  assert.notEqual(mismatchedIdentical.status, 0, "an identical comparison must bind the tag target to GITHUB_SHA");
+
+  const behind = runDeployReleaseGate(gate, {
+    targetSha: ancestorSha,
+    expectedSha: exactSha,
+    status: "behind",
+    headSha: exactSha
+  });
+  assert.notEqual(behind.status, 0, "a tag newer than the deployment commit must be rejected");
+
+  const wrongAheadHead = runDeployReleaseGate(gate, {
+    targetSha: ancestorSha,
+    expectedSha: exactSha,
+    status: "ahead",
+    headSha: "c".repeat(40)
+  });
+  assert.notEqual(wrongAheadHead.status, 0, "the ahead comparison must end at GITHUB_SHA");
 });
 
 test("publication validation accepts Git-compatible CRLF checkouts without weakening hashes", async () => {
