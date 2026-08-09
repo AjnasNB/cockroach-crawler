@@ -1,6 +1,6 @@
 # Read-only source adapters
 
-The `0.7.0` source candidate includes the capability-aware registry, ordered source routing, and optional read-only reach providers. The npm `latest` tag remains `0.6.1`; review the exact candidate commit before importing candidate-only surfaces.
+The `0.7.0` source candidate includes the capability-aware registry, ordered source routing, and optional read-only reach providers. The npm `latest` tag is `0.6.2`; review the exact candidate commit before importing candidate-only surfaces.
 
 Normalized records follow the published JSON Schema at
 `cockroach-crawler/schemas/source-record.json`. Every required field is shared
@@ -8,7 +8,7 @@ across providers; `metadata` is intentionally provider-specific and consumers
 must feature-detect its keys.
 
 ```bash
-npm install cockroach-crawler@0.6.1
+npm install cockroach-crawler@0.6.2
 npx cockroach-sources doctor --json
 npx cockroach-sources search github "topic:web-crawler language:javascript" --max-results 5 --json
 npx cockroach-sources read youtube "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --json

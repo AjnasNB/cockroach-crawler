@@ -2015,6 +2015,11 @@ code {
   margin: 0;
 }
 
+.section p code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .table-wrap {
   max-width: 100%;
   overflow-x: auto;

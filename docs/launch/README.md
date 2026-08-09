@@ -2,7 +2,7 @@
 
 Last verified: 2026-08-08.
 
-> **Prerelease boundary:** npm `latest` is 0.6.1 and reviewed `0.7.0-rc.1` is
+> **Prerelease boundary:** npm `latest` is 0.6.2 and reviewed `0.7.0-rc.1` is
 > published on npm `next`. Frozen raw-DOM attempt 003 failed five gates. Use
 > this kit only for disclosed prerelease discussion; do not claim stable 0.7,
 > best crawler, or universal 0.90 precision.
@@ -32,7 +32,7 @@ Run `cockroach-reach setup` without `--apply` to inspect an optional-provider pl
 
 ## Launch order
 
-1. Verify npm `next` resolves to `0.7.0-rc.1`, its integrity and provenance match, and `latest` remains `0.6.1`.
+1. Verify npm `next` resolves to `0.7.0-rc.1`, its integrity and provenance match, and `latest` resolves to `0.6.2`.
 2. Run the provider doctor and bounded crawl from a clean install.
 3. Confirm the website, media, captions, GitHub social card, and every launch link.
 4. Publish one personally written Show HN submission while the maintainer can answer questions.
@@ -53,4 +53,4 @@ Run `cockroach-reach setup` without `--apply` to inspect an optional-provider pl
 - [Claims checklist](CLAIMS-CHECKLIST.md)
 - [Contributor issues](CONTRIBUTOR-ISSUES.md)
 
-The current npm stable is `0.6.1`. The `0.7.0-rc.1` launch assets are prerelease drafts that must preserve the stated evidence limits.
+The current npm stable is `0.6.2`. The `0.7.0-rc.1` launch assets are prerelease drafts that must preserve the stated evidence limits.
