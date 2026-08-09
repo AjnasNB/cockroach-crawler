@@ -108,6 +108,12 @@ import {
   type BrowserArtifactOptions
 } from "cockroach-crawler/browser";
 import {
+  browserAutomationCapabilityReport,
+  createBrowserAutomationAdapter,
+  type BrowserAutomationBackend,
+  type BrowserAutomationCapabilityReport
+} from "cockroach-crawler/browser-automation";
+import {
   createEscalationRouter,
   createProxyGatewayProvider
 } from "cockroach-crawler/providers";
@@ -209,6 +215,19 @@ extractWithRegex("Invoice 42", {
 const artifacts: BrowserArtifactOptions = { screenshot: true, pdf: true };
 void artifacts;
 normalizeScrollOptions(true).maxSteps satisfies number;
+const automationBackend: BrowserAutomationBackend = {
+  createSession: async () => ({ id: "session-1" }),
+  act: async () => ({ ok: true }),
+  closeSession: async () => undefined
+};
+const automation = createBrowserAutomationAdapter({
+  backend: automationBackend,
+  allowedActions: ["snapshot"],
+  allowedEffects: ["read"]
+});
+automation.capabilityReport() satisfies BrowserAutomationCapabilityReport;
+browserAutomationCapabilityReport().puppeteerApiCompatible satisfies false;
+void automation;
 const escalation = createEscalationRouter({
   providers: [{ id: "direct", execute: async () => ({ status: 200 }) }]
 });
@@ -263,7 +282,7 @@ void page;
   await exec(process.execPath, [
     "--input-type=module",
     "--eval",
-    "const root = await import('cockroach-crawler'); const agent = await import('cockroach-crawler/agent'); const sources = await import('cockroach-crawler/sources'); const router = await import('cockroach-crawler/source-router'); const external = await import('cockroach-crawler/external-sources'); const browserHost = await import('cockroach-crawler/browser-host'); const conformance = await import('cockroach-crawler/source-conformance'); const serverless = await import('cockroach-crawler/serverless'); const strategies = await import('cockroach-crawler/strategies'); const cache = await import('cockroach-crawler/cache'); const documents = await import('cockroach-crawler/documents'); const extractors = await import('cockroach-crawler/extractors'); const browser = await import('cockroach-crawler/browser'); const providers = await import('cockroach-crawler/providers'); const mcp = await import('cockroach-crawler/mcp'); const server = await import('cockroach-crawler/server'); const jobs = await import('cockroach-crawler/jobs'); const quality = await import('cockroach-crawler/quality'); if (typeof root.crawl !== 'function' || typeof root.mapSite !== 'function' || typeof root.extractStructured !== 'function' || typeof root.resolveUrlTarget !== 'function' || typeof agent.createCockroachCrawlerTool !== 'function' || typeof sources.createSourceRegistry !== 'function' || typeof router.createSourceRouter !== 'function' || typeof external.createExternalSourceProviders !== 'function' || typeof browserHost.createBrowserHost !== 'function' || typeof conformance.runSourceProviderConformance !== 'function' || typeof serverless.createServerlessCrawler !== 'function' || typeof strategies.createTraversalQueue !== 'function' || typeof cache.FileCrawlCache !== 'function' || typeof documents.parsePdf !== 'function' || typeof extractors.extractWithXPath !== 'function' || typeof extractors.extractWithRegex !== 'function' || typeof browser.capturePageArtifacts !== 'function' || typeof providers.createEscalationRouter !== 'function' || typeof providers.createProxyGatewayProvider !== 'function' || typeof mcp.createCockroachMcpServer !== 'function' || typeof server.createCrawlerApiServer !== 'function' || typeof jobs.createBoundedJobQueue !== 'function' || typeof quality.extractPageQuality !== 'function') process.exit(1);"
+    "const root = await import('cockroach-crawler'); const agent = await import('cockroach-crawler/agent'); const sources = await import('cockroach-crawler/sources'); const router = await import('cockroach-crawler/source-router'); const external = await import('cockroach-crawler/external-sources'); const browserHost = await import('cockroach-crawler/browser-host'); const browserAutomation = await import('cockroach-crawler/browser-automation'); const conformance = await import('cockroach-crawler/source-conformance'); const serverless = await import('cockroach-crawler/serverless'); const strategies = await import('cockroach-crawler/strategies'); const cache = await import('cockroach-crawler/cache'); const documents = await import('cockroach-crawler/documents'); const extractors = await import('cockroach-crawler/extractors'); const browser = await import('cockroach-crawler/browser'); const providers = await import('cockroach-crawler/providers'); const mcp = await import('cockroach-crawler/mcp'); const server = await import('cockroach-crawler/server'); const jobs = await import('cockroach-crawler/jobs'); const quality = await import('cockroach-crawler/quality'); if (typeof root.crawl !== 'function' || typeof root.mapSite !== 'function' || typeof root.extractStructured !== 'function' || typeof root.resolveUrlTarget !== 'function' || typeof agent.createCockroachCrawlerTool !== 'function' || typeof sources.createSourceRegistry !== 'function' || typeof router.createSourceRouter !== 'function' || typeof external.createExternalSourceProviders !== 'function' || typeof browserHost.createBrowserHost !== 'function' || typeof browserAutomation.createBrowserAutomationAdapter !== 'function' || typeof conformance.runSourceProviderConformance !== 'function' || typeof serverless.createServerlessCrawler !== 'function' || typeof strategies.createTraversalQueue !== 'function' || typeof cache.FileCrawlCache !== 'function' || typeof documents.parsePdf !== 'function' || typeof extractors.extractWithXPath !== 'function' || typeof extractors.extractWithRegex !== 'function' || typeof browser.capturePageArtifacts !== 'function' || typeof providers.createEscalationRouter !== 'function' || typeof providers.createProxyGatewayProvider !== 'function' || typeof mcp.createCockroachMcpServer !== 'function' || typeof server.createCrawlerApiServer !== 'function' || typeof jobs.createBoundedJobQueue !== 'function' || typeof quality.extractPageQuality !== 'function') process.exit(1);"
   ], { cwd: temp, windowsHide: true, maxBuffer: 4 * 1024 * 1024 });
   const installedCli = path.join(temp, "node_modules", "cockroach-crawler", "bin", "cockroach-crawl.js");
   const { stdout: versionOutput } = await exec(process.execPath, [installedCli, "--version"], {

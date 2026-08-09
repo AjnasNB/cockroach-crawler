@@ -30,10 +30,25 @@ types, and documentation ship together.
 | Named request identity profiles | Stable `0.6.x` | Coherent declared user agent, client hints, locale, and viewport across HTTP and browser tiers |
 | Access-challenge detection | Stable `0.6.x` | Vendor and kind reported as a first-class outcome; deny-by-default policy |
 | Node quality extraction | `0.7.0` candidate | Separate `cockroach-crawler/quality` export, exact `trafilatura@0.2.0`, named profiles, bounded validation, and optional fail-closed abstention; no silent core fallback |
+| Governed browser automation bridge | Foundation | Separate `cockroach-crawler/browser-automation` export; creator-owned origin, action, effect, policy, and session limits around an injected trusted backend; not Puppeteer API compatible |
 
 `mapSite` is deliberately a fetch-validated map. Entries identify pages that
 passed transport and content policy; it does not claim the completeness of a
 search-engine index.
+
+## Browser automation compatibility baseline
+
+The crawler does not absorb a general browser-control library into its core.
+Cockroach Crawler owns crawl acquisition, scheduling, extraction, and normalized
+evidence. Cockroach Browser owns separately installed, stateful interactive
+Chromium sessions and browser receipts. The foundation adapter connects those
+responsibilities through only `createSession`, `act`, and `closeSession`.
+
+The machine-readable Puppeteer 25.5.0 baseline covers all 436 exported class
+members. It records `supported`, `partial`, `missing`, or `not-applicable`
+independently for crawler core, Cockroach Browser, and the adapter. Equivalent
+capability does not imply an identical JavaScript API. See
+[the exact baseline and limits](./compatibility/PUPPETEER-25.5.0.md).
 
 ## Structured extraction
 

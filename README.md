@@ -70,6 +70,23 @@ Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for ag
 
 It is designed for governed agents that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus, not a claim of universal superiority or access-control bypass.
 
+### Browser automation boundary
+
+Cockroach Crawler remains the acquisition, scheduling, extraction, and evidence
+layer. The optional `cockroach-crawler/browser-automation` subpath is a narrow,
+dependency-injected bridge for a separately installed Cockroach Browser runtime
+or another trusted backend. It exposes 58 structural action names, enables 21
+observation/navigation/evidence actions by default, and independently enforces
+creator-owned action, effect, session, and exact-origin limits before dispatch.
+
+It is **not** a Puppeteer API shim and does not make Cockroach Crawler API
+compatible with Puppeteer. The checked-in
+[Puppeteer 25.5.0 baseline](./docs/compatibility/PUPPETEER-25.5.0.md) inventories
+all 436 exported class members and reports every crawler, Cockroach Browser, and
+adapter gap without a full-parity claim. Cockroach Browser is a separate
+AGPL-3.0-or-later product; review its license and deployment boundary before
+injecting it as the backend.
+
 Every capability stays behind creator-owned origin, request, byte, redirect, concurrency, and time limits. Use the hardened local crawler for bounded public-web collection, the source router for explicit provider capabilities, optional reach providers for reviewed no-developer-key or session-backed reads, and the restricted self-hosted Worker only for allowlisted sites you operate or trust.
 
 ## Why developers choose Cockroach Crawler

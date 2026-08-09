@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- A dependency-injected `cockroach-crawler/browser-automation` foundation with
+  exact-origin sessions, creator-owned action and effect allowlists, strict
+  plain-data validation, a packed capability JSON Schema, and external consumer
+  types. It is not a Puppeteer API shim.
+- An official-package-pinned Puppeteer 25.5.0 snapshot and machine-readable gap
+  matrix covering all 43 exported classes and 436 class members. Every member
+  has a crawler, Cockroach Browser, and adapter status; no full-parity claim is
+  made.
+
 ## 0.7.0-rc.1 - 2026-08-08
 
 This prerelease makes the reviewed 0.7 source available through the npm

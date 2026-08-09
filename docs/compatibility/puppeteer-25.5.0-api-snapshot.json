@@ -1,0 +1,8058 @@
+{
+  "schemaVersion": "cockroach.upstream-api-snapshot.v1",
+  "upstream": {
+    "name": "puppeteer-core",
+    "version": "25.5.0",
+    "license": "Apache-2.0",
+    "node": ">=22.12.0",
+    "npmIntegrity": "sha512-XPNT0dQJtphqQ4I29zxlG4IIPbg1iEHAQKWuQgtMJGXjACV77pZSmJvDi51IIIfd+DTKICcopJwUx4upVQ4XbA==",
+    "npmShasum": "a41b14d582056b998e0bc3561ac47c7615d38a53",
+    "tarballSha256": "52b57c652a24d69b2cc659888fcce97e26d91af17f46cc58920ada7d0998bdbd",
+    "types": "lib/types.d.ts",
+    "source": "https://github.com/puppeteer/puppeteer/tree/puppeteer-v25.5.0",
+    "docs": "https://pptr.dev/api"
+  },
+  "counts": {
+    "declarations": 213,
+    "classes": 43,
+    "interfaces": 100,
+    "classMembers": 436,
+    "interfaceMembers": 418
+  },
+  "declarations": [
+    {
+      "name": "Accessibility",
+      "kind": "class",
+      "members": [
+        {
+          "id": "snapshot",
+          "name": "snapshot",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ActionOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "signal",
+          "name": "signal",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ActionResult",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "AdapterState",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "AddScreenParams",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "colorDepth",
+          "name": "colorDepth",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "devicePixelRatio",
+          "name": "devicePixelRatio",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "height",
+          "name": "height",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isInternal",
+          "name": "isInternal",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "label",
+          "name": "label",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "left",
+          "name": "left",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "rotation",
+          "name": "rotation",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "top",
+          "name": "top",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "width",
+          "name": "width",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "workAreaInsets",
+          "name": "workAreaInsets",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "asyncDisposeSymbol",
+      "kind": "const",
+      "members": []
+    },
+    {
+      "name": "AutofillAddressField",
+      "kind": "enum",
+      "members": []
+    },
+    {
+      "name": "AutofillData",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Awaitable",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "AwaitableIterable",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "AwaitablePredicate",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "AwaitedLocator",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "BluetoothEmulation",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "disableEmulation",
+          "name": "disableEmulation",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emulateAdapter",
+          "name": "emulateAdapter",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "simulatePreconnectedPeripheral",
+          "name": "simulatePreconnectedPeripheral",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "BluetoothManufacturerData",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "data",
+          "name": "data",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "key",
+          "name": "key",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "BoundingBox",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "height",
+          "name": "height",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "width",
+          "name": "width",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "BoxModel",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "border",
+          "name": "border",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "content",
+          "name": "content",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "height",
+          "name": "height",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "margin",
+          "name": "margin",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "padding",
+          "name": "padding",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "width",
+          "name": "width",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Browser",
+      "kind": "class",
+      "members": [
+        {
+          "id": "[asyncDisposeSymbol]",
+          "name": "[asyncDisposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[disposeSymbol]",
+          "name": "[disposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "addScreen",
+          "name": "addScreen",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "browserContexts",
+          "name": "browserContexts",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "close",
+          "name": "close",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "connected",
+          "name": "connected",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "cookies",
+          "name": "cookies",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "createBrowserContext",
+          "name": "createBrowserContext",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "debugInfo",
+          "name": "debugInfo",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "defaultBrowserContext",
+          "name": "defaultBrowserContext",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "deleteCookie",
+          "name": "deleteCookie",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "deleteMatchingCookies",
+          "name": "deleteMatchingCookies",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "disconnect",
+          "name": "disconnect",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "extensions",
+          "name": "extensions",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "getPWAState",
+          "name": "getPWAState",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "getWindowBounds",
+          "name": "getWindowBounds",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "installExtension",
+          "name": "installExtension",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "installPWA",
+          "name": "installPWA",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "launchPWA",
+          "name": "launchPWA",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "newPage",
+          "name": "newPage",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "pages",
+          "name": "pages",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "process",
+          "name": "process",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "removeScreen",
+          "name": "removeScreen",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "screens",
+          "name": "screens",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setCookie",
+          "name": "setCookie",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setPermission",
+          "name": "setPermission",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setWindowBounds",
+          "name": "setWindowBounds",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "target",
+          "name": "target",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "targets",
+          "name": "targets",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "uninstallExtension",
+          "name": "uninstallExtension",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "uninstallPWA",
+          "name": "uninstallPWA",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "userAgent",
+          "name": "userAgent",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "version",
+          "name": "version",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForTarget",
+          "name": "waitForTarget",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "wsEndpoint",
+          "name": "wsEndpoint",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "BrowserContext",
+      "kind": "class",
+      "members": [
+        {
+          "id": "[asyncDisposeSymbol]",
+          "name": "[asyncDisposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[disposeSymbol]",
+          "name": "[disposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "browser",
+          "name": "browser",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "clearPermissionOverrides",
+          "name": "clearPermissionOverrides",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "close",
+          "name": "close",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "closed",
+          "name": "closed",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "cookies",
+          "name": "cookies",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "deleteCookie",
+          "name": "deleteCookie",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "deleteMatchingCookies",
+          "name": "deleteMatchingCookies",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "id",
+          "name": "id",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "newPage",
+          "name": "newPage",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "overridePermissions",
+          "name": "overridePermissions",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "pages",
+          "name": "pages",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setCookie",
+          "name": "setCookie",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setPermission",
+          "name": "setPermission",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "targets",
+          "name": "targets",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForTarget",
+          "name": "waitForTarget",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "BrowserContextEvent",
+      "kind": "enum",
+      "members": []
+    },
+    {
+      "name": "BrowserContextEvents",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "[BrowserContextEvent.TargetChanged]",
+          "name": "[BrowserContextEvent.TargetChanged]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[BrowserContextEvent.TargetCreated]",
+          "name": "[BrowserContextEvent.TargetCreated]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[BrowserContextEvent.TargetDestroyed]",
+          "name": "[BrowserContextEvent.TargetDestroyed]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "BrowserContextOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "downloadBehavior",
+          "name": "downloadBehavior",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "proxyBypassList",
+          "name": "proxyBypassList",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "proxyServer",
+          "name": "proxyServer",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "BrowserEvent",
+      "kind": "enum",
+      "members": []
+    },
+    {
+      "name": "BrowserEvents",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "[BrowserEvent.Disconnected]",
+          "name": "[BrowserEvent.Disconnected]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[BrowserEvent.TargetChanged]",
+          "name": "[BrowserEvent.TargetChanged]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[BrowserEvent.TargetCreated]",
+          "name": "[BrowserEvent.TargetCreated]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[BrowserEvent.TargetDestroyed]",
+          "name": "[BrowserEvent.TargetDestroyed]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "BrowserLauncher",
+      "kind": "class",
+      "members": [
+        {
+          "id": "browser",
+          "name": "browser",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "defaultArgs",
+          "name": "defaultArgs",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "executablePath",
+          "name": "executablePath",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "launch",
+          "name": "launch",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CDPEvents",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "CDPSession",
+      "kind": "class",
+      "members": [
+        {
+          "id": "connection",
+          "name": "connection",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "detach",
+          "name": "detach",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "detached",
+          "name": "detached",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "id",
+          "name": "id",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "send",
+          "name": "send",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CDPSessionEvents",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "[CDPSessionEvent.SessionAttached]",
+          "name": "[CDPSessionEvent.SessionAttached]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[CDPSessionEvent.SessionDetached]",
+          "name": "[CDPSessionEvent.SessionDetached]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ChromeHeadlessShellSettings",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "downloadBaseUrl",
+          "name": "downloadBaseUrl",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "skipDownload",
+          "name": "skipDownload",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "version",
+          "name": "version",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ChromeReleaseChannel",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "ChromeSettings",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "downloadBaseUrl",
+          "name": "downloadBaseUrl",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "skipDownload",
+          "name": "skipDownload",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "version",
+          "name": "version",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ClickOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "debugHighlight",
+          "name": "debugHighlight",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "offset",
+          "name": "offset",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CommandOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CommonEventEmitter",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "emit",
+          "name": "emit",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "listenerCount",
+          "name": "listenerCount",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "off",
+          "name": "off",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "on",
+          "name": "on",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "once",
+          "name": "once",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "removeAllListeners",
+          "name": "removeAllListeners",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Configuration",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "['chrome-headless-shell']",
+          "name": "['chrome-headless-shell']",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "cacheDirectory",
+          "name": "cacheDirectory",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "chrome",
+          "name": "chrome",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "defaultBrowser",
+          "name": "defaultBrowser",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "executablePath",
+          "name": "executablePath",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "experiments",
+          "name": "experiments",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "firefox",
+          "name": "firefox",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "logLevel",
+          "name": "logLevel",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "skipDownload",
+          "name": "skipDownload",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "temporaryDirectory",
+          "name": "temporaryDirectory",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "connect",
+      "kind": "const",
+      "members": []
+    },
+    {
+      "name": "Connection",
+      "kind": "class",
+      "members": [
+        {
+          "id": "createSession",
+          "name": "createSession",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "dispose",
+          "name": "dispose",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "send",
+          "name": "send",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "session",
+          "name": "session",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "static fromSession",
+          "name": "fromSession",
+          "kind": "method",
+          "static": true,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ConnectionClosedError",
+      "kind": "class",
+      "members": []
+    },
+    {
+      "name": "ConnectionTransport",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "close",
+          "name": "close",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "onclose",
+          "name": "onclose",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "onmessage",
+          "name": "onmessage",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "send",
+          "name": "send",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ConnectOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "acceptInsecureCerts",
+          "name": "acceptInsecureCerts",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "allowlist",
+          "name": "allowlist",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "blocklist",
+          "name": "blocklist",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "browserURL",
+          "name": "browserURL",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "browserWSEndpoint",
+          "name": "browserWSEndpoint",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "capabilities",
+          "name": "capabilities",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "channel",
+          "name": "channel",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "defaultViewport",
+          "name": "defaultViewport",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "downloadBehavior",
+          "name": "downloadBehavior",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "handleDevToolsAsPage",
+          "name": "handleDevToolsAsPage",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "headers",
+          "name": "headers",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "issuesEnabled",
+          "name": "issuesEnabled",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "networkEnabled",
+          "name": "networkEnabled",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "protocol",
+          "name": "protocol",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "protocolTimeout",
+          "name": "protocolTimeout",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "slowMo",
+          "name": "slowMo",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "targetFilter",
+          "name": "targetFilter",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "transport",
+          "name": "transport",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ConsoleMessage",
+      "kind": "class",
+      "members": [
+        {
+          "id": "args",
+          "name": "args",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "location",
+          "name": "location",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "stackTrace",
+          "name": "stackTrace",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "text",
+          "name": "text",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "type",
+          "name": "type",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ConsoleMessageLocation",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "columnNumber",
+          "name": "columnNumber",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "lineNumber",
+          "name": "lineNumber",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ConsoleMessageType",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "ContinueRequestOverrides",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "headers",
+          "name": "headers",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "method",
+          "name": "method",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "postData",
+          "name": "postData",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Cookie",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "expires",
+          "name": "expires",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "partitionKeyOpaque",
+          "name": "partitionKeyOpaque",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "secure",
+          "name": "secure",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "session",
+          "name": "session",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "size",
+          "name": "size",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CookieData",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "domain",
+          "name": "domain",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "expires",
+          "name": "expires",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "httpOnly",
+          "name": "httpOnly",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "name",
+          "name": "name",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "partitionKey",
+          "name": "partitionKey",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "priority",
+          "name": "priority",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "sameSite",
+          "name": "sameSite",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "secure",
+          "name": "secure",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "sourceScheme",
+          "name": "sourceScheme",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "value",
+          "name": "value",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CookieParam",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "domain",
+          "name": "domain",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "expires",
+          "name": "expires",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "httpOnly",
+          "name": "httpOnly",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "name",
+          "name": "name",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "partitionKey",
+          "name": "partitionKey",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "priority",
+          "name": "priority",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "sameSite",
+          "name": "sameSite",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "secure",
+          "name": "secure",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "sourceScheme",
+          "name": "sourceScheme",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "value",
+          "name": "value",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CookiePartitionKey",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "hasCrossSiteAncestor",
+          "name": "hasCrossSiteAncestor",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "sourceOrigin",
+          "name": "sourceOrigin",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CookiePriority",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "CookieSourceScheme",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Coverage",
+      "kind": "class",
+      "members": [
+        {
+          "id": "startCSSCoverage",
+          "name": "startCSSCoverage",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "startJSCoverage",
+          "name": "startJSCoverage",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "stopCSSCoverage",
+          "name": "stopCSSCoverage",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "stopJSCoverage",
+          "name": "stopJSCoverage",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CoverageEntry",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "ranges",
+          "name": "ranges",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "text",
+          "name": "text",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CreatePageOptions",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Credentials",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "password",
+          "name": "password",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "username",
+          "name": "username",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CSSCoverage",
+      "kind": "class",
+      "members": [
+        {
+          "id": "constructor",
+          "name": "constructor",
+          "kind": "constructor",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "start",
+          "name": "start",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "stop",
+          "name": "stop",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CSSCoverageOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "resetOnNavigation",
+          "name": "resetOnNavigation",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "CustomQueryHandler",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "queryAll",
+          "name": "queryAll",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "queryOne",
+          "name": "queryOne",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "DebugInfo",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "pendingProtocolErrors",
+          "name": "pendingProtocolErrors",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "DEFAULT_INTERCEPT_RESOLUTION_PRIORITY",
+      "kind": "const",
+      "members": []
+    },
+    {
+      "name": "defaultArgs",
+      "kind": "const",
+      "members": []
+    },
+    {
+      "name": "DeleteCookiesRequest",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "domain",
+          "name": "domain",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "name",
+          "name": "name",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "partitionKey",
+          "name": "partitionKey",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Device",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "userAgent",
+          "name": "userAgent",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "viewport",
+          "name": "viewport",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "DeviceRequestPrompt",
+      "kind": "class",
+      "members": [
+        {
+          "id": "cancel",
+          "name": "cancel",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "devices",
+          "name": "devices",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "select",
+          "name": "select",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForDevice",
+          "name": "waitForDevice",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "DeviceRequestPromptDevice",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "id",
+          "name": "id",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "name",
+          "name": "name",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Dialog",
+      "kind": "class",
+      "members": [
+        {
+          "id": "accept",
+          "name": "accept",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "defaultValue",
+          "name": "defaultValue",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "dismiss",
+          "name": "dismiss",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "handled#getter",
+          "name": "handled",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "handled#setter",
+          "name": "handled",
+          "kind": "setter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "message",
+          "name": "message",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "type",
+          "name": "type",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "disposeSymbol",
+      "kind": "const",
+      "members": []
+    },
+    {
+      "name": "DownloadBehavior",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "downloadPath",
+          "name": "downloadPath",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "policy",
+          "name": "policy",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "DownloadPolicy",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "ElementFor",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "ElementHandle",
+      "kind": "class",
+      "members": [
+        {
+          "id": "$",
+          "name": "$",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "$$",
+          "name": "$$",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "$$eval",
+          "name": "$$eval",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "$eval",
+          "name": "$eval",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "asLocator",
+          "name": "asLocator",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "autofill",
+          "name": "autofill",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "backendNodeId",
+          "name": "backendNodeId",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "boundingBox",
+          "name": "boundingBox",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "boxModel",
+          "name": "boxModel",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "click",
+          "name": "click",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "clickablePoint",
+          "name": "clickablePoint",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "contentFrame",
+          "name": "contentFrame",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "drag",
+          "name": "drag",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "dragAndDrop",
+          "name": "dragAndDrop",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "dragEnter",
+          "name": "dragEnter",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "dragOver",
+          "name": "dragOver",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "drop",
+          "name": "drop",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "focus",
+          "name": "focus",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "frame",
+          "name": "frame",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "hover",
+          "name": "hover",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isHidden",
+          "name": "isHidden",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isIntersectingViewport",
+          "name": "isIntersectingViewport",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isVisible",
+          "name": "isVisible",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "press",
+          "name": "press",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "screenshot",
+          "name": "screenshot",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "scrollIntoView",
+          "name": "scrollIntoView",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "select",
+          "name": "select",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "tap",
+          "name": "tap",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "toElement",
+          "name": "toElement",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "touchEnd",
+          "name": "touchEnd",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "touchMove",
+          "name": "touchMove",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "touchStart",
+          "name": "touchStart",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "type",
+          "name": "type",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "uploadFile",
+          "name": "uploadFile",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForSelector",
+          "name": "waitForSelector",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ElementScreenshotOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "scrollIntoView",
+          "name": "scrollIntoView",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ErrorCode",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "EvaluateFunc",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "EvaluateFuncWith",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "EventEmitter",
+      "kind": "class",
+      "members": [
+        {
+          "id": "[asyncDisposeSymbol]",
+          "name": "[asyncDisposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[disposeSymbol]",
+          "name": "[disposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emit",
+          "name": "emit",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "listenerCount",
+          "name": "listenerCount",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "off",
+          "name": "off",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "on",
+          "name": "on",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "once",
+          "name": "once",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "removeAllListeners",
+          "name": "removeAllListeners",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "EventsWithWildcard",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "EventType",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "executablePath",
+      "kind": "const",
+      "members": []
+    },
+    {
+      "name": "ExperimentsConfiguration",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Extension",
+      "kind": "class",
+      "members": [
+        {
+          "id": "enabled",
+          "name": "enabled",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "id",
+          "name": "id",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "name",
+          "name": "name",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "pages",
+          "name": "pages",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "triggerAction",
+          "name": "triggerAction",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "version",
+          "name": "version",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "workers",
+          "name": "workers",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ExtensionInstallOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "enabledInIncognito",
+          "name": "enabledInIncognito",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ExtensionTransport",
+      "kind": "class",
+      "members": [
+        {
+          "id": "close",
+          "name": "close",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "onclose",
+          "name": "onclose",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "onmessage",
+          "name": "onmessage",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "send",
+          "name": "send",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "static connectTab",
+          "name": "connectTab",
+          "kind": "method",
+          "static": true,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "FileChooser",
+      "kind": "class",
+      "members": [
+        {
+          "id": "accept",
+          "name": "accept",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "cancel",
+          "name": "cancel",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isMultiple",
+          "name": "isMultiple",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "FirefoxSettings",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "downloadBaseUrl",
+          "name": "downloadBaseUrl",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "skipDownload",
+          "name": "skipDownload",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "version",
+          "name": "version",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "FlattenHandle",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Frame",
+      "kind": "class",
+      "members": [
+        {
+          "id": "$",
+          "name": "$",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "$$",
+          "name": "$$",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "$$eval",
+          "name": "$$eval",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "$eval",
+          "name": "$eval",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "addScriptTag",
+          "name": "addScriptTag",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "addStyleTag",
+          "name": "addStyleTag",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "childFrames",
+          "name": "childFrames",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "click",
+          "name": "click",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "content",
+          "name": "content",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "detached",
+          "name": "detached",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluate",
+          "name": "evaluate",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluateHandle",
+          "name": "evaluateHandle",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "extensionRealms",
+          "name": "extensionRealms",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "focus",
+          "name": "focus",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "frameElement",
+          "name": "frameElement",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "goto",
+          "name": "goto",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "hover",
+          "name": "hover",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isDetached",
+          "name": "isDetached",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "locator",
+          "name": "locator",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "name",
+          "name": "name",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "page",
+          "name": "page",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "parentFrame",
+          "name": "parentFrame",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "select",
+          "name": "select",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setContent",
+          "name": "setContent",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "tap",
+          "name": "tap",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "title",
+          "name": "title",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "type",
+          "name": "type",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForFunction",
+          "name": "waitForFunction",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForNavigation",
+          "name": "waitForNavigation",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForSelector",
+          "name": "waitForSelector",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "FrameAddScriptTagOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "content",
+          "name": "content",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "id",
+          "name": "id",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "type",
+          "name": "type",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "FrameAddStyleTagOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "content",
+          "name": "content",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "FrameEvents",
+      "kind": "interface",
+      "members": []
+    },
+    {
+      "name": "FrameWaitForFunctionOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "polling",
+          "name": "polling",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "signal",
+          "name": "signal",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "GeolocationOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "accuracy",
+          "name": "accuracy",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "latitude",
+          "name": "latitude",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "longitude",
+          "name": "longitude",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "GetPWAStateOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "manifestId",
+          "name": "manifestId",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "GoToOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "referer",
+          "name": "referer",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "referrerPolicy",
+          "name": "referrerPolicy",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "HandleFor",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "HandleOr",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Handler",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "HeapSnapshotOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "HTTPRequest",
+      "kind": "class",
+      "members": [
+        {
+          "id": "abort",
+          "name": "abort",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "abortErrorReason",
+          "name": "abortErrorReason",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "client",
+          "name": "client",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "continue",
+          "name": "continue",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "continueRequestOverrides",
+          "name": "continueRequestOverrides",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "enqueueInterceptAction",
+          "name": "enqueueInterceptAction",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "failure",
+          "name": "failure",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "fetchPostData",
+          "name": "fetchPostData",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "finalizeInterceptions",
+          "name": "finalizeInterceptions",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "frame",
+          "name": "frame",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "hasPostData",
+          "name": "hasPostData",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "headers",
+          "name": "headers",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "initiator",
+          "name": "initiator",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "interceptResolutionState",
+          "name": "interceptResolutionState",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isInterceptResolutionHandled",
+          "name": "isInterceptResolutionHandled",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isNavigationRequest",
+          "name": "isNavigationRequest",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "method",
+          "name": "method",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "postData",
+          "name": "postData",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "redirectChain",
+          "name": "redirectChain",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "resourceType",
+          "name": "resourceType",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "respond",
+          "name": "respond",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "response",
+          "name": "response",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "responseForRequest",
+          "name": "responseForRequest",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "HTTPResponse",
+      "kind": "class",
+      "members": [
+        {
+          "id": "buffer",
+          "name": "buffer",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "content",
+          "name": "content",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "frame",
+          "name": "frame",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "fromCache",
+          "name": "fromCache",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "fromServiceWorker",
+          "name": "fromServiceWorker",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "headers",
+          "name": "headers",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "json",
+          "name": "json",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "ok",
+          "name": "ok",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "remoteAddress",
+          "name": "remoteAddress",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "request",
+          "name": "request",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "securityDetails",
+          "name": "securityDetails",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "status",
+          "name": "status",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "statusText",
+          "name": "statusText",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "text",
+          "name": "text",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "timing",
+          "name": "timing",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ImageFormat",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "InnerParams",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "InstallPWAOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "displayMode",
+          "name": "displayMode",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "installUrlOrBundleUrl",
+          "name": "installUrlOrBundleUrl",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "manifestId",
+          "name": "manifestId",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "InterceptResolutionAction",
+      "kind": "enum",
+      "members": []
+    },
+    {
+      "name": "InterceptResolutionState",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "action",
+          "name": "action",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "priority",
+          "name": "priority",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "InternalNetworkConditions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "offline",
+          "name": "offline",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Issue",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "code",
+          "name": "code",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "details",
+          "name": "details",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "JSCoverage",
+      "kind": "class",
+      "members": [
+        {
+          "id": "start",
+          "name": "start",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "stop",
+          "name": "stop",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "JSCoverageEntry",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "rawScriptCoverage",
+          "name": "rawScriptCoverage",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "JSCoverageOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "includeRawScriptCoverage",
+          "name": "includeRawScriptCoverage",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "reportAnonymousScripts",
+          "name": "reportAnonymousScripts",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "resetOnNavigation",
+          "name": "resetOnNavigation",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "useBlockCoverage",
+          "name": "useBlockCoverage",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "JSHandle",
+      "kind": "class",
+      "members": [
+        {
+          "id": "_",
+          "name": "_",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "[asyncDisposeSymbol]",
+          "name": "[asyncDisposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[disposeSymbol]",
+          "name": "[disposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "asElement",
+          "name": "asElement",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "dispose",
+          "name": "dispose",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluate",
+          "name": "evaluate",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluateHandle",
+          "name": "evaluateHandle",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "getProperties",
+          "name": "getProperties",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "getProperty",
+          "name": "getProperty",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "jsonValue",
+          "name": "jsonValue",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "move",
+          "name": "move",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "remoteObject",
+          "name": "remoteObject",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "toString",
+          "name": "toString",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Keyboard",
+      "kind": "class",
+      "members": [
+        {
+          "id": "down",
+          "name": "down",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "press",
+          "name": "press",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "sendCharacter",
+          "name": "sendCharacter",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "type",
+          "name": "type",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "up",
+          "name": "up",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "KeyboardTypeOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "delay",
+          "name": "delay",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "KeyDownOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "commands",
+          "name": "commands",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": true
+        },
+        {
+          "id": "text",
+          "name": "text",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": true
+        }
+      ]
+    },
+    {
+      "name": "KeyInput",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "KeyPressOptions",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "KnownDevices",
+      "kind": "const",
+      "members": []
+    },
+    {
+      "name": "launch",
+      "kind": "const",
+      "members": []
+    },
+    {
+      "name": "LaunchOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "args",
+          "name": "args",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "browser",
+          "name": "browser",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "channel",
+          "name": "channel",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "debuggingPort",
+          "name": "debuggingPort",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "devtools",
+          "name": "devtools",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "dumpio",
+          "name": "dumpio",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "enableExtensions",
+          "name": "enableExtensions",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "env",
+          "name": "env",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "executablePath",
+          "name": "executablePath",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "extensionsEnabledInIncognito",
+          "name": "extensionsEnabledInIncognito",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "extraPrefsFirefox",
+          "name": "extraPrefsFirefox",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "handleSIGHUP",
+          "name": "handleSIGHUP",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "handleSIGINT",
+          "name": "handleSIGINT",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "handleSIGTERM",
+          "name": "handleSIGTERM",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "headless",
+          "name": "headless",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "ignoreDefaultArgs",
+          "name": "ignoreDefaultArgs",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "pipe",
+          "name": "pipe",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "signal",
+          "name": "signal",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "userDataDir",
+          "name": "userDataDir",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "waitForInitialPage",
+          "name": "waitForInitialPage",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "LaunchPWAOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "manifestId",
+          "name": "manifestId",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Locator",
+      "kind": "class",
+      "members": [
+        {
+          "id": "_",
+          "name": "_",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "click",
+          "name": "click",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "clone",
+          "name": "clone",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "fill",
+          "name": "fill",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "filter",
+          "name": "filter",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "hover",
+          "name": "hover",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "map",
+          "name": "map",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "scroll",
+          "name": "scroll",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setEnsureElementIsInTheViewport",
+          "name": "setEnsureElementIsInTheViewport",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setTimeout",
+          "name": "setTimeout",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setVisibility",
+          "name": "setVisibility",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setWaitForEnabled",
+          "name": "setWaitForEnabled",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setWaitForStableBoundingBox",
+          "name": "setWaitForStableBoundingBox",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "static race",
+          "name": "race",
+          "kind": "method",
+          "static": true,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "wait",
+          "name": "wait",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitHandle",
+          "name": "waitHandle",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "LocatorClickOptions",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "LocatorEvent",
+      "kind": "enum",
+      "members": []
+    },
+    {
+      "name": "LocatorEvents",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "[LocatorEvent.Action]",
+          "name": "[LocatorEvent.Action]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "LocatorFillOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "typingThreshold",
+          "name": "typingThreshold",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "LocatorScrollOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "scrollLeft",
+          "name": "scrollLeft",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "scrollTop",
+          "name": "scrollTop",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Logger",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "LoggerFunction",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "LowerCasePaperFormat",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Mapper",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "MediaFeature",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "name",
+          "name": "name",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "value",
+          "name": "value",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Metrics",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "Documents",
+          "name": "Documents",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "Frames",
+          "name": "Frames",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "JSEventListeners",
+          "name": "JSEventListeners",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "JSHeapTotalSize",
+          "name": "JSHeapTotalSize",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "JSHeapUsedSize",
+          "name": "JSHeapUsedSize",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "LayoutCount",
+          "name": "LayoutCount",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "LayoutDuration",
+          "name": "LayoutDuration",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "Nodes",
+          "name": "Nodes",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "RecalcStyleCount",
+          "name": "RecalcStyleCount",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "RecalcStyleDuration",
+          "name": "RecalcStyleDuration",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "ScriptDuration",
+          "name": "ScriptDuration",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "TaskDuration",
+          "name": "TaskDuration",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "Timestamp",
+          "name": "Timestamp",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Mouse",
+      "kind": "class",
+      "members": [
+        {
+          "id": "click",
+          "name": "click",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "down",
+          "name": "down",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "drag",
+          "name": "drag",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "dragAndDrop",
+          "name": "dragAndDrop",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "dragEnter",
+          "name": "dragEnter",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "dragOver",
+          "name": "dragOver",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "drop",
+          "name": "drop",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "move",
+          "name": "move",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "reset",
+          "name": "reset",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "up",
+          "name": "up",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "wheel",
+          "name": "wheel",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "MouseButton",
+      "kind": "const",
+      "members": []
+    },
+    {
+      "name": "MouseButton",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "MouseClickOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "count",
+          "name": "count",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "delay",
+          "name": "delay",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "MouseMoveOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "steps",
+          "name": "steps",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "MouseOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "button",
+          "name": "button",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "MouseWheelOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "deltaX",
+          "name": "deltaX",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "deltaY",
+          "name": "deltaY",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Moveable",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "move",
+          "name": "move",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "NetworkConditions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "download",
+          "name": "download",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "latency",
+          "name": "latency",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "offline",
+          "name": "offline",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "upload",
+          "name": "upload",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "NewDocumentScriptEvaluation",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "identifier",
+          "name": "identifier",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "NodeFor",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Offset",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "x",
+          "name": "x",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Page",
+      "kind": "class",
+      "members": [
+        {
+          "id": "[asyncDisposeSymbol]",
+          "name": "[asyncDisposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[disposeSymbol]",
+          "name": "[disposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "$",
+          "name": "$",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "$$",
+          "name": "$$",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "$$eval",
+          "name": "$$eval",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "$eval",
+          "name": "$eval",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "accessibility",
+          "name": "accessibility",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "addScriptTag",
+          "name": "addScriptTag",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "addStyleTag",
+          "name": "addStyleTag",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "authenticate",
+          "name": "authenticate",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "bluetooth",
+          "name": "bluetooth",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "bringToFront",
+          "name": "bringToFront",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "browser",
+          "name": "browser",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "browserContext",
+          "name": "browserContext",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "captureHeapSnapshot",
+          "name": "captureHeapSnapshot",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "click",
+          "name": "click",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "close",
+          "name": "close",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "content",
+          "name": "content",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "cookies",
+          "name": "cookies",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "coverage",
+          "name": "coverage",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "createCDPSession",
+          "name": "createCDPSession",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "createPDFStream",
+          "name": "createPDFStream",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "deleteCookie",
+          "name": "deleteCookie",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "emulate",
+          "name": "emulate",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emulateCPUThrottling",
+          "name": "emulateCPUThrottling",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emulateFocusedPage",
+          "name": "emulateFocusedPage",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emulateIdleState",
+          "name": "emulateIdleState",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emulateLocale",
+          "name": "emulateLocale",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emulateMediaFeatures",
+          "name": "emulateMediaFeatures",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emulateMediaType",
+          "name": "emulateMediaType",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emulateNetworkConditions",
+          "name": "emulateNetworkConditions",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emulateTimezone",
+          "name": "emulateTimezone",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "emulateVisionDeficiency",
+          "name": "emulateVisionDeficiency",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluate",
+          "name": "evaluate",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluateHandle",
+          "name": "evaluateHandle",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluateOnNewDocument",
+          "name": "evaluateOnNewDocument",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "exposeFunction",
+          "name": "exposeFunction",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "extensionRealms",
+          "name": "extensionRealms",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "focus",
+          "name": "focus",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "frames",
+          "name": "frames",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "getDefaultNavigationTimeout",
+          "name": "getDefaultNavigationTimeout",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "getDefaultTimeout",
+          "name": "getDefaultTimeout",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "goBack",
+          "name": "goBack",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "goForward",
+          "name": "goForward",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "goto",
+          "name": "goto",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "hasDevTools",
+          "name": "hasDevTools",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "hover",
+          "name": "hover",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isClosed",
+          "name": "isClosed",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isDragInterceptionEnabled",
+          "name": "isDragInterceptionEnabled",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "isJavaScriptEnabled",
+          "name": "isJavaScriptEnabled",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isServiceWorkerBypassed",
+          "name": "isServiceWorkerBypassed",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "keyboard",
+          "name": "keyboard",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "locator",
+          "name": "locator",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "mainFrame",
+          "name": "mainFrame",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "metrics",
+          "name": "metrics",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "mouse",
+          "name": "mouse",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "openDevTools",
+          "name": "openDevTools",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "pdf",
+          "name": "pdf",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "queryObjects",
+          "name": "queryObjects",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "reload",
+          "name": "reload",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "removeExposedFunction",
+          "name": "removeExposedFunction",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "removeScriptToEvaluateOnNewDocument",
+          "name": "removeScriptToEvaluateOnNewDocument",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "resize",
+          "name": "resize",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "screencast",
+          "name": "screencast",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "screenshot",
+          "name": "screenshot",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "select",
+          "name": "select",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setBypassCSP",
+          "name": "setBypassCSP",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setBypassServiceWorker",
+          "name": "setBypassServiceWorker",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setCacheEnabled",
+          "name": "setCacheEnabled",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setContent",
+          "name": "setContent",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setCookie",
+          "name": "setCookie",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "setDefaultNavigationTimeout",
+          "name": "setDefaultNavigationTimeout",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setDefaultTimeout",
+          "name": "setDefaultTimeout",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setDragInterception",
+          "name": "setDragInterception",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "setExtraHTTPHeaders",
+          "name": "setExtraHTTPHeaders",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setGeolocation",
+          "name": "setGeolocation",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setJavaScriptEnabled",
+          "name": "setJavaScriptEnabled",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setOfflineMode",
+          "name": "setOfflineMode",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setRequestInterception",
+          "name": "setRequestInterception",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "setUserAgent",
+          "name": "setUserAgent",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "setViewport",
+          "name": "setViewport",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "tap",
+          "name": "tap",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "target",
+          "name": "target",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": true
+        },
+        {
+          "id": "title",
+          "name": "title",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "touchscreen",
+          "name": "touchscreen",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "tracing",
+          "name": "tracing",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "triggerExtensionAction",
+          "name": "triggerExtensionAction",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "type",
+          "name": "type",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "viewport",
+          "name": "viewport",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForDevicePrompt",
+          "name": "waitForDevicePrompt",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForFileChooser",
+          "name": "waitForFileChooser",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForFrame",
+          "name": "waitForFrame",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForFunction",
+          "name": "waitForFunction",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForNavigation",
+          "name": "waitForNavigation",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForNetworkIdle",
+          "name": "waitForNetworkIdle",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForRequest",
+          "name": "waitForRequest",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForResponse",
+          "name": "waitForResponse",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForSelector",
+          "name": "waitForSelector",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "webmcp",
+          "name": "webmcp",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "windowId",
+          "name": "windowId",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "workers",
+          "name": "workers",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "PageEvent",
+      "kind": "enum",
+      "members": []
+    },
+    {
+      "name": "PageEvents",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "[PageEvent.Close]",
+          "name": "[PageEvent.Close]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.Console]",
+          "name": "[PageEvent.Console]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.Dialog]",
+          "name": "[PageEvent.Dialog]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.DOMContentLoaded]",
+          "name": "[PageEvent.DOMContentLoaded]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.Error]",
+          "name": "[PageEvent.Error]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.FrameAttached]",
+          "name": "[PageEvent.FrameAttached]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.FrameDetached]",
+          "name": "[PageEvent.FrameDetached]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.FrameNavigated]",
+          "name": "[PageEvent.FrameNavigated]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.Issue]",
+          "name": "[PageEvent.Issue]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.Load]",
+          "name": "[PageEvent.Load]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.Metrics]",
+          "name": "[PageEvent.Metrics]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.PageError]",
+          "name": "[PageEvent.PageError]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.Popup]",
+          "name": "[PageEvent.Popup]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.Request]",
+          "name": "[PageEvent.Request]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.RequestFailed]",
+          "name": "[PageEvent.RequestFailed]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.RequestFinished]",
+          "name": "[PageEvent.RequestFinished]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.RequestServedFromCache]",
+          "name": "[PageEvent.RequestServedFromCache]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.Response]",
+          "name": "[PageEvent.Response]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.WorkerCreated]",
+          "name": "[PageEvent.WorkerCreated]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[PageEvent.WorkerDestroyed]",
+          "name": "[PageEvent.WorkerDestroyed]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "PaperFormat",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "PDFMargin",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "bottom",
+          "name": "bottom",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "left",
+          "name": "left",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "right",
+          "name": "right",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "top",
+          "name": "top",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "PDFOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "displayHeaderFooter",
+          "name": "displayHeaderFooter",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "footerTemplate",
+          "name": "footerTemplate",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "format",
+          "name": "format",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "headerTemplate",
+          "name": "headerTemplate",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "height",
+          "name": "height",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "landscape",
+          "name": "landscape",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "margin",
+          "name": "margin",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "omitBackground",
+          "name": "omitBackground",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "outline",
+          "name": "outline",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "pageRanges",
+          "name": "pageRanges",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "preferCSSPageSize",
+          "name": "preferCSSPageSize",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "printBackground",
+          "name": "printBackground",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "scale",
+          "name": "scale",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "tagged",
+          "name": "tagged",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "waitForFonts",
+          "name": "waitForFonts",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "width",
+          "name": "width",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Permission",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Point",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "x",
+          "name": "x",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "y",
+          "name": "y",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "PreconnectedPeripheral",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "address",
+          "name": "address",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "knownServiceUuids",
+          "name": "knownServiceUuids",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "manufacturerData",
+          "name": "manufacturerData",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "name",
+          "name": "name",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "PredefinedNetworkConditions",
+      "kind": "const",
+      "members": []
+    },
+    {
+      "name": "Predicate",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "ProtocolError",
+      "kind": "class",
+      "members": [
+        {
+          "id": "code#getter",
+          "name": "code",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "code#setter",
+          "name": "code",
+          "kind": "setter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "originalMessage#getter",
+          "name": "originalMessage",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "originalMessage#setter",
+          "name": "originalMessage",
+          "kind": "setter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ProtocolLifeCycleEvent",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "ProtocolType",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Puppeteer",
+      "kind": "class",
+      "members": [
+        {
+          "id": "connect",
+          "name": "connect",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "static clearCustomQueryHandlers",
+          "name": "clearCustomQueryHandlers",
+          "kind": "method",
+          "static": true,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "static customQueryHandlerNames",
+          "name": "customQueryHandlerNames",
+          "kind": "method",
+          "static": true,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "static registerCustomQueryHandler",
+          "name": "registerCustomQueryHandler",
+          "kind": "method",
+          "static": true,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "static unregisterCustomQueryHandler",
+          "name": "unregisterCustomQueryHandler",
+          "kind": "method",
+          "static": true,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "PuppeteerError",
+      "kind": "class",
+      "members": []
+    },
+    {
+      "name": "PuppeteerLifeCycleEvent",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "PuppeteerNode",
+      "kind": "class",
+      "members": [
+        {
+          "id": "configuration",
+          "name": "configuration",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "connect",
+          "name": "connect",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "defaultArgs",
+          "name": "defaultArgs",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "defaultBrowser",
+          "name": "defaultBrowser",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "executablePath",
+          "name": "executablePath",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "lastLaunchedBrowser",
+          "name": "lastLaunchedBrowser",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "launch",
+          "name": "launch",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "trimCache",
+          "name": "trimCache",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "PWADisplayMode",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "PWAState",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "badgeCount",
+          "name": "badgeCount",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "fileHandlers",
+          "name": "fileHandlers",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Quad",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "QueryOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "isolate",
+          "name": "isolate",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Realm",
+      "kind": "class",
+      "members": [
+        {
+          "id": "[disposeSymbol]",
+          "name": "[disposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluate",
+          "name": "evaluate",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluateHandle",
+          "name": "evaluateHandle",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "extension",
+          "name": "extension",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "origin",
+          "name": "origin",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForFunction",
+          "name": "waitForFunction",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ReloadOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "ignoreCache",
+          "name": "ignoreCache",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "RemoteAddress",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "ip",
+          "name": "ip",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "port",
+          "name": "port",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ResourceType",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "ResponseForRequest",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "body",
+          "name": "body",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "contentType",
+          "name": "contentType",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "headers",
+          "name": "headers",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "status",
+          "name": "status",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ScreencastOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "colors",
+          "name": "colors",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "crop",
+          "name": "crop",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "delay",
+          "name": "delay",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "ffmpegPath",
+          "name": "ffmpegPath",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "format",
+          "name": "format",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "fps",
+          "name": "fps",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "loop",
+          "name": "loop",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "overwrite",
+          "name": "overwrite",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "quality",
+          "name": "quality",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "scale",
+          "name": "scale",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "speed",
+          "name": "speed",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ScreenInfo",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "availHeight",
+          "name": "availHeight",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "availLeft",
+          "name": "availLeft",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "availTop",
+          "name": "availTop",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "availWidth",
+          "name": "availWidth",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "colorDepth",
+          "name": "colorDepth",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "devicePixelRatio",
+          "name": "devicePixelRatio",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "height",
+          "name": "height",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "id",
+          "name": "id",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isExtended",
+          "name": "isExtended",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isInternal",
+          "name": "isInternal",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isPrimary",
+          "name": "isPrimary",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "label",
+          "name": "label",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "left",
+          "name": "left",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "orientation",
+          "name": "orientation",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "top",
+          "name": "top",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "width",
+          "name": "width",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ScreenRecorder",
+      "kind": "class",
+      "members": [
+        {
+          "id": "[asyncDisposeSymbol]",
+          "name": "[asyncDisposeSymbol]",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "stop",
+          "name": "stop",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ScreenshotClip",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "scale",
+          "name": "scale",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "ScreenshotOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "captureBeyondViewport",
+          "name": "captureBeyondViewport",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "clip",
+          "name": "clip",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "encoding",
+          "name": "encoding",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "fromSurface",
+          "name": "fromSurface",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "fullPage",
+          "name": "fullPage",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "omitBackground",
+          "name": "omitBackground",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "optimizeForSpeed",
+          "name": "optimizeForSpeed",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "quality",
+          "name": "quality",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "type",
+          "name": "type",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "SecurityDetails",
+      "kind": "class",
+      "members": [
+        {
+          "id": "issuer",
+          "name": "issuer",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "protocol",
+          "name": "protocol",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "subjectAlternativeNames",
+          "name": "subjectAlternativeNames",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "subjectName",
+          "name": "subjectName",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "validFrom",
+          "name": "validFrom",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "validTo",
+          "name": "validTo",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "SerializedAXNode",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "atomic",
+          "name": "atomic",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "autocomplete",
+          "name": "autocomplete",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "busy",
+          "name": "busy",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "checked",
+          "name": "checked",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "children",
+          "name": "children",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "description",
+          "name": "description",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "details",
+          "name": "details",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "disabled",
+          "name": "disabled",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "elementHandle",
+          "name": "elementHandle",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "errormessage",
+          "name": "errormessage",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "expanded",
+          "name": "expanded",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "focused",
+          "name": "focused",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "haspopup",
+          "name": "haspopup",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "invalid",
+          "name": "invalid",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "keyshortcuts",
+          "name": "keyshortcuts",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "level",
+          "name": "level",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "live",
+          "name": "live",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "modal",
+          "name": "modal",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "multiline",
+          "name": "multiline",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "multiselectable",
+          "name": "multiselectable",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "name",
+          "name": "name",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "orientation",
+          "name": "orientation",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "pressed",
+          "name": "pressed",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "readonly",
+          "name": "readonly",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "relevant",
+          "name": "relevant",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "required",
+          "name": "required",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "role",
+          "name": "role",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "roledescription",
+          "name": "roledescription",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "selected",
+          "name": "selected",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "value",
+          "name": "value",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "valuemax",
+          "name": "valuemax",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "valuemin",
+          "name": "valuemin",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "valuetext",
+          "name": "valuetext",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "SetContentWaitForOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "waitUntil",
+          "name": "waitUntil",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "SnapshotOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "includeIframes",
+          "name": "includeIframes",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "interestingOnly",
+          "name": "interestingOnly",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "root",
+          "name": "root",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "SupportedBrowser",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "SupportedWebDriverCapabilities",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "alwaysMatch",
+          "name": "alwaysMatch",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "firstMatch",
+          "name": "firstMatch",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "SupportedWebDriverCapability",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Target",
+      "kind": "class",
+      "members": [
+        {
+          "id": "asPage",
+          "name": "asPage",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "browser",
+          "name": "browser",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "browserContext",
+          "name": "browserContext",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "createCDPSession",
+          "name": "createCDPSession",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "opener",
+          "name": "opener",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "page",
+          "name": "page",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "type",
+          "name": "type",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "worker",
+          "name": "worker",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "TargetFilterCallback",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "TargetType",
+      "kind": "enum",
+      "members": []
+    },
+    {
+      "name": "TimeoutError",
+      "kind": "class",
+      "members": []
+    },
+    {
+      "name": "TouchError",
+      "kind": "class",
+      "members": []
+    },
+    {
+      "name": "TouchHandle",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "end",
+          "name": "end",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "move",
+          "name": "move",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Touchscreen",
+      "kind": "class",
+      "members": [
+        {
+          "id": "tap",
+          "name": "tap",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "touchEnd",
+          "name": "touchEnd",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "touchMove",
+          "name": "touchMove",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "touchStart",
+          "name": "touchStart",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "Tracing",
+      "kind": "class",
+      "members": [
+        {
+          "id": "start",
+          "name": "start",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "stop",
+          "name": "stop",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "TracingOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "categories",
+          "name": "categories",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "path",
+          "name": "path",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "screenshots",
+          "name": "screenshots",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "UninstallPWAOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "manifestId",
+          "name": "manifestId",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "UnsupportedOperation",
+      "kind": "class",
+      "members": []
+    },
+    {
+      "name": "VideoFormat",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "Viewport",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "deviceScaleFactor",
+          "name": "deviceScaleFactor",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "hasTouch",
+          "name": "hasTouch",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "height",
+          "name": "height",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "isLandscape",
+          "name": "isLandscape",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "isMobile",
+          "name": "isMobile",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "width",
+          "name": "width",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "VisibilityOption",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "WaitForNetworkIdleOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "concurrency",
+          "name": "concurrency",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "idleTime",
+          "name": "idleTime",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WaitForOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "signal",
+          "name": "signal",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "waitUntil",
+          "name": "waitUntil",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WaitForSelectorOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "hidden",
+          "name": "hidden",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "signal",
+          "name": "signal",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "visible",
+          "name": "visible",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WaitForTargetOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "signal",
+          "name": "signal",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WaitTimeoutOptions",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "signal",
+          "name": "signal",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "timeout",
+          "name": "timeout",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WebMCP",
+      "kind": "class",
+      "members": [
+        {
+          "id": "tools",
+          "name": "tools",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WebMCPTool",
+      "kind": "class",
+      "members": [
+        {
+          "id": "annotations",
+          "name": "annotations",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "description",
+          "name": "description",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "execute",
+          "name": "execute",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "formElement",
+          "name": "formElement",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "frame",
+          "name": "frame",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "inputSchema",
+          "name": "inputSchema",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "location",
+          "name": "location",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "name",
+          "name": "name",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WebMCPToolCall",
+      "kind": "class",
+      "members": [
+        {
+          "id": "id",
+          "name": "id",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "input",
+          "name": "input",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "tool",
+          "name": "tool",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WebMCPToolCallResult",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "call",
+          "name": "call",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "errorText",
+          "name": "errorText",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "exception",
+          "name": "exception",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "id",
+          "name": "id",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "output",
+          "name": "output",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "status",
+          "name": "status",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WebMCPToolsAddedEvent",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "tools",
+          "name": "tools",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WebMCPToolsRemovedEvent",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "tools",
+          "name": "tools",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WebWorker",
+      "kind": "class",
+      "members": [
+        {
+          "id": "client",
+          "name": "client",
+          "kind": "getter",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "close",
+          "name": "close",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluate",
+          "name": "evaluate",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "evaluateHandle",
+          "name": "evaluateHandle",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "url",
+          "name": "url",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "waitForFunction",
+          "name": "waitForFunction",
+          "kind": "method",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WebWorkerEvent",
+      "kind": "enum",
+      "members": []
+    },
+    {
+      "name": "WebWorkerEvents",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "[WebWorkerEvent.Console]",
+          "name": "[WebWorkerEvent.Console]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        },
+        {
+          "id": "[WebWorkerEvent.Error]",
+          "name": "[WebWorkerEvent.Error]",
+          "kind": "property",
+          "static": false,
+          "optional": false,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WindowBounds",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "height",
+          "name": "height",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "left",
+          "name": "left",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "top",
+          "name": "top",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "width",
+          "name": "width",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "windowState",
+          "name": "windowState",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    },
+    {
+      "name": "WindowId",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "WindowState",
+      "kind": "type",
+      "members": []
+    },
+    {
+      "name": "WorkAreaInsets",
+      "kind": "interface",
+      "members": [
+        {
+          "id": "bottom",
+          "name": "bottom",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "left",
+          "name": "left",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "right",
+          "name": "right",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        },
+        {
+          "id": "top",
+          "name": "top",
+          "kind": "property",
+          "static": false,
+          "optional": true,
+          "deprecated": false
+        }
+      ]
+    }
+  ]
+}

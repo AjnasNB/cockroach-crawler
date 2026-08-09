@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cockroachcrawler.com/schemas/browser-automation-capabilities.schema.json",
+  "title": "Cockroach Crawler browser automation capability report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "puppeteerBaseline",
+    "puppeteerApiCompatible",
+    "backendContract",
+    "actions",
+    "defaultSafeActions",
+    "enabledActions",
+    "enabledEffects",
+    "actionEffects",
+    "matrix"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "cockroach.browser-automation-adapter.v1" },
+    "status": { "const": "adapter" },
+    "puppeteerBaseline": { "const": "25.5.0" },
+    "puppeteerApiCompatible": { "const": false },
+    "backendContract": {
+      "const": ["createSession", "act", "closeSession"]
+    },
+    "actions": { "$ref": "#/$defs/actions" },
+    "defaultSafeActions": { "$ref": "#/$defs/actions" },
+    "enabledActions": { "$ref": "#/$defs/actions" },
+    "enabledEffects": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/effect" }
+    },
+    "actionEffects": {
+      "type": "object",
+      "additionalProperties": false,
+      "propertyNames": { "$ref": "#/$defs/action" },
+      "patternProperties": {
+        ".*": { "$ref": "#/$defs/effect" }
+      }
+    },
+    "matrix": { "const": "docs/compatibility/puppeteer-25.5.0-gap-matrix.json" }
+  },
+  "$defs": {
+    "actions": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 58,
+      "items": { "$ref": "#/$defs/action" }
+    },
+    "action": {
+      "enum": [
+        "navigate", "back", "forward", "reload", "click", "doubleClick", "fill", "type",
+        "press", "hover", "focus", "check", "uncheck", "select", "scroll", "drag",
+        "mouse.move", "mouse.down", "mouse.up", "mouse.click", "keyboard.down", "keyboard.up",
+        "keyboard.insertText", "upload", "download", "evaluate", "wait", "history.inspect",
+        "capture.paired", "annotate.show", "annotate.clear", "clipboard.read", "clipboard.write",
+        "network.inspect", "network.export", "network.route.add", "network.route.remove",
+        "network.routes.list", "state.save", "state.load", "state.list", "state.delete",
+        "screenshot", "pdf", "snapshot", "extract", "cookies.read", "cookies.write",
+        "storage.read", "storage.write", "tab.open", "tab.close", "tab.switch", "tab.lock",
+        "tab.unlock", "tab.lock.status", "trace.start", "trace.stop"
+      ]
+    },
+    "effect": {
+      "enum": ["read", "write", "execute", "upload", "download", "credential"]
+    }
+  }
+}

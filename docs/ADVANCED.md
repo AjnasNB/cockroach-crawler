@@ -33,6 +33,15 @@ fleet, or multi-tenant scraping cloud.
 | Native MCP service | `cockroach-crawler/mcp`; `cockroach-mcp` | Model arguments can only narrow deployment-owned origins and budgets |
 | Process-local job queue | `cockroach-crawler/jobs`; Node/Docker API | Fixed concurrency, pending, retention, result, cancellation, and authority limits |
 | Persistent managed profile | `browser.profileDirectory` | Explicit operator directory plus `allowPersistentProfile: true`; never inferred from a local browser |
+| Governed browser automation bridge | `cockroach-crawler/browser-automation` | Injected backend only; exact origin plus creator-owned action/effect policy; 21 read-safe defaults; explicitly not Puppeteer API compatible |
+
+The browser automation bridge is not another crawler engine. Crawler core still
+owns public-web admission and normalized evidence; the injected backend owns its
+interactive browser session, action-specific validation, approvals, network and
+secret controls, budgets, and receipts. Cockroach Browser is separately licensed
+under AGPL-3.0-or-later and is not a runtime dependency of this package. Review
+the [member-level Puppeteer 25.5.0 gap matrix](./compatibility/PUPPETEER-25.5.0.md)
+before treating an equivalent capability as available through this adapter.
 
 ## Deep crawl strategies
 
