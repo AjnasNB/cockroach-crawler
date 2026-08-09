@@ -2,7 +2,20 @@
 
 ## Supported versions
 
-Security fixes are provided for the latest published stable minor release. Version `0.3.0` is the stable package line for the local crawler, provider registry, optional reach providers, browser-host contract, and restricted serverless profile. Verify the current registry tag with `npm view cockroach-crawler version dist-tags`.
+Security fixes are provided for the latest published stable minor release.
+Version `0.6.2` is a documentation-only maintenance package over the `0.6.1`
+runtime for the local crawler, provider registry, optional reach providers,
+browser-host contract, and restricted serverless profile. Verify the current
+registry tag with `npm view cockroach-crawler version dist-tags`.
+
+The maintenance release is built only from protected `release/0.6.x`. Its Git
+gate binds annotated tag object `ff7000579240658bfd99f3def6df4e59e6911b28`
+to commit `e71ee10f6fd3931b9fd6c09f8a69bf7808d4a316` and tree
+`b9008158d90b1b050cad6ab566b44fd794f9c1dd`, then rejects every changed path
+outside the reviewed documentation, version metadata, verifier, test, and
+workflow allowlist. Frozen `0.6.1` benchmark artifacts are neither regenerated
+nor relabeled; the packed verifier normalizes only the four exact
+version-bearing metadata files before checking the historical fingerprint.
 
 Report a suspected vulnerability privately through the GitHub repository's security-advisory form. Do not include credentials, session state, private page content, or cloud metadata in a public issue. If the advisory form is unavailable, contact `ajnasnb@gmail.com` with a minimal reproduction.
 

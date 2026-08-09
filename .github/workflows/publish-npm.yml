@@ -6,13 +6,10 @@ name: Publish npm (trusted)
 # registry reports it as "404 Not Found - PUT", which reads like a missing
 # package rather than an authorisation failure. See docs/RELEASE.md.
 #
-# Two entry points:
-#   workflow_dispatch - strict. The caller states the version, commit, size,
-#                       sha256, and integrity in advance and everything is
-#                       compared against them.
-#   push to main      - automatic when package.json changes the version. The
-#                       artifact is measured in the verify job and the publish
-#                       job re-measures and compares against it.
+# This maintenance workflow has one entry point: strict workflow_dispatch from
+# the protected release/0.6.x branch. The caller states the version, commit,
+# size, sha256, and integrity in advance and everything is compared against
+# them. There is deliberately no version-change push trigger.
 
 on:
   workflow_dispatch:
@@ -20,7 +17,7 @@ on:
       version:
         description: Exact package version to publish
         required: true
-        default: 0.4.2
+        default: 0.6.2
         type: string
       expected_git_commit:
         description: Exact reviewed lowercase 40-character commit SHA
@@ -31,7 +28,7 @@ on:
         required: true
         default: latest
         type: choice
-        options: [next, latest]
+        options: [latest]
       expected_size_bytes:
         description: Approved npm tarball size in bytes
         required: true
@@ -48,11 +45,6 @@ on:
         description: Type publish cockroach-crawler@VERSION
         required: true
         type: string
-  push:
-    branches: [main]
-    paths:
-      - package.json
-
 permissions:
   contents: read
 
@@ -84,6 +76,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]] || { echo "Manual dispatch only." >&2; exit 1; }
+          [[ "${GITHUB_REF}" == "refs/heads/release/0.6.x" ]] || { echo "Dispatch from protected release/0.6.x only." >&2; exit 1; }
           read_version() {
             gh api "repos/${GITHUB_REPOSITORY}/contents/package.json?ref=$1" \
               -H "Accept: application/vnd.github.raw" 2>/dev/null \
@@ -93,37 +87,21 @@ jobs:
           current="$(read_version "${GITHUB_SHA}")"
           [[ -n "${current}" ]] || { echo "Could not read package.json at ${GITHUB_SHA}." >&2; exit 1; }
           [[ "${current}" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]] || { echo "Invalid version." >&2; exit 1; }
-
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
-            [[ "${INPUT_VERSION}" == "${current}" ]] || {
-              echo "Dispatch version ${INPUT_VERSION} does not match package.json ${current}." >&2; exit 1;
-            }
-            echo "strict=true" >> "${GITHUB_OUTPUT}"
-            echo "publish=true" >> "${GITHUB_OUTPUT}"
-            echo "version=${current}" >> "${GITHUB_OUTPUT}"
-            echo "dist_tag=${INPUT_DIST_TAG}" >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-
-          parent="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}" --jq '.parents[0].sha // empty')"
-          previous=""
-          if [[ -n "${parent}" ]]; then previous="$(read_version "${parent}")"; fi
-          echo "current=${current} previous=${previous}"
-          echo "strict=false" >> "${GITHUB_OUTPUT}"
-          if [[ "${current}" == "${previous}" ]]; then
-            echo "publish=false" >> "${GITHUB_OUTPUT}"
-            echo "Version unchanged; nothing to publish."
-            exit 0
-          fi
-          if npm view "cockroach-crawler@${current}" version >/dev/null 2>&1; then
-            echo "publish=false" >> "${GITHUB_OUTPUT}"
-            echo "cockroach-crawler@${current} is already published; refusing to republish."
-            exit 0
-          fi
-          if [[ "${current}" == *-* ]]; then tag=next; else tag=latest; fi
+          [[ "${INPUT_VERSION}" == "0.6.2" && "${current}" == "0.6.2" ]] || {
+            echo "This maintenance workflow publishes exactly 0.6.2." >&2; exit 1;
+          }
+          [[ "${INPUT_DIST_TAG}" == "latest" ]] || { echo "0.6.2 must use latest." >&2; exit 1; }
+          latest=""
+          for attempt in {1..12}; do
+            latest="$(npm view cockroach-crawler@latest version 2>/dev/null || true)"
+            [[ -n "${latest}" ]] && break
+            sleep 5
+          done
+          [[ "${latest}" == "0.6.1" ]] || { echo "Expected npm latest 0.6.1, got ${latest:-unavailable}." >&2; exit 1; }
+          echo "strict=true" >> "${GITHUB_OUTPUT}"
           echo "publish=true" >> "${GITHUB_OUTPUT}"
           echo "version=${current}" >> "${GITHUB_OUTPUT}"
-          echo "dist_tag=${tag}" >> "${GITHUB_OUTPUT}"
+          echo "dist_tag=latest" >> "${GITHUB_OUTPUT}"
 
   verify:
     name: Verify approved artifact
@@ -149,30 +127,35 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          [[ "${GITHUB_REF}" == "refs/heads/main" ]] || { echo "Publish from main only." >&2; exit 1; }
+          [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]] || { echo "Manual dispatch only." >&2; exit 1; }
+          [[ "${GITHUB_REF}" == "refs/heads/release/0.6.x" ]] || { echo "Publish from protected release/0.6.x only." >&2; exit 1; }
           [[ "${GITHUB_REPOSITORY}" == "AjnasNB/cockroach-crawler" ]] || { echo "Unexpected repository." >&2; exit 1; }
-          if [[ "${EXPECTED_VERSION}" == *-* && "${DIST_TAG}" != "next" ]]; then
-            echo "Prereleases must use the next dist-tag." >&2; exit 1
-          fi
-          if [[ "${EXPECTED_VERSION}" != *-* && "${DIST_TAG}" != "latest" ]]; then
-            echo "Stable releases must use the latest dist-tag." >&2; exit 1
-          fi
-          if [[ "${STRICT}" != "true" ]]; then
-            echo "Automatic publish for ${EXPECTED_VERSION}; artifact digests are measured here and re-checked before publish."
-            exit 0
-          fi
+          [[ "${STRICT}" == "true" ]] || { echo "Strict artifact approval is required." >&2; exit 1; }
+          [[ "${EXPECTED_VERSION}" == "0.6.2" ]] || { echo "Only 0.6.2 is allowed." >&2; exit 1; }
+          [[ "${DIST_TAG}" == "latest" ]] || { echo "0.6.2 must use latest." >&2; exit 1; }
           [[ "${EXPECTED_GIT_COMMIT}" =~ ^[0-9a-f]{40}$ ]] || { echo "Invalid reviewed commit." >&2; exit 1; }
           [[ "${EXPECTED_GIT_COMMIT}" == "${GITHUB_SHA}" ]] || { echo "Reviewed commit does not match the workflow commit." >&2; exit 1; }
           [[ "${EXPECTED_SIZE_BYTES}" =~ ^[1-9][0-9]*$ ]] || { echo "Invalid size." >&2; exit 1; }
           [[ "${EXPECTED_SHA256}" =~ ^[0-9a-f]{64}$ ]] || { echo "Invalid SHA-256." >&2; exit 1; }
           [[ "${EXPECTED_INTEGRITY}" =~ ^sha512-[A-Za-z0-9+/]+={0,2}$ ]] || { echo "Invalid integrity." >&2; exit 1; }
           [[ "${CONFIRMATION}" == "publish cockroach-crawler@${EXPECTED_VERSION}" ]] || { echo "Confirmation mismatch." >&2; exit 1; }
+          latest=""
+          for attempt in {1..12}; do
+            latest="$(npm view cockroach-crawler@latest version 2>/dev/null || true)"
+            [[ -n "${latest}" ]] && break
+            sleep 5
+          done
+          [[ "${latest}" == "0.6.1" ]] || { echo "Expected npm latest 0.6.1, got ${latest:-unavailable}." >&2; exit 1; }
 
       - name: Check out approved commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
+          fetch-tags: true
           persist-credentials: false
+      - name: Verify immutable maintenance tree
+        run: node scripts/verify-maintenance-release.mjs
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -257,7 +240,11 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
+          fetch-tags: true
           persist-credentials: false
+      - name: Verify immutable maintenance tree
+        run: node scripts/verify-maintenance-release.mjs
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -293,6 +280,13 @@ jobs:
       - name: Reconfirm version is unpublished
         shell: bash
         run: |
+          latest=""
+          for attempt in {1..12}; do
+            latest="$(npm view cockroach-crawler@latest version 2>/dev/null || true)"
+            [[ -n "${latest}" ]] && break
+            sleep 5
+          done
+          [[ "${latest}" == "0.6.1" ]] || { echo "npm latest changed before publication." >&2; exit 1; }
           error_file="${RUNNER_TEMP}/npm-view.err"
           if npm view "cockroach-crawler@${EXPECTED_VERSION}" version >/dev/null 2>"${error_file}"; then exit 1; fi
           grep -Eq "E404|404 Not Found" "${error_file}" || exit 1
@@ -316,8 +310,32 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          retry_delay_seconds() {
+            local attempt="$1"
+            local delay=$((2 ** (attempt - 1)))
+            if (( delay > 30 )); then delay=30; fi
+            printf '%s' "${delay}"
+          }
           consumer="${RUNNER_TEMP}/consumer"; mkdir -p "${consumer}"; cd "${consumer}"
           npm init --yes >/dev/null
           npm install "cockroach-crawler@${EXPECTED_VERSION}" --ignore-scripts
           node --input-type=module -e "await import('cockroach-crawler'); await import('cockroach-crawler/agent'); await import('cockroach-crawler/sources'); await import('cockroach-crawler/serverless')"
-          npm audit signatures
+          # Package metadata and provenance can become readable before npm's
+          # attestations endpoint. Retry that bounded propagation window while
+          # remaining fail-closed.
+          signatures_verified=false
+          for attempt in {1..20}; do
+            if npm audit signatures; then
+              signatures_verified=true
+              break
+            fi
+            if (( attempt < 20 )); then
+              delay="$(retry_delay_seconds "${attempt}")"
+              echo "Registry signatures or attestations are not available yet (attempt ${attempt}/20); retrying in ${delay}s."
+              sleep "${delay}"
+            fi
+          done
+          if [[ "${signatures_verified}" != "true" ]]; then
+            echo "Registry signature verification did not succeed after 20 attempts." >&2
+            exit 1
+          fi

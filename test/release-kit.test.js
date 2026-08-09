@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -136,4 +137,88 @@ test("trusted npm publication binds dispatch approval to the exact reviewed comm
   for (const input of ["expected_size_bytes", "expected_sha256", "expected_integrity"]) {
     assert.match(workflow, new RegExp(`${input}:`));
   }
+});
+
+test("0.6.2 maintenance publication is branch-bound, allowlisted, and manual", async () => {
+  const output = execFileSync(process.execPath, ["scripts/verify-maintenance-release.mjs"], {
+    cwd: ROOT,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"]
+  });
+  assert.match(output, /ff7000579240658bfd99f3def6df4e59e6911b28/);
+  assert.match(output, /e71ee10f6fd3931b9fd6c09f8a69bf7808d4a316/);
+  assert.match(output, /b9008158d90b1b050cad6ab566b44fd794f9c1dd/);
+
+  const publish = await readFile(path.join(ROOT, ".github", "workflows", "publish-npm.yml"), "utf8");
+  const ci = await readFile(path.join(ROOT, ".github", "workflows", "ci.yml"), "utf8");
+  const codeql = await readFile(path.join(ROOT, ".github", "workflows", "codeql.yml"), "utf8");
+
+  assert.match(publish, /refs\/heads\/release\/0\.6\.x/);
+  assert.match(publish, /Manual dispatch only\./);
+  assert.doesNotMatch(publish, /^\s+push:\s*$/m);
+  assert.match(publish, /EXPECTED_VERSION\}" == "0\.6\.2"/);
+  assert.match(publish, /DIST_TAG\}" == "latest"/);
+  assert.match(publish, /options: \[latest\]/);
+  assert.match(publish, /Expected npm latest 0\.6\.1/);
+  assert.match(publish, /for attempt in \{1\.\.20\}/);
+  assert.match(publish, /Registry signature verification did not succeed after 20 attempts/);
+  assert.ok(
+    publish.match(/node scripts\/verify-maintenance-release\.mjs/g)?.length >= 2,
+    "verify and publish must both bind the maintenance tree"
+  );
+  assert.ok(
+    publish.match(/fetch-depth: 0/g)?.length >= 2,
+    "both publishing jobs need the annotated tag and full ancestry"
+  );
+  assert.match(ci, /branches: \[main, release\/0\.6\.x\]/);
+  assert.match(codeql, /branches: \[main, release\/0\.6\.x\]/);
+});
+
+test("maintenance metadata accepts only exact version substitutions", async () => {
+  const maintenance = await import("../scripts/verify-maintenance-release.mjs");
+  const current = await readFile(path.join(ROOT, "package.json"), "utf8");
+  const historical = execFileSync(
+    "git",
+    ["show", "e71ee10f6fd3931b9fd6c09f8a69bf7808d4a316:package.json"],
+    { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
+  );
+
+  assert.doesNotThrow(() => {
+    maintenance.assertVersionOnlyMetadata("package.json", current, historical);
+  });
+
+  const dependencyDrift = current.replace('"ajv": "^8.18.0"', '"ajv": "^8.99.0"');
+  assert.notEqual(dependencyDrift, current, "dependency mutation fixture must change package.json");
+  assert.throws(
+    () => maintenance.assertVersionOnlyMetadata("package.json", dependencyDrift, historical),
+    /drifted from v0\.6\.1 outside the exact version occurrences/
+  );
+
+  const malformedVersion = current.replace('"version": "0.6.2"', '"version":"0.6.2"');
+  assert.notEqual(malformedVersion, current, "version-shape mutation fixture must change package.json");
+  assert.throws(
+    () => maintenance.normalizeVersionMetadata("package.json", malformedVersion, "0.6.2", "0.6.1"),
+    /does not have the exact 0\.6\.2 occurrence shape/
+  );
+
+  const historicalLock = execFileSync(
+    "git",
+    ["show", "e71ee10f6fd3931b9fd6c09f8a69bf7808d4a316:package-lock.json"],
+    { cwd: ROOT, encoding: "buffer", stdio: ["ignore", "pipe", "pipe"] }
+  );
+  assert.deepEqual(maintenance.canonicalizeHistoricalLockSnapshot(historicalLock), historicalLock);
+  const crlfLock = Buffer.from(historicalLock.toString("utf8").replaceAll("\n", "\r\n"), "utf8");
+  assert.deepEqual(maintenance.canonicalizeHistoricalLockSnapshot(crlfLock), historicalLock);
+  assert.throws(
+    () => maintenance.canonicalizeHistoricalLockSnapshot(
+      Buffer.from(historicalLock.toString("utf8").replace("\n", "\r"), "utf8")
+    ),
+    /contains a bare carriage return/
+  );
+  assert.throws(
+    () => maintenance.canonicalizeHistoricalLockSnapshot(
+      Buffer.from(historicalLock.toString("utf8").replace("\n", "\r\n"), "utf8")
+    ),
+    /mixes LF and CRLF newlines/
+  );
 });
