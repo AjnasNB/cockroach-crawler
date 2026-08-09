@@ -15,8 +15,8 @@ supported read-only sources into structured content and evidence records.
 - crawls with breadth-first, depth-first, relevance-based, or adaptive
   traversal under origin, redirect, request, byte, concurrency, and time limits;
 - discovers sitemaps and follows robots rules;
-- extracts Markdown, JSON, JSONL, CSS, XPath, restricted-regex, and structured
-  fields;
+- extracts readable text and Markdown, emits JSON/JSONL, and supports bounded
+  CSS, XPath, restricted-regex, and structured-field extraction;
 - uses an explicit browser provider when JavaScript rendering, screenshots,
   PDFs, or browser evidence are required; and
 - preserves canonical URLs, redirect history, hashes, warnings, provenance,
