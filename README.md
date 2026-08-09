@@ -3,7 +3,7 @@
 <img src="https://raw.githubusercontent.com/AjnasNB/cockroach-crawler/main/assets/banner.svg" alt="Cockroach Crawler - give your AI agents the web, keep the keys" width="100%">
 
 [![npm version](https://img.shields.io/npm/v/cockroach-crawler.svg)](https://www.npmjs.com/package/cockroach-crawler)
-[![npm next](https://img.shields.io/npm/v/cockroach-crawler/next.svg?label=npm%20next)](https://www.npmjs.com/package/cockroach-crawler/v/0.7.0-rc.1)
+[![release 0.7.0](https://img.shields.io/badge/release-0.7.0-10b981.svg)](https://github.com/AjnasNB/cockroach-crawler/releases/tag/v0.7.0)
 [![CI](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml)
 [![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
@@ -16,15 +16,15 @@
 
 ## Measured, not asserted
 
-The published 0.7.0-rc.1 prerelease defines separate core, quality, and
+The stable 0.7.0 release defines separate core, quality, and
 fail-closed extraction profiles. Every value below is development evidence
 from the same source-pinned WCEB v1.0 scorer, not held-out confirmation or a
-stable-release performance claim.
+universal performance claim.
 
-Install the reviewed candidate without replacing the stable channel:
+Install the stable package:
 
 ```bash
-npm install cockroach-crawler@0.7.0-rc.1
+npm install cockroach-crawler@0.7.0
 ```
 
 | Surface and corpus | Precision | Recall | F1 | Required-snippet | Unwanted | Abstentions |
@@ -39,12 +39,12 @@ previously inspected and iterated against it. We therefore label it
 1,497-page row is the upstream WCEB development split. These results do not
 support a universal 0.90 precision claim.
 
-**Published evidence receipt:** the immutable npm prerelease contains
+**Published evidence receipt:** the immutable benchmark artifact
 [`wceb-quality-observed-0.7.0.json`](./bench/results/wceb-quality-observed-0.7.0.json)
 unchanged from benchmark-generation commit
 [`90825063d447f07345388d040b1428a311109c2b`](https://github.com/AjnasNB/cockroach-crawler/tree/90825063d447f07345388d040b1428a311109c2b)
 (`research-crawler-0.7.0-evidence-source`). The JSON records source version
-`0.7.0`; it was later packaged byte-for-byte in `cockroach-crawler@0.7.0-rc.1`
+`0.7.0`; it was first packaged byte-for-byte in `cockroach-crawler@0.7.0-rc.1`
 at commit
 [`62f270636a019c9bcc617a13fe254640bcd06925`](https://github.com/AjnasNB/cockroach-crawler/tree/62f270636a019c9bcc617a13fe254640bcd06925).
 That package commit has a valid GitHub signature. `v0.7.0-rc.1` is an annotated
@@ -57,8 +57,10 @@ All 511 pages were accepted by this non-fail-closed profile.
 
 This published result remains valid within that observed-development scope. A
 separate later raw-DOM experiment was rejected after five gates failed; it did
-not replace, retract, or modify the benchmark shipped in `0.7.0-rc.1`. npm
-`latest` is the stable `0.6.2` line, while this candidate remains on `next`.
+not replace, retract, or modify the benchmark shipped in `0.7.0-rc.1` and
+carried unchanged into 0.7.0. The maintainer selected stable API and package
+availability independently of that rejected experiment. This is not a
+benchmark-leadership claim.
 
 The opt-in `cockroach-crawler/quality` surface uses the exact native
 `trafilatura@0.2.0` dependency; it is not presented as a new extraction
@@ -97,10 +99,12 @@ Every capability stays behind creator-owned origin, request, byte, redirect, con
 
 Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [category-based alternatives guide](https://cockroachcrawler.com/compare/) covering Firecrawl, Crawl4AI, Crawlee, Scrapy, Trafilatura, Playwright, Puppeteer, Apify, and ScrapingBee before choosing a crawler.
 
-## All 50 shipped capabilities
+## 50 top-level shipped capabilities
 
-Every item below has a public API, command, output contract, test, or dedicated
-documentation page in the `0.7.0` source candidate.
+This curated top-level catalog makes the package easier to scan; it is not an
+exhaustive count of every exported function, option, or output field. Every
+listed item has a public API, command, output contract, test, or dedicated
+documentation page in stable `0.7.0`.
 
 ### Crawl and discover - 15
 
@@ -173,7 +177,7 @@ documentation page in the `0.7.0` source candidate.
 4. Fixed self-hosted proxy-gateway adapter
 5. Challenge-aware provider escalation that stops without access-control bypass
 
-Open the [searchable 50-capability library](https://cockroachcrawler.com/docs/capabilities/)
+Open the [searchable catalog of 50 top-level capabilities](https://cockroachcrawler.com/docs/capabilities/)
 for copyable APIs, expected outputs, prerequisites, failure modes, and the
 authority boundary for every item.
 
@@ -211,10 +215,11 @@ case-sensitive registry identity
 publication proves control of that namespace, not additional crawler runtime
 authority.
 
-Version `0.7.0-rc.1` is the reviewed prerelease represented by commit
-`62f270636a019c9bcc617a13fe254640bcd06925`. It is published on npm under
-`next`; `latest` is the stable `0.6.2` line. Verify both channels with
-`npm view cockroach-crawler dist-tags`.
+Version `0.7.0` promotes the reviewed RC runtime represented by commit
+`62f270636a019c9bcc617a13fe254640bcd06925` without runtime, dependency, or
+benchmark drift. Stable publication is bound to the exact reviewed 0.7.0
+commit and tarball through npm trusted publishing. Verify the live registry
+state with `npm view cockroach-crawler version dist-tags`.
 
 ## Public benchmark evidence
 
@@ -239,7 +244,7 @@ The local crawler produces structured JSON/JSONL with readable text, Markdown, l
 
 It does not bundle a model, model key, hosted account, stealth layer, CAPTCHA bypass, paywall bypass, or authorization bypass. Optional LLM extraction runs only through a host-supplied adapter and validates its output against the caller's JSON Schema.
 
-Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [50-capability library](https://cockroachcrawler.com/docs/capabilities/) · [advanced capabilities](./docs/ADVANCED.md) · [complete feature inventory](./docs/FEATURES.md) · [comparison](https://cockroachcrawler.com/compare/) · [benchmark](https://cockroachcrawler.com/benchmark/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [GitHub Discussions](https://github.com/AjnasNB/cockroach-crawler/discussions) · [issues](https://github.com/AjnasNB/cockroach-crawler/issues) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
+Documentation: [quickstart](https://cockroachcrawler.com/docs/) · [50-capability top-level catalog](https://cockroachcrawler.com/docs/capabilities/) · [advanced capabilities](./docs/ADVANCED.md) · [detailed feature inventory](./docs/FEATURES.md) · [comparison](https://cockroachcrawler.com/compare/) · [benchmark](https://cockroachcrawler.com/benchmark/) · [architecture](./docs/ARCHITECTURE.md) · [source adapters](./docs/SOURCES.md) · [GitHub Discussions](https://github.com/AjnasNB/cockroach-crawler/discussions) · [issues](https://github.com/AjnasNB/cockroach-crawler/issues) · [security](./SECURITY.md) · [contributing](./CONTRIBUTING.md)
 
 ## Complete documentation
 
@@ -249,8 +254,8 @@ uses stable public exports and copyable examples from this package.
 | Need | Guide |
 | --- | --- |
 | Install and run one bounded crawl | [Documentation overview](https://cockroachcrawler.com/docs/) |
-| Browse every shipped feature as a separate page with its API, output, failures, and boundary | [50-capability library](https://cockroachcrawler.com/docs/capabilities/) |
-| Use every CLI flag | [CLI guide](https://cockroachcrawler.com/docs/cli/) |
+| Browse the 50 curated top-level capability pages with API, output, failures, and boundaries | [Top-level capability catalog](https://cockroachcrawler.com/docs/capabilities/) |
+| Follow the CLI quickstart and bounded workflow | [CLI guide](https://cockroachcrawler.com/docs/cli/) |
 | Embed the typed Node.js API | [JavaScript API](https://cockroachcrawler.com/docs/javascript/) |
 | Configure BFS, DFS, best-first, adaptive traversal, sitemaps, callbacks, and cache | [Crawling and cache](https://cockroachcrawler.com/docs/crawling/) |
 | Render JavaScript, click, scroll, flatten DOM, capture screenshots and PDFs, and use explicit profiles | [Browser rendering and evidence](https://cockroachcrawler.com/docs/browser/) |
@@ -261,7 +266,7 @@ uses stable public exports and copyable examples from this package.
 | Inspect public, official, no-key, and session-backed read routes | [Provider guide](https://cockroachcrawler.com/docs/providers/) |
 | Run the authenticated API, process-local job queue, dashboard, and playground | [Docker and Node API](https://cockroachcrawler.com/docs/docker/) |
 | Deploy the fixed-origin fetch-only Worker profile | [Cloudflare Worker](https://cockroachcrawler.com/docs/serverless/) |
-| Look up every package subpath, crawl option, page field, statistic, and executable | [Complete reference](https://cockroachcrawler.com/docs/reference/) |
+| Look up major package subpaths, crawl options, page fields, statistics, and executables | [Curated reference](https://cockroachcrawler.com/docs/reference/) |
 | Reproduce extraction and public-policy evidence | [Benchmark method and machine-readable results](https://cockroachcrawler.com/benchmark/) |
 | Ask design questions and share integrations | [GitHub Discussions](https://github.com/AjnasNB/cockroach-crawler/discussions) |
 | Report a reproducible bug or request a scoped capability | [GitHub Issues](https://github.com/AjnasNB/cockroach-crawler/issues) |
@@ -338,8 +343,8 @@ Read [SECURITY.md](./SECURITY.md) before exposing crawling to model-generated or
 | --- | --- |
 | Public documentation, blogs, help centers, and marketing pages | Strong |
 | JSONL/Markdown records for RAG and indexing | Strong |
-| Compact fetch-validated site maps | 0.7 source candidate; optional lexical search ranks only fetched entries |
-| Structured extraction | 0.7 source candidate; CSS, XPath, restricted regex, schema-validated host-model strategies, and an opt-in Node quality backend |
+| Compact fetch-validated site maps | Stable 0.7; optional lexical search ranks only fetched entries |
+| Structured extraction | Stable 0.7; CSS, XPath, restricted regex, schema-validated host-model strategies, and an opt-in Node quality backend |
 | Bounded local crawling from Node.js or a CLI | Strong |
 | A strictly limited crawler tool inside an agent runtime | Strong, with creator-owned origin and resource policy |
 | JavaScript-rendered pages with bounded explicit clicks | Optional Chromium mode; isolate it for untrusted targets |
@@ -359,12 +364,10 @@ npm install cockroach-crawler
 Pin the current published stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@0.6.2
+npm install cockroach-crawler@0.7.0
 ```
 
-The `0.7.0` source candidate includes advanced package subpaths. Review it at
-the pinned commit; do not present these candidate surfaces as published npm
-0.6.2 features:
+The stable `0.7.0` package includes the advanced package subpaths below:
 
 ```js
 import { crawl } from "cockroach-crawler";
@@ -446,10 +449,13 @@ import { resolveIdentity, identityHeaders, detectChallenge } from "cockroach-cra
 identityHeaders(resolveIdentity("chrome-windows"));
 ```
 
-A profile keeps user agent, client hints, `Accept-Language`, viewport, platform,
-locale, and timezone consistent, and drives the HTTP and browser tiers from one
-declaration — which is what stops sites from serving degraded markup to a
-client whose headers describe no real browser.
+The HTTP transport applies the profile's user agent, `Accept`,
+`Accept-Language`, `Accept-Encoding`, navigation headers, and applicable
+Chromium client hints. The exported `identityBrowserContext()` helper returns
+optional Playwright context settings for a trusted caller to apply. Cockroach
+Crawler's built-in browser mode currently applies only the declared user agent;
+it does not claim profile-driven viewport, browser locale, timezone, or
+client-hint emulation.
 
 Challenge pages are detected and surfaced as a first-class outcome, never
 mistaken for content. The default policy fails closed; `report` hands the
@@ -621,7 +627,7 @@ Run `cockroach-crawl --help` for the complete browser and output option list.
 `cockroach-sources` is read-only. It never accepts secrets on command-line flags, extracts browser cookies, installs provider tools, or silently falls back from an official API to session scraping.
 
 ```bash
-npm install cockroach-crawler@0.7.0-rc.1
+npm install cockroach-crawler@0.7.0
 npx cockroach-sources doctor
 npx cockroach-sources search github "secure web crawler" --max-results 5
 npx cockroach-sources read github AjnasNB/cockroach-crawler

@@ -1,24 +1,28 @@
 # Cockroach Crawler benchmarks
 
-## Published 0.7.0-rc.1 result
+## Stable 0.7.0 release evidence
 
-The reviewed npm `next` prerelease publishes the following exact
+The stable `0.7.0` package carries forward the following exact
 observed-development result for its opt-in Node quality `balanced` path:
 
 | Version | Corpus | Pages | Precision | Recall | Macro F1 |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `0.7.0-rc.1` | WCEB v1.0, observed partition | 511 | **0.894101** | **0.926022** | **0.890524** |
+| `0.7.0` | WCEB v1.0, observed partition | 511 | **0.894101** | **0.926022** | **0.890524** |
 
-This is a positive, reproducible prerelease benchmark within its declared
+This is positive, reproducible release evidence within its declared
 scope. It is not untouched held-out confirmation. Publication reports the
 measured values directly; it does not round precision to 0.90 or turn the row
 into a universal crawler ranking.
 
-- npm package: `cockroach-crawler@0.7.0-rc.1` on `next`
+- stable package metadata: `cockroach-crawler@0.7.0` on `latest` after the
+  trusted publication workflow completes
 - benchmark-generation commit: `90825063d447f07345388d040b1428a311109c2b`
   (`research-crawler-0.7.0-evidence-source`)
 - embedded benchmark package version: `0.7.0`
 - package/tag commit: `62f270636a019c9bcc617a13fe254640bcd06925`
+- provenance note: that commit first packaged the unchanged artifact in
+  `cockroach-crawler@0.7.0-rc.1`; stable 0.7.0 changes release metadata, not
+  benchmark or runtime bytes
 - signature state: the package commit has a valid GitHub signature;
   `v0.7.0-rc.1` is an annotated tag without a cryptographic tag signature
 - result: `bench/results/wceb-quality-observed-0.7.0.json`

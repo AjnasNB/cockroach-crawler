@@ -1,11 +1,11 @@
 # Advanced AI crawler capabilities
 
-Cockroach Crawler `0.7.x` is the source-level candidate capability line for agents that need
+Cockroach Crawler `0.7.x` is the stable capability line for agents that need
 deep traversal, browser evidence, document parsing, structured extraction,
 local deployment, and MCP without losing the package's origin, robots,
 network, and resource boundaries.
 
-The candidate is designed as a compact crawler for governed agents.
+The package is designed as a compact crawler for governed agents.
 That scope matters: it is a Node.js package with reviewable authority,
 not a claim to be a CAPTCHA bypass, distributed durable queue, managed proxy
 fleet, or multi-tenant scraping cloud.

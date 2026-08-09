@@ -1,6 +1,6 @@
 {
   "name": "cockroach-crawler",
-  "version": "0.7.0-rc.1",
+  "version": "0.7.0",
   "mcpName": "io.github.AjnasNB/cockroach-crawler",
   "description": "Give AI agents superpowers on the web: crawl, render, map, extract, and verify evidence through one governed Node.js crawler.",
   "license": "MIT",
@@ -211,7 +211,7 @@
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
     "check": "npm test && npm run test:types && npm run bench && npm run audit:licenses",
-    "release:check": "npm run check && npm run test:browser && npm run worker:types && npm run worker:check && npm audit --omit=dev --audit-level=high && npm pack --dry-run --ignore-scripts",
+    "release:check": "npm run release:runtime-invariant && npm run publication:check && npm run bench:public:verify -- --historical-source && npm run check && npm run test:browser && npm run worker:types && npm run worker:check && npm audit --omit=dev --audit-level=high && npm pack --dry-run --ignore-scripts",
     "prepublishOnly": "npm run release:check",
     "bench": "node bench/local-benchmark.mjs",
     "bench:public:wceb": "node bench/public/wceb-benchmark.mjs",
@@ -226,7 +226,8 @@
     "shell": "node bin/cockroach-shell.js",
     "bench:public:comparison": "node bench/public/extraction-comparison.mjs",
     "paper:build": "python scripts/build-crawler-whitepaper-pdf.py",
-    "publication:check": "node scripts/check-publication.mjs"
+    "publication:check": "node scripts/check-publication.mjs",
+    "release:runtime-invariant": "node scripts/check-stable-runtime-invariant.mjs"
   },
   "keywords": [
     "crawler",

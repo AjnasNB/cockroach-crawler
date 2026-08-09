@@ -34,17 +34,17 @@ alongside extracted content.
 Cockroach Crawler is useful when bounded crawling, structured extraction,
 source identity, and inspectable evidence need to live in one Node.js toolkit.
 It is not a hosted proxy fleet, an access-control bypass, or a universal
-best-crawler claim. The 0.7 line is currently a prerelease under evaluation;
-its published benchmark rows are development evidence, not independent
-certification or stable-release performance guarantees.
+best-crawler claim. Stable 0.7 keeps its published benchmark rows labeled as
+development evidence, not independent certification or universal performance
+guarantees.
 
 ## Stewardship and release record
 
 Project citation metadata credits [Ajnas N B](https://github.com/AjnasNB) as
 the author.
 
-- Current stable software release: [Cockroach Crawler 0.6.1](https://github.com/AjnasNB/cockroach-crawler/releases/tag/v0.6.1)
-- Current prerelease: [Cockroach Crawler 0.7.0-rc.1](https://github.com/AjnasNB/cockroach-crawler/releases/tag/v0.7.0-rc.1)
+- Stable software release: [Cockroach Crawler 0.7.0](https://github.com/AjnasNB/cockroach-crawler/releases/tag/v0.7.0)
+- Historical prerelease: [Cockroach Crawler 0.7.0-rc.1](https://github.com/AjnasNB/cockroach-crawler/releases/tag/v0.7.0-rc.1)
 - Package: [cockroach-crawler on npm](https://www.npmjs.com/package/cockroach-crawler)
 - License: [MIT License](https://github.com/AjnasNB/cockroach-crawler/blob/main/LICENSE)
 - Source: [github.com/AjnasNB/cockroach-crawler](https://github.com/AjnasNB/cockroach-crawler)

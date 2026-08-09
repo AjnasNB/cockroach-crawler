@@ -81,15 +81,20 @@ import { resolveIdentity, identityHeaders, identityBrowserContext } from "cockro
 
 const identity = resolveIdentity("chrome-windows", { acceptLanguage: "de-DE,de;q=0.9" });
 identityHeaders(identity);          // coherent headers for the HTTP tier
-identityBrowserContext(identity);   // matching Playwright context options
+identityBrowserContext(identity);   // optional settings for a trusted Playwright caller
 ```
 
 Profiles: `chrome-windows`, `chrome-macos`, `edge-windows`, `firefox-windows`,
 `safari-macos`, `chrome-android`, `safari-ios`.
 
-A profile keeps user agent, client hints, `Accept-Language`, viewport, platform,
-locale, and timezone consistent with each other, and drives both tiers from one
-declaration. Firefox and WebKit profiles do not emit Chromium client hints.
+`identityHeaders()` emits the profile's user agent, `Accept`,
+`Accept-Language`, `Accept-Encoding`, navigation headers, and applicable
+Chromium client hints. Firefox and WebKit profiles do not emit Chromium client
+hints. `identityBrowserContext()` separately returns viewport, locale,
+timezone, touch/mobile, scale, user-agent, and header settings that a trusted
+Playwright caller may choose to apply. Cockroach Crawler's built-in browser
+mode does not consume that helper today: `crawl()` applies only the declared
+user agent to its browser context.
 
 This solves a correctness problem: a client whose headers describe no real
 browser gets degraded markup or a flat refusal from many sites. Profiles are

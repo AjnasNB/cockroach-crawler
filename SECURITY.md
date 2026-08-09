@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are provided for the latest published stable minor release. The current npm `latest` baseline is version `0.6.1` as of 8 August 2026. Version `0.7.0` is a source-level release candidate at commit `90825063d447f07345388d040b1428a311109c2b`; it is not a published package or release tag. Verify current registry state with `npm view cockroach-crawler version dist-tags`.
+Security fixes are provided for the latest published stable minor release. This source tree identifies Cockroach Crawler `0.7.0` and is prepared for stable publication through the repository's trusted npm workflow. Until that exact reviewed artifact is published, the registry's existing `latest` tag remains authoritative; verify live state with `npm view cockroach-crawler version dist-tags`. The stable promotion changes release metadata only: the shipped runtime and dependency graph remain identical to the reviewed `0.7.0-rc.1` package commit `62f270636a019c9bcc617a13fe254640bcd06925`.
 
 Report a suspected vulnerability privately through the GitHub repository's security-advisory form. Do not include credentials, session state, private page content, or cloud metadata in a public issue. If the advisory form is unavailable, contact `ajnasnb@gmail.com` with a minimal reproduction.
 

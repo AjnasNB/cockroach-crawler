@@ -37,6 +37,7 @@ for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
   const label = file.slice(dist.length).replaceAll("\\", "/");
   if (/\u2014|&mdash;|&#8212;|&#x2014;/i.test(html)) errors.push(`${label}: public pages must use a normal hyphen instead of an em dash`);
+  if (html.includes(">All features</a>") || html.includes(">Complete reference</a>")) errors.push(`${label}: navigation must label curated surfaces without implying exhaustive coverage`);
   const h1Count = (html.match(/<h1\b/g) ?? []).length;
   if (h1Count !== 1) errors.push(`${label}: expected one h1, found ${h1Count}`);
   if (!/<meta name="description"/.test(html) && !label.endsWith("404.html")) errors.push(`${label}: missing description`);
@@ -121,7 +122,10 @@ const searchIndex = JSON.parse(await readFile(join(dist, "search.json"), "utf8")
 if (!Array.isArray(searchIndex) || searchIndex.length !== sitemapLocations.length) errors.push("search.json must index every public route");
 const benchmarkSearch = searchIndex.find((entry) => entry.url === "https://cockroachcrawler.com/benchmark/");
 if (!benchmarkSearch || !benchmarkSearch.description.includes("0.894101 precision") || !benchmarkSearch.description.includes("0.926022 recall") || !benchmarkSearch.description.includes("0.890524 macro F1")) {
-  errors.push("search.json must publish the exact 0.7.0-rc.1 benchmark in the benchmark route description");
+  errors.push("search.json must publish the exact stable 0.7.0 benchmark in the benchmark route description");
+}
+if (JSON.stringify(searchIndex).includes("Core structural · observed 511") || JSON.stringify(searchIndex).includes("0.793763")) {
+  errors.push("search.json must not reintroduce the obsolete core structural row into current stable summaries");
 }
 const ecosystemSearch = searchIndex.find((entry) => entry.url === "https://cockroachcrawler.com/ecosystem/");
 if (!ecosystemSearch || ecosystemSearch.updated !== "2026-08-09" || !ecosystemSearch.description.includes("Qarinah")) {
@@ -143,11 +147,11 @@ if (!dockerHtml.includes("/v1/jobs")) errors.push("Docker guide must document bo
 const llms = await readFile(join(dist, "llms.txt"), "utf8");
 if (!llms.includes("AI crawler comparison: https://cockroachcrawler.com/compare/")) errors.push("llms.txt must link the factual crawler comparison");
 if (!llms.includes("Open-source governed-agent ecosystem: https://cockroachcrawler.com/ecosystem/")) errors.push("llms.txt must link the governed-agent ecosystem article");
-if (!llms.includes("Complete JavaScript and CLI reference: https://cockroachcrawler.com/docs/reference/")) errors.push("llms.txt must link the complete reference");
+if (!llms.includes("Curated JavaScript and CLI reference: https://cockroachcrawler.com/docs/reference/")) errors.push("llms.txt must link the curated reference");
 for (const phrase of ["searchable fetch-validated site maps", "restricted regex extraction", "bounded process-local asynchronous jobs", "official Registry metadata"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must document ${phrase}`);
 }
-for (const phrase of ["npm latest is 0.6.2", "0.7.0-rc.1 prerelease", "raw-DOM attempt 003 was rejected", "precision 0.860252", "five gates", "no integration, release, ranking, or best-crawler statement"]) {
+for (const phrase of ["Stable version 0.7.0 is published through npm latest", "historical 0.7.0-rc.1", "raw-DOM attempt 003 was rejected", "precision 0.860252", "five gates", "no integration, release, ranking, or best-crawler statement"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must preserve publication status: ${phrase}`);
 }
 for (const phrase of [
@@ -162,7 +166,7 @@ for (const phrase of [
   "annotated tag without a cryptographic tag signature",
   "Download the published 511-page result"
 ]) {
-  if (!llms.includes(phrase)) errors.push(`llms.txt must publish the exact RC benchmark: ${phrase}`);
+  if (!llms.includes(phrase)) errors.push(`llms.txt must publish the exact stable benchmark and RC provenance: ${phrase}`);
 }
 for (const phrase of ["Cockroach Browser uses playwright-core", "Cockroach Crawler's opt-in quality option is Trafilatura-backed", "This is a category map, not a ranking"]) {
   if (!llms.includes(phrase)) errors.push(`llms.txt must preserve the ecosystem boundary: ${phrase}`);
@@ -175,17 +179,43 @@ for (const route of ["/docs/", "/compare/", "/ecosystem/", "/benchmark/", "/pape
 if (!llmsFull.includes("no integration, release, ranking, or best-crawler statement")) {
   errors.push("llms-full.txt must preserve the rejected-attempt claim boundary");
 }
+for (const currentSummary of [llms, llmsFull]) {
+  if (currentSummary.includes("Core structural · observed 511") || currentSummary.includes("0.793763")) {
+    errors.push("LLM discovery summaries must lead with the stable quality result and omit the obsolete core structural row");
+  }
+}
 const packageReadme = await readFile(join(dist, "..", "..", "README.md"), "utf8");
 if (/assets\/readme-proof-still/i.test(packageReadme)) errors.push("npm README must not restore the oversized proof banner");
 if (!packageReadme.includes("Give your AI agents the web. Keep the keys.")) errors.push("npm README must lead with the creator-owned AI web crawler promise");
-if (!packageReadme.includes("Look up every package subpath, crawl option, page field, statistic, and executable")) {
-  errors.push("npm README must retain the complete-reference documentation row");
+if (!packageReadme.includes("Look up major package subpaths, crawl options, page fields, statistics, and executables")) {
+  errors.push("npm README must retain the curated-reference documentation row");
 }
-if (!packageReadme.includes("npm install cockroach-crawler@0.6.2") || !packageReadme.includes("0.6.2 features:")) {
-  errors.push("npm README must pin the current stable 0.6.2 install and feature boundary");
+if (packageReadme.includes("Use every CLI flag")) errors.push("npm README must describe the CLI route as a quickstart, not an exhaustive flag inventory");
+if (!packageReadme.includes("npm install cockroach-crawler@0.7.0") || !packageReadme.includes("curated top-level catalog")) {
+  errors.push("npm README must pin stable 0.7.0 and label the 50-item list as a curated top-level catalog");
+}
+if (!packageReadme.includes("built-in browser mode currently applies only the declared user agent")) {
+  errors.push("npm README must state the actual browser identity boundary");
+}
+if (!packageReadme.includes("identityBrowserContext()") || !/applicable\s+Chromium client hints/i.test(packageReadme)) {
+  errors.push("npm README must distinguish emitted HTTP identity headers from optional trusted-caller browser context settings");
+}
+const featureInventory = await readFile(join(dist, "..", "..", "docs", "FEATURES.md"), "utf8");
+if (!featureInventory.includes("Eight CLIs:") || !featureInventory.includes("`cockroach-shell`")) {
+  errors.push("feature inventory must list all eight package CLIs");
+}
+const capabilityContract = await readFile(join(dist, "..", "..", "docs", "CAPABILITIES.md"), "utf8");
+if (!/Optional browser crawling inside `crawl\(\)`\s+currently applies only/i.test(capabilityContract) || capabilityContract.includes("the same profile drives both the HTTP and browser tiers")) {
+  errors.push("capability contract must distinguish full HTTP identity headers from browser user-agent-only wiring");
+}
+const identityGuide = await readFile(join(dist, "..", "..", "docs", "SELECTORS-AND-IDENTITY.md"), "utf8");
+if (!identityGuide.includes("identityBrowserContext()") || !/built-in browser\s+mode does not consume that helper today/i.test(identityGuide) || identityGuide.includes("drives both tiers from one declaration")) {
+  errors.push("identity guide must distinguish the optional context helper from built-in browser wiring");
 }
 const docsHtml = await readFile(join(dist, "docs", "index.html"), "utf8");
-if (!docsHtml.includes("Cockroach Crawler 0.7.0-rc.1 prerelease documentation")) errors.push("docs must identify the published 0.7.0-rc.1 prerelease documentation set");
+if (!docsHtml.includes("Cockroach Crawler 0.7.0 stable documentation")) errors.push("docs must identify the stable 0.7.0 documentation set");
+if (!docsHtml.includes("stable 0.7.0") || docsHtml.includes("next 0.7.0") || docsHtml.includes("Prerelease 0.7.0")) errors.push("docs navigation and manuals must label 0.7.0 stable, never next or prerelease");
+if (!docsHtml.includes("Curated reference")) errors.push("docs navigation must link the curated reference with truthful scope");
 if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
 if (!docsHtml.includes('href="/docs/capabilities/"')) errors.push("docs overview must link the dedicated capability library");
 if (!docsHtml.includes("docs-sidebar-nav")) errors.push("docs overview must use the persistent grouped documentation navigation");
@@ -194,10 +224,16 @@ if ((docsHtml.match(/data-docs-nav-expanded="true"/g) ?? []).length < 2) errors.
 for (const group of ["Start", "Crawl and extract", "Agents and sources", "Deploy and reference", "Capability library"]) {
   if (!docsHtml.includes(`>${group}</h2>`)) errors.push(`docs navigation must expose the ${group} group heading`);
 }
+const referenceHtml = await readFile(join(dist, "docs", "reference", "index.html"), "utf8");
+if (!referenceHtml.includes("Curated JavaScript and CLI reference") || !referenceHtml.includes("Major stable top-level crawl options")) errors.push("reference page must describe a curated major-surface guide rather than an exhaustive inventory");
+if (!referenceHtml.includes("Eight command-line entry points") || !referenceHtml.includes("<code>cockroach-shell</code>")) errors.push("reference page must list all eight package CLIs, including cockroach-shell");
+for (const staleClaim of ["Complete JavaScript and CLI reference", "Every stable top-level crawl option", "Seven command-line entry points"]) {
+  if (referenceHtml.includes(staleClaim)) errors.push(`reference page must not restore overclaim: ${staleClaim}`);
+}
 if (docsHtml.includes("data-feature-entry")) errors.push("docs overview must not restore the giant inline capability wall");
 const capabilityHomeHtml = await readFile(join(dist, "index.html"), "utf8");
-if (!capabilityHomeHtml.includes("data-home-capability-inventory")) errors.push("homepage must expose the complete capability inventory immediately after the hero");
-if ((capabilityHomeHtml.match(/data-home-capability(?:>|\s)/g) ?? []).length !== 50) errors.push("homepage must expose all 50 capability links");
+if (!capabilityHomeHtml.includes("data-home-capability-inventory")) errors.push("homepage must expose the curated top-level capability catalog immediately after the hero");
+if ((capabilityHomeHtml.match(/data-home-capability(?:>|\s)/g) ?? []).length !== 50) errors.push("homepage must expose all 50 curated top-level capability links");
 if ((capabilityHomeHtml.match(/data-home-capability-group=/g) ?? []).length !== 7) errors.push("homepage must preserve all seven capability groups");
 if (capabilityHomeHtml.indexOf("data-home-capability-inventory") > capabilityHomeHtml.indexOf("quality-title")) errors.push("homepage capability inventory must appear before benchmark marketing");
 for (const heading of ["Crawl and discover", "Render and capture", "Extract agent-ready data", "Reach public sources", "Connect agents and MCP", "Deploy and operate", "Keep authority bounded"]) {
@@ -205,11 +241,12 @@ for (const heading of ["Crawl and discover", "Render and capture", "Extract agen
 }
 const homeSchema = [...capabilityHomeHtml.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((match) => JSON.parse(match[1]));
 const homeGraph = homeSchema.flatMap((schema) => schema["@graph"] ?? []);
-const capabilityItemList = homeGraph.find((entry) => entry["@type"] === "ItemList" && entry.name === "Cockroach Crawler complete capability inventory");
+const capabilityItemList = homeGraph.find((entry) => entry["@type"] === "ItemList" && entry.name === "Cockroach Crawler curated top-level capability catalog");
 if (!capabilityItemList || capabilityItemList.numberOfItems !== 50 || capabilityItemList.itemListElement?.length !== 50) {
-  errors.push("homepage structured data must publish all 50 capabilities");
+  errors.push("homepage structured data must publish all 50 curated top-level capabilities");
 }
 const capabilityIndexHtml = await readFile(join(dist, "docs", "capabilities", "index.html"), "utf8");
+if (!capabilityIndexHtml.includes("Fifty curated capabilities. One page for every catalog item.")) errors.push("capability library must identify its 50 entries as a curated catalog");
 if ((capabilityIndexHtml.match(/data-feature-entry/g) ?? []).length !== 50) errors.push("capability library must expose all 50 indexed capabilities");
 if (!capabilityIndexHtml.includes("data-feature-search")) errors.push("capability library must retain the searchable feature index");
 const capabilityIndexLinks = [...capabilityIndexHtml.matchAll(/href="(\/docs\/capabilities\/[^"]+\/)"/g)]
@@ -238,7 +275,7 @@ for (const [route, proof] of [
   ["extraction", "Turn page bytes into model-ready records."],
   ["mcp", "cockroach://capabilities"],
   ["docker", "COCKROACH_API_TOKEN"],
-  ["reference", "Every stable top-level crawl option."]
+  ["reference", "Major stable top-level crawl options."]
 ]) {
   const html = await readFile(join(dist, "docs", route, "index.html"), "utf8");
   if (!html.includes("docs-sidebar-nav")) errors.push(`${route} docs must include grouped documentation navigation`);
@@ -247,8 +284,8 @@ for (const [route, proof] of [
   if (!html.includes(proof)) errors.push(`${route} docs are missing their reference proof`);
 }
 const releaseHtml = await readFile(join(dist, "release", "index.html"), "utf8");
-if (!releaseHtml.includes("npm install cockroach-crawler@next")) errors.push("release page must install the reviewed npm-next prerelease");
-if (!releaseHtml.includes("Published prerelease") || !releaseHtml.includes("Install reviewed npm next 0.7.0-rc.1")) errors.push("release page must separate stable and prerelease status");
+if (!releaseHtml.includes("npm install cockroach-crawler@0.7.0")) errors.push("release page must install exact stable 0.7.0");
+if (!releaseHtml.includes("Stable release") || !releaseHtml.includes("Install stable 0.7.0")) errors.push("release page must identify stable software status");
 for (const proof of [
   "0.894101",
   "0.926022",
@@ -264,7 +301,7 @@ for (const proof of [
   "SHA256SUMS",
   "10.5281/zenodo.21851008"
 ]) {
-  if (!releaseHtml.includes(proof)) errors.push(`release page must publish the exact prerelease benchmark: ${proof}`);
+  if (!releaseHtml.includes(proof)) errors.push(`release page must publish the exact stable benchmark and historical RC provenance: ${proof}`);
 }
 if (!releaseHtml.includes("trafilatura@0.2.0") || !releaseHtml.includes("Alpine/musl")) errors.push("release page must document the exact native dependency and unsupported platform boundary");
 if (releaseHtml.includes("Release · 0.3.0")) errors.push("release page must not advertise 0.3.0 as current");
@@ -300,9 +337,15 @@ for (const proof of [
   if (!benchmarkHtml.includes(proof)) errors.push(`benchmark page is missing scoped development evidence: ${proof}`);
 }
 if (benchmarkHtml.includes("511 held-out pages") || benchmarkHtml.includes("complete held-out")) errors.push("benchmark page must not present the observed 511-page corpus as untouched evidence");
+if (!benchmarkHtml.includes("<tbody><tr><td>Quality balanced · observed 511</td><td><strong>0.894101</strong></td><td><strong>0.926022</strong></td><td><strong>0.890524</strong></td>")) {
+  errors.push("benchmark page must lead its stable summary table with the exact quality-balanced row");
+}
+if (benchmarkHtml.includes("Core structural · observed 511") || benchmarkHtml.includes("0.793763")) {
+  errors.push("benchmark page must not reintroduce the obsolete core structural row into the stable summary");
+}
 const providerMapSvg = await readFile(join(dist, "assets", "provider-map.svg"), "utf8");
-if (!providerMapSvg.includes("npm latest 0.6.2") || providerMapSvg.includes("npm latest 0.6.1")) {
-  errors.push("provider map must identify npm 0.6.2 as the current stable release");
+if (!providerMapSvg.includes("stable 0.7.0") || /npm latest 0\.6\.[12]/.test(providerMapSvg)) {
+  errors.push("provider map must identify stable 0.7.0");
 }
 const compareHtml = await readFile(join(dist, "compare", "index.html"), "utf8");
 for (const proof of [
@@ -359,7 +402,12 @@ for (const proof of [
 if (/[\u2013\u2014]/.test(ecosystemHtml)) errors.push("ecosystem page must use ASCII hyphens instead of en or em dashes");
 const benchmarkBlogHtml = await readFile(join(dist, "blog", "we-benchmarked-ourselves-and-lost", "index.html"), "utf8");
 if (!benchmarkBlogHtml.includes("From a noisy core extractor to an explicit quality path")) errors.push("benchmark blog must carry the 0.7.0 evidence update");
-if (!benchmarkBlogHtml.includes("0.892777") || !benchmarkBlogHtml.includes("0.873844")) errors.push("benchmark blog must retain corrected exact stage values");
+if (!/<tbody>\s*<tr><td>Quality balanced · observed 511<\/td><td><strong>0\.894101<\/strong><\/td><td><strong>0\.926022<\/strong><\/td><td><strong>0\.890524<\/strong><\/td>/.test(benchmarkBlogHtml)) errors.push("benchmark blog must lead with the exact stable quality row");
+if (benchmarkBlogHtml.includes("Core structural · observed 511") || benchmarkBlogHtml.includes("0.793763")) errors.push("benchmark blog must not present the obsolete core row as a current release result");
+const identityBlogHtml = await readFile(join(dist, "blog", "coherent-request-identity", "index.html"), "utf8");
+if (!identityBlogHtml.includes("identityBrowserContext()") || !identityBlogHtml.includes("built-in browser mode does not consume that full mapping today") || identityBlogHtml.includes("one declaration, both tiers")) {
+  errors.push("identity blog must distinguish optional context settings from built-in user-agent-only browser wiring");
+}
 const paperHtml = await readFile(join(dist, "paper", "index.html"), "utf8");
 for (const proof of [
   '"@type":"ScholarlyArticle"',
@@ -371,17 +419,18 @@ for (const proof of [
   "0.860252",
   "five declared gates",
   "10.5281/zenodo.21851008",
-  "npm <code>latest</code> remains 0.6.2"
+  "Stable 0.7.0 is a separate maintainer release decision",
+  "does not certify"
 ]) {
   if (!paperHtml.includes(proof)) errors.push(`paper page is missing research-publication proof: ${proof}`);
 }
 const homeHtml = await readFile(join(dist, "index.html"), "utf8");
-for (const proof of ["Reach the web.", "npm latest 0.6.2", "npm next 0.7.0-rc.1", "62f2706", '"softwareVersion":"0.6.2"', '"identifier":"62f270636a019c9bcc617a13fe254640bcd06925"']) {
+for (const proof of ["Reach the web.", "npm latest 0.7.0", "Stable release", '"softwareVersion":"0.7.0"', '"identifier":"v0.7.0"']) {
   if (!homeHtml.includes(proof)) errors.push(`home page is missing centered publication proof: ${proof}`);
 }
 const roadmapHtml = await readFile(join(dist, "roadmap", "index.html"), "utf8");
-if ((roadmapHtml.match(/Released · 0\.6\.2/g) ?? []).length !== 4 || roadmapHtml.includes("Released · 0.6.1")) {
-  errors.push("roadmap status cards must use the current stable 0.6.2 release label");
+if ((roadmapHtml.match(/Released · 0\.7\.0/g) ?? []).length !== 5 || /Released · 0\.6\.[12]/.test(roadmapHtml)) {
+  errors.push("roadmap status cards must use the stable 0.7.0 release label");
 }
 for (const recognition of [
   'aria-label="Launch directories"',

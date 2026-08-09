@@ -1,14 +1,13 @@
 # Cockroach Crawler Feature Inventory
 
-This is the source-backed inventory for the `0.7.0` release candidate. The
-candidate package, declarations, tests, documentation, and benchmark evidence
-are reviewed together. The npm `latest` tag is `0.6.2`.
+This is the source-backed inventory for stable `0.7.0`. The package,
+declarations, tests, documentation, and benchmark evidence are reviewed
+together.
 
 Status terms:
 
 - **Stable 0.5.x/0.6.x** means the feature was introduced in an earlier stable npm line.
-- **0.7 candidate** means the feature exists in the cited source candidate and
-  is not represented as part of the current stable npm release.
+- **Stable 0.7** means the feature is part of the reviewed 0.7.0 package.
 - **Optional** means the feature requires an explicitly installed peer,
   credential, executable, browser session, or deployment component.
 - **Excluded** means Cockroach Crawler deliberately does not advertise or
@@ -24,7 +23,7 @@ Status terms:
 - Advanced subpaths for traversal, cache, documents, CSS/XPath/restricted-regex
   and host-model extraction, browser evidence, bounded jobs, provider
   escalation, native MCP, and the authenticated server.
-- **0.7 candidate:** an opt-in Node-only quality extraction subpath backed by
+- **Stable 0.7:** an opt-in Node-only quality extraction subpath backed by
   exact `trafilatura@0.2.0`, with named profiles, bounded validation,
   diagnostics, and optional fail-closed abstention. Core and serverless do not
   import it.
@@ -37,9 +36,9 @@ Status terms:
 - Maqam-compatible browser-host API with an injected runtime.
 - Restricted serverless crawler API and a checked-in Cloudflare Worker entry
   point.
-- Seven CLIs: `cockroach-crawl`, `cockroach-crawler`,
+- Eight CLIs: `cockroach-crawl`, `cockroach-crawler`,
   `cockroach-sources`, `cockroach-reach`, `cockroach-documents`,
-  `cockroach-mcp`, and `cockroach-server`.
+  `cockroach-mcp`, `cockroach-server`, and `cockroach-shell`.
 - Machine-readable source record JSON Schema.
 - MIT-licensed core package with direct dependency license auditing.
 
@@ -83,7 +82,7 @@ Status terms:
 
 - Clean readable text.
 - Markdown generated from the cleaned document.
-- **0.7 candidate:** `extractPageQuality` for supported Windows, macOS, and
+- **Stable 0.7:** `extractPageQuality` for supported Windows, macOS, and
   glibc Linux x64/ARM64 Node hosts. It throws when the native backend is
   unavailable instead of silently substituting core; Alpine/musl, 32-bit, and
   other operating systems are unsupported by the exact native dependency.

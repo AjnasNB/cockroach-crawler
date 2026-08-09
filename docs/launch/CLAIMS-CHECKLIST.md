@@ -2,8 +2,8 @@
 
 ## Release identity
 
-- [ ] `npm view cockroach-crawler@next version dist.integrity` resolves to reviewed prerelease `0.7.0-rc.1` with integrity `sha512-FtieUIKrI1aIuv2QXtoinA/OptW7MEUmM9sf/ZsPO5Mow8Xr45PqInI3SFgjA5gazOWK9iPcWuxOCHtpit2kyA==` and verified provenance.
-- [ ] npm `latest` is `0.6.2`; no copy calls the prerelease stable.
+- [ ] `npm view cockroach-crawler@0.7.0 version dist.integrity` resolves to the exact reviewed stable artifact with CI-recorded integrity and verified provenance.
+- [ ] npm `latest` is exactly `0.7.0`; the release tag and checksums bind the same reviewed commit and tarball.
 - [ ] A registry-only install passes the doctor, bounded crawl, package exports, and CLI-bin checks.
 - [ ] The website, captions, social card, and release links work signed out.
 
