@@ -171,6 +171,11 @@ test("0.6.2 maintenance publication is branch-bound, allowlisted, and manual", a
     "both publishing jobs need the annotated tag and full ancestry"
   );
   assert.match(ci, /branches: \[main, release\/0\.6\.x\]/);
+  assert.match(
+    ci,
+    /name: Node \$\{\{ matrix\.node \}\}[\s\S]*?fetch-depth: 0[\s\S]*?fetch-tags: true/,
+    "the Node matrix must fetch the immutable v0.6.1 tag used by maintenance tests"
+  );
   assert.match(codeql, /branches: \[main, release\/0\.6\.x\]/);
 });
 
