@@ -83,7 +83,13 @@ Every capability stays behind creator-owned origin, request, byte, redirect, con
 - **Proof travels with the content:** canonical URLs, redirect history, content hashes, retrieval metadata, failures, warnings, and provenance stay attached to results.
 - **No-key routes are explicit:** public GitHub reads and an optional reviewed YouTube route work without developer API credentials; session-backed providers remain separately installed and operator controlled.
 
-Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [category-based alternatives guide](https://cockroachcrawler.com/compare/) covering Firecrawl, Crawl4AI, Crawlee, Scrapy, Trafilatura, Playwright, Puppeteer, Apify, and ScrapingBee before choosing a crawler.
+Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [category-based alternatives guide](https://cockroachcrawler.com/compare/) covering managed acquisition, crawler frameworks, specialist extraction, and direct browser-automation libraries before choosing a crawler.
+
+### Opt-in governed browser automation
+
+`cockroach-crawler/browser-automation` is a separate, opt-in authority boundary for hosts that need direct page actions. It binds one exact origin per isolated session and validates action/effect allowlists, deadlines, session lifetime, uploads, saved artifacts, and bounded plain-data results before dispatch to the optional Playwright runtime.
+
+The [browser-automation guide](docs/BROWSER-AUTOMATION.md) and [machine-readable capability matrix](docs/browser-automation-capability-matrix.json) distinguish cataloged contracts from built-in handlers, trusted-service-dependent handlers, explicit unsupported states, and actions exercised by the installed-engine test. The 102 cataloged contracts are not a claim of comprehensive runtime support; the current maximum configured backend exposes 72 bounded handlers, names 30 unsupported actions, and exercises 29 action kinds against installed Chromium. Ordered multi-file upload is included; ambiguous click-triggered download persistence and persistent request mutation stay fail-closed.
 
 ## All 50 shipped capabilities
 

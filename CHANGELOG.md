@@ -8,6 +8,13 @@ does not promote the development evidence below into a best-crawler claim.
 
 ### Added
 
+- An opt-in `cockroach-crawler/browser-automation` export with exact-origin
+  session authority, action/effect allowlists, bounded time and byte budgets,
+  opaque ordered multi-file upload references, fail-closed download cancellation, plain-data
+  attestations, and an installed-engine integration smoke test. Its generated
+  capability matrix separates 102 cataloged contracts from 72 maximum
+  configured handlers, 30 explicit unsupported actions, and 29 action kinds
+  exercised against a real browser runtime.
 - An opt-in Node-only `cockroach-crawler/quality` export backed by the exact
   native `trafilatura@0.2.0` dependency. The existing core and serverless
   exports remain isolated from the native backend.
