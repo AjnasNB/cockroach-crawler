@@ -8,7 +8,7 @@ across providers; `metadata` is intentionally provider-specific and consumers
 must feature-detect its keys.
 
 ```bash
-npm install cockroach-crawler@0.6.1
+npm install cockroach-crawler@0.6.2
 npx cockroach-sources doctor --json
 npx cockroach-sources search github "topic:web-crawler language:javascript" --max-results 5 --json
 npx cockroach-sources read youtube "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --json

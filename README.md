@@ -356,12 +356,12 @@ npm install cockroach-crawler
 Pin the current published stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@0.6.1
+npm install cockroach-crawler@0.6.2
 ```
 
 The `0.7.0` source candidate includes advanced package subpaths. Review it at
 the pinned commit; do not present these candidate surfaces as published npm
-0.6.1 features:
+0.6.2 features:
 
 ```js
 import { crawl } from "cockroach-crawler";

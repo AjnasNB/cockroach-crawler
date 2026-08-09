@@ -170,6 +170,9 @@ if (!packageReadme.includes("Give your AI agents the web. Keep the keys.")) erro
 if (!packageReadme.includes("Look up every package subpath, crawl option, page field, statistic, and executable")) {
   errors.push("npm README must retain the complete-reference documentation row");
 }
+if (!packageReadme.includes("npm install cockroach-crawler@0.6.2") || !packageReadme.includes("0.6.2 features:")) {
+  errors.push("npm README must pin the current stable 0.6.2 install and feature boundary");
+}
 const docsHtml = await readFile(join(dist, "docs", "index.html"), "utf8");
 if (!docsHtml.includes("Cockroach Crawler 0.7.0-rc.1 prerelease documentation")) errors.push("docs must identify the published 0.7.0-rc.1 prerelease documentation set");
 if (docsHtml.includes("Install it. Crawl one path. Inspect the result.")) errors.push("docs must not regress to the sparse task-directory hero");
@@ -326,6 +329,10 @@ for (const proof of [
 const homeHtml = await readFile(join(dist, "index.html"), "utf8");
 for (const proof of ["Reach the web.", "npm latest 0.6.2", "npm next 0.7.0-rc.1", "62f2706", '"softwareVersion":"0.6.2"', '"identifier":"62f270636a019c9bcc617a13fe254640bcd06925"']) {
   if (!homeHtml.includes(proof)) errors.push(`home page is missing centered publication proof: ${proof}`);
+}
+const roadmapHtml = await readFile(join(dist, "roadmap", "index.html"), "utf8");
+if ((roadmapHtml.match(/Released · 0\.6\.2/g) ?? []).length !== 4 || roadmapHtml.includes("Released · 0.6.1")) {
+  errors.push("roadmap status cards must use the current stable 0.6.2 release label");
 }
 for (const recognition of [
   'aria-label="Launch directories"',
