@@ -2191,6 +2191,42 @@ tr:last-child td {
   color: var(--green-soft);
 }
 
+.launch-recognition {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-block: 20px;
+  border-top: 1px solid var(--line);
+  color: var(--quiet);
+  font: 500 0.72rem/1.4 var(--mono);
+}
+
+.fazier-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 55px;
+  padding-inline: 16px;
+  border: 1px solid var(--line-bright);
+  background: #ffffff;
+}
+
+.fazier-badge img {
+  display: block;
+  width: 120px;
+  height: auto;
+}
+
+.fazier-badge:hover {
+  filter: brightness(1.04);
+}
+
+.fazier-badge:focus-visible {
+  outline: 3px solid var(--green-soft);
+  outline-offset: 3px;
+}
+
 .legal {
   display: flex;
   justify-content: space-between;
@@ -2952,6 +2988,11 @@ tr:last-child td {
   .next-links,
   .footer-grid {
     grid-template-columns: 1fr;
+  }
+
+  .launch-recognition {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .capability-board article {
