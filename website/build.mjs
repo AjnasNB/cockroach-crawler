@@ -126,15 +126,7 @@ const pages = [
           downloadUrl: npmPackage,
           sameAs: [repository, npmPackage],
           isAccessibleForFree: true,
-          featureList: [
-            "Bounded public-web crawling",
-            "Fetch-validated site mapping",
-            "Deterministic structured extraction",
-            "JavaScript rendering",
-            "Markdown, JSON, and JSONL output",
-            "Read-only source adapters",
-            "Evidence hashes and provenance"
-          ],
+          featureList: crawlerFeatureCatalog().map(homeCapabilityTitle),
           description:
             "Open-source AI web crawling and read-only source routing for agents, with explicit network policy, resource budgets, structured extraction, and normalized evidence records.",
           offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }
@@ -155,6 +147,18 @@ const pages = [
           runtimePlatform: "Node.js 22, 24, or 26",
           softwareVersion: candidateVersion,
           identifier: candidateCommit
+        },
+        {
+          "@type": "ItemList",
+          name: "Cockroach Crawler complete capability inventory",
+          numberOfItems: crawlerFeatureCatalog().length,
+          itemListOrder: "https://schema.org/ItemListOrderAscending",
+          itemListElement: crawlerFeatureCatalog().map((feature, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: homeCapabilityTitle(feature),
+            url: `${siteUrl}${capabilityPath(feature)}`
+          }))
         },
         {
           "@type": "FAQPage",
@@ -737,6 +741,7 @@ function homePage() {
       </div>
       <div class="hero-rail" role="list" aria-label="Crawler execution boundary"><span role="listitem">01 normalize</span><span role="listitem">02 resolve</span><span role="listitem">03 respect</span><span role="listitem">04 record</span></div>
     </section>
+    ${homeCapabilityInventory()}
     <section class="section shell" aria-labelledby="quality-title">
       <p class="eyebrow">New in 0.7.0 · measured on WCEB</p>
       <h2 id="quality-title">Choose the lightweight core or the measured Node quality path.</h2>
@@ -882,7 +887,7 @@ function docsTopicNav() {
     ["Extract exact data", "Select fields with CSS or XPath, parse local PDFs, or connect a host-supplied model adapter with mandatory JSON Schema validation.", "/docs/extraction/", "Open the extraction manual"],
     ["Connect any agent", "Use the strict agent tool, native MCP stdio server, authenticated Docker API, Node.js API, or optional Maqam boundary.", "/docs/mcp/", "Open the MCP manual"],
     ["Reach public sources", "Route public web, GitHub, YouTube, X, Reddit, RSS, and optional read-only session providers through explicit capability checks.", "/docs/providers/", "Open provider guide"],
-    ["Explore every feature", "Search the complete 40-plus feature index, then open the typed package, option, output, command, and deployment reference.", "/docs/reference/", "Open the complete reference"],
+    ["Explore every feature", "Search the complete 50-capability index, then open the typed package, option, output, command, and deployment reference.", "/docs/reference/", "Open the complete reference"],
     ["Deploy with confidence", "Run locally, in CI, in Docker, or through the fixed-origin Cloudflare Worker profile with reproducible release checks.", "/docs/docker/", "Open deployment paths"]
   ];
   return `<section class="docs-directory shell" aria-labelledby="docs-directory-title">
@@ -1177,6 +1182,55 @@ function capabilityCategoryDetails(category) {
     }
   };
   return details[category];
+}
+
+function homeCapabilityTitle(feature) {
+  const titles = {
+    "Crawl:Compact site map": "Compact fetch-validated site maps",
+    "Crawl:Searchable site map": "Searchable fetch-validated site maps",
+    "Browser:Selector waits and clicks": "Selector waits and bounded clicks",
+    "Browser:Readable iframe flattening": "Readable same-origin iframe flattening",
+    "Browser:Screenshots": "Full-page screenshots",
+    "Browser:Trusted page hooks": "Trusted operator page hooks",
+    "Browser:Persistent profiles": "Explicit persistent browser profiles",
+    "Extract:Readable Markdown": "Readable Markdown through the dependency-light core or opt-in Node quality backend",
+    "Extract:Optional LLM schema extraction": "Optional host-model JSON Schema extraction",
+    "Extract:Evidence hashes": "Evidence hashes and retrieval provenance",
+    "Sources:Public GitHub reads": "Public GitHub repository and issue reads",
+    "Sources:YouTube without a developer key": "YouTube search and metadata without a developer API key through the optional reviewed route",
+    "Sources:Official provider adapters": "Official YouTube, X, and Reddit provider adapters",
+    "Sources:Read-only session providers": "Optional read-only session providers for X, Reddit, Facebook, Instagram, LinkedIn, and Xiaohongshu",
+    "Sources:RSS and Atom": "Offline RSS and Atom parsing",
+    "Sources:Provider doctor and routing": "Provider doctor, capability reporting, and deterministic routing",
+    "Agents:Strict agent tool": "Strict creator-bounded agent tool",
+    "Agents:Maqam integration": "Optional Maqam policy, approval, trace, and evidence integration",
+    "Deploy:Authenticated Docker API": "Authenticated Node.js and Docker API",
+    "Deploy:Dashboard and playground": "Responsive dashboard and browser playground",
+    "Deploy:Bounded asynchronous jobs": "Bounded process-local asynchronous jobs",
+    "Deploy:Cloudflare Worker profile": "Fixed-origin Cloudflare Worker profile",
+    "Security:Public-network admission": "Public-network admission and SSRF defenses",
+    "Security:Resource ceilings": "Exact resource ceilings",
+    "Security:Challenge-aware provider escalation": "Challenge-aware provider escalation that stops without access-control bypass"
+  };
+  return titles[`${feature[0]}:${feature[1]}`] ?? feature[1];
+}
+
+function homeCapabilityInventory() {
+  const features = crawlerFeatureCatalog();
+  const categories = [...new Set(features.map(([category]) => category))];
+  return `<section class="section shell home-capability-inventory" aria-labelledby="home-capabilities-title" data-home-capability-inventory>
+    <div class="section-head"><div><p class="eyebrow">Complete capability map - ${features.length} shipped surfaces</p><h2 id="home-capabilities-title">Crawl, render, extract, connect, and operate from one bounded toolkit.</h2></div><p>Every capability below links to its public contract, quickstart, result shape, and operating boundary. Optional routes stay explicit; model-facing input cannot expand creator-owned authority.</p></div>
+    <div class="home-capability-groups">${categories.map((category) => {
+      const details = capabilityCategoryDetails(category);
+      const categoryFeatures = features.filter(([candidate]) => candidate === category);
+      return `<article class="home-capability-group" data-home-capability-group="${docsSlug(category)}">
+        <header><span>${String(categoryFeatures.length).padStart(2, "0")}</span><div><h3>${details.title}</h3><p>${details.lede}</p></div></header>
+        <ol>${categoryFeatures.map((feature) => `<li data-home-capability><a href="${capabilityPath(feature)}">${escapeHtml(homeCapabilityTitle(feature))}</a></li>`).join("")}</ol>
+        <a class="text-link" href="${capabilityCategoryPath(category)}">Open ${details.title.toLowerCase()} reference -&gt;</a>
+      </article>`;
+    }).join("")}</div>
+    <div class="button-row home-capability-actions"><a class="button primary" href="/docs/capabilities/">Search all 50 capabilities</a><a class="button secondary" href="/docs/">Start with the documentation</a></div>
+  </section>`;
 }
 
 function docsNavigationGroups() {
