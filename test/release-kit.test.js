@@ -8,6 +8,12 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+function replaceFirstNewline(text, replacement) {
+  const index = text.indexOf("\n");
+  assert.notEqual(index, -1, "lock mutation fixture requires at least one newline");
+  return `${text.slice(0, index)}${replacement}${text.slice(index + 1)}`;
+}
+
 test("the packed feature inventory stays complete and release-honest", async () => {
   const manifest = JSON.parse(await readFile(path.join(ROOT, "package.json"), "utf8"));
   const readme = await readFile(path.join(ROOT, "README.md"), "utf8");
@@ -216,13 +222,13 @@ test("maintenance metadata accepts only exact version substitutions", async () =
   assert.deepEqual(maintenance.canonicalizeHistoricalLockSnapshot(crlfLock), historicalLock);
   assert.throws(
     () => maintenance.canonicalizeHistoricalLockSnapshot(
-      Buffer.from(historicalLock.toString("utf8").replace("\n", "\r"), "utf8")
+      Buffer.from(replaceFirstNewline(historicalLock.toString("utf8"), "\r"), "utf8")
     ),
     /contains a bare carriage return/
   );
   assert.throws(
     () => maintenance.canonicalizeHistoricalLockSnapshot(
-      Buffer.from(historicalLock.toString("utf8").replace("\n", "\r\n"), "utf8")
+      Buffer.from(replaceFirstNewline(historicalLock.toString("utf8"), "\r\n"), "utf8")
     ),
     /mixes LF and CRLF newlines/
   );

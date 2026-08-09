@@ -19,6 +19,12 @@ function canonicalizeHistoricalLockSnapshot(bytes) {
   return text.replaceAll("\r\n", "\n");
 }
 
+function replaceFirstNewline(text, replacement) {
+  const index = text.indexOf("\n");
+  assert.notEqual(index, -1, "snapshot mutation fixture requires at least one newline");
+  return `${text.slice(0, index)}${replacement}${text.slice(index + 1)}`;
+}
+
 test("public benchmark evidence is source-pinned, packaged, and independently verifiable", async () => {
   const manifest = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
   const sources = JSON.parse(await readFile(path.join(root, "bench", "public", "sources.json"), "utf8"));
@@ -115,12 +121,12 @@ test("the packed verifier uses only the exact immutable historical lock snapshot
     assert.notEqual(malformed.status, 0);
     assert.match(malformed.stderr, /does not have the exact historical-version shape/);
 
-    await writeFile(snapshotPath, snapshot.replace("\n", "\r"), "utf8");
+    await writeFile(snapshotPath, replaceFirstNewline(snapshot, "\r"), "utf8");
     const bareCarriageReturn = verify();
     assert.notEqual(bareCarriageReturn.status, 0);
     assert.match(bareCarriageReturn.stderr, /contains a bare carriage return/);
 
-    await writeFile(snapshotPath, snapshot.replace("\n", "\r\n"), "utf8");
+    await writeFile(snapshotPath, replaceFirstNewline(snapshot, "\r\n"), "utf8");
     const mixedNewlines = verify();
     assert.notEqual(mixedNewlines.status, 0);
     assert.match(mixedNewlines.stderr, /mixes LF and CRLF newlines/);
