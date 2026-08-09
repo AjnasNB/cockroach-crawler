@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/AjnasNB/cockroach-crawler/main/assets/banner.svg" alt="Cockroach Crawler - give your AI agents the web, keep the keys" width="100%">
+<img src="https://raw.githubusercontent.com/AjnasNB/cockroach-crawler/e71ee10f6fd3931b9fd6c09f8a69bf7808d4a316/assets/banner.svg" alt="Cockroach Crawler - give your AI agents the web, keep the keys" width="100%">
 
 [![npm version](https://img.shields.io/npm/v/cockroach-crawler.svg)](https://www.npmjs.com/package/cockroach-crawler)
 [![CI](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml)
@@ -13,41 +13,46 @@
 
 ---
 
-## Measured, not asserted
+## Governed web evidence for AI agents
 
-Main-content extraction across all 511 pages of WCEB v1.0, with one scorer
-applied to every tool. Reproduce it with `npm run bench:public:comparison`.
+Cockroach Crawler turns explicitly allowed public URLs into Markdown, JSON,
+or JSONL evidence records under fixed origin, request, byte, redirect,
+concurrency, and time limits. It is a crawler and extraction layer - not an
+access-control bypass or a general-purpose browser automation replacement.
 
-| Tool | Precision | Recall | F1 |
-| --- | --- | --- | --- |
-| trafilatura 2.2.0 | 0.8901 | 0.8683 | **0.8600** |
-| **cockroach-crawler 0.6.1** | 0.7938 | **0.8738** | 0.7915 |
-| readability-lxml | 0.8694 | 0.6263 | 0.6565 |
+- **Crawl and map:** BFS, DFS, best-first, or adaptive traversal with robots,
+  sitemap, redirect, cache, and public-network policy enforcement.
+- **Render and capture:** optional bounded Playwright rendering, explicit
+  clicks and waits, screenshots, PDFs, open Shadow DOM, and readable
+  same-origin frames.
+- **Extract:** readable text and Markdown, links and metadata, local PDF text,
+  CSS and XPath fields, restricted regex, or host-model output validated
+  against the caller's JSON Schema.
+- **Connect:** JavaScript and TypeScript APIs, CLI tools, native MCP over
+  stdio, an authenticated local/Docker API, and a restricted fixed-origin
+  Worker profile.
+- **Verify:** canonical URLs, redirect history, content hashes, retrieval
+  metadata, warnings, failures, and provenance remain attached to results.
 
-**Cockroach Crawler does not win this benchmark.** Trafilatura leads macro F1
-by 0.069. It is published here because a comparison that only appears when it
-flatters the author is not evidence.
+Version `0.6.2` is a documentation-only patch over the `0.6.1` runtime. It does
+not change extraction behavior, scorers, or pinned benchmark artifacts.
 
-What Cockroach Crawler does lead is recall, and by extension how much of the
-annotated content survives extraction. Tune that tradeoff with `boilerplate`:
+Evidence remains separately inspectable and reproducible:
 
-| `boilerplate` | Precision | Recall | F1 | Required-snippet | Unwanted |
-| --- | --- | --- | --- | --- | --- |
-| `off` | 0.7330 | **0.9100** | 0.7653 | **0.8713** | 0.3885 |
-| `structural` *(default)* | 0.7938 | 0.8778 | 0.7915 | 0.8356 | 0.1787 |
-| `balanced` | 0.8354 | 0.8497 | **0.8044** | 0.8075 | 0.1354 |
-| `aggressive` | **0.8421** | 0.8391 | 0.8018 | 0.7956 | **0.1310** |
+- [benchmark method and page-class results](./docs/BENCHMARK.md)
+- [pinned 0.6.1 WCEB result](./bench/results/wceb-test-0.6.1.json)
+- [extraction-comparison method](./docs/EXTRACTION-COMPARISON.md) and its
+  [machine-readable output](./bench/results/extraction-comparison-0.6.1.json)
+- [public-policy conformance output](./bench/results/public-conformance-0.6.1.json)
+- [release provenance](./docs/PROVENANCE.md)
 
-`aggressive` scores *worse* F1 than `balanced` — over-removal costs more recall
-than the precision buys. The default removes only landmarks the HTML
-specification already places outside main content.
+The evidence files keep their `0.6.1` names because the measured runtime is
+unchanged. No rejected or development-only `0.7` result is presented as stable
+release evidence.
 
-Other published evidence, all source-pinned and independently verifiable:
-25/25 Google robots dispatch vectors, 101/101 applicable WPT URL
-canonicalization cases, 381 tests. Method, page-class breakdown, and the
-claims these numbers do **not** support are in
-[docs/EXTRACTION-COMPARISON.md](./docs/EXTRACTION-COMPARISON.md).
-
+```bash
+npm install cockroach-crawler@0.6.2
+```
 
 ---
 
@@ -59,7 +64,7 @@ npm install cockroach-crawler
 
 Cockroach Crawler is an open-source AI web crawler and TypeScript toolkit for agents, RAG pipelines, documentation indexing, research, content inventory, and QA. It turns explicit public URLs and supported read-only sources into clean Markdown, JSON, and JSONL evidence records. Use one package to run BFS, DFS, best-first, or adaptive traversal, build searchable fetch-validated site maps, extract bounded CSS, XPath, or restricted-regex fields, search YouTube without a developer API key through the optional reviewed route, render JavaScript pages, run bounded self-hosted jobs, and preserve source identity, redirects, hashes, warnings, artifacts, and provenance.
 
-It is built to be **the best AI crawler for governed agents** that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus - not a claim that it replaces every distributed scraping cloud or bypasses site controls.
+It is built for governed agents that need browser rendering, structured extraction, source evidence, and explicit network authority in one Node.js package. That is the product focus - not a claim that it replaces every distributed scraping cloud or bypasses site controls.
 
 Every capability stays behind creator-owned origin, request, byte, redirect, concurrency, and time limits. Use the hardened local crawler for bounded public-web collection, the source router for explicit provider capabilities, optional reach providers for reviewed no-developer-key or session-backed reads, and the restricted self-hosted Worker only for allowlisted sites you operate or trust.
 
@@ -79,7 +84,7 @@ Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compa
 ## All 50 shipped capabilities
 
 Every item below has a public API, command, output contract, test, or dedicated
-documentation page in the stable `0.5.x` line.
+documentation page in the stable `0.6.x` line.
 
 ### Crawl and discover - 15
 
@@ -190,28 +195,23 @@ case-sensitive registry identity
 publication proves control of that namespace, not additional crawler runtime
 authority.
 
-Version `0.5.2` is the current stable npm release. It carries the complete `0.4` capability line plus the image-free npm README, current documentation links, and release metadata. Verify the immutable artifact with `npm view cockroach-crawler@0.5.2 version gitHead dist.integrity`.
+Version `0.6.2` is a documentation-only stable patch over the `0.6.1` runtime.
+It refreshes the npm overview and release metadata without changing crawler or
+extractor behavior. After publication, verify the immutable artifact with
+`npm view cockroach-crawler@0.6.2 version gitHead dist.integrity`.
 
 ## Public benchmark evidence
 
-The extractor shipped in `0.5.2` was revalidated against the complete
-511-page held-out split of the
-human-reviewed WCEB v1.0 corpus. The source-pinned run produced
-**0.7653 macro word F1**, **0.9041 recall**, and **87.13% required-snippet
-recall** across articles, services, products, collections, forums, listings,
-and documentation. Documentation pages scored **0.8839 F1** and articles
-**0.8367 F1**.
-
-Separate public-source conformance probes passed **25/25 adapted Google
-robots.txt dispatch vectors** and **101/101 applicable credential-free HTTP(S)
-canonicalization cases** from the pinned Web Platform Tests URL corpus.
+The `0.6.2` package carries the `0.6.1` runtime and its source-pinned evidence
+unchanged. The complete 511-page held-out WCEB result, public robots and URL
+conformance outputs, source revisions, scoring method, page-class breakdown,
+and reproduction commands remain available in the [benchmark method](./docs/BENCHMARK.md),
+[machine-readable results](./bench/results/), and [source-pinned evaluators](./bench/public/).
 
 These are reproducible workload results, not a universal quality, speed, RFC
-certification, or competitor-ranking claim. Read the [method and complete
-page-type table](./docs/BENCHMARK.md), inspect the [machine-readable
-results](./bench/results/), and run the [source-pinned evaluators](./bench/public/).
-The local 120-page throughput fixture remains separate because extraction
-quality and loopback speed measure different things.
+certification, or competitor-ranking claim. The local 120-page throughput
+fixture remains separate because extraction quality and loopback speed measure
+different things.
 
 The local crawler produces structured JSON/JSONL with readable text, Markdown, links, response metadata, redirect provenance, and content hashes for documentation indexing, RAG ingestion, content inventory, QA, research, and agent tools. The source adapters normalize GitHub, YouTube, X, and Reddit records when each provider's documented access requirements are met.
 
@@ -250,7 +250,7 @@ uses stable public exports and copyable examples from this package.
 The source registry reports what the current machine can use before an agent makes a request. This command reads configuration state only; it does not print secrets or contact a provider.
 
 ```bash
-npx -y --package cockroach-crawler@0.5.2 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.6.2 cockroach-sources doctor
 ```
 
 | Capability | No developer API key | Optional configuration | Honest boundary |
@@ -316,8 +316,8 @@ Read [SECURITY.md](./SECURITY.md) before exposing crawling to model-generated or
 | --- | --- |
 | Public documentation, blogs, help centers, and marketing pages | Strong |
 | JSONL/Markdown records for RAG and indexing | Strong |
-| Compact fetch-validated site maps | Stable 0.5.x; optional lexical search ranks only fetched entries |
-| Structured extraction | Stable 0.5.x; CSS, XPath, restricted regex, and schema-validated host-model strategies |
+| Compact fetch-validated site maps | Stable 0.6.x; optional lexical search ranks only fetched entries |
+| Structured extraction | Stable 0.6.x; CSS, XPath, restricted regex, and schema-validated host-model strategies |
 | Bounded local crawling from Node.js or a CLI | Strong |
 | A strictly limited crawler tool inside an agent runtime | Strong, with creator-owned origin and resource policy |
 | JavaScript-rendered pages with bounded explicit clicks | Optional Chromium mode; isolate it for untrusted targets |
@@ -337,10 +337,10 @@ npm install cockroach-crawler
 Pin the exact stable release when reproducibility matters:
 
 ```bash
-npm install cockroach-crawler@0.5.2
+npm install cockroach-crawler@0.6.2
 ```
 
-The stable `0.5.x` line includes advanced package subpaths:
+The stable `0.6.x` line includes advanced package subpaths:
 
 ```js
 import { crawl } from "cockroach-crawler";

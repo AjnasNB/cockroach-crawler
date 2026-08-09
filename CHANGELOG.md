@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.6.2 - 2026-08-09
+
+### Changed
+
+- Refreshed the npm README so it opens with the stable crawler, rendering,
+  extraction, integration, and provenance capabilities instead of a
+  competitor table.
+- Kept the `0.6.1` runtime, scorers, and source-pinned benchmark artifacts
+  unchanged. The artifact names continue to identify the runtime that was
+  actually measured.
+- Added a packed-source historical verifier for the exact `v0.6.1` evidence
+  inputs and a full-Git maintenance gate that binds the annotated tag, commit,
+  tree, ancestry, and changed-path allowlist.
+- Restricted trusted publication to manual, digest-bound dispatch from the
+  protected `release/0.6.x` branch while npm `latest` remains `0.6.1`.
+- Kept final npm signature verification fail-closed while retrying the bounded
+  attestation-propagation window observed after a successful publication.
+
 ## 0.6.1 - 2026-08-07
 
 ### Added
