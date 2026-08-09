@@ -148,7 +148,9 @@ jobs:
               : null;
           if (release?.tag_name !== `v${process.env.EXPECTED_VERSION}` || release?.draft || release?.prerelease) process.exit(1);
           if (!['identical', 'ahead'].includes(compare?.status)) process.exit(1);
-          if (compare?.base_commit?.sha !== targetSha || compare?.head_commit?.sha !== process.env.EXPECTED_SHA) process.exit(1);
+          if (compare?.base_commit?.sha !== targetSha) process.exit(1);
+          if (compare.status === 'identical' && targetSha !== process.env.EXPECTED_SHA) process.exit(1);
+          if (compare.status === 'ahead' && compare?.head_commit?.sha !== process.env.EXPECTED_SHA) process.exit(1);
           if ([...required].some((name) => {
             const asset = assets.get(name);
             return asset?.state !== "uploaded" || !Number.isSafeInteger(asset?.size) || asset.size <= 0;
