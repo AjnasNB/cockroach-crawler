@@ -645,6 +645,12 @@ function footer() {
         <div><h2>Trust</h2><a href="/security/">Security model</a><a href="/benchmark/">Benchmark method</a><a href="/paper/">Technical paper</a><a href="${repository}/blob/main/SECURITY.md">Report privately</a></div>
         <div><h2>Project</h2><a href="/launch/">Launch kit</a><a href="/roadmap/">Roadmap</a><a href="/community/">Contribute</a><a href="${repository}">Source code</a><a href="${maqamDocs}">Govern with Maqam</a></div>
       </div>
+      <div class="shell launch-recognition" aria-label="Launch directories">
+        <span>Find Cockroach Crawler on</span>
+        <a class="fazier-badge" href="https://fazier.com/launches/cockroachcrawler.com" target="_blank" rel="noreferrer">
+          <img src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&amp;theme=light" width="120" height="51" alt="Fazier badge" />
+        </a>
+      </div>
       <div class="shell legal"><span>MIT software · npm latest ${publishedVersion} · npm next ${candidateVersion}</span><span>Site content last reviewed 8 August 2026</span></div>
     </footer>`;
 }
