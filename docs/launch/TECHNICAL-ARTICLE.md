@@ -6,7 +6,7 @@ A crawler that runs on a developer machine can inspect DNS answers, pin a connec
 
 Treating both environments as equivalent creates a dangerous documentation problem: the convenient tier inherits the security reputation of the hardened tier without inheriting its controls.
 
-Cockroach Crawler `0.7.0-rc.1` takes the opposite approach. The published npm prerelease exposes two crawler tiers, returns their capabilities, and keeps official and optional read-only source providers separate from both.
+Cockroach Crawler `0.7.0` takes the opposite approach. The stable npm package exposes two crawler tiers, returns their capabilities, and keeps official and optional read-only source providers separate from both.
 
 ## The first boundary: what may be contacted?
 
@@ -60,10 +60,10 @@ If a deployment needs stronger destination control, the correct answer is to use
 
 Reading a website and reading a provider API have different rules. Cockroach Crawler's source registry exposes them through a shared record format without pretending their availability is identical.
 
-After installing the reviewed prerelease globally, run:
+After installing stable 0.7.0 globally, run:
 
 ```bash
-npm install --global cockroach-crawler@0.7.0-rc.1
+npm install --global cockroach-crawler@0.7.0
 cockroach-sources doctor
 ```
 
@@ -123,12 +123,12 @@ provider-specific search/read/authentication capabilities
 
 Cockroach Crawler is designed for a common agent integration: an explicit read request enters a creator-owned boundary, consumes a known budget, and returns a record with enough provenance to audit what happened. Distributed queues, proxy infrastructure, hosted search indexes, and large-scale browser orchestration belong in a separate deployment layer.
 
-## Try the published prerelease
+## Try the stable release
 
-From npm `next` while `latest` is 0.6.2:
+From npm `latest`:
 
 ```bash
-npm install --global cockroach-crawler@0.7.0-rc.1
+npm install --global cockroach-crawler@0.7.0
 cockroach-sources doctor
 cockroach-crawl https://example.com/docs --max-pages 10 --jsonl
 ```

@@ -5,7 +5,7 @@ router for agents. Its differentiator is not an unlimited scrape claim. It is
 that every fetch, redirect, provider choice, browser request, output record,
 and optional authority tier keeps a reviewable boundary.
 
-This document separates the `0.7.0` source candidate, stable behavior, optional adapters, planned
+This document separates stable `0.7.0` behavior, optional adapters, planned
 work, and deliberate exclusions. A capability
 becomes a release claim only after its code, tests, package artifact, public
 types, and documentation ship together.
@@ -27,9 +27,9 @@ types, and documentation ship together.
 | Browser screenshots and PDF | Stable `0.5.x` | Explicit artifact directory, byte limit, media type, and SHA-256 |
 | Shadow DOM, iframe, and virtual scroll | Stable `0.5.x` | Open/readable DOM only, bounded cloning and scroll work |
 | Docker API, playground, and MCP | Stable `0.5.x` | Deployment-owned origins and budgets; caller input can only narrow |
-| Named request identity profiles | Stable `0.6.x` | Coherent declared user agent, client hints, locale, and viewport across HTTP and browser tiers |
+| Named request identity profiles | Stable `0.6.x` | HTTP requests use the full named header profile; optional browser crawling applies the declared user agent only |
 | Access-challenge detection | Stable `0.6.x` | Vendor and kind reported as a first-class outcome; deny-by-default policy |
-| Node quality extraction | `0.7.0` candidate | Separate `cockroach-crawler/quality` export, exact `trafilatura@0.2.0`, named profiles, bounded validation, and optional fail-closed abstention; no silent core fallback |
+| Node quality extraction | Stable `0.7.0` | Separate `cockroach-crawler/quality` export, exact `trafilatura@0.2.0`, named profiles, bounded validation, and optional fail-closed abstention; no silent core fallback |
 
 `mapSite` is deliberately a fetch-validated map. Entries identify pages that
 passed transport and content policy; it does not claim the completeness of a
@@ -69,7 +69,7 @@ recovered if it clears an explicit threshold. Relocation abstains rather than
 guessing: below threshold it reports a miss and returns no element. Every
 weight, threshold, and node ceiling is caller-visible.
 
-The `0.7.0` source candidate adds `extractPageQuality` through the Node-only
+Stable `0.7.0` adds `extractPageQuality` through the Node-only
 `cockroach-crawler/quality` export. The dependency-light core and serverless
 entry points remain isolated from its exact native `trafilatura@0.2.0`
 dependency. Supported prebuilt targets are Windows, macOS, and glibc Linux on
@@ -144,10 +144,14 @@ implicit third-party data disclosure.
 
 ## Request identity
 
-Stable `0.6.x` ships named identity profiles so a crawl presents one coherent,
-declared browser identity instead of a mismatched default. A profile fixes the
-user agent, client hints, `Accept-Language`, viewport, platform, locale, and
-timezone together, and the same profile drives both the HTTP and browser tiers.
+Stable `0.6.x` ships named identity profiles. The HTTP transport applies the
+profile's user agent, `Accept`, `Accept-Language`, `Accept-Encoding`, navigation
+headers, and applicable Chromium client hints. The exported
+`identityBrowserContext()` helper returns optional Playwright context settings
+for a trusted caller to apply. Optional browser crawling inside `crawl()`
+currently applies only the profile's declared user agent; viewport, browser
+locale, timezone, and client-hint emulation are not wired from the profile and
+are not release claims.
 
 This exists because an incoherent identity is a correctness problem: many sites
 serve degraded markup, or refuse service outright, to a client whose headers do

@@ -5,20 +5,23 @@ containing unreviewed changes or credentials. Release `0.7.0` requires
 quality-backend, benchmark-integrity, provider/security, packed-consumer, and
 exact-artifact approval on the reviewed release commit.
 
-> **Stable hold (9 August 2026):** npm `latest` is 0.6.2, no `v0.7.0` tag
-> or stable package exists, and frozen raw-DOM attempt 003 was rejected after
-> five gate violations. Do not execute the stable publication section until a
-> later immutable candidate passes every declared benchmark gate.
+> **Stable decision (9 August 2026):** the maintainer selected `0.7.0` for
+> stable API and package availability. The decision does not convert any
+> benchmark into a promotion gate or leadership claim. Frozen raw-DOM attempt
+> 003 remains rejected and is not part of the shipped runtime. Publication is
+> still blocked until the exact reviewed commit, tarball, CI, environment
+> approval, provenance, registry, tag, and post-publication checks below pass.
 
-The separately reviewed `0.7.0-rc.1` package may be published only with the
-npm `next` tag. It exposes the already reviewed 0.7 source for opt-in product
-evaluation while preserving every benchmark artifact and limitation. It must
-not create or move `latest`, create `v0.7.0`, or claim benchmark leadership.
+The stable artifact must preserve the reviewed `0.7.0-rc.1` runtime,
+dependency graph, and frozen evidence byte-for-byte, apart from approved
+version and release metadata. The historical RC paper remains a CC BY 4.0
+report about that RC evidence boundary. It neither authorizes nor certifies the
+stable software release.
 
-## Published prerelease benchmark
+## Frozen 0.7.0 release benchmark
 
-`cockroach-crawler@0.7.0-rc.1` is already published on npm `next` and contains
-the exact source-pinned observed-development artifact below:
+`cockroach-crawler@0.7.0` carries forward the exact source-pinned
+observed-development artifact first published in `0.7.0-rc.1`:
 
 | Path | Pages | Precision | Recall | Macro F1 |
 | --- | ---: | ---: | ---: | ---: |
@@ -35,8 +38,10 @@ tag without a cryptographic tag signature.
 It pins WCEB v1.0 revision `62ff86d12ea72c80c31fb810ff1a724fad687bea`
 and uses the exact `trafilatura@0.2.0` quality backend. The 511 pages influenced
 development, so this is not untouched held-out confirmation. Publishing this
-exact scoped result does not require a 0.90 threshold; it requires retaining
-the measured values, provenance, and limitations without rounding or ranking.
+exact scoped result does not require a 0.90 threshold. Stable promotion is a
+maintainer decision about the reviewed API and package availability; evidence
+publication still requires retaining the measured values, provenance, and
+limitations without rounding or ranking.
 
 ## npm trusted publishing: the one thing that will bite you
 
@@ -135,9 +140,9 @@ approval, and both verify the published result against the registry afterwards.
 ## Target 0.7.0 publication after every gate passes
 
 1. Publish a fresh `0.7.0` artifact through the npm trusted-publishing GitHub environment with provenance and `--tag latest`; never move an older tarball onto the stable tag.
-2. Download `package-artifact-<full-commit>` from the successful packed-consumer CI job for the exact reviewed `main` commit. Copy the full lowercase 40-character commit, byte size, SHA-256, and npm integrity from that job's summary, then independently verify the downloaded tarball before dispatching `publish-npm.yml`.
-3. The publish dispatch must receive those four exact values as `expected_git_commit`, `expected_size_bytes`, `expected_sha256`, and `expected_integrity`. The workflow fails unless the reviewed commit equals the immutable workflow commit and the freshly packed artifact matches every approved value both before and after the `npm-publish` environment approval.
-4. The workflow must verify the approved package name and version, use `id-token: write`, use no npm token secret, and have an npm trusted-publisher mapping restricted to `AjnasNB/cockroach-crawler`, `.github/workflows/publish-npm.yml`, and the `npm-publish` environment. The packed-consumer CI job retains the exact Ubuntu-built tarball for 90 days and records its byte size, SHA-256, npm integrity, commit, and npm CLI version for independent review.
+2. This `0.7.0` promotion uses the workflow's automatic exact-`main` path: merging the reviewed `package.json` version change triggers `publish-npm.yml`. Its verify job runs the full release gate, packs the exact merge commit, records byte size, SHA-256, and npm integrity, and passes those measured values to the publish job. After the protected `npm-publish` environment approval, the publish job checks out that same commit, repacks it, and refuses publication unless all three artifact measurements agree.
+3. The strict `workflow_dispatch` path remains available for a deliberate manual publication. Before dispatch, download `package-artifact-<full-commit>` from successful packed-consumer CI, independently verify it, and supply its exact lowercase commit, byte size, SHA-256, and npm integrity as `expected_git_commit`, `expected_size_bytes`, `expected_sha256`, and `expected_integrity`. Strict mode compares those preapproved values both before and after environment approval.
+4. Both paths must verify the approved package name and version, use `id-token: write`, use no npm token secret, and have an npm trusted-publisher mapping restricted to `AjnasNB/cockroach-crawler`, `.github/workflows/publish-npm.yml`, and the `npm-publish` environment. The packed-consumer CI job retains the exact Ubuntu-built tarball for 90 days and records its byte size, SHA-256, npm integrity, commit, and npm CLI version for independent review.
 5. After publication, verify registry version, dist-tag, exact integrity, attestations, CLI bins, all exports/declarations, and a fresh registry-only install. The workflow publishes the reviewed tarball directly, so verification relies on its digest and Sigstore/SLSA provenance rather than npm's directory-publish-only `gitHead` field.
    npm can expose the package and provenance metadata before the attestations
    endpoint is readable. The workflow therefore retries the final signature
@@ -146,9 +151,14 @@ approval, and both verify the published result against the registry afterwards.
 6. Create an annotated `v0.7.0` tag only at the exact green published commit. Attach only release-owned assets and generate `SHA256SUMS.txt` from exactly those attachments.
 7. Mark the GitHub release as stable and list every continuing boundary: no hidden cookie extraction, CAPTCHA or access-control bypass, hosted arbitrary-origin proxy fleet, distributed jobs, operating-system sandbox, or universal provider claim.
 
-## Stable promotion
+## Stable promotion decision record
 
-Promotion evidence must include alpha feedback, an independent security review, clean provider contract tests, a fresh browser run, a Worker dry-run, and a successful trusted-publishing rehearsal. Publish a new stable artifact; never retag an alpha tarball as stable.
+Promotion evidence includes independent review, clean provider contract tests,
+a fresh browser run, a Worker dry-run, the stable-runtime invariant, historical
+benchmark verification, and a successful trusted-publishing rehearsal. The
+stable package is a newly packed `0.7.0` artifact from the exact reviewed
+commit; an RC tarball is never retagged. The decision records API/package
+readiness only and makes no universal quality or market-leadership claim.
 
 ## Credentials
 

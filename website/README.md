@@ -29,7 +29,9 @@ configuration are intentionally maintained outside the public repository.
 ## Content rules
 
 - Stable npm capability must match the exact package version verified by the
-  deployment workflow before the site is built.
+  deployment workflow before the site is built. The matching non-draft,
+  non-prerelease GitHub release and every site-linked release asset must also
+  exist before deployment.
 - Local Node DNS pinning must never be attributed to the serverless profile.
 - Benchmark pages must name the workload, environment, sample distribution,
   exclusions, and dirty-source status.

@@ -57,7 +57,7 @@ export function blogPosts({ codeBlock, siteUrl, repository }) {
         "A crawler that sends a Chrome user agent with no client hints and a Linux TCP fingerprint describes a browser that does not exist. Here is what coherence means and why it is a correctness problem, not an evasion one.",
       title: "The header mismatch that gets you blocked | Cockroach Crawler",
       description:
-        "Why setting a browser user agent alone makes a crawler more suspicious, not less, and what a coherent request identity actually consists of across the HTTP and browser tiers.",
+        "Why setting a browser user agent alone can be contradictory, what the HTTP identity helper emits, and which optional browser context settings trusted callers must apply themselves.",
       body: article({
         eyebrow: "Engineering · 6 August 2026",
         title: "The header mismatch that gets you blocked",
@@ -83,22 +83,17 @@ identityHeaders(identity);
 //   "accept-language": "en-US,en;q=0.9",
 //   ...
 // }`, "javascript")}
-      <p>Ask for a Firefox profile and the Chromium client hints disappear entirely, because Firefox does not send them. Ask for <code>safari-ios</code> and you get a mobile user agent, <code>sec-ch-ua-mobile: ?1</code>, a 393×852 viewport, and a 3× device pixel ratio - the combination an actual iPhone reports. Getting the viewport wrong matters more than people expect: a mobile user agent paired with a 1920×1080 viewport is its own contradiction, and it is the one that changes what markup you receive.</p>
+      <p>Ask <code>identityHeaders()</code> for a Firefox or WebKit profile and Chromium client hints disappear entirely. For Chromium profiles it emits the user agent, <code>Accept</code>, <code>Accept-Language</code>, <code>Accept-Encoding</code>, navigation headers, and applicable client hints. Viewport, locale, timezone, touch/mobile, and device-scale values belong to the separate browser-context helper; they are not HTTP headers.</p>
 
-      <h2>The same identity has to drive the browser tier</h2>
-      <p>The failure mode that wastes an afternoon is a static crawl and a rendered crawl that disagree. You tune headers for the HTTP path, the page needs JavaScript, you switch to browser mode, and Playwright launches with its own defaults. Now you are sending a different identity from the same crawler and getting different markup back, with no obvious reason.</p>
-      ${codeBlock("identity-crawl", "one declaration, both tiers", `import { crawl } from "cockroach-crawler";
+      <h2>Browser context settings are an explicit helper</h2>
+      <p>The exported <code>identityBrowserContext()</code> helper returns optional Playwright context settings for a trusted caller to apply. Cockroach Crawler's built-in browser mode does not consume that full mapping today: <code>crawl()</code> applies only the declared user agent to its browser context. It does not claim profile-driven viewport, locale, timezone, or client-hint emulation.</p>
+      ${codeBlock("identity-crawl", "explicit browser context mapping", `import { identityBrowserContext, resolveIdentity } from "cockroach-crawler/identity";
 
-await crawl({
-  seeds: ["https://shop.example/catalog"],
-  identity: "chrome-windows"      // HTTP requests
-});
+const identity = resolveIdentity("chrome-windows");
+const contextOptions = identityBrowserContext(identity);
 
-await crawl({
-  seeds: ["https://shop.example/catalog"],
-  identity: "chrome-windows",     // and the browser context
-  browser: true
-});`, "javascript")}
+// A trusted Playwright integration may pass contextOptions to newContext().
+// Built-in crawl({ browser: true, identity }) currently wires userAgent only.`, "javascript")}
       <p>Setting both <code>identity</code> and <code>userAgent</code> is rejected rather than silently resolved in favour of one. Two sources of truth for the same field is how the mismatch gets reintroduced.</p>
 
       <h2>Where this stops helping</h2>
@@ -125,7 +120,7 @@ await crawl({
           {
             question: "What is a coherent request identity?",
             answer:
-              "A coherent identity fixes the user agent, client hints, Accept and Accept-Language, viewport, platform, locale, and timezone together so they describe one real browser, and applies the same declaration to both HTTP requests and the browser rendering context."
+              "For HTTP, identityHeaders emits the user agent, Accept, Accept-Language, Accept-Encoding, navigation headers, and applicable Chromium client hints. identityBrowserContext separately returns optional Playwright settings for trusted callers. Built-in browser crawling currently applies only the declared user agent."
           }
         ]
       })
@@ -380,7 +375,7 @@ rotator.report(proxyUrl, false);        // three strikes, then cooled down`, "ja
       slug: "blog/we-benchmarked-ourselves-and-lost",
       cardTitle: "From a noisy core extractor to an explicit quality path",
       cardSummary:
-        "Exact core stages, a Node-native quality surface, 511 observed pages, 1,497 development pages, and a fail-closed result that reports its 43 abstentions.",
+        "A Node-native quality surface, 511 observed pages, 1,497 development pages, and a fail-closed result that reports its 43 abstentions.",
       title: "From core extraction to a measured Node quality path | Cockroach Crawler",
       description:
         "A reproducible WCEB study of Cockroach Crawler core and quality extraction, separately generated baselines evaluated by the same scorer, fail-closed admission, and the limits of observed development evidence.",
@@ -388,28 +383,21 @@ rotator.report(proxyUrl, false);        // three strikes, then cooled down`, "ja
         eyebrow: "Engineering · updated 8 August 2026",
         title: "From a noisy core extractor to an explicit quality path",
         lede:
-          "The first comparison exposed a real precision problem. The 0.7.0 release candidate keeps that history, adds a separately named Node quality backend, reports a broader development run, and makes abstention visible instead of turning every page into confident text.",
+          "The first comparison exposed a real precision problem. Stable 0.7.0 keeps that history, adds a separately named Node quality backend, reports a broader development run, and makes abstention visible instead of turning every page into confident text.",
         body: `
       <h2>First, correct the evidence label</h2>
       <p>WCEB calls its 511-page partition <code>test</code>. We inspected those pages, analyzed their failures, and changed extraction behavior in response. That makes every 511-page number here <strong>observed development evidence</strong>, not fresh confirmatory evidence. The separate 1,497-page partition is the upstream WCEB development split.</p>
       <p>This distinction matters more than the headline. A 0.894101 precision result on pages that influenced development is useful engineering evidence. It is not permission to write &quot;0.90 precision everywhere.&quot;</p>
 
-      <h2>The core improvements, with corrected values</h2>
-      <table><thead><tr><th>Stage</th><th>Precision</th><th>Recall</th><th>F1</th><th>Unwanted</th></tr></thead><tbody>
-        <tr><td>Whole-body baseline</td><td>0.733006</td><td>0.904131</td><td>0.765255</td><td>0.388454</td></tr>
-        <tr><td>Landmark removal</td><td>0.753037</td><td>0.903825</td><td>0.779079</td><td>0.287019</td></tr>
-        <tr><td>Content-block scoring</td><td>0.774856</td><td>0.892777</td><td>0.789532</td><td>0.220320</td></tr>
-        <tr><td>Sentence-aware structural filtering</td><td>0.793763</td><td>0.873844</td><td>0.791500</td><td>0.178735</td></tr>
-      </tbody></table>
-      <p>Earlier copy incorrectly listed 0.8986 recall after block scoring and 0.8778 for the structural result. The immutable rows above are the corrected values. Unverified historical core <code>balanced</code> and <code>aggressive</code> rows are no longer used as release evidence.</p>
+      <h2>The stable summary starts at the named quality path</h2>
+      <p>The stable public summary leads with the exact quality-balanced row below. Earlier structural-development rows remain available in the immutable benchmark evidence and methods document, but they are not presented as the current release result.</p>
 
       <h2>The product decision: keep core small, make quality explicit</h2>
-      <p>Trying to disguise a mature extraction engine as a few more home-grown heuristics would be the wrong architecture. The 0.7.0 release candidate instead exports <code>cockroach-crawler/quality</code>, a Node-only surface with bounded validation, named profiles, deterministic diagnostics, and optional fail-closed admission. It delegates main-content extraction to the exact native npm dependency <code>trafilatura@0.2.0</code>.</p>
+      <p>Trying to disguise a mature extraction engine as a few more home-grown heuristics would be the wrong architecture. Stable 0.7.0 instead exports <code>cockroach-crawler/quality</code>, a Node-only surface with bounded validation, named profiles, deterministic diagnostics, and optional fail-closed admission. It delegates main-content extraction to the exact native npm dependency <code>trafilatura@0.2.0</code>.</p>
       <p>The dependency identity is part of the result. This is a Cockroach Crawler product surface, but not a claim that Cockroach Crawler invented the underlying extraction algorithm. Core and serverless do not import it, and an unavailable native backend throws instead of silently falling back.</p>
 
       <h2>The named 0.7.0 development results</h2>
       <table><thead><tr><th>Profile</th><th>Precision</th><th>Recall</th><th>F1</th><th>Required</th><th>Unwanted</th><th>Abstained</th></tr></thead><tbody>
-        <tr><td>Core structural · observed 511</td><td>0.793763</td><td>0.873844</td><td>0.791500</td><td>0.835584</td><td>0.178735</td><td>-</td></tr>
         <tr><td>Quality balanced · observed 511</td><td><strong>0.894101</strong></td><td><strong>0.926022</strong></td><td><strong>0.890524</strong></td><td>0.864090</td><td>0.111383</td><td>-</td></tr>
         <tr><td>Quality balanced · WCEB development 1,497</td><td>0.852784</td><td>0.896259</td><td>0.847064</td><td>0.755867</td><td>0.096181</td><td>-</td></tr>
         <tr><td>Quality balanced + fail-closed · observed 511</td><td>0.847901</td><td>0.875080</td><td>0.844935</td><td>0.812035</td><td>0.104207</td><td>43</td></tr>
@@ -457,7 +445,7 @@ npm run bench:public:verify`, "shell")}
           {
             question: "Which content extractor is most accurate: trafilatura, readability, or Cockroach Crawler?",
             answer:
-              "On 511 previously observed WCEB pages under one scorer, Cockroach Crawler quality balanced records 0.890524 F1, Python trafilatura 2.2.0 records 0.860042, core structural records 0.791500, and readability-lxml records 0.656537. Because the 511 pages influenced development and configurations differ, this is not a universal ranking."
+              "On 511 previously observed WCEB pages under one scorer, Cockroach Crawler quality balanced records 0.890524 F1, Python trafilatura 2.2.0 records 0.860042, and readability-lxml records 0.656537. Because the 511 pages influenced development and configurations differ, this is not a universal ranking."
           },
           {
             question: "How do you remove boilerplate from HTML without losing content?",

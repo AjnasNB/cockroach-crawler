@@ -113,7 +113,7 @@ credentials, and which are unavailable — before you depend on them.
 
 | You want to | Read |
 | --- | --- |
-| Every CLI flag | [CLI-REFERENCE](https://cockroachcrawler.com/docs/cli/) |
+| CLI quickstart and bounded workflow | [CLI guide](https://cockroachcrawler.com/docs/cli/) |
 | Selectors, relocation, identity, export | [SELECTORS-AND-IDENTITY.md](SELECTORS-AND-IDENTITY.md) |
 | What is and is not supported | [CAPABILITIES.md](CAPABILITIES.md) |
 | Network and security boundary | [../SECURITY.md](../SECURITY.md) |

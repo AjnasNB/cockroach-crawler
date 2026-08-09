@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -14,6 +15,8 @@ test("the packed feature inventory stays complete and release-honest", async () 
   const sources = await readFile(path.join(ROOT, "docs", "SOURCES.md"), "utf8");
   const benchmark = await readFile(path.join(ROOT, "docs", "BENCHMARK.md"), "utf8");
   const release = await readFile(path.join(ROOT, "docs", "RELEASE.md"), "utf8");
+  const capabilities = await readFile(path.join(ROOT, "docs", "CAPABILITIES.md"), "utf8");
+  const identityGuide = await readFile(path.join(ROOT, "docs", "SELECTORS-AND-IDENTITY.md"), "utf8");
 
   assert.ok(manifest.files.includes("docs/FEATURES.md"));
   assert.ok(
@@ -22,11 +25,24 @@ test("the packed feature inventory stays complete and release-honest", async () 
   );
   assert.doesNotMatch(readme, /assets\/readme-proof-still/i);
   assert.match(readme, /complete feature inventory/i);
-  assert.match(readme, /npm install cockroach-crawler@0\.6\.2/);
-  assert.match(readme, /0\.6\.2 features:/);
-  assert.doesNotMatch(readme, /npm install cockroach-crawler@0\.6\.1/);
-  assert.match(sources, /npm install cockroach-crawler@0\.6\.2/);
-  assert.doesNotMatch(sources, /npm install cockroach-crawler@0\.6\.1/);
+  assert.match(readme, /npm install cockroach-crawler@0\.7\.0/);
+  assert.doesNotMatch(readme, /npm install cockroach-crawler@0\.6\.[12]/);
+  assert.match(sources, /npm install cockroach-crawler@0\.7\.0/);
+  assert.doesNotMatch(sources, /npm install cockroach-crawler@0\.6\.[12]/);
+  assert.match(features, /Eight CLIs:/);
+  assert.match(features, /`cockroach-shell`/);
+  assert.match(readme, /curated top-level catalog/i);
+  assert.match(readme, /built-in browser mode currently applies only the declared user agent/i);
+  assert.match(readme, /applicable\s+Chromium client hints/i);
+  assert.match(readme, /exported `identityBrowserContext\(\)` helper/i);
+  assert.match(features, /stable `0\.7\.0`/i);
+  assert.match(capabilities, /browser crawling inside `crawl\(\)`\s+currently applies only the profile's declared user agent/i);
+  assert.match(capabilities, /applicable\s+Chromium client hints/i);
+  assert.match(capabilities, /`identityBrowserContext\(\)` helper returns optional Playwright context settings/i);
+  assert.doesNotMatch(capabilities, /platform, locale, and\s+timezone headers/i);
+  assert.match(identityGuide, /built-in browser\s+mode does not consume that helper today/i);
+  assert.match(identityGuide, /trusted\s+Playwright caller may choose to apply/i);
+  assert.doesNotMatch(identityGuide, /drives both tiers from one\s+declaration/i);
   for (const publicationCopy of [readme, benchmark, release]) {
     assert.match(publicationCopy, /90825063d447f07345388d040b1428a311109c2b/);
     assert.match(publicationCopy, /62f270636a019c9bcc617a13fe254640bcd06925/);
@@ -75,6 +91,19 @@ test("the packed feature inventory stays complete and release-honest", async () 
     assert.match(features, new RegExp(capability.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"));
   }
   assert.doesNotMatch(features, /DFS and relevance\/adaptive strategies \| Not implemented/);
+});
+
+test("stable metadata is the only shipped-runtime drift from the reviewed RC package", () => {
+  const output = execFileSync(
+    process.execPath,
+    [path.join(ROOT, "scripts", "check-stable-runtime-invariant.mjs")],
+    { cwd: ROOT, encoding: "utf8" }
+  );
+  const receipt = JSON.parse(output);
+  assert.equal(receipt.ok, true);
+  assert.equal(receipt.stableVersion, "0.7.0");
+  assert.equal(receipt.reviewedPackageCommit, "62f270636a019c9bcc617a13fe254640bcd06925");
+  assert.equal(receipt.observedQualitySha256, "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535");
 });
 
 test("MCP Registry metadata matches the packed npm package", async () => {
@@ -180,12 +209,29 @@ test("release workflows retry transient registry propagation and still fail clos
   assert.match(publishWorkflow, /if \[\[ "\$\{verified\}" != "true" \]\]; then/);
 
   const waitIndex = deployWorkflow.indexOf("- name: Wait for the exact npm package version");
+  const releaseAssetsIndex = deployWorkflow.indexOf("- name: Wait for the stable GitHub release assets");
   const buildIndex = deployWorkflow.indexOf("- name: Build");
   const deployIndex = deployWorkflow.indexOf("- name: Deploy");
-  assert.ok(waitIndex >= 0 && waitIndex < buildIndex && buildIndex < deployIndex);
+  assert.ok(waitIndex >= 0 && waitIndex < releaseAssetsIndex && releaseAssetsIndex < buildIndex && buildIndex < deployIndex);
+  assert.match(deployWorkflow, /- name: Require the main deployment ref[\s\S]*?"\$\{GITHUB_REF\}" != "refs\/heads\/main"/);
   assert.match(deployWorkflow, /for attempt in \{1\.\.30\}/);
-  assert.match(deployWorkflow, /\[\[ "\$\{published_version\}" == "\$\{version\}" \]\]/);
+  assert.match(deployWorkflow, /\[\[ "\$\{published_version\}" == "\$\{version\}" && "\$\{published_latest\}" == "\$\{version\}" \]\]/);
+  assert.match(deployWorkflow, /npm view "cockroach-crawler@latest" version/);
+  assert.match(deployWorkflow, /"\$\{published_latest\}" == "\$\{version\}"/);
   assert.match(deployWorkflow, /refusing to build or deploy the site/);
+  assert.match(deployWorkflow, /releases\/tags\/v\$\{version\}/);
+  assert.match(deployWorkflow, /release\?\.draft \|\| release\?\.prerelease/);
+  assert.match(deployWorkflow, /git\/ref\/tags\/v\$\{version\}/);
+  assert.match(deployWorkflow, /compare\/\$\{target_sha\}\.\.\.\$\{GITHUB_SHA\}/);
+  assert.match(deployWorkflow, /\['identical', 'ahead'\]\.includes\(compare\?\.status\)/);
+  assert.match(deployWorkflow, /compare\?\.base_commit\?\.sha !== targetSha/);
+  assert.match(deployWorkflow, /compare\?\.head_commit\?\.sha !== process\.env\.EXPECTED_SHA/);
+  assert.match(deployWorkflow, /timeout-minutes:\s*60/);
+  for (const asset of ["SHA256SUMS.txt", "extraction-comparison-0.7.0.json", "wceb-quality-observed-0.7.0.json"]) {
+    assert.match(deployWorkflow, new RegExp(asset.replaceAll(".", "\\.")));
+  }
+  assert.match(deployWorkflow, /asset\?\.state !== "uploaded"/);
+  assert.match(deployWorkflow, /asset\.size <= 0/);
   assert.doesNotMatch(
     deployWorkflow,
     /^\s*(?:-\s+)?uses:\s+[^\s]+@(?![0-9a-f]{40}(?:\s|$))/m,

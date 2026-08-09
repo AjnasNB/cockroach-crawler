@@ -1,11 +1,11 @@
 # Cockroach Crawler 0.7.0 launch kit
 
-Last verified: 2026-08-08.
+Last verified: 2026-08-09.
 
-> **Prerelease boundary:** npm `latest` is 0.6.2 and reviewed `0.7.0-rc.1` is
-> published on npm `next`. Frozen raw-DOM attempt 003 failed five gates. Use
-> this kit only for disclosed prerelease discussion; do not claim stable 0.7,
-> best crawler, or universal 0.90 precision.
+> **Stable boundary:** use this kit only after `cockroach-crawler@0.7.0` is
+> visible on npm `latest` with matching integrity, provenance, tag, and release
+> assets. Frozen raw-DOM attempt 003 remains rejected. Do not claim best
+> crawler, benchmark leadership, or universal 0.90 precision.
 
 ## The one-line story
 
@@ -24,15 +24,15 @@ Cockroach Crawler turns permitted public pages and supported read-only sources i
 ## Five-minute proof
 
 ```sh
-npx -y --package cockroach-crawler@0.7.0-rc.1 cockroach-sources doctor
-npx -y --package cockroach-crawler@0.7.0-rc.1 cockroach-crawl https://example.com --max-pages 3 --jsonl
+npx -y --package cockroach-crawler@0.7.0 cockroach-sources doctor
+npx -y --package cockroach-crawler@0.7.0 cockroach-crawl https://example.com --max-pages 3 --jsonl
 ```
 
 Run `cockroach-reach setup` without `--apply` to inspect an optional-provider plan before it changes the machine.
 
 ## Launch order
 
-1. Verify npm `next` resolves to `0.7.0-rc.1`, its integrity and provenance match, and `latest` resolves to `0.6.2`.
+1. Verify npm `latest` resolves to `0.7.0` and its integrity, provenance, tag, and release assets match the exact reviewed commit.
 2. Run the provider doctor and bounded crawl from a clean install.
 3. Confirm the website, media, captions, GitHub social card, and every launch link.
 4. Publish one personally written Show HN submission while the maintainer can answer questions.
@@ -53,4 +53,5 @@ Run `cockroach-reach setup` without `--apply` to inspect an optional-provider pl
 - [Claims checklist](CLAIMS-CHECKLIST.md)
 - [Contributor issues](CONTRIBUTOR-ISSUES.md)
 
-The current npm stable is `0.6.2`. The `0.7.0-rc.1` launch assets are prerelease drafts that must preserve the stated evidence limits.
+The `0.7.0` launch assets must preserve the stated evidence limits and must not
+be used before the exact stable package is available from npm.

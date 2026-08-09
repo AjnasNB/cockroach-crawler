@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.7.0 - 2026-08-09
+
+This stable release promotes the reviewed 0.7 API and package surface without
+changing the runtime, dependency graph, or frozen benchmark evidence shipped in
+`0.7.0-rc.1`. The maintainer's promotion decision is about stable API and
+package availability. It is not a benchmark-leadership decision.
+
+### Stable-release evidence
+
+- Quality `balanced`, observed-development WCEB partition, 511 pages:
+  precision **0.894101**, recall **0.926022**, macro F1 **0.890524**.
+- The 511 pages influenced development, so this remains non-confirmatory
+  observed-development evidence. It is not rounded into a universal 0.90 claim
+  and does not establish a best-crawler ranking.
+- The shipped runtime, package dependency graph, public benchmark JSON, and
+  archived `0.7.0-rc.1` white-paper artifacts remain byte-identical to the
+  reviewed RC package at commit
+  `62f270636a019c9bcc617a13fe254640bcd06925`, except for approved stable version
+  and release-gate metadata.
+- The historical CC BY 4.0 RC paper and Zenodo record remain unchanged. That
+  report documents the RC evidence boundary; it does not authorize or certify
+  this stable software release.
+
+### Release controls
+
+- Added a fail-closed stable-runtime invariant that rejects runtime,
+  dependency, lockfile, benchmark, or archived-paper drift from the reviewed RC
+  baseline.
+- Stable publication remains restricted to the trusted npm workflow, exact
+  reviewed commit and tarball, environment approval, registry verification,
+  provenance verification, and an annotated `v0.7.0` tag at the published
+  commit.
+
 ## 0.7.0-rc.1 - 2026-08-08
 
 This prerelease makes the reviewed 0.7 source available through the npm
@@ -84,9 +117,10 @@ does not promote the development evidence below into a best-crawler claim.
   clears an explicit threshold. Relocation abstains below threshold instead of
   returning a best guess.
 - Named request identity profiles at `cockroach-crawler/identity` covering
-  Chrome, Edge, Firefox, and Safari on desktop and mobile. A profile keeps user
-  agent, client hints, `Accept-Language`, viewport, platform, locale, and
-  timezone coherent across the HTTP and browser tiers.
+  Chrome, Edge, Firefox, and Safari on desktop and mobile. HTTP crawling applies
+  the profile's request headers. The exported `identityBrowserContext()` helper
+  exposes matching browser-context settings for trusted callers; built-in
+  browser crawling applies the selected user agent only.
 - Access-challenge detection and a deny-by-default challenge policy. A challenge
   is reported as a first-class outcome rather than treated as page content.
   `operator` mode delegates resolution to an operator-supplied handler and

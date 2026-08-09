@@ -44,7 +44,7 @@ const docsPdf = await bytes("docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0
 const sitePdf = await bytes("website/paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf");
 const checksum = (await text("docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.sha256")).trim();
 
-requireValue(packageJson.version === "0.7.0-rc.1", "package source version must identify the reviewed release candidate");
+requireValue(packageJson.version === "0.7.0", "package source version must identify the stable software release");
 for (const path of ["CITATION.cff", "codemeta.json", "docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.md"]) {
   requireValue(packageJson.files.includes(path), `npm files must include ${path}`);
 }
@@ -52,20 +52,23 @@ requireValue(packageJson.scripts["paper:build"] === "python scripts/build-crawle
 requireValue(packageJson.scripts["publication:check"] === "node scripts/check-publication.mjs", "package script must expose publication validation");
 
 requireValue(softwareZenodo.upload_type === "software", ".zenodo.json must describe software");
-requireValue(softwareZenodo.version === "0.7.0-rc.1", ".zenodo.json must identify the release candidate");
+requireValue(softwareZenodo.version === "0.7.0-rc.1", ".zenodo.json must preserve the historical RC software snapshot");
 requireValue(softwareZenodo.description.includes("attempt 003 was rejected"), ".zenodo.json must preserve the frozen rejection");
 requireValue(!JSON.stringify(softwareZenodo).includes('"doi"'), ".zenodo.json must not claim an unreserved DOI");
 requireValue(codeMeta["@type"] === "SoftwareSourceCode", "codemeta.json must describe source code");
-requireValue(codeMeta.identifier === "90825063d447f07345388d040b1428a311109c2b", "codemeta.json must pin the candidate commit");
+requireValue(codeMeta.version === "0.7.0", "codemeta.json must identify the current stable software version");
+requireValue(codeMeta.identifier === "https://github.com/AjnasNB/cockroach-crawler/releases/tag/v0.7.0", "codemeta.json must identify the stable release tag target");
+requireValue(codeMeta.referencePublication === "https://doi.org/10.5281/zenodo.21851008", "codemeta.json must retain the historical RC paper reference");
 requireValue(paperZenodo.metadata.upload_type === "publication" && paperZenodo.metadata.publication_type === "report", "paper Zenodo metadata must describe a report");
 requireValue(paperZenodo.metadata.prereserve_doi === false, "paper Zenodo metadata must not request a second DOI");
 requireValue(paperZenodo.metadata.doi === "10.5281/zenodo.21851008", "paper Zenodo metadata must bind the reserved DOI");
 requireValue(publication.record.id === 21851008 && publication.record.doi === paperZenodo.metadata.doi, "publication receipt must bind the public record and DOI");
 requireValue(publication.record.published === true && publication.record.accessRight === "open" && publication.record.license === "cc-by-4.0", "publication receipt must preserve open CC BY 4.0 publication");
-requireValue(publication.claimBoundary.softwareReleaseAuthorized === false && publication.claimBoundary.bestCrawlerClaimAuthorized === false, "publication receipt must preserve the release and ranking claim boundary");
+requireValue(publication.claimBoundary.softwareReleaseAuthorized === false && publication.claimBoundary.bestCrawlerClaimAuthorized === false, "historical paper receipt must preserve its release and ranking claim boundary");
 requireValue(!/orcid:/i.test(citation), "CITATION.cff must not invent an ORCID");
-requireValue(citation.includes("version: 0.7.0-rc.1"), "CITATION.cff must identify the manuscript version");
+requireValue(/^version: 0\.7\.0$/m.test(citation), "CITATION.cff must identify the current stable software version");
 requireValue(citation.includes("preferred-citation:"), "CITATION.cff must provide the paper citation");
+requireValue(/preferred-citation:[\s\S]*?version: 0\.7\.0-rc\.1/.test(citation), "CITATION.cff must preserve the historical RC paper version");
 requireValue(citation.includes('doi: "10.5281/zenodo.21851008"'), "CITATION.cff must bind the reserved paper DOI");
 
 const outputHash = sha256(outputPdf);
@@ -93,12 +96,14 @@ const publicationSources = await Promise.all([
 
 for (const { path, source } of publicationSources) {
   for (const phrase of [
-    "The stable 0.7.0 release",
-    "current stable release represented by this source tree",
     "built to be the best AI crawler",
-    "Version `0.7.0` is MIT licensed and available on npm"
+    "best crawler in the world",
+    "achieves universal 0.90 precision",
+    "proves universal 0.90 precision",
+    "the paper authorizes the stable release",
+    "the paper certifies the stable release"
   ]) {
-    requireValue(!source.includes(phrase), `${path} retains forbidden publication claim: ${phrase}`);
+    requireValue(!source.toLowerCase().includes(phrase.toLowerCase()), `${path} retains forbidden publication claim: ${phrase}`);
   }
 }
 
@@ -109,7 +114,8 @@ if (errors.length) {
   console.log(JSON.stringify({
     ok: true,
     paperVersion: receipt.paperVersion,
-    candidateCommit: receipt.implementation.candidateCommit,
+    historicalCandidateCommit: receipt.implementation.candidateCommit,
+    softwareVersion: packageJson.version,
     frozenEvaluation: receipt.frozenEvaluation.status,
     pdfSha256: outputHash,
     zenodo: "published",
