@@ -82,6 +82,12 @@ import {
   type BrowserHostCapabilities
 } from "cockroach-crawler/browser-host";
 import {
+  createGovernedBrowserAutomation,
+  type BrowserAutomationAction,
+  type BrowserAutomationAuthority,
+  type BrowserAutomationBackend
+} from "cockroach-crawler/browser-automation";
+import {
   runSourceProviderConformance,
   type SourceProviderConformanceReport
 } from "cockroach-crawler/source-conformance";
@@ -181,6 +187,85 @@ void externalProviderId;
 void createBrowserHost;
 type _BrowserHostContract = BrowserHost;
 type _BrowserCapabilityContract = BrowserHostCapabilities;
+const automationBackend: BrowserAutomationBackend = {
+  supportedActions: ["page.url"],
+  async openSession() { return {}; },
+  async runAction(_handle, action) {
+    return {
+      data: null,
+      attestation: {
+        action: action.kind,
+        effect: "read",
+        origin: action.origin,
+        sessionBound: true,
+        withinBudget: true,
+        network: { requests: 0, requestBytes: 0, responseBytes: 0 }
+      }
+    };
+  },
+  async closeSession() {}
+};
+const governedAutomation = createGovernedBrowserAutomation({ backend: automationBackend });
+void governedAutomation;
+const validUpload: BrowserAutomationAction = {
+  kind: "upload",
+  origin: "https://example.com",
+  selector: "input[type=file]",
+  fileRefs: ["file:one"],
+  maxFileBytes: 1024,
+  maxBytes: 1024
+};
+void validUpload;
+// @ts-expect-error upload requires trusted file references and both byte ceilings
+const invalidUpload: BrowserAutomationAction = { kind: "upload", origin: "https://example.com", selector: "input" };
+// @ts-expect-error exact action contracts reject unknown fields
+const invalidPageUrl: BrowserAutomationAction = { kind: "page.url", origin: "https://example.com", surprise: true };
+// @ts-expect-error fill does not accept typing delay
+const invalidFill: BrowserAutomationAction = { kind: "fill", origin: "https://example.com", selector: "input", text: "x", delayMs: 1 };
+// @ts-expect-error a new tab is blank-only and rejects implicit navigation fields
+const invalidTabOpen: BrowserAutomationAction = { kind: "tab.open", origin: "https://example.com", url: "https://example.com", timeoutMs: 1 };
+// @ts-expect-error screenshots support only runtime-verified png and jpeg formats
+const invalidScreenshot: BrowserAutomationAction = { kind: "screenshot", origin: "https://example.com", artifactName: "x.webp", maxBytes: 1, format: "webp" };
+// @ts-expect-error fulfilled routes require an explicit body byte ceiling
+const invalidRoute: BrowserAutomationAction = { kind: "network.route.add", origin: "https://example.com", route: { id: "one", origin: "https://example.com", pathPattern: "/*", response: { mode: "fulfill" } } };
+void invalidUpload;
+void invalidPageUrl;
+void invalidFill;
+void invalidTabOpen;
+void invalidScreenshot;
+void invalidRoute;
+const validAuthority: BrowserAutomationAuthority = {
+  principalId: "agent:test",
+  allowedOrigins: ["https://example.com"],
+  allowedActions: ["page.url"],
+  allowedEffects: ["read"],
+  maxActions: 10,
+  maxActionMs: 1000,
+  maxSessionMs: 5000,
+  maxArtifactBytes: 1024,
+  maxUploadBytes: 1024,
+  maxTotalArtifactBytes: 4096,
+  maxTotalUploadBytes: 4096,
+  maxNetworkRequestBytes: 1024,
+  maxNetworkResponseBytes: 4096,
+  maxTotalNetworkRequestBytes: 4096,
+  maxTotalNetworkResponseBytes: 16_384
+};
+void validAuthority;
+// @ts-expect-error session upload authority is mandatory and separate from artifact authority
+const invalidAuthority: BrowserAutomationAuthority = {
+  principalId: "agent:test",
+  allowedOrigins: ["https://example.com"],
+  allowedActions: ["page.url"],
+  allowedEffects: ["read"],
+  maxActions: 10,
+  maxActionMs: 1000,
+  maxSessionMs: 5000,
+  maxArtifactBytes: 1024,
+  maxUploadBytes: 1024,
+  maxTotalArtifactBytes: 4096
+};
+void invalidAuthority;
 const conformance = await runSourceProviderConformance({
   registry: sources,
   providerId: "github"
@@ -263,7 +348,7 @@ void page;
   await exec(process.execPath, [
     "--input-type=module",
     "--eval",
-    "const root = await import('cockroach-crawler'); const agent = await import('cockroach-crawler/agent'); const sources = await import('cockroach-crawler/sources'); const router = await import('cockroach-crawler/source-router'); const external = await import('cockroach-crawler/external-sources'); const browserHost = await import('cockroach-crawler/browser-host'); const conformance = await import('cockroach-crawler/source-conformance'); const serverless = await import('cockroach-crawler/serverless'); const strategies = await import('cockroach-crawler/strategies'); const cache = await import('cockroach-crawler/cache'); const documents = await import('cockroach-crawler/documents'); const extractors = await import('cockroach-crawler/extractors'); const browser = await import('cockroach-crawler/browser'); const providers = await import('cockroach-crawler/providers'); const mcp = await import('cockroach-crawler/mcp'); const server = await import('cockroach-crawler/server'); const jobs = await import('cockroach-crawler/jobs'); const quality = await import('cockroach-crawler/quality'); if (typeof root.crawl !== 'function' || typeof root.mapSite !== 'function' || typeof root.extractStructured !== 'function' || typeof root.resolveUrlTarget !== 'function' || typeof agent.createCockroachCrawlerTool !== 'function' || typeof sources.createSourceRegistry !== 'function' || typeof router.createSourceRouter !== 'function' || typeof external.createExternalSourceProviders !== 'function' || typeof browserHost.createBrowserHost !== 'function' || typeof conformance.runSourceProviderConformance !== 'function' || typeof serverless.createServerlessCrawler !== 'function' || typeof strategies.createTraversalQueue !== 'function' || typeof cache.FileCrawlCache !== 'function' || typeof documents.parsePdf !== 'function' || typeof extractors.extractWithXPath !== 'function' || typeof extractors.extractWithRegex !== 'function' || typeof browser.capturePageArtifacts !== 'function' || typeof providers.createEscalationRouter !== 'function' || typeof providers.createProxyGatewayProvider !== 'function' || typeof mcp.createCockroachMcpServer !== 'function' || typeof server.createCrawlerApiServer !== 'function' || typeof jobs.createBoundedJobQueue !== 'function' || typeof quality.extractPageQuality !== 'function') process.exit(1);"
+    "const root = await import('cockroach-crawler'); const agent = await import('cockroach-crawler/agent'); const sources = await import('cockroach-crawler/sources'); const router = await import('cockroach-crawler/source-router'); const external = await import('cockroach-crawler/external-sources'); const browserHost = await import('cockroach-crawler/browser-host'); const automation = await import('cockroach-crawler/browser-automation'); const conformance = await import('cockroach-crawler/source-conformance'); const serverless = await import('cockroach-crawler/serverless'); const strategies = await import('cockroach-crawler/strategies'); const cache = await import('cockroach-crawler/cache'); const documents = await import('cockroach-crawler/documents'); const extractors = await import('cockroach-crawler/extractors'); const browser = await import('cockroach-crawler/browser'); const providers = await import('cockroach-crawler/providers'); const mcp = await import('cockroach-crawler/mcp'); const server = await import('cockroach-crawler/server'); const jobs = await import('cockroach-crawler/jobs'); const quality = await import('cockroach-crawler/quality'); if (typeof root.crawl !== 'function' || typeof root.mapSite !== 'function' || typeof root.extractStructured !== 'function' || typeof root.resolveUrlTarget !== 'function' || typeof agent.createCockroachCrawlerTool !== 'function' || typeof sources.createSourceRegistry !== 'function' || typeof router.createSourceRouter !== 'function' || typeof external.createExternalSourceProviders !== 'function' || typeof browserHost.createBrowserHost !== 'function' || typeof automation.createGovernedBrowserAutomation !== 'function' || typeof automation.createGovernedPlaywrightBackend !== 'function' || typeof conformance.runSourceProviderConformance !== 'function' || typeof serverless.createServerlessCrawler !== 'function' || typeof strategies.createTraversalQueue !== 'function' || typeof cache.FileCrawlCache !== 'function' || typeof documents.parsePdf !== 'function' || typeof extractors.extractWithXPath !== 'function' || typeof extractors.extractWithRegex !== 'function' || typeof browser.capturePageArtifacts !== 'function' || typeof providers.createEscalationRouter !== 'function' || typeof providers.createProxyGatewayProvider !== 'function' || typeof mcp.createCockroachMcpServer !== 'function' || typeof server.createCrawlerApiServer !== 'function' || typeof jobs.createBoundedJobQueue !== 'function' || typeof quality.extractPageQuality !== 'function') process.exit(1);"
   ], { cwd: temp, windowsHide: true, maxBuffer: 4 * 1024 * 1024 });
   const installedCli = path.join(temp, "node_modules", "cockroach-crawler", "bin", "cockroach-crawl.js");
   const { stdout: versionOutput } = await exec(process.execPath, [installedCli, "--version"], {

@@ -245,6 +245,29 @@ const capabilityItemList = homeGraph.find((entry) => entry["@type"] === "ItemLis
 if (!capabilityItemList || capabilityItemList.numberOfItems !== 50 || capabilityItemList.itemListElement?.length !== 50) {
   errors.push("homepage structured data must publish all 50 curated top-level capabilities");
 }
+if (!capabilityHomeHtml.includes("data-governed-browser-summary") || !capabilityHomeHtml.includes("same 28 actions proven in Chromium and Firefox")) {
+  errors.push("homepage must expose the governed Chromium and Firefox source-candidate proof");
+}
+for (const proof of ["102 contracts", "71 handlers", "28 actions each", "31 unsupported", "not part of npm stable 0.7.0 yet"]) {
+  if (!capabilityHomeHtml.includes(proof)) errors.push(`homepage governed browser summary is missing: ${proof}`);
+}
+const browserAutomationHtml = await readFile(join(dist, "docs", "browser-automation", "index.html"), "utf8");
+for (const proof of [
+  "102 validated action contracts",
+  "71 maximum configured handlers",
+  "31 explicit unsupported states",
+  "same 28 real-engine action kinds verified in Chromium and Firefox",
+  "Upload 1 to 32 opaque file references",
+  "not included in npm stable 0.7.0"
+]) {
+  if (!browserAutomationHtml.includes(proof)) errors.push(`browser automation page is missing: ${proof}`);
+}
+if ((browserAutomationHtml.match(/<tbody><tr>/g) ?? []).length !== 1 || (browserAutomationHtml.match(/<tr><th scope="row">/g) ?? []).length !== 16) {
+  errors.push("browser automation page must expose all 16 category rows");
+}
+if (!browserAutomationHtml.includes('aria-current="page">Governed browser automation</a>')) {
+  errors.push("browser automation docs route must be selected in the documentation navigation");
+}
 const capabilityIndexHtml = await readFile(join(dist, "docs", "capabilities", "index.html"), "utf8");
 if (!capabilityIndexHtml.includes("Fifty curated capabilities. One page for every catalog item.")) errors.push("capability library must identify its 50 entries as a curated catalog");
 if ((capabilityIndexHtml.match(/data-feature-entry/g) ?? []).length !== 50) errors.push("capability library must expose all 50 indexed capabilities");
@@ -356,7 +379,6 @@ for (const proof of [
   "Scrapy",
   "Trafilatura",
   "Playwright",
-  "Puppeteer",
   "Apify",
   "ScrapingBee",
   "Trafilatura-backed Node profile",
@@ -380,7 +402,6 @@ for (const proof of [
   "Cockroach Browser",
   "Cockroach Crawler",
   "Playwright",
-  "Puppeteer",
   "Trafilatura",
   "Firecrawl",
   "Browser Use",
@@ -456,6 +477,10 @@ if (redirect.status !== 308 || redirect.headers.get("location") !== "https://coc
 const canonicalRedirect = await siteWorker.fetch(new Request("https://www.cockroachcrawler.com/media/?source=check"), mockEnvironment);
 if (canonicalRedirect.status !== 308 || canonicalRedirect.headers.get("location") !== "https://cockroachcrawler.com/media/?source=check") {
   errors.push("site worker must redirect www HTTPS requests to the canonical apex host");
+}
+const pathRedirect = await siteWorker.fetch(new Request("https://cockroachcrawler.com/docs/browser-automation?source=check"), mockEnvironment);
+if (pathRedirect.status !== 308 || pathRedirect.headers.get("location") !== "https://cockroachcrawler.com/docs/browser-automation/?source=check") {
+  errors.push("site worker must canonicalize fileless directory routes with one permanent 308 redirect");
 }
 const secure = await siteWorker.fetch(new Request("https://cockroachcrawler.com/"), mockEnvironment);
 if (secure.headers.get("strict-transport-security") !== "max-age=31536000; includeSubDomains") {

@@ -199,7 +199,7 @@ jobs:
       - name: Install exact dependencies
         run: npm ci --ignore-scripts
       - name: Install Chromium
-        run: ./node_modules/.bin/playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium firefox
       - name: Run complete release gate
         run: npm run release:check
       - name: Verify published benchmark evidence

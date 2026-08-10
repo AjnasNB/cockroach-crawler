@@ -47,7 +47,7 @@ jobs:
       - run: npm pack --dry-run --json --ignore-scripts
 
   browser:
-    name: Chromium integration
+    name: Chromium + Firefox integration
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -61,7 +61,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: ./node_modules/.bin/playwright install --with-deps chromium
+      - run: ./node_modules/.bin/playwright install --with-deps chromium firefox
       - run: npm run test:browser
       - name: Build and verify website
         run: |

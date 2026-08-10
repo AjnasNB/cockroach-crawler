@@ -93,17 +93,23 @@ test("the packed feature inventory stays complete and release-honest", async () 
   assert.doesNotMatch(features, /DFS and relevance\/adaptive strategies \| Not implemented/);
 });
 
-test("stable metadata is the only shipped-runtime drift from the reviewed RC package", () => {
-  const output = execFileSync(
-    process.execPath,
-    [path.join(ROOT, "scripts", "check-stable-runtime-invariant.mjs")],
-    { cwd: ROOT, encoding: "utf8" }
+test("the immutable stable tag retains the reviewed 0.7.0 runtime and evidence", () => {
+  const git = (args, options = {}) => execFileSync("git", args, { cwd: ROOT, ...options });
+  assert.equal(
+    git(["rev-parse", "v0.7.0^{commit}"], { encoding: "utf8" }).trim(),
+    "b80984625256821484731f29aca4d65011507628"
   );
-  const receipt = JSON.parse(output);
-  assert.equal(receipt.ok, true);
-  assert.equal(receipt.stableVersion, "0.7.0");
-  assert.equal(receipt.reviewedPackageCommit, "62f270636a019c9bcc617a13fe254640bcd06925");
-  assert.equal(receipt.observedQualitySha256, "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535");
+  assert.equal(
+    git(["rev-parse", "v0.7.0^{tree}"], { encoding: "utf8" }).trim(),
+    "707a1b2f71a51da75aa637d26e6d2a5e03ea29b1"
+  );
+  const stableManifest = JSON.parse(git(["show", "v0.7.0:package.json"], { encoding: "utf8" }));
+  assert.equal(stableManifest.version, "0.7.0");
+  const qualityBytes = git(["show", "v0.7.0:bench/results/wceb-quality-observed-0.7.0.json"]);
+  assert.equal(
+    createHash("sha256").update(qualityBytes).digest("hex"),
+    "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535"
+  );
 });
 
 test("MCP Registry metadata matches the packed npm package", async () => {

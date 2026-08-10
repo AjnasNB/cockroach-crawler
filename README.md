@@ -97,7 +97,13 @@ Every capability stays behind creator-owned origin, request, byte, redirect, con
 - **Proof travels with the content:** canonical URLs, redirect history, content hashes, retrieval metadata, failures, warnings, and provenance stay attached to results.
 - **No-key routes are explicit:** public GitHub reads and an optional reviewed YouTube route work without developer API credentials; session-backed providers remain separately installed and operator controlled.
 
-Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [category-based alternatives guide](https://cockroachcrawler.com/compare/) covering Firecrawl, Crawl4AI, Crawlee, Scrapy, Trafilatura, Playwright, Puppeteer, Apify, and ScrapingBee before choosing a crawler.
+Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [category-based alternatives guide](https://cockroachcrawler.com/compare/) covering managed acquisition, crawler frameworks, specialist extraction, and direct browser-automation libraries before choosing a crawler.
+
+### Opt-in governed browser automation
+
+`cockroach-crawler/browser-automation` is a separate, opt-in authority boundary for hosts that need direct page actions. It binds one exact origin per isolated session and validates action/effect allowlists, deadlines, session lifetime, uploads, saved artifacts, and bounded plain-data results before dispatch to the optional Playwright runtime.
+
+The [browser-automation guide](docs/BROWSER-AUTOMATION.md) and [machine-readable capability matrix](docs/browser-automation-capability-matrix.json) distinguish cataloged contracts from built-in handlers, trusted-service-dependent handlers, explicit unsupported states, and actions exercised by installed engines. The 102 cataloged contracts are not a claim of comprehensive runtime support; the current maximum configured backend exposes 71 bounded handlers, names 31 unsupported actions, and exercises the same 28 action kinds against installed Chromium and Firefox. Ordered multi-file upload is included; ambiguous click-triggered download persistence and persistent request mutation stay fail-closed.
 
 ## 50 top-level shipped capabilities
 
@@ -989,13 +995,13 @@ npm run bench
 npm run audit:licenses
 npm run worker:check
 npm run worker:types
-npx playwright install chromium
+npx playwright install chromium firefox
 npm run test:browser
 npm audit --omit=dev --audit-level=high
 npm pack --dry-run --json --ignore-scripts
 ```
 
-The normal suite covers adversarial SSRF (including Azure's host-platform address), IPv4/IPv6/provider endpoints, mixed DNS, pinned redirects, robots failure modes, sitemap origin policy, exact budgets and callback deadlines, unknown-key/prototype/accessor resistance, immutable agent policy, literal-only agent filters, CLI behavior, and packed external TypeScript consumption. The real Chromium suite verifies rendering/clicks, pinned proxying, redirect cookies and provenance, sensitive subresource/redirect denial, close-time request races, popup first requests, robots on subresources, decoded-byte and duration limits, WebSocket blocking, WebRTC/STUN blocking, and denial of state-changing methods.
+The normal suite covers adversarial SSRF (including Azure's host-platform address), IPv4/IPv6/provider endpoints, mixed DNS, pinned redirects, robots failure modes, sitemap origin policy, exact budgets and callback deadlines, unknown-key/prototype/accessor resistance, immutable agent policy, literal-only agent filters, CLI behavior, and packed external TypeScript consumption. The crawler rendering suite verifies Chromium rendering/clicks, pinned proxying, redirect cookies and provenance, sensitive subresource/redirect denial, close-time request races, popup first requests, robots on subresources, decoded-byte and duration limits, WebSocket blocking, WebRTC/STUN blocking, and denial of state-changing methods. The governed-action smoke executes its exact 28-action evidence set on both installed Chromium and Firefox.
 
 See [docs/RELEASE.md](./docs/RELEASE.md) for the complete release gate.
 

@@ -49,6 +49,12 @@
       "import": "./src/browser-host.js",
       "default": "./src/browser-host.js"
     },
+    "./browser-automation": {
+      "types": "./types/browser-automation.d.ts",
+      "import": "./src/browser-automation.js",
+      "default": "./src/browser-automation.js"
+    },
+    "./schemas/browser-automation-capabilities.json": "./schemas/browser-automation-capabilities.schema.json",
     "./schemas/source-record.json": "./schemas/source-record.schema.json",
     "./source-conformance": {
       "types": "./types/source-conformance.d.ts",
@@ -180,6 +186,9 @@
     "docs/SOURCES.md",
     "docs/EXTERNAL-SOURCES.md",
     "docs/REACH-AND-BROWSER.md",
+    "docs/BROWSER-AUTOMATION.md",
+    "docs/browser-automation-capability-matrix.json",
+    "docs/browser-automation-real-engine-verified-actions.json",
     "docs/SOURCE-CONFORMANCE.md",
     "docs/SERVERLESS.md",
     "docs/SERVERLESS-THREAT-MODEL.md",
@@ -203,11 +212,12 @@
     "GOVERNANCE.md",
     "SUPPORT.md",
     "CHANGELOG.md",
+    "scripts/build-browser-automation-matrix.mjs",
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/adaptive.test.js test/advanced.test.js test/blocklist.test.js test/boilerplate.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/exporters.test.js test/external-sources-cli.test.js test/external-sources.test.js test/glama-config.test.js test/identity-crawl.test.js test/identity.test.js test/limits.test.js test/mcp-tools.test.js test/parser.test.js test/public-benchmark.test.js test/quality.test.js test/release-kit.test.js test/security.test.js test/session.test.js test/spider.test.js test/shell.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
-    "test:browser": "node --test browser-test/integration.test.js browser-test/xhr-capture.test.js",
+    "test": "node --test test/adaptive.test.js test/advanced.test.js test/blocklist.test.js test/boilerplate.test.js test/browser-automation.test.js test/browser-automation-engine.test.js test/browser-host.test.js test/cli.test.js test/crawler.test.js test/exporters.test.js test/external-sources-cli.test.js test/external-sources.test.js test/glama-config.test.js test/identity-crawl.test.js test/identity.test.js test/limits.test.js test/mcp-tools.test.js test/parser.test.js test/public-benchmark.test.js test/public-copy-boundary.test.js test/quality.test.js test/release-kit.test.js test/security.test.js test/session.test.js test/spider.test.js test/shell.test.js test/source-provider-conformance.test.js test/source-provider-errors.test.js test/source-router.test.js test/source-schema.test.js test/sources.test.js test/serverless.test.js test/worker.test.js",
+    "test:browser": "node --test browser-test/integration.test.js browser-test/xhr-capture.test.js browser-test/governed-automation.integration.test.js",
     "test:types": "node scripts/consumer-types.mjs",
     "audit:licenses": "node scripts/audit-direct-licenses.mjs",
     "check": "npm test && npm run test:types && npm run bench && npm run audit:licenses",
@@ -227,7 +237,8 @@
     "bench:public:comparison": "node bench/public/extraction-comparison.mjs",
     "paper:build": "python scripts/build-crawler-whitepaper-pdf.py",
     "publication:check": "node scripts/check-publication.mjs",
-    "release:runtime-invariant": "node scripts/check-stable-runtime-invariant.mjs"
+    "release:runtime-invariant": "node scripts/check-stable-runtime-invariant.mjs",
+    "browser-automation:matrix": "node scripts/build-browser-automation-matrix.mjs"
   },
   "keywords": [
     "crawler",

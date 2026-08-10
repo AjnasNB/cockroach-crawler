@@ -18,10 +18,13 @@ async function fetchAsset(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const lastSegment = url.pathname.split("/").at(-1);
+    const needsTrailingSlash = Boolean(lastSegment) && !lastSegment.includes(".");
 
-    if (url.protocol !== "https:" || url.hostname === "www.cockroachcrawler.com") {
+    if (url.protocol !== "https:" || url.hostname === "www.cockroachcrawler.com" || needsTrailingSlash) {
       url.protocol = "https:";
       if (url.hostname === "www.cockroachcrawler.com") url.hostname = "cockroachcrawler.com";
+      if (needsTrailingSlash) url.pathname = `${url.pathname}/`;
       return Response.redirect(url, 308);
     }
 

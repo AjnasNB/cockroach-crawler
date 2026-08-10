@@ -35,6 +35,7 @@ const routes = [
   "/docs/javascript/",
   "/docs/crawling/",
   "/docs/browser/",
+  "/docs/browser-automation/",
   "/docs/extraction/",
   "/docs/map-and-extract/",
   "/docs/agents/",

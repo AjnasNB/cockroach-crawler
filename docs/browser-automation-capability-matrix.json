@@ -1,0 +1,1390 @@
+{
+  "schemaVersion": "cockroach.browser-automation-capability-matrix.v1",
+  "packageVersion": "0.7.0",
+  "scope": "product-owned-governed-browser-automation",
+  "summary": {
+    "catalogedActions": 102,
+    "catalogedCategories": 16,
+    "builtInHandlerActions": 60,
+    "trustedServiceRequiredActions": 11,
+    "explicitlyUnsupportedActions": 31,
+    "realEngineIntegrationVerifiedActions": 28
+  },
+  "interpretation": {
+    "cataloged": "The normalized contract and validator exist; this alone is not runtime support.",
+    "builtInHandler": "The shipped engine adapter has a handler, subject to runtime method probes and authority checks.",
+    "trustedServiceRequired": "The handler is available only when the host injects every named trusted service.",
+    "realEngineIntegrationVerified": "The repository's installed-engine smoke test executes this action kind.",
+    "separateProductContract": "Cockroach Browser is a separate product; this repository does not self-attest its feature coverage."
+  },
+  "categories": [
+    {
+      "id": "lifecycle-connect",
+      "status": "unsupported",
+      "catalogedActions": 4,
+      "maximumBackendActions": 0,
+      "realEngineIntegrationVerifiedActions": 0
+    },
+    {
+      "id": "sessions-pages-tabs",
+      "status": "partial",
+      "catalogedActions": 11,
+      "maximumBackendActions": 7,
+      "realEngineIntegrationVerifiedActions": 4
+    },
+    {
+      "id": "navigation-waits",
+      "status": "maximum-backend-covered",
+      "catalogedActions": 8,
+      "maximumBackendActions": 8,
+      "realEngineIntegrationVerifiedActions": 3
+    },
+    {
+      "id": "locators-elements-forms",
+      "status": "maximum-backend-covered",
+      "catalogedActions": 11,
+      "maximumBackendActions": 11,
+      "realEngineIntegrationVerifiedActions": 7
+    },
+    {
+      "id": "keyboard-input",
+      "status": "maximum-backend-covered",
+      "catalogedActions": 4,
+      "maximumBackendActions": 4,
+      "realEngineIntegrationVerifiedActions": 1
+    },
+    {
+      "id": "pointer-touch-drag",
+      "status": "maximum-backend-covered",
+      "catalogedActions": 7,
+      "maximumBackendActions": 7,
+      "realEngineIntegrationVerifiedActions": 2
+    },
+    {
+      "id": "files-dialogs",
+      "status": "partial",
+      "catalogedActions": 5,
+      "maximumBackendActions": 1,
+      "realEngineIntegrationVerifiedActions": 1
+    },
+    {
+      "id": "screenshots-pdf",
+      "status": "maximum-backend-covered",
+      "catalogedActions": 3,
+      "maximumBackendActions": 3,
+      "realEngineIntegrationVerifiedActions": 1
+    },
+    {
+      "id": "evaluation-scripts-workers",
+      "status": "partial",
+      "catalogedActions": 5,
+      "maximumBackendActions": 4,
+      "realEngineIntegrationVerifiedActions": 0
+    },
+    {
+      "id": "network",
+      "status": "partial",
+      "catalogedActions": 10,
+      "maximumBackendActions": 5,
+      "realEngineIntegrationVerifiedActions": 2
+    },
+    {
+      "id": "cookies-storage",
+      "status": "partial",
+      "catalogedActions": 11,
+      "maximumBackendActions": 10,
+      "realEngineIntegrationVerifiedActions": 4
+    },
+    {
+      "id": "permissions-geolocation-emulation",
+      "status": "partial",
+      "catalogedActions": 3,
+      "maximumBackendActions": 2,
+      "realEngineIntegrationVerifiedActions": 0
+    },
+    {
+      "id": "accessibility-page-tools",
+      "status": "partial",
+      "catalogedActions": 5,
+      "maximumBackendActions": 4,
+      "realEngineIntegrationVerifiedActions": 0
+    },
+    {
+      "id": "tracing-metrics-recording",
+      "status": "partial",
+      "catalogedActions": 5,
+      "maximumBackendActions": 1,
+      "realEngineIntegrationVerifiedActions": 0
+    },
+    {
+      "id": "coverage-console-heap",
+      "status": "partial",
+      "catalogedActions": 4,
+      "maximumBackendActions": 1,
+      "realEngineIntegrationVerifiedActions": 0
+    },
+    {
+      "id": "selectors-page-tools",
+      "status": "partial",
+      "catalogedActions": 6,
+      "maximumBackendActions": 3,
+      "realEngineIntegrationVerifiedActions": 3
+    }
+  ],
+  "actions": [
+    {
+      "kind": "browser.connect",
+      "category": "lifecycle-connect",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "browser.disconnect",
+      "category": "lifecycle-connect",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "context.create",
+      "category": "lifecycle-connect",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "context.close",
+      "category": "lifecycle-connect",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "session.inspect",
+      "category": "sessions-pages-tabs",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "page.list",
+      "category": "sessions-pages-tabs",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "tab.open",
+      "category": "sessions-pages-tabs",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "tab.close",
+      "category": "sessions-pages-tabs",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "tab.switch",
+      "category": "sessions-pages-tabs",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "tab.lock",
+      "category": "sessions-pages-tabs",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "tab.unlock",
+      "category": "sessions-pages-tabs",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "tab.lock.status",
+      "category": "sessions-pages-tabs",
+      "effect": "read",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "popup.wait",
+      "category": "sessions-pages-tabs",
+      "effect": "read",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "frame.list",
+      "category": "sessions-pages-tabs",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "frame.select",
+      "category": "sessions-pages-tabs",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "navigate",
+      "category": "navigation-waits",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "back",
+      "category": "navigation-waits",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "forward",
+      "category": "navigation-waits",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "reload",
+      "category": "navigation-waits",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "wait",
+      "category": "navigation-waits",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "wait.selector",
+      "category": "navigation-waits",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "wait.url",
+      "category": "navigation-waits",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "history.inspect",
+      "category": "navigation-waits",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "locator.inspect",
+      "category": "locators-elements-forms",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "click",
+      "category": "locators-elements-forms",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "doubleClick",
+      "category": "locators-elements-forms",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "fill",
+      "category": "locators-elements-forms",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "type",
+      "category": "locators-elements-forms",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "hover",
+      "category": "locators-elements-forms",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "focus",
+      "category": "locators-elements-forms",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "check",
+      "category": "locators-elements-forms",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "uncheck",
+      "category": "locators-elements-forms",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "select",
+      "category": "locators-elements-forms",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "form.submit",
+      "category": "locators-elements-forms",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "press",
+      "category": "keyboard-input",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "keyboard.down",
+      "category": "keyboard-input",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "keyboard.up",
+      "category": "keyboard-input",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "keyboard.insertText",
+      "category": "keyboard-input",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "scroll",
+      "category": "pointer-touch-drag",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "drag",
+      "category": "pointer-touch-drag",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "touch.tap",
+      "category": "pointer-touch-drag",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "mouse.move",
+      "category": "pointer-touch-drag",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "mouse.down",
+      "category": "pointer-touch-drag",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "mouse.up",
+      "category": "pointer-touch-drag",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "mouse.click",
+      "category": "pointer-touch-drag",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "upload",
+      "category": "files-dialogs",
+      "effect": "upload",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "resolveFileRefs"
+      ],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "download",
+      "category": "files-dialogs",
+      "effect": "download",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "dialog.wait",
+      "category": "files-dialogs",
+      "effect": "read",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "dialog.accept",
+      "category": "files-dialogs",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "dialog.dismiss",
+      "category": "files-dialogs",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "capture.paired",
+      "category": "screenshots-pdf",
+      "effect": "download",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "saveArtifact"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "screenshot",
+      "category": "screenshots-pdf",
+      "effect": "download",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "saveArtifact"
+      ],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "pdf",
+      "category": "screenshots-pdf",
+      "effect": "download",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "saveArtifact"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "evaluate",
+      "category": "evaluation-scripts-workers",
+      "effect": "execute",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "resolveExpression"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "script.add",
+      "category": "evaluation-scripts-workers",
+      "effect": "execute",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "resolveScript"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "style.add",
+      "category": "evaluation-scripts-workers",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "resolveStyle"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "worker.list",
+      "category": "evaluation-scripts-workers",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "worker.evaluate",
+      "category": "evaluation-scripts-workers",
+      "effect": "execute",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [
+        "resolveExpression"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "network.inspect",
+      "category": "network",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "network.export",
+      "category": "network",
+      "effect": "download",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "saveArtifact"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "network.requests",
+      "category": "network",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "network.responses",
+      "category": "network",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "network.route.add",
+      "category": "network",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [
+        "resolveRouteBody"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "network.route.remove",
+      "category": "network",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "network.routes.list",
+      "category": "network",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "network.offline",
+      "category": "network",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "network.cache",
+      "category": "network",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "network.headers",
+      "category": "network",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "clipboard.read",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "clipboard.write",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "cookies.read",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "cookies.write",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "storage.read",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "storage.write",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "storage.clear",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "state.save",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "saveState"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "state.load",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "state.list",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "listStates"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "state.delete",
+      "category": "cookies-storage",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "trusted-service-required",
+      "requiredServices": [
+        "deleteState"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "permissions.set",
+      "category": "permissions-geolocation-emulation",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "geolocation.set",
+      "category": "permissions-geolocation-emulation",
+      "effect": "credential",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "emulation.set",
+      "category": "permissions-geolocation-emulation",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "snapshot",
+      "category": "accessibility-page-tools",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "extract",
+      "category": "accessibility-page-tools",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "accessibility.snapshot",
+      "category": "accessibility-page-tools",
+      "effect": "read",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "annotate.show",
+      "category": "accessibility-page-tools",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "annotate.clear",
+      "category": "accessibility-page-tools",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "trace.start",
+      "category": "tracing-metrics-recording",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "trace.stop",
+      "category": "tracing-metrics-recording",
+      "effect": "download",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "metrics.read",
+      "category": "tracing-metrics-recording",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "recording.start",
+      "category": "tracing-metrics-recording",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "recording.stop",
+      "category": "tracing-metrics-recording",
+      "effect": "download",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "coverage.start",
+      "category": "coverage-console-heap",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "coverage.stop",
+      "category": "coverage-console-heap",
+      "effect": "download",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [
+        "saveArtifact"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "console.read",
+      "category": "coverage-console-heap",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "heap.snapshot",
+      "category": "coverage-console-heap",
+      "effect": "download",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "selector.register",
+      "category": "selectors-page-tools",
+      "effect": "execute",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [
+        "resolveScript"
+      ],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "selector.unregister",
+      "category": "selectors-page-tools",
+      "effect": "write",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "selector.list",
+      "category": "selectors-page-tools",
+      "effect": "read",
+      "defaultEnabled": false,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "unsupported",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": false
+    },
+    {
+      "kind": "page.content",
+      "category": "selectors-page-tools",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "page.title",
+      "category": "selectors-page-tools",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    },
+    {
+      "kind": "page.url",
+      "category": "selectors-page-tools",
+      "effect": "read",
+      "defaultEnabled": true,
+      "contract": "cataloged",
+      "crawlerCore": "not-directly-exposed",
+      "cockroachBrowser": "separate-product-contract",
+      "governedAdapter": "built-in-handler",
+      "requiredServices": [],
+      "realEngineIntegrationVerified": true
+    }
+  ]
+}

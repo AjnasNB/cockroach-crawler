@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased - governed browser automation candidate
+
+### Added
+
+- A source-candidate `cockroach-crawler/browser-automation` export with
+  exact-origin session authority, action/effect allowlists, bounded time,
+  network, upload, artifact, and session budgets, opaque ordered multi-file
+  upload references, fail-closed download cancellation, plain-data
+  attestations, and installed-engine integration tests. Its generated matrix
+  separates 102 cataloged contracts from 71 maximum configured handlers, 31
+  explicit unsupported actions, and the same 28 action kinds exercised against
+  installed Chromium and Firefox runtimes. This export is not part of npm
+  stable 0.7.0.
+
 ## 0.7.0 - 2026-08-09
 
 This stable release promotes the reviewed 0.7 API and package surface without

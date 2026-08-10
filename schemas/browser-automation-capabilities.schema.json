@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cockroachcrawler.com/schemas/browser-automation-capabilities.json",
+  "title": "Cockroach governed browser-automation capability matrix",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "packageVersion", "scope", "summary", "interpretation", "categories", "actions"],
+  "properties": {
+    "schemaVersion": { "const": "cockroach.browser-automation-capability-matrix.v1" },
+    "packageVersion": { "type": "string", "minLength": 1 },
+    "scope": { "const": "product-owned-governed-browser-automation" },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["catalogedActions", "catalogedCategories", "builtInHandlerActions", "trustedServiceRequiredActions", "explicitlyUnsupportedActions", "realEngineIntegrationVerifiedActions"],
+      "properties": {
+        "catalogedActions": { "type": "integer", "minimum": 0 },
+        "catalogedCategories": { "type": "integer", "minimum": 0 },
+        "builtInHandlerActions": { "type": "integer", "minimum": 0 },
+        "trustedServiceRequiredActions": { "type": "integer", "minimum": 0 },
+        "explicitlyUnsupportedActions": { "type": "integer", "minimum": 0 },
+        "realEngineIntegrationVerifiedActions": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "interpretation": { "type": "object", "additionalProperties": { "type": "string" } },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status", "catalogedActions", "maximumBackendActions", "realEngineIntegrationVerifiedActions"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["maximum-backend-covered", "partial", "unsupported"] },
+          "catalogedActions": { "type": "integer", "minimum": 0 },
+          "maximumBackendActions": { "type": "integer", "minimum": 0 },
+          "realEngineIntegrationVerifiedActions": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "category", "effect", "defaultEnabled", "contract", "crawlerCore", "cockroachBrowser", "governedAdapter", "requiredServices", "realEngineIntegrationVerified"],
+        "properties": {
+          "kind": { "type": "string", "minLength": 1 },
+          "category": { "type": "string", "minLength": 1 },
+          "effect": { "enum": ["read", "write", "execute", "upload", "download", "credential"] },
+          "defaultEnabled": { "type": "boolean" },
+          "contract": { "const": "cataloged" },
+          "crawlerCore": { "const": "not-directly-exposed" },
+          "cockroachBrowser": { "const": "separate-product-contract" },
+          "governedAdapter": { "enum": ["built-in-handler", "trusted-service-required", "unsupported"] },
+          "requiredServices": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+          "realEngineIntegrationVerified": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

@@ -18,7 +18,6 @@ const scrapyRepository = "https://github.com/scrapy/scrapy";
 const trafilaturaDocs = "https://trafilatura.readthedocs.io/en/latest/";
 const trafilaturaEvaluation = "https://trafilatura.readthedocs.io/en/latest/evaluation.html";
 const playwrightRepository = "https://github.com/microsoft/playwright";
-const puppeteerRepository = "https://github.com/puppeteer/puppeteer";
 const apifyDocs = "https://docs.apify.com/get-started";
 const scrapingBeeDocs = "https://www.scrapingbee.com/documentation/";
 const qarinahSite = "https://qarinah.io";
@@ -80,6 +79,12 @@ const qualityFailClosedResult = JSON.parse(
 const publicConformanceResult = JSON.parse(
   await readFile(join(root, "..", "bench", "results", "public-conformance-0.7.0.json"), "utf8")
 );
+const browserAutomationMatrix = JSON.parse(
+  await readFile(join(root, "..", "docs", "browser-automation-capability-matrix.json"), "utf8")
+);
+const browserAutomationSummary = browserAutomationMatrix.summary;
+const browserAutomationMaximumHandlers =
+  browserAutomationSummary.builtInHandlerActions + browserAutomationSummary.trustedServiceRequiredActions;
 const benchmarkElapsedMedian = benchmarkResult.results.elapsedMs.median;
 const benchmarkElapsedP95 = benchmarkResult.results.elapsedMs.p95;
 const benchmarkThroughputMedian = benchmarkResult.results.pagesPerSecond.median;
@@ -218,6 +223,14 @@ const pages = [
     body: browserDocsPage()
   },
   {
+    slug: "docs/browser-automation",
+    active: "Docs",
+    title: "Governed browser automation API - Cockroach Crawler",
+    description: "Inspect Cockroach Crawler's source-candidate browser automation contracts, built-in and trusted-service handlers, explicit unsupported actions, Chromium and Firefox verification, and authority boundaries.",
+    body: browserAutomationDocsPage(),
+    lastModified: "2026-08-10"
+  },
+  {
     slug: "docs/extraction",
     active: "Docs",
     title: "Markdown, CSS, XPath, PDF, and LLM extraction - Cockroach Crawler",
@@ -293,7 +306,7 @@ const pages = [
     slug: "compare",
     nav: "Compare",
     title: "Cockroach Crawler alternatives | Crawlers, extractors, browsers, APIs",
-    description: "Compare Cockroach Crawler with Firecrawl, Crawl4AI, Crawlee, Scrapy, Trafilatura, Playwright, Puppeteer, Apify, and ScrapingBee by product category and evidence boundary.",
+    description: "Compare Cockroach Crawler with managed acquisition services, crawler frameworks, specialist extraction, and direct browser automation by product category and evidence boundary.",
     body: comparePage(),
     schema: comparisonSchema(),
     ogType: "article"
@@ -482,7 +495,6 @@ function comparisonSchema() {
           { "@type": "SoftwareApplication", name: "Scrapy", url: scrapyRepository },
           { "@type": "SoftwareApplication", name: "Trafilatura", url: trafilaturaDocs },
           { "@type": "SoftwareApplication", name: "Playwright", url: playwrightRepository },
-          { "@type": "SoftwareApplication", name: "Puppeteer", url: puppeteerRepository },
           { "@type": "SoftwareApplication", name: "Apify", url: apifyDocs },
           { "@type": "SoftwareApplication", name: "ScrapingBee", url: scrapingBeeDocs }
         ]
@@ -492,8 +504,8 @@ function comparisonSchema() {
         mainEntity: [
           faqSchema("What is the best AI web crawler for agents?", "There is no universal best crawler. Choose by required layer: managed acquisition, programmable crawling, browser automation, main-content extraction, or governed evidence."),
           faqSchema("Is Cockroach Crawler better than Trafilatura?", "No universal ranking is established. Cockroach Crawler's opt-in Node quality surface is Trafilatura-backed and adds crawling, rendering, policy, structured extraction, and evidence around that extractor."),
-          faqSchema("Is Cockroach Crawler better than Puppeteer or Playwright?", "That is not a like-for-like comparison. Puppeteer and Playwright are browser-automation primitives; Cockroach Crawler composes bounded crawling and evidence above browser automation."),
-          faqSchema("Which crawler should I choose for an AI agent?", "Choose the smallest tested contract that matches the job: Cockroach Crawler for bounded local evidence, Firecrawl or Apify for managed reach, Crawlee or Scrapy for custom crawler systems, Crawl4AI for Python LLM crawling, and Playwright or Puppeteer for direct browser automation.")
+          faqSchema("How does Cockroach Crawler differ from direct browser automation?", "Direct automation controls a browser. Cockroach Crawler composes bounded acquisition, extraction, and evidence above an optional browser runtime."),
+          faqSchema("Which crawler should I choose for an AI agent?", "Choose the smallest tested contract that matches the job: Cockroach Crawler for bounded local evidence, a managed service for hosted reach, a crawler framework for a custom system, or a direct browser library for page-level automation.")
         ]
       }
     ]
@@ -577,7 +589,6 @@ function ecosystemSchema() {
     ["Cockroach Browser", cockroachBrowserSite],
     ["Cockroach Crawler", siteUrl],
     ["Playwright", playwrightRepository],
-    ["Puppeteer", puppeteerRepository],
     ["Trafilatura", trafilaturaDocs],
     ["Firecrawl", firecrawlDocs],
     ["Browser Use", browserUseRepository],
@@ -822,6 +833,7 @@ function homePage() {
       <div class="hero-rail" role="list" aria-label="Crawler execution boundary"><span role="listitem">01 normalize</span><span role="listitem">02 resolve</span><span role="listitem">03 respect</span><span role="listitem">04 record</span></div>
     </section>
     ${homeCapabilityInventory()}
+    ${homeGovernedAutomation()}
     <section class="section shell" aria-labelledby="quality-title">
       <p class="eyebrow">New in 0.7.0 · measured on WCEB</p>
       <h2 id="quality-title">Choose the lightweight core or the measured Node quality path.</h2>
@@ -1313,6 +1325,66 @@ function homeCapabilityInventory() {
   </section>`;
 }
 
+function homeGovernedAutomation() {
+  return `<section class="section shell proof-section" aria-labelledby="governed-browser-home-title" data-governed-browser-summary>
+    <div><p class="eyebrow">Source candidate - governed browser runtime</p><h2 id="governed-browser-home-title">One authority contract. The same 28 actions proven in Chromium and Firefox.</h2><p>The candidate API catalogs ${browserAutomationSummary.catalogedActions} validated contracts. Its maximum configured backend exposes ${browserAutomationMaximumHandlers} handlers, while ${browserAutomationSummary.explicitlyUnsupportedActions} actions remain explicitly unavailable instead of silently falling through. This source candidate is not part of npm stable ${publishedVersion} yet.</p><div class="button-row"><a class="button primary" href="/docs/browser-automation/">Inspect the capability matrix</a><a class="button secondary" href="${repository}/blob/main/docs/browser-automation-capability-matrix.json">Open machine-readable evidence</a></div></div>
+    <div class="candidate-facts" aria-label="Governed browser automation source-candidate facts"><div><span>Cataloged</span><strong>${browserAutomationSummary.catalogedActions} contracts</strong></div><div><span>Maximum configured</span><strong>${browserAutomationMaximumHandlers} handlers</strong></div><div><span>Real-engine proof</span><strong>${browserAutomationSummary.realEngineIntegrationVerifiedActions} actions each</strong></div><div><span>Fail closed</span><strong>${browserAutomationSummary.explicitlyUnsupportedActions} unsupported</strong></div></div>
+  </section>`;
+}
+
+function browserAutomationCategoryTitle(id) {
+  return ({
+    "lifecycle-connect": "Lifecycle and connect",
+    "sessions-pages-tabs": "Sessions, pages, and tabs",
+    "navigation-waits": "Navigation and waits",
+    "locators-elements-forms": "Locators, elements, and forms",
+    "keyboard-input": "Keyboard input",
+    "pointer-touch-drag": "Pointer, touch, and drag",
+    "files-dialogs": "Files and dialogs",
+    "screenshots-pdf": "Screenshots and PDF",
+    "evaluation-scripts-workers": "Evaluation, scripts, and workers",
+    network: "Network",
+    "cookies-storage": "Cookies and storage",
+    "permissions-geolocation-emulation": "Permissions, geolocation, and emulation",
+    "accessibility-page-tools": "Accessibility and page tools",
+    "tracing-metrics-recording": "Tracing, metrics, and recording",
+    "coverage-console-heap": "Coverage, console, and heap",
+    "selectors-page-tools": "Selectors and page tools"
+  })[id] ?? id;
+}
+
+function browserAutomationDocsPage() {
+  const categories = browserAutomationMatrix.categories;
+  const supported = browserAutomationMatrix.actions
+    .filter((action) => action.governedAdapter !== "unsupported")
+    .map((action) => `<code>${escapeHtml(action.kind)}</code>`)
+    .join(" ");
+  const unsupported = browserAutomationMatrix.actions
+    .filter((action) => action.governedAdapter === "unsupported")
+    .map((action) => `<code>${escapeHtml(action.kind)}</code>`)
+    .join(" ");
+  return docsManualPage({
+    currentPath: "/docs/browser-automation/",
+    eyebrow: "Source candidate - governed browser automation",
+    title: "Control Chromium and Firefox without hiding the authority boundary.",
+    lede: `The source candidate exposes ${browserAutomationSummary.catalogedActions} validated action contracts, ${browserAutomationMaximumHandlers} maximum configured handlers, ${browserAutomationSummary.explicitlyUnsupportedActions} explicit unsupported states, and the same ${browserAutomationSummary.realEngineIntegrationVerifiedActions} real-engine action kinds verified in Chromium and Firefox. It is not a drop-in browser-library replacement and is not included in npm stable ${publishedVersion}.`,
+    toc: [
+      ["accounting", "Capability accounting"],
+      ["matrix", "Category matrix"],
+      ["supported", "Available contracts"],
+      ["files", "Multi-file upload"],
+      ["authority", "Authority and network"],
+      ["unsupported", "Explicitly unsupported"]
+    ],
+    content: `<section id="accounting"><p class="eyebrow">01 - Accounting</p><h2>Catalog, handlers, and engine proof are different facts.</h2><div class="reference-cards"><article><strong>${browserAutomationSummary.catalogedActions} cataloged</strong><p>Each action has a normalized contract and validator. Catalog presence alone is not runtime support.</p></article><article><strong>${browserAutomationSummary.builtInHandlerActions} built in</strong><p>The shipped backend has these handlers, subject to exact runtime probes, policy, authority, and resource budgets.</p></article><article><strong>${browserAutomationSummary.trustedServiceRequiredActions} service dependent</strong><p>These handlers require the host to inject every named trusted resolver or persistence service.</p></article><article><strong>${browserAutomationSummary.realEngineIntegrationVerifiedActions} verified per engine</strong><p>The checked-in integration executes the same exact action-kind set in installed Chromium and Firefox.</p></article></div><div class="callout candidate"><strong>Publication boundary</strong><p>This page documents a reviewed source candidate under development after stable ${publishedVersion}. Do not install it from npm until a separately verified candidate release is published.</p></div></section>
+      <section id="matrix"><p class="eyebrow">02 - Category matrix</p><h2>See maximum handlers and real-engine proof side by side.</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Governed browser automation category capability matrix"><table><thead><tr><th>Category</th><th>Maximum handlers / catalog</th><th>Chromium tested</th><th>Firefox tested</th><th>Status</th></tr></thead><tbody>${categories.map((category) => `<tr><th scope="row">${escapeHtml(browserAutomationCategoryTitle(category.id))}</th><td>${category.maximumBackendActions} / ${category.catalogedActions}</td><td>${category.realEngineIntegrationVerifiedActions}</td><td>${category.realEngineIntegrationVerifiedActions}</td><td>${escapeHtml(category.status)}</td></tr>`).join("")}</tbody></table></div></section>
+      <section id="supported"><p class="eyebrow">03 - Available contracts</p><h2>Maximum configured handlers are named, not implied.</h2><p class="code-cloud">${supported}</p><p>Trusted-service-dependent actions become available only when the host supplies the exact required service. Runtime method probes can reduce the advertised set for a specific engine build.</p></section>
+      <section id="files"><p class="eyebrow">04 - Ordered files</p><h2>Upload 1 to 32 opaque file references without accepting ambient paths.</h2><p>Ordered multi-file upload preserves reference order and identity. Resolver output is checked per file and in aggregate against per-file, per-action, and per-session byte ceilings before the engine receives any file payload.</p></section>
+      <section id="authority"><p class="eyebrow">05 - Authority and network</p><h2>Bind origins, effects, actions, sessions, requests, bytes, and time before dispatch.</h2><p>Owned sessions serialize actions and attest exact action numbers. The bounded HTTP transport enforces method, origin, request-count, request-body, streamed-response, redirect, deadline, and total-byte limits. The host must still attest and enforce non-routed egress controls and operating-system or container isolation for hostile pages.</p></section>
+      <section id="unsupported"><p class="eyebrow">06 - Explicitly unsupported</p><h2>Unimplemented or ambiguous effects fail closed.</h2><p class="code-cloud">${unsupported}</p><p>These catalog entries remain visible so callers can inspect the gap. They do not dispatch, fall back to a broader primitive, or become supported through documentation wording.</p></section>`
+  });
+}
+
 function docsNavigationGroups() {
   return [
     ["Start", [
@@ -1323,6 +1395,7 @@ function docsNavigationGroups() {
     ["Crawl and extract", [
       ["/docs/crawling/", "Crawling and cache"],
       ["/docs/browser/", "Browser rendering"],
+      ["/docs/browser-automation/", "Governed browser automation"],
       ["/docs/extraction/", "Extraction and PDF"],
       ["/docs/map-and-extract/", "Map and CSS fields"]
     ]],
@@ -2515,7 +2588,7 @@ function comparePage() {
         <article class="fit-yes"><span>Governed local evidence</span><h3>Cockroach Crawler</h3><p>Node-first crawling, mapping, rendering, structured extraction, explicit network ceilings, and normalized source evidence in one bounded package.</p></article>
         <article><span>Managed web data</span><h3>Firecrawl, Apify, ScrapingBee</h3><p>Hosted acquisition, search, proxy infrastructure, asynchronous jobs, actors, and operational scale.</p></article>
         <article><span>Programmable crawler systems</span><h3>Crawlee, Scrapy, Crawl4AI</h3><p>Broader queues, routers, browser pools, storage, deep strategies, and language-native customization.</p></article>
-        <article><span>Specialist primitives</span><h3>Trafilatura, Playwright, Puppeteer</h3><p>Main-content extraction or direct browser automation that a larger acquisition system can compose.</p></article>
+        <article><span>Specialist primitives</span><h3>Extraction and browser automation</h3><p>Main-content extraction or direct browser automation that a larger acquisition system can compose.</p></article>
       </div>
     </section>
     <section class="section shell" id="matrix">
@@ -2530,7 +2603,7 @@ function comparePage() {
             <tr><th scope="row"><a href="${crawleeRepository}">Crawlee</a></th><td>Programmable crawler framework</td><td>You want queues, routers, sessions, storage, proxies, and HTTP/browser engines to build a custom system</td><td>Lower-level and more extensible; application code defines the final evidence contract</td></tr>
             <tr><th scope="row"><a href="${scrapyRepository}">Scrapy</a></th><td>Python crawler framework</td><td>High-volume asynchronous Python crawling and mature middleware, pipelines, scheduling, and extensions are central</td><td>Framework rather than an agent-specific normalized evidence product</td></tr>
             <tr><th scope="row"><a href="${trafilaturaDocs}">Trafilatura</a></th><td>Main-content extractor</td><td>Python crawling/discovery and high-quality text/metadata extraction are the primary job</td><td>Cockroach's opt-in Node quality surface is Trafilatura-backed; it is not an independent extractor beating Trafilatura</td></tr>
-            <tr><th scope="row"><a href="${playwrightRepository}">Playwright</a> / <a href="${puppeteerRepository}">Puppeteer</a></th><td>Browser-automation primitives</td><td>You need direct page, browser, testing, or automation control</td><td>Not like-for-like extraction products; Cockroach composes a bounded crawler above optional browser automation</td></tr>
+            <tr><th scope="row"><a href="${playwrightRepository}">Direct browser automation</a></th><td>Browser-automation primitives</td><td>You need direct page, browser, testing, or automation control</td><td>Not a like-for-like extraction product; Cockroach composes a bounded crawler above optional browser automation</td></tr>
             <tr><th scope="row"><a href="${apifyDocs}">Apify</a></th><td>Managed actors and data platform</td><td>Hosted actors, schedules, datasets, proxy infrastructure, and operational deployment are the job</td><td>Cockroach does not claim distributed cloud or marketplace scale</td></tr>
             <tr><th scope="row"><a href="${scrapingBeeDocs}">ScrapingBee</a></th><td>Managed scraping API</td><td>JavaScript rendering, proxy rotation, and anti-block infrastructure should be externally operated</td><td>Hosted acquisition service rather than a local evidence and policy runtime</td></tr>
           </tbody>
@@ -2557,7 +2630,7 @@ function comparePage() {
         <article><h3>Choose Firecrawl for managed operations</h3><p>Hosted search, proxy and anti-block infrastructure, large asynchronous jobs, managed browser interaction, document parsing, and operational scale remain outside Cockroach Crawler's compact package.</p><a class="text-link" href="${firecrawlDocs}">Read Firecrawl documentation →</a></article>
         <article><h3>Choose Crawl4AI for broad Python workflows</h3><p>Adaptive crawling, session-rich browser control, policy-aware caching, PDF and media processing, multiple extraction strategies, and Python-native orchestration are broader in Crawl4AI today.</p><a class="text-link" href="${crawl4aiDocs}">Read Crawl4AI documentation →</a></article>
         <article><h3>Choose Crawlee or Scrapy to build the crawler</h3><p>Both are mature programmable frameworks with queues, routing, hooks, storage, retry, and extension surfaces that can support architectures beyond one opinionated evidence product.</p><a class="text-link" href="${crawleeRepository}">Inspect Crawlee →</a></article>
-        <article><h3>Choose Playwright or Puppeteer for direct automation</h3><p>They expose browser primitives and testing APIs. Cockroach Browser and Crawler use established browser automation rather than pretending to replace the engine.</p><a class="text-link" href="${playwrightRepository}">Inspect Playwright →</a></article>
+        <article><h3>Choose a direct browser library for page-level automation</h3><p>Direct libraries expose browser primitives and testing APIs. Cockroach Browser and Crawler add narrower authority and evidence contracts above an established browser runtime.</p><a class="text-link" href="${playwrightRepository}">Inspect the runtime →</a></article>
       </div>
     </section>
     <section class="section shell proof-section">
@@ -2565,9 +2638,9 @@ function comparePage() {
       ${codeBlock("compare-proof", "stable npm package", `npm install cockroach-crawler@${publishedVersion}\nnpx cockroach-sources doctor --json\nnpx cockroach-crawl https://example.com/docs --max-pages 20 --jsonl`)}
     </section>
     <section class="section shell faq-section"><div><p class="eyebrow">Crawler selection FAQ</p><h2>Choose the smallest trustworthy surface.</h2></div><div class="faq-list">
-      <details><summary>What is the best AI web crawler for agents?</summary><p>There is no universal best. Choose by layer: Cockroach for bounded local evidence, Firecrawl or Apify for managed reach, Crawlee or Scrapy for a custom crawler system, Crawl4AI for Python LLM crawling, Trafilatura for specialist extraction, or Playwright/Puppeteer for direct browser automation.</p></details>
+      <details><summary>What is the best AI web crawler for agents?</summary><p>There is no universal best. Choose by layer: Cockroach for bounded local evidence, a managed service for hosted reach, a programmable framework for a custom crawler, a specialist extractor for article text, or a direct browser library for page-level automation.</p></details>
       <details><summary>Is Cockroach Crawler better than Trafilatura?</summary><p>No universal ranking is established. Cockroach's quality surface delegates main-content extraction to exact <code>trafilatura@0.2.0</code> and adds crawling, rendering, policy, structured extraction, and evidence around it.</p></details>
-      <details><summary>Is Cockroach Crawler better than Puppeteer or Playwright?</summary><p>That is a category error. Puppeteer and Playwright are browser-automation primitives. Cockroach Crawler composes a bounded acquisition and evidence contract above optional browser automation.</p></details>
+      <details><summary>How does Cockroach Crawler differ from direct browser automation?</summary><p>Direct automation exposes page and browser primitives. Cockroach Crawler composes a bounded acquisition, extraction, and evidence contract above an optional browser runtime.</p></details>
       <details><summary>Can I replace either product without testing?</summary><p>No. Match URL sets, rendering mode, output fields, robots policy, retries, concurrency, network conditions, and deployment requirements before migrating.</p></details>
       <details><summary>Where did the comparison data come from?</summary><p>Product claims were reviewed against the linked official repositories and documentation on 8 August 2026. Benchmark rows come from Cockroach Crawler's pinned WCEB artifacts; Trafilatura's separate official study is linked only to explain why its scorer is not directly comparable.</p></details>
     </div></section>`;
@@ -2611,7 +2684,7 @@ function ecosystemPage() {
           </li>
           <li>
             <div class="layer-index">B</div>
-            <div class="layer-copy"><span>Browser automation primitives</span><h3>Control browsers directly when code is the product center.</h3><p><a href="${playwrightRepository}">Playwright</a> automates Chromium, Firefox, and WebKit through a cross-browser API. <a href="${puppeteerRepository}">Puppeteer</a> automates Chrome and Firefox through browser protocols. Cockroach Browser uses Playwright and adds a narrower operator-owned authority and evidence contract above it.</p></div>
+            <div class="layer-copy"><span>Browser automation primitives</span><h3>Control browsers directly when code is the product center.</h3><p><a href="${playwrightRepository}">The optional runtime</a> automates Chromium, Firefox, and WebKit through a cross-browser API. Cockroach Browser adds a narrower operator-owned authority and evidence contract above that runtime.</p></div>
           </li>
           <li>
             <div class="layer-index">C</div>
@@ -2986,7 +3059,7 @@ Quality balanced with fail-closed admission records ${failClosedPrecision} preci
 
 The native quality backend never silently falls back. Upstream prebuilt binaries cover Windows x64/ARM64, macOS x64/ARM64, and glibc Linux x64/ARM64. Alpine/musl, 32-bit, and other operating systems are unsupported. Core and serverless do not import the native backend.
 
-Alternatives belong to different layers. Firecrawl, Apify, and ScrapingBee center managed web acquisition; Crawlee and Scrapy are programmable crawler frameworks; Crawl4AI is a broad Python LLM crawler; Trafilatura is a specialist main-content extractor; Playwright and Puppeteer are browser-automation primitives. Cockroach Crawler centers bounded local acquisition and normalized evidence. No universal best-crawler or cross-benchmark superiority claim is made.
+Alternatives belong to different layers. Some center managed web acquisition, others are programmable crawler frameworks or specialist main-content extractors, and direct browser libraries expose page-level automation primitives. Cockroach Crawler centers bounded local acquisition and normalized evidence. No universal best-crawler or cross-benchmark superiority claim is made.
 
 The governed-agent ecosystem guide maps thirteen source-linked projects by layer. Qarinah supplies evidence-linked project memory, Maqam governs selected registered actions, Cockroach Browser supplies an operator-owned browser authority and evidence runtime, and Cockroach Crawler supplies bounded web acquisition. Cockroach Browser uses playwright-core and does not replace Playwright. Cockroach Crawler's opt-in quality option is Trafilatura-backed and delegates main-content extraction to exact trafilatura@0.2.0. LangGraph and the OpenAI Agents SDK remain orchestration choices; Browser Use and Stagehand remain AI browser frameworks; Firecrawl remains a managed web-acquisition option; Docling remains a document-conversion specialist. This is a category map, not a ranking.
 
