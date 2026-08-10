@@ -18,6 +18,12 @@ test("the packed feature inventory stays complete and release-honest", async () 
   const capabilities = await readFile(path.join(ROOT, "docs", "CAPABILITIES.md"), "utf8");
   const identityGuide = await readFile(path.join(ROOT, "docs", "SELECTORS-AND-IDENTITY.md"), "utf8");
 
+  assert.equal(manifest.version, "0.8.0-rc.1");
+  assert.match(
+    manifest.scripts["test:browser"],
+    /--test-concurrency=1/,
+    "installed-engine release tests must run sequentially to avoid cross-browser process contention"
+  );
   assert.ok(manifest.files.includes("docs/FEATURES.md"));
   assert.ok(
     !manifest.files.some((entry) => entry === "assets/" || entry.startsWith("assets/")),
@@ -200,9 +206,10 @@ test("trusted npm publication binds dispatch approval to the exact reviewed comm
 });
 
 test("release workflows retry transient registry propagation and still fail closed", async () => {
-  const [publishWorkflow, deployWorkflow] = await Promise.all([
+  const [publishWorkflow, deployWorkflow, releaseChannel] = await Promise.all([
     readFile(path.join(ROOT, ".github", "workflows", "publish-npm.yml"), "utf8"),
-    readFile(path.join(ROOT, ".github", "workflows", "deploy-site.yml"), "utf8")
+    readFile(path.join(ROOT, ".github", "workflows", "deploy-site.yml"), "utf8"),
+    readFile(path.join(ROOT, "scripts", "release-channel.mjs"), "utf8")
   ]);
 
   assert.match(publishWorkflow, /for attempt in \{1\.\.10\}/);
@@ -214,30 +221,48 @@ test("release workflows retry transient registry propagation and still fail clos
   assert.match(publishWorkflow, /Registry signature verification did not succeed after 20 attempts/);
   assert.match(publishWorkflow, /if \[\[ "\$\{verified\}" != "true" \]\]; then/);
 
-  const waitIndex = deployWorkflow.indexOf("- name: Wait for the exact npm package version");
-  const releaseAssetsIndex = deployWorkflow.indexOf("- name: Wait for the stable GitHub release assets");
+  const waitIndex = deployWorkflow.indexOf("- name: Wait for the exact npm package and dist-tag");
+  const releaseAssetsIndex = deployWorkflow.indexOf("- name: Wait for the matching GitHub release assets");
   const buildIndex = deployWorkflow.indexOf("- name: Build");
   const deployIndex = deployWorkflow.indexOf("- name: Deploy");
   assert.ok(waitIndex >= 0 && waitIndex < releaseAssetsIndex && releaseAssetsIndex < buildIndex && buildIndex < deployIndex);
   assert.match(deployWorkflow, /- name: Require the main deployment ref[\s\S]*?"\$\{GITHUB_REF\}" != "refs\/heads\/main"/);
   assert.match(deployWorkflow, /for attempt in \{1\.\.30\}/);
-  assert.match(deployWorkflow, /\[\[ "\$\{published_version\}" == "\$\{version\}" && "\$\{published_latest\}" == "\$\{version\}" \]\]/);
+  assert.match(deployWorkflow, /validateRegistryState/);
+  assert.match(deployWorkflow, /releaseChannelForVersion/);
+  assert.match(deployWorkflow, /PUBLISHED_TAG="\$\{published_tag\}"/);
+  assert.match(deployWorkflow, /SITE_STABLE_VERSION: 0\.7\.0/);
+  assert.match(deployWorkflow, /npm view "cockroach-crawler@\$\{dist_tag\}" version/);
   assert.match(deployWorkflow, /npm view "cockroach-crawler@latest" version/);
-  assert.match(deployWorkflow, /"\$\{published_latest\}" == "\$\{version\}"/);
   assert.match(deployWorkflow, /refusing to build or deploy the site/);
   assert.match(deployWorkflow, /releases\/tags\/v\$\{version\}/);
-  assert.match(deployWorkflow, /release\?\.draft \|\| release\?\.prerelease/);
+  assert.match(deployWorkflow, /validateReleaseState/);
+  assert.match(deployWorkflow, /gh release download "v\$\{version\}"/);
+  assert.match(deployWorkflow, /stage-release-assets\.mjs --verify-directory/);
   assert.match(deployWorkflow, /git\/ref\/tags\/v\$\{version\}/);
   assert.match(deployWorkflow, /compare\/\$\{target_sha\}\.\.\.\$\{GITHUB_SHA\}/);
-  assert.match(deployWorkflow, /\['identical', 'ahead'\]\.includes\(compare\?\.status\)/);
-  assert.match(deployWorkflow, /compare\?\.base_commit\?\.sha !== targetSha/);
-  assert.match(deployWorkflow, /compare\?\.head_commit\?\.sha !== process\.env\.EXPECTED_SHA/);
+  assert.match(releaseChannel, /\["identical", "ahead"\]\.includes\(compare\?\.status\)/);
+  assert.match(releaseChannel, /compare\.status === "identical"/);
+  assert.match(releaseChannel, /targetSha === expectedSha/);
+  assert.match(releaseChannel, /compare\?\.head_commit\?\.sha === expectedSha/);
+  assert.match(releaseChannel, /release\?\.draft === false/);
+  assert.match(releaseChannel, /release\?\.prerelease === channel\.isPrerelease/);
+  assert.match(releaseChannel, /ref\?\.object\?\.type === "tag"/);
   assert.match(deployWorkflow, /timeout-minutes:\s*60/);
-  for (const asset of ["SHA256SUMS.txt", "extraction-comparison-0.7.0.json", "wceb-quality-observed-0.7.0.json"]) {
-    assert.match(deployWorkflow, new RegExp(asset.replaceAll(".", "\\.")));
+  for (const asset of [
+    "SHA256SUMS.txt",
+    "RELEASE-NOTES.md",
+    "browser-automation-capabilities.schema.json",
+    "extraction-comparison-0.7.0.json",
+    "wceb-quality-observed-0.7.0.json",
+    "browser-automation-capability-matrix.json",
+    "browser-automation-real-engine-verified-actions.json",
+    "release-receipt.json"
+  ]) {
+    assert.match(releaseChannel, new RegExp(asset.replaceAll(".", "\\.")));
   }
-  assert.match(deployWorkflow, /asset\?\.state !== "uploaded"/);
-  assert.match(deployWorkflow, /asset\.size <= 0/);
+  assert.match(releaseChannel, /asset\?\.state === "uploaded"/);
+  assert.match(releaseChannel, /asset\.size > 0/);
   assert.doesNotMatch(
     deployWorkflow,
     /^\s*(?:-\s+)?uses:\s+[^\s]+@(?![0-9a-f]{40}(?:\s|$))/m,
@@ -246,7 +271,10 @@ test("release workflows retry transient registry propagation and still fail clos
   assert.match(deployWorkflow, /actions\/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1/);
   assert.match(deployWorkflow, /persist-credentials:\s*false/);
   assert.match(deployWorkflow, /cloudflare\/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd/);
-  assert.match(publishWorkflow, /default:\s*0\.7\.0/);
+  assert.match(publishWorkflow, /default:\s*0\.8\.0-rc\.1/);
+  assert.match(publishWorkflow, /default:\s*next/);
+  assert.match(publishWorkflow, /EXPECTED_STABLE_VERSION: 0\.7\.0/);
+  assert.match(publishWorkflow, /await import\('cockroach-crawler\/browser-automation'\)/);
 });
 
 test("publication validation accepts Git-compatible CRLF checkouts without weakening hashes", async () => {

@@ -1,18 +1,27 @@
 # Changelog
 
-## Unreleased - governed browser automation candidate
+## 0.8.0-rc.1 - 2026-08-10
 
 ### Added
 
-- A source-candidate `cockroach-crawler/browser-automation` export with
+- A prerelease `cockroach-crawler/browser-automation` export with
   exact-origin session authority, action/effect allowlists, bounded time,
   network, upload, artifact, and session budgets, opaque ordered multi-file
   upload references, fail-closed download cancellation, plain-data
   attestations, and installed-engine integration tests. Its generated matrix
   separates 102 cataloged contracts from 71 maximum configured handlers, 31
   explicit unsupported actions, and the same 28 action kinds exercised against
-  installed Chromium and Firefox runtimes. This export is not part of npm
-  stable 0.7.0.
+  installed Chromium and Firefox runtimes. It is published only through npm
+  `next`; stable `latest` remains 0.7.0.
+
+### Release controls
+
+- Added a prerelease runtime invariant that preserves the immutable `v0.7.0`
+  commit, tree, observed benchmark digest, and archived paper evidence while
+  allowing the separately reviewed 0.8 runtime addition.
+- Trusted publication rejects `latest` for every prerelease and the website
+  deployment gate requires the exact `next` package plus a matching GitHub
+  prerelease before publishing candidate documentation.
 
 ## 0.7.0 - 2026-08-09
 

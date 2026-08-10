@@ -39,6 +39,9 @@ const productLoopRepository = "https://github.com/AjnasNB/productloop-os";
 const benchmarkRun = "https://github.com/AjnasNB/cockroach-crawler/actions/runs/29624859893";
 const publishedVersion = "0.7.0";
 const candidateVersion = publishedVersion;
+const automationCandidateVersion = "0.8.0-rc.1";
+const automationCandidatePackage = `${npmPackage}/v/${automationCandidateVersion}`;
+const automationCandidateRelease = `${repository}/releases/tag/v${automationCandidateVersion}`;
 const candidateCommit = "62f270636a019c9bcc617a13fe254640bcd06925";
 const historicalCandidateVersion = "0.7.0-rc.1";
 const historicalCandidateSource = `${repository}/tree/${candidateCommit}`;
@@ -226,7 +229,7 @@ const pages = [
     slug: "docs/browser-automation",
     active: "Docs",
     title: "Governed browser automation API - Cockroach Crawler",
-    description: "Inspect Cockroach Crawler's source-candidate browser automation contracts, built-in and trusted-service handlers, explicit unsupported actions, Chromium and Firefox verification, and authority boundaries.",
+    description: `Inspect Cockroach Crawler ${automationCandidateVersion} browser automation contracts, built-in and trusted-service handlers, explicit unsupported actions, Chromium and Firefox verification, and authority boundaries.`,
     body: browserAutomationDocsPage(),
     lastModified: "2026-08-10"
   },
@@ -1327,8 +1330,8 @@ function homeCapabilityInventory() {
 
 function homeGovernedAutomation() {
   return `<section class="section shell proof-section" aria-labelledby="governed-browser-home-title" data-governed-browser-summary>
-    <div><p class="eyebrow">Source candidate - governed browser runtime</p><h2 id="governed-browser-home-title">One authority contract. The same 28 actions proven in Chromium and Firefox.</h2><p>The candidate API catalogs ${browserAutomationSummary.catalogedActions} validated contracts. Its maximum configured backend exposes ${browserAutomationMaximumHandlers} handlers, while ${browserAutomationSummary.explicitlyUnsupportedActions} actions remain explicitly unavailable instead of silently falling through. This source candidate is not part of npm stable ${publishedVersion} yet.</p><div class="button-row"><a class="button primary" href="/docs/browser-automation/">Inspect the capability matrix</a><a class="button secondary" href="${repository}/blob/main/docs/browser-automation-capability-matrix.json">Open machine-readable evidence</a></div></div>
-    <div class="candidate-facts" aria-label="Governed browser automation source-candidate facts"><div><span>Cataloged</span><strong>${browserAutomationSummary.catalogedActions} contracts</strong></div><div><span>Maximum configured</span><strong>${browserAutomationMaximumHandlers} handlers</strong></div><div><span>Real-engine proof</span><strong>${browserAutomationSummary.realEngineIntegrationVerifiedActions} actions each</strong></div><div><span>Fail closed</span><strong>${browserAutomationSummary.explicitlyUnsupportedActions} unsupported</strong></div></div>
+    <div><p class="eyebrow">Prerelease ${automationCandidateVersion} - governed browser runtime</p><h2 id="governed-browser-home-title">One authority contract. The same 28 actions proven in Chromium and Firefox.</h2><p>The prerelease API catalogs ${browserAutomationSummary.catalogedActions} validated contracts. Its maximum configured backend exposes ${browserAutomationMaximumHandlers} handlers, while ${browserAutomationSummary.explicitlyUnsupportedActions} actions remain explicitly unavailable instead of silently falling through. It is published through npm <code>next</code>; stable <code>latest</code> remains ${publishedVersion}.</p><div class="button-row"><a class="button primary" href="/docs/browser-automation/">Install and inspect the matrix</a><a class="button secondary" href="${automationCandidatePackage}">Open npm prerelease</a><a class="button secondary" href="${repository}/blob/main/docs/browser-automation-capability-matrix.json">Open machine-readable evidence</a></div></div>
+    <div class="candidate-facts" aria-label="Governed browser automation prerelease facts"><div><span>Cataloged</span><strong>${browserAutomationSummary.catalogedActions} contracts</strong></div><div><span>Maximum configured</span><strong>${browserAutomationMaximumHandlers} handlers</strong></div><div><span>Real-engine proof</span><strong>${browserAutomationSummary.realEngineIntegrationVerifiedActions} actions each</strong></div><div><span>Fail closed</span><strong>${browserAutomationSummary.explicitlyUnsupportedActions} unsupported</strong></div></div>
   </section>`;
 }
 
@@ -1365,10 +1368,12 @@ function browserAutomationDocsPage() {
     .join(" ");
   return docsManualPage({
     currentPath: "/docs/browser-automation/",
-    eyebrow: "Source candidate - governed browser automation",
+    eyebrow: `Prerelease ${automationCandidateVersion} - governed browser automation`,
+    releaseLabel: `Prerelease ${automationCandidateVersion}`,
     title: "Control Chromium and Firefox without hiding the authority boundary.",
-    lede: `The source candidate exposes ${browserAutomationSummary.catalogedActions} validated action contracts, ${browserAutomationMaximumHandlers} maximum configured handlers, ${browserAutomationSummary.explicitlyUnsupportedActions} explicit unsupported states, and the same ${browserAutomationSummary.realEngineIntegrationVerifiedActions} real-engine action kinds verified in Chromium and Firefox. It is not a drop-in browser-library replacement and is not included in npm stable ${publishedVersion}.`,
+    lede: `The ${automationCandidateVersion} prerelease exposes ${browserAutomationSummary.catalogedActions} validated action contracts, ${browserAutomationMaximumHandlers} maximum configured handlers, ${browserAutomationSummary.explicitlyUnsupportedActions} explicit unsupported states, and the same ${browserAutomationSummary.realEngineIntegrationVerifiedActions} real-engine action kinds verified in Chromium and Firefox. It is not a drop-in browser-library replacement. It is published through npm next while stable latest remains ${publishedVersion}.`,
     toc: [
+      ["install", "Install the prerelease"],
       ["accounting", "Capability accounting"],
       ["matrix", "Category matrix"],
       ["supported", "Available contracts"],
@@ -1376,12 +1381,13 @@ function browserAutomationDocsPage() {
       ["authority", "Authority and network"],
       ["unsupported", "Explicitly unsupported"]
     ],
-    content: `<section id="accounting"><p class="eyebrow">01 - Accounting</p><h2>Catalog, handlers, and engine proof are different facts.</h2><div class="reference-cards"><article><strong>${browserAutomationSummary.catalogedActions} cataloged</strong><p>Each action has a normalized contract and validator. Catalog presence alone is not runtime support.</p></article><article><strong>${browserAutomationSummary.builtInHandlerActions} built in</strong><p>The shipped backend has these handlers, subject to exact runtime probes, policy, authority, and resource budgets.</p></article><article><strong>${browserAutomationSummary.trustedServiceRequiredActions} service dependent</strong><p>These handlers require the host to inject every named trusted resolver or persistence service.</p></article><article><strong>${browserAutomationSummary.realEngineIntegrationVerifiedActions} verified per engine</strong><p>The checked-in integration executes the same exact action-kind set in installed Chromium and Firefox.</p></article></div><div class="callout candidate"><strong>Publication boundary</strong><p>This page documents a reviewed source candidate under development after stable ${publishedVersion}. Do not install it from npm until a separately verified candidate release is published.</p></div></section>
-      <section id="matrix"><p class="eyebrow">02 - Category matrix</p><h2>See maximum handlers and real-engine proof side by side.</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Governed browser automation category capability matrix"><table><thead><tr><th>Category</th><th>Maximum handlers / catalog</th><th>Chromium tested</th><th>Firefox tested</th><th>Status</th></tr></thead><tbody>${categories.map((category) => `<tr><th scope="row">${escapeHtml(browserAutomationCategoryTitle(category.id))}</th><td>${category.maximumBackendActions} / ${category.catalogedActions}</td><td>${category.realEngineIntegrationVerifiedActions}</td><td>${category.realEngineIntegrationVerifiedActions}</td><td>${escapeHtml(category.status)}</td></tr>`).join("")}</tbody></table></div></section>
-      <section id="supported"><p class="eyebrow">03 - Available contracts</p><h2>Maximum configured handlers are named, not implied.</h2><p class="code-cloud">${supported}</p><p>Trusted-service-dependent actions become available only when the host supplies the exact required service. Runtime method probes can reduce the advertised set for a specific engine build.</p></section>
-      <section id="files"><p class="eyebrow">04 - Ordered files</p><h2>Upload 1 to 32 opaque file references without accepting ambient paths.</h2><p>Ordered multi-file upload preserves reference order and identity. Resolver output is checked per file and in aggregate against per-file, per-action, and per-session byte ceilings before the engine receives any file payload.</p></section>
-      <section id="authority"><p class="eyebrow">05 - Authority and network</p><h2>Bind origins, effects, actions, sessions, requests, bytes, and time before dispatch.</h2><p>Owned sessions serialize actions and attest exact action numbers. The bounded HTTP transport enforces method, origin, request-count, request-body, streamed-response, redirect, deadline, and total-byte limits. The host must still attest and enforce non-routed egress controls and operating-system or container isolation for hostile pages.</p></section>
-      <section id="unsupported"><p class="eyebrow">06 - Explicitly unsupported</p><h2>Unimplemented or ambiguous effects fail closed.</h2><p class="code-cloud">${unsupported}</p><p>These catalog entries remain visible so callers can inspect the gap. They do not dispatch, fall back to a broader primitive, or become supported through documentation wording.</p></section>`
+    content: `<section id="install"><p class="eyebrow">01 - Install</p><h2>Use the exact prerelease or npm next.</h2>${codeBlock("browser-automation-install", "terminal", `npm install cockroach-crawler@${automationCandidateVersion} playwright\nnpx playwright install chromium firefox`)}<p>Pin the exact version in reproducible builds. The prerelease does not move npm <code>latest</code> away from stable ${publishedVersion}.</p><div class="page-actions"><a class="button primary" href="${automationCandidatePackage}">Open npm ${automationCandidateVersion}</a><a class="button secondary" href="${automationCandidateRelease}">Verify GitHub prerelease</a></div></section>
+      <section id="accounting"><p class="eyebrow">02 - Accounting</p><h2>Catalog, handlers, and engine proof are different facts.</h2><div class="reference-cards"><article><strong>${browserAutomationSummary.catalogedActions} cataloged</strong><p>Each action has a normalized contract and validator. Catalog presence alone is not runtime support.</p></article><article><strong>${browserAutomationSummary.builtInHandlerActions} built in</strong><p>The shipped backend has these handlers, subject to exact runtime probes, policy, authority, and resource budgets.</p></article><article><strong>${browserAutomationSummary.trustedServiceRequiredActions} service dependent</strong><p>These handlers require the host to inject every named trusted resolver or persistence service.</p></article><article><strong>${browserAutomationSummary.realEngineIntegrationVerifiedActions} verified per engine</strong><p>The checked-in integration executes the same exact action-kind set in installed Chromium and Firefox.</p></article></div><div class="callout candidate"><strong>Publication boundary</strong><p>This page documents prerelease ${automationCandidateVersion}. It is published for evaluation through npm <code>next</code>, not promoted to stable <code>latest</code>, and it does not claim comprehensive browser-library parity.</p></div></section>
+      <section id="matrix"><p class="eyebrow">03 - Category matrix</p><h2>See maximum handlers and real-engine proof side by side.</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Governed browser automation category capability matrix"><table><thead><tr><th>Category</th><th>Maximum handlers / catalog</th><th>Chromium tested</th><th>Firefox tested</th><th>Status</th></tr></thead><tbody>${categories.map((category) => `<tr><th scope="row">${escapeHtml(browserAutomationCategoryTitle(category.id))}</th><td>${category.maximumBackendActions} / ${category.catalogedActions}</td><td>${category.realEngineIntegrationVerifiedActions}</td><td>${category.realEngineIntegrationVerifiedActions}</td><td>${escapeHtml(category.status)}</td></tr>`).join("")}</tbody></table></div></section>
+      <section id="supported"><p class="eyebrow">04 - Available contracts</p><h2>Maximum configured handlers are named, not implied.</h2><p class="code-cloud">${supported}</p><p>Trusted-service-dependent actions become available only when the host supplies the exact required service. Runtime method probes can reduce the advertised set for a specific engine build.</p></section>
+      <section id="files"><p class="eyebrow">05 - Ordered files</p><h2>Upload 1 to 32 opaque file references without accepting ambient paths.</h2><p>Ordered multi-file upload preserves reference order and identity. Resolver output is checked per file and in aggregate against per-file, per-action, and per-session byte ceilings before the engine receives any file payload.</p></section>
+      <section id="authority"><p class="eyebrow">06 - Authority and network</p><h2>Bind origins, effects, actions, sessions, requests, bytes, and time before dispatch.</h2><p>Owned sessions serialize actions and attest exact action numbers. The bounded HTTP transport enforces method, origin, request-count, request-body, streamed-response, redirect, deadline, and total-byte limits. The host must still attest and enforce non-routed egress controls and operating-system or container isolation for hostile pages.</p></section>
+      <section id="unsupported"><p class="eyebrow">07 - Explicitly unsupported</p><h2>Unimplemented or ambiguous effects fail closed.</h2><p class="code-cloud">${unsupported}</p><p>These catalog entries remain visible so callers can inspect the gap. They do not dispatch, fall back to a broader primitive, or become supported through documentation wording.</p></section>`
   });
 }
 
@@ -1439,7 +1445,7 @@ function docsSidebar(currentPath, instance = "desktop") {
   </nav>`;
 }
 
-function docsManualPage({ currentPath, eyebrow, title, lede, toc, content }) {
+function docsManualPage({ currentPath, eyebrow, title, lede, toc, content, releaseLabel = `Stable ${documentationVersion}` }) {
   const currentLabel = docsNavigationGroups()
     .flatMap(([, links]) => links)
     .find(([href]) => href === currentPath)?.[1] ?? "Documentation";
@@ -1447,7 +1453,7 @@ function docsManualPage({ currentPath, eyebrow, title, lede, toc, content }) {
   return `
     <section class="page-hero shell docs-manual-hero" aria-labelledby="docs-manual-title">
       <nav class="docs-breadcrumbs" aria-label="Breadcrumb"><a href="/docs/">Documentation</a><span aria-hidden="true">/</span><span aria-current="page">${currentLabel}</span></nav>
-      <div class="docs-hero-labels"><span>${eyebrow}</span><span>Stable ${documentationVersion}</span></div>
+      <div class="docs-hero-labels"><span>${eyebrow}</span><span>${releaseLabel}</span></div>
       <h1 id="docs-manual-title">${title}</h1>
       <p class="lede">${lede}</p>
       <div class="page-actions"><a class="button primary" href="#${toc[0][0]}">Read ${toc[0][1]}</a><a class="button secondary" href="/docs/reference/">View API reference</a></div>
@@ -3053,6 +3059,8 @@ The package crawls static and rendered pages and emits LLM-ready Markdown, JSON,
 
 Stable ${publishedVersion} includes an opt-in Node-only quality surface backed by exact trafilatura@0.2.0. On 511 observed-development WCEB v1.0 pages, quality balanced records ${qualityPrecision} precision, ${qualityRecall} recall, and ${qualityF1} macro F1. The benchmark JSON records source version ${benchmarkArtifactVersion} and was generated at evidence commit ${benchmarkEvidenceCommit}; byte-identical JSON was first packaged in historical ${historicalCandidateVersion} at package/tag commit ${candidateCommit}. That package commit has a valid GitHub signature. v${historicalCandidateVersion} is an annotated tag without a cryptographic tag signature. Stable 0.7.0 changes release metadata, not runtime, dependency, or benchmark bytes. The result JSON SHA-256 is ${benchmarkArtifactSha256}; the WCEB revision is ${wcebRevision}; scoring uses macro averages of page-level Unicode-word precision, recall, and F1. The pages influenced development, so the row is not fresh held-out confirmation and is not rounded into a universal 0.90 claim.
 
+Prerelease ${automationCandidateVersion} adds the opt-in governed browser-automation export. Its generated matrix records ${browserAutomationSummary.catalogedActions} cataloged contracts, ${browserAutomationMaximumHandlers} maximum configured handlers, ${browserAutomationSummary.explicitlyUnsupportedActions} explicit unsupported actions, and the same ${browserAutomationSummary.realEngineIntegrationVerifiedActions} action kinds executed in installed Chromium and Firefox. It is published through npm next while stable latest remains ${publishedVersion}; the counts are not a comprehensive parity claim.
+
 The separately frozen raw-DOM attempt 003 was rejected: precision 0.860252, recall 0.884690, F1 0.844419, required-snippet recall 0.758829, and unwanted inclusion 0.092846. It violated five gates and improved precision in 6 of 10 page types where 8 were required. It authorizes no integration, release, ranking, or best-crawler statement.
 
 Quality balanced with fail-closed admission records ${failClosedPrecision} precision, ${failClosedRecall} recall, ${failClosedF1} F1, ${failClosedRequired} required-snippet recall, ${failClosedUnwanted} unwanted inclusion, and ${failClosedAbstentions} abstentions. Fail-closed is a separate safety profile; abstained pages return no admitted body.
@@ -3079,6 +3087,7 @@ Public conformance evidence records ${robotsPassed}/${robotsCases} adapted Googl
 - JavaScript guide: ${siteUrl}/docs/javascript/
 - Deep crawling and cache: ${siteUrl}/docs/crawling/
 - Browser rendering and evidence: ${siteUrl}/docs/browser/
+- Governed Chromium and Firefox prerelease: ${siteUrl}/docs/browser-automation/
 - Quality, Markdown, CSS, XPath, regex, PDF, and LLM extraction: ${siteUrl}/docs/extraction/
 - Searchable map and extraction guide: ${siteUrl}/docs/map-and-extract/
 - Agent and Maqam guide: ${siteUrl}/docs/agents/

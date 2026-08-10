@@ -4,6 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/cockroach-crawler.svg)](https://www.npmjs.com/package/cockroach-crawler)
 [![release 0.7.0](https://img.shields.io/badge/release-0.7.0-10b981.svg)](https://github.com/AjnasNB/cockroach-crawler/releases/tag/v0.7.0)
+[![prerelease 0.8.0-rc.1](https://img.shields.io/badge/prerelease-0.8.0--rc.1-f59e0b.svg)](https://www.npmjs.com/package/cockroach-crawler/v/0.8.0-rc.1)
 [![CI](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml)
 [![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
@@ -101,7 +102,17 @@ Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compa
 
 ### Opt-in governed browser automation
 
-`cockroach-crawler/browser-automation` is a separate, opt-in authority boundary for hosts that need direct page actions. It binds one exact origin per isolated session and validates action/effect allowlists, deadlines, session lifetime, uploads, saved artifacts, and bounded plain-data results before dispatch to the optional Playwright runtime.
+`cockroach-crawler/browser-automation` is a separate, opt-in authority boundary for hosts that need direct page actions. It binds one exact origin per isolated session and validates action/effect allowlists, deadlines, session lifetime, uploads, saved artifacts, and bounded plain-data results before dispatch to the optional Playwright runtime. It is published for evaluation in `0.8.0-rc.1` through npm's `next` tag; stable `latest` remains `0.7.0`.
+
+```bash
+npm install cockroach-crawler@next playwright
+npx playwright install chromium firefox
+```
+
+Playwright is an optional peer dependency owned by the consuming host, not an
+ambient runtime installed by the crawler. The `0.8.0-rc.1` lockfile and CI use
+exact Playwright `1.62.1`; the public peer range is `>=1.48.0 <2`, and runtime
+method probes can expose fewer handlers on older compatible builds.
 
 The [browser-automation guide](docs/BROWSER-AUTOMATION.md) and [machine-readable capability matrix](docs/browser-automation-capability-matrix.json) distinguish cataloged contracts from built-in handlers, trusted-service-dependent handlers, explicit unsupported states, and actions exercised by installed engines. The 102 cataloged contracts are not a claim of comprehensive runtime support; the current maximum configured backend exposes 71 bounded handlers, names 31 unsupported actions, and exercises the same 28 action kinds against installed Chromium and Firefox. Ordered multi-file upload is included; ambiguous click-triggered download persistence and persistent request mutation stay fail-closed.
 

@@ -20,7 +20,7 @@ on:
       version:
         description: Exact package version to publish
         required: true
-        default: 0.7.0
+        default: 0.8.0-rc.1
         type: string
       expected_git_commit:
         description: Exact reviewed lowercase 40-character commit SHA
@@ -29,7 +29,7 @@ on:
       dist_tag:
         description: npm dist-tag (prereleases use next; stable releases use latest)
         required: true
-        default: latest
+        default: next
         type: choice
         options: [next, latest]
       expected_size_bytes:
@@ -139,6 +139,7 @@ jobs:
       STRICT: ${{ needs.detect.outputs.strict }}
       EXPECTED_VERSION: ${{ needs.detect.outputs.version }}
       DIST_TAG: ${{ needs.detect.outputs.dist_tag }}
+      EXPECTED_STABLE_VERSION: 0.7.0
       EXPECTED_GIT_COMMIT: ${{ inputs.expected_git_commit }}
       EXPECTED_SIZE_BYTES: ${{ inputs.expected_size_bytes }}
       EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
@@ -198,7 +199,7 @@ jobs:
           NODE
       - name: Install exact dependencies
         run: npm ci --ignore-scripts
-      - name: Install Chromium
+      - name: Install Chromium and Firefox
         run: ./node_modules/.bin/playwright install --with-deps chromium firefox
       - name: Run complete release gate
         run: npm run release:check
@@ -249,6 +250,7 @@ jobs:
       STRICT: ${{ needs.detect.outputs.strict }}
       EXPECTED_VERSION: ${{ needs.detect.outputs.version }}
       DIST_TAG: ${{ needs.detect.outputs.dist_tag }}
+      EXPECTED_STABLE_VERSION: 0.7.0
       EXPECTED_GIT_COMMIT: ${{ inputs.expected_git_commit }}
       EXPECTED_SIZE_BYTES: ${{ needs.verify.outputs.size_bytes }}
       EXPECTED_SHA256: ${{ needs.verify.outputs.sha256 }}
@@ -315,7 +317,10 @@ jobs:
             integrity="$(npm view "cockroach-crawler@${EXPECTED_VERSION}" dist.integrity 2>/dev/null || true)"
             predicate="$(npm view "cockroach-crawler@${EXPECTED_VERSION}" dist.attestations.provenance.predicateType 2>/dev/null || true)"
             tag_version="$(npm view "cockroach-crawler@${DIST_TAG}" version 2>/dev/null || true)"
-            if [[ "${version}" == "${EXPECTED_VERSION}" && "${integrity}" == "${EXPECTED_INTEGRITY}" && "${predicate}" == "https://slsa.dev/provenance/v1" && "${tag_version}" == "${EXPECTED_VERSION}" ]]; then
+            latest_version="$(npm view "cockroach-crawler@latest" version 2>/dev/null || true)"
+            stable_tag_ok=true
+            if [[ "${EXPECTED_VERSION}" == *-* && "${latest_version}" != "${EXPECTED_STABLE_VERSION}" ]]; then stable_tag_ok=false; fi
+            if [[ "${version}" == "${EXPECTED_VERSION}" && "${integrity}" == "${EXPECTED_INTEGRITY}" && "${predicate}" == "https://slsa.dev/provenance/v1" && "${tag_version}" == "${EXPECTED_VERSION}" && "${stable_tag_ok}" == "true" ]]; then
               verified=true
               break
             fi
@@ -327,10 +332,10 @@ jobs:
           done
           if [[ "${verified}" != "true" ]]; then
             echo "Registry identity and provenance did not converge after 10 attempts." >&2
-            echo "Observed version=${version:-missing} tag=${tag_version:-missing} integrity=${integrity:-missing} predicate=${predicate:-missing}" >&2
+            echo "Observed version=${version:-missing} tag=${tag_version:-missing} latest=${latest_version:-missing} integrity=${integrity:-missing} predicate=${predicate:-missing}" >&2
             exit 1
           fi
-          printf '## Publication verified\n\n- Version: `%s`\n- Dist-tag: `%s`\n- Integrity: `%s`\n- Provenance: `%s`\n- Workflow commit: `%s`\n' "${version}" "${DIST_TAG}" "${integrity}" "${predicate}" "${GITHUB_SHA}" >> "${GITHUB_STEP_SUMMARY}"
+          printf '## Publication verified\n\n- Version: `%s`\n- Dist-tag: `%s`\n- Stable latest: `%s`\n- Integrity: `%s`\n- Provenance: `%s`\n- Workflow commit: `%s`\n' "${version}" "${DIST_TAG}" "${latest_version}" "${integrity}" "${predicate}" "${GITHUB_SHA}" >> "${GITHUB_STEP_SUMMARY}"
       - name: Verify installed signatures and exports
         shell: bash
         run: |
@@ -359,7 +364,7 @@ jobs:
             echo "Registry install did not succeed after 10 attempts." >&2
             exit 1
           fi
-          node --input-type=module -e "await import('cockroach-crawler'); await import('cockroach-crawler/agent'); await import('cockroach-crawler/sources'); await import('cockroach-crawler/serverless'); await import('cockroach-crawler/quality')"
+          node --input-type=module -e "await import('cockroach-crawler'); await import('cockroach-crawler/agent'); await import('cockroach-crawler/sources'); await import('cockroach-crawler/serverless'); await import('cockroach-crawler/quality'); await import('cockroach-crawler/browser-automation')"
           # npm may expose package metadata and SLSA provenance several minutes
           # before its attestations endpoint becomes readable. Keep the check
           # fail-closed, but allow enough time for that independently observed

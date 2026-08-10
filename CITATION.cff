@@ -1,9 +1,9 @@
 cff-version: 1.2.0
-message: "Cite the stable software and the historical release-candidate white paper using this metadata."
+message: "Cite the 0.8 prerelease software and the historical 0.7 release-candidate white paper using this metadata."
 title: "Cockroach Crawler"
 type: software
-version: 0.7.0
-date-released: 2026-08-09
+version: 0.8.0-rc.1
+date-released: 2026-08-10
 authors:
   - family-names: "N B"
     given-names: "Ajnas"
@@ -13,10 +13,10 @@ license: MIT
 abstract: >-
   A governed Node.js web acquisition layer for AI agents with explicit network,
   browser, provider, extraction, resource, and evidence boundaries. Version
-  0.7.0 promotes the reviewed package API without changing the runtime,
-  dependency graph, or frozen evidence shipped in 0.7.0-rc.1. The preferred
-  citation remains the historical RC paper and does not certify the stable
-  software release.
+  0.8.0-rc.1 adds an opt-in governed Chromium and Firefox automation boundary
+  while preserving the frozen 0.7 benchmark and paper evidence. The preferred
+  citation remains the historical 0.7 RC paper and does not certify this
+  prerelease software.
 keywords:
   - web crawler
   - AI agents

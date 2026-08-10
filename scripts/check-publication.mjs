@@ -31,6 +31,7 @@ function requireValue(condition, message) {
 }
 
 const packageJson = JSON.parse(await text("package.json"));
+const softwareVersion = packageJson.version;
 const softwareZenodo = JSON.parse(await text(".zenodo.json"));
 const codeMeta = JSON.parse(await text("codemeta.json"));
 const paperZenodo = JSON.parse(await text("docs/zenodo/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.metadata.json"));
@@ -44,7 +45,7 @@ const docsPdf = await bytes("docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0
 const sitePdf = await bytes("website/paper/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.pdf");
 const checksum = (await text("docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.sha256")).trim();
 
-requireValue(packageJson.version === "0.7.0", "package source version must identify the stable software release");
+requireValue(/^0\.8\.0-rc\.1$/.test(softwareVersion), "package source version must identify the reviewed 0.8 prerelease");
 for (const path of ["CITATION.cff", "codemeta.json", "docs/Cockroach-Crawler-Technical-White-Paper-v0.7.0-rc.1.md"]) {
   requireValue(packageJson.files.includes(path), `npm files must include ${path}`);
 }
@@ -56,8 +57,8 @@ requireValue(softwareZenodo.version === "0.7.0-rc.1", ".zenodo.json must preserv
 requireValue(softwareZenodo.description.includes("attempt 003 was rejected"), ".zenodo.json must preserve the frozen rejection");
 requireValue(!JSON.stringify(softwareZenodo).includes('"doi"'), ".zenodo.json must not claim an unreserved DOI");
 requireValue(codeMeta["@type"] === "SoftwareSourceCode", "codemeta.json must describe source code");
-requireValue(codeMeta.version === "0.7.0", "codemeta.json must identify the current stable software version");
-requireValue(codeMeta.identifier === "https://github.com/AjnasNB/cockroach-crawler/releases/tag/v0.7.0", "codemeta.json must identify the stable release tag target");
+requireValue(codeMeta.version === softwareVersion, "codemeta.json must identify the current software version");
+requireValue(codeMeta.identifier === `https://github.com/AjnasNB/cockroach-crawler/releases/tag/v${softwareVersion}`, "codemeta.json must identify the current release tag target");
 requireValue(codeMeta.referencePublication === "https://doi.org/10.5281/zenodo.21851008", "codemeta.json must retain the historical RC paper reference");
 requireValue(paperZenodo.metadata.upload_type === "publication" && paperZenodo.metadata.publication_type === "report", "paper Zenodo metadata must describe a report");
 requireValue(paperZenodo.metadata.prereserve_doi === false, "paper Zenodo metadata must not request a second DOI");
@@ -66,7 +67,7 @@ requireValue(publication.record.id === 21851008 && publication.record.doi === pa
 requireValue(publication.record.published === true && publication.record.accessRight === "open" && publication.record.license === "cc-by-4.0", "publication receipt must preserve open CC BY 4.0 publication");
 requireValue(publication.claimBoundary.softwareReleaseAuthorized === false && publication.claimBoundary.bestCrawlerClaimAuthorized === false, "historical paper receipt must preserve its release and ranking claim boundary");
 requireValue(!/orcid:/i.test(citation), "CITATION.cff must not invent an ORCID");
-requireValue(/^version: 0\.7\.0$/m.test(citation), "CITATION.cff must identify the current stable software version");
+requireValue(new RegExp(`^version: ${softwareVersion.replaceAll(".", "\\.")}$`, "m").test(citation), "CITATION.cff must identify the current software version");
 requireValue(citation.includes("preferred-citation:"), "CITATION.cff must provide the paper citation");
 requireValue(/preferred-citation:[\s\S]*?version: 0\.7\.0-rc\.1/.test(citation), "CITATION.cff must preserve the historical RC paper version");
 requireValue(citation.includes('doi: "10.5281/zenodo.21851008"'), "CITATION.cff must bind the reserved paper DOI");

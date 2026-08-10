@@ -1,6 +1,6 @@
 # Governed browser automation
 
-The current source candidate exposes an opt-in, product-owned browser-automation boundary at `cockroach-crawler/browser-automation`. It is a bounded subset for hosts that need direct page actions without surrendering origin, effect, time, network, upload, artifact, or session authority. It is not part of npm stable 0.7.0.
+Version `0.8.0-rc.1` exposes an opt-in, product-owned browser-automation boundary at `cockroach-crawler/browser-automation`. It is a bounded subset for hosts that need direct page actions without surrendering origin, effect, time, network, upload, artifact, or session authority. The prerelease is published through npm's `next` tag and does not move stable `latest` from `0.7.0`.
 
 This is separate from the crawler core. The crawler core acquires and normalizes evidence. Cockroach Browser remains a separate product. The adapter in this package validates and dispatches explicitly registered actions through a host-injected browser runtime.
 
@@ -20,6 +20,20 @@ Regenerate the matrix with:
 ```bash
 npm run browser-automation:matrix
 ```
+
+Install the prerelease and both tested engines with:
+
+```bash
+npm install cockroach-crawler@next playwright
+npx playwright install chromium firefox
+```
+
+Pin `cockroach-crawler@0.8.0-rc.1` instead of `@next` in reproducible builds.
+Playwright is an optional peer dependency, so the consuming application must
+install and own it explicitly. This release's exact lockfile and CI exercise
+Playwright `1.62.1`; the declared peer range remains `>=1.48.0 <2`, with runtime
+method probes reducing advertised handlers when an older compatible build does
+not expose a required method.
 
 ## Security model
 

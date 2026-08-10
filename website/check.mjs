@@ -246,9 +246,9 @@ if (!capabilityItemList || capabilityItemList.numberOfItems !== 50 || capability
   errors.push("homepage structured data must publish all 50 curated top-level capabilities");
 }
 if (!capabilityHomeHtml.includes("data-governed-browser-summary") || !capabilityHomeHtml.includes("same 28 actions proven in Chromium and Firefox")) {
-  errors.push("homepage must expose the governed Chromium and Firefox source-candidate proof");
+  errors.push("homepage must expose the governed Chromium and Firefox prerelease proof");
 }
-for (const proof of ["102 contracts", "71 handlers", "28 actions each", "31 unsupported", "not part of npm stable 0.7.0 yet"]) {
+for (const proof of ["Prerelease 0.8.0-rc.1", "102 contracts", "71 handlers", "28 actions each", "31 unsupported", "published through npm <code>next</code>", "stable <code>latest</code> remains 0.7.0"]) {
   if (!capabilityHomeHtml.includes(proof)) errors.push(`homepage governed browser summary is missing: ${proof}`);
 }
 const browserAutomationHtml = await readFile(join(dist, "docs", "browser-automation", "index.html"), "utf8");
@@ -258,7 +258,8 @@ for (const proof of [
   "31 explicit unsupported states",
   "same 28 real-engine action kinds verified in Chromium and Firefox",
   "Upload 1 to 32 opaque file references",
-  "not included in npm stable 0.7.0"
+  "npm install cockroach-crawler@0.8.0-rc.1 playwright",
+  "published through npm next while stable latest remains 0.7.0"
 ]) {
   if (!browserAutomationHtml.includes(proof)) errors.push(`browser automation page is missing: ${proof}`);
 }
@@ -267,6 +268,9 @@ if ((browserAutomationHtml.match(/<tbody><tr>/g) ?? []).length !== 1 || (browser
 }
 if (!browserAutomationHtml.includes('aria-current="page">Governed browser automation</a>')) {
   errors.push("browser automation docs route must be selected in the documentation navigation");
+}
+if (!browserAutomationHtml.includes("Prerelease 0.8.0-rc.1") || browserAutomationHtml.includes("Do not install it from npm")) {
+  errors.push("browser automation docs must identify the published prerelease without retaining source-only copy");
 }
 const capabilityIndexHtml = await readFile(join(dist, "docs", "capabilities", "index.html"), "utf8");
 if (!capabilityIndexHtml.includes("Fifty curated capabilities. One page for every catalog item.")) errors.push("capability library must identify its 50 entries as a curated catalog");

@@ -24,6 +24,8 @@ jobs:
     environment:
       name: website
       url: https://cockroachcrawler.com
+    env:
+      SITE_STABLE_VERSION: 0.7.0
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -43,7 +45,7 @@ jobs:
           node-version: 24
           package-manager-cache: false
 
-      - name: Wait for the exact npm package version
+      - name: Wait for the exact npm package and dist-tag
         shell: bash
         run: |
           set -euo pipefail
@@ -55,26 +57,44 @@ jobs:
           }
           version="$(node -p 'require("./package.json").version')"
           published_version=""
+          published_tag=""
           published_latest=""
+          registry_ready=false
+          dist_tag="$(VERSION="${version}" SITE_STABLE_VERSION="${SITE_STABLE_VERSION}" node --input-type=module -e '
+            import { releaseChannelForVersion } from "./scripts/release-channel.mjs";
+            process.stdout.write(releaseChannelForVersion(process.env.VERSION, process.env.SITE_STABLE_VERSION).distTag);
+          ')"
           for attempt in {1..30}; do
             published_version="$(npm view "cockroach-crawler@${version}" version 2>/dev/null || true)"
+            published_tag="$(npm view "cockroach-crawler@${dist_tag}" version 2>/dev/null || true)"
             published_latest="$(npm view "cockroach-crawler@latest" version 2>/dev/null || true)"
-            if [[ "${published_version}" == "${version}" && "${published_latest}" == "${version}" ]]; then
-              echo "cockroach-crawler@${version} is published on npm latest; website verification may proceed."
+            if VERSION="${version}" PUBLISHED_VERSION="${published_version}" PUBLISHED_TAG="${published_tag}" PUBLISHED_LATEST="${published_latest}" SITE_STABLE_VERSION="${SITE_STABLE_VERSION}" node --input-type=module <<'NODE'
+          import { validateRegistryState } from "./scripts/release-channel.mjs";
+          validateRegistryState({
+            version: process.env.VERSION,
+            publishedVersion: process.env.PUBLISHED_VERSION,
+            publishedTag: process.env.PUBLISHED_TAG,
+            publishedLatest: process.env.PUBLISHED_LATEST,
+            stableSiteVersion: process.env.SITE_STABLE_VERSION
+          });
+          NODE
+            then
+              registry_ready=true
+              echo "cockroach-crawler@${version} is published on npm ${dist_tag}; website verification may proceed."
               break
             fi
             if (( attempt < 30 )); then
               delay="$(retry_delay_seconds "${attempt}")"
-              echo "cockroach-crawler@${version} or npm latest is not coherent yet (attempt ${attempt}/30); retrying in ${delay}s."
+              echo "cockroach-crawler@${version}, npm ${dist_tag}, or stable latest is not coherent yet (attempt ${attempt}/30); retrying in ${delay}s."
               sleep "${delay}"
             fi
           done
-          if [[ "${published_version}" != "${version}" || "${published_latest}" != "${version}" ]]; then
-            echo "cockroach-crawler@${version} was not available on npm latest after 30 attempts; refusing to build or deploy the site." >&2
+          if [[ "${registry_ready}" != "true" ]]; then
+            echo "cockroach-crawler@${version} was not coherent on npm ${dist_tag} after 30 attempts; refusing to build or deploy the site." >&2
             exit 1
           fi
 
-      - name: Wait for the stable GitHub release assets
+      - name: Wait for the matching GitHub release assets
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -130,43 +150,44 @@ jobs:
                 --header "X-GitHub-Api-Version: 2022-11-28" \
                 "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/compare/${target_sha}...${GITHUB_SHA}" 2>/dev/null || true)"
             fi
-            if RELEASE_JSON="${release_json}" REF_JSON="${ref_json}" TAG_JSON="${tag_json}" COMPARE_JSON="${compare_json}" EXPECTED_VERSION="${version}" EXPECTED_SHA="${GITHUB_SHA}" node --input-type=module <<'NODE'
+            if RELEASE_JSON="${release_json}" REF_JSON="${ref_json}" TAG_JSON="${tag_json}" COMPARE_JSON="${compare_json}" EXPECTED_VERSION="${version}" EXPECTED_SHA="${GITHUB_SHA}" SITE_STABLE_VERSION="${SITE_STABLE_VERSION}" node --input-type=module <<'NODE'
+          import { validateReleaseState } from "./scripts/release-channel.mjs";
           const release = JSON.parse(process.env.RELEASE_JSON || "null");
           const ref = JSON.parse(process.env.REF_JSON || "null");
           const tag = JSON.parse(process.env.TAG_JSON || "null");
           const compare = JSON.parse(process.env.COMPARE_JSON || "null");
-          const required = new Set([
-            "SHA256SUMS.txt",
-            "extraction-comparison-0.7.0.json",
-            "wceb-quality-observed-0.7.0.json"
-          ]);
-          const assets = new Map((release?.assets || []).map((asset) => [asset.name, asset]));
-          const targetSha = ref?.object?.type === "commit"
-            ? ref.object.sha
-            : ref?.object?.type === "tag" && tag?.object?.type === "commit"
-              ? tag.object.sha
-              : null;
-          if (release?.tag_name !== `v${process.env.EXPECTED_VERSION}` || release?.draft || release?.prerelease) process.exit(1);
-          if (!['identical', 'ahead'].includes(compare?.status)) process.exit(1);
-          if (compare?.base_commit?.sha !== targetSha || compare?.head_commit?.sha !== process.env.EXPECTED_SHA) process.exit(1);
-          if ([...required].some((name) => {
-            const asset = assets.get(name);
-            return asset?.state !== "uploaded" || !Number.isSafeInteger(asset?.size) || asset.size <= 0;
-          })) process.exit(1);
+          validateReleaseState({
+            release,
+            ref,
+            tag,
+            compare,
+            expectedVersion: process.env.EXPECTED_VERSION,
+            expectedSha: process.env.EXPECTED_SHA,
+            stableSiteVersion: process.env.SITE_STABLE_VERSION
+          });
           NODE
             then
-              release_ready=true
-              echo "Stable v${version} release and site-linked assets are published; website verification may proceed."
-              break
+              if [[ "${version}" != *-* ]]; then
+                release_ready=true
+                echo "Matching stable v${version} release assets are published; website verification may proceed."
+                break
+              fi
+              release_dir="$(mktemp -d "${RUNNER_TEMP}/cockroach-release-assets.XXXXXX")"
+              if gh release download "v${version}" --repo "${GITHUB_REPOSITORY}" --dir "${release_dir}" \
+                && node scripts/stage-release-assets.mjs --verify-directory "${release_dir}"; then
+                release_ready=true
+                echo "Matching prerelease v${version} and byte-identical staged assets are published; website verification may proceed."
+                break
+              fi
             fi
             if (( attempt < 30 )); then
               delay="$(retry_delay_seconds "${attempt}")"
-              echo "Stable v${version} release assets are not complete yet (attempt ${attempt}/30); retrying in ${delay}s."
+              echo "Matching v${version} release assets are not complete yet (attempt ${attempt}/30); retrying in ${delay}s."
               sleep "${delay}"
             fi
           done
           if [[ "${release_ready}" != "true" ]]; then
-            echo "Stable v${version} release assets were not complete after 30 attempts; refusing to build or deploy the site." >&2
+            echo "Matching v${version} release assets were not complete after 30 attempts; refusing to build or deploy the site." >&2
             exit 1
           fi
 
