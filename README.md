@@ -29,7 +29,7 @@ npm install cockroach-crawler@0.7.0
 
 | Surface and corpus | Precision | Recall | F1 | Required-snippet | Unwanted | Abstentions |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Node quality `balanced`, observed 511 | **0.894101** | **0.926022** | **0.890524** | **0.864090** | 0.111383 | - |
+| Node quality `balanced`, observed 511 | **0.894101 (89.4101%)** | **0.926022 (92.6022%)** | **0.890524 (89.0524%)** | **0.864090** | 0.111383 | - |
 | Node quality `balanced`, WCEB development 1,497 | 0.852784 | 0.896259 | 0.847064 | 0.755867 | **0.096181** | - |
 | Node quality `balanced` + fail-closed, observed 511 | 0.847901 | 0.875080 | 0.844935 | 0.812035 | 0.104207 | 43 |
 
@@ -223,8 +223,9 @@ state with `npm view cockroach-crawler version dist-tags`.
 
 ## Public benchmark evidence
 
-The source-pinned quality `balanced` profile produced **0.894101 precision**,
-**0.926022 recall**, and **0.890524 macro word F1** on the observed 511-page
+The source-pinned quality `balanced` profile produced **0.894101 precision
+(89.4101%)**, **0.926022 recall (92.6022%)**, and **0.890524 macro word F1
+(89.0524%)** on the observed 511-page
 partition. On the 1,497-page WCEB development split it produced **0.852784
 precision**, **0.896259 recall**, and **0.847064 F1**.
 
