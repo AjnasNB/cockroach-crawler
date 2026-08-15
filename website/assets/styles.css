@@ -2327,10 +2327,24 @@ tr:last-child td {
   overflow: hidden;
 }
 
+.producthunt-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  overflow: hidden;
+}
+
 .launchnest-badge img {
   display: block;
   width: 220px;
   height: 56px;
+}
+
+.producthunt-badge img {
+  display: block;
+  width: 250px;
+  height: 54px;
 }
 
 .fazier-badge img {
@@ -2347,12 +2361,21 @@ tr:last-child td {
   filter: brightness(1.04);
 }
 
+.producthunt-badge:hover {
+  filter: brightness(1.04);
+}
+
 .fazier-badge:focus-visible {
   outline: 3px solid var(--green-soft);
   outline-offset: 3px;
 }
 
 .launchnest-badge:focus-visible {
+  outline: 3px solid var(--green-soft);
+  outline-offset: 3px;
+}
+
+.producthunt-badge:focus-visible {
   outline: 3px solid var(--green-soft);
   outline-offset: 3px;
 }
