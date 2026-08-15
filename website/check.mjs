@@ -439,14 +439,17 @@ for (const recognition of [
   'width="120" height="51" alt="Fazier badge"',
   'href="https://launchnest.io/p/cockroach-crawler" target="_blank"',
   'src="https://launchnest.io/badge/cockroach-crawler.svg?variant=listed"',
-  'alt="Cockroach Crawler on LaunchNest" width="220" height="56"'
+  'alt="Cockroach Crawler on LaunchNest" width="220" height="56"',
+  'href="https://www.producthunt.com/products/cockroach-crawler?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-cockroach-crawler"',
+  'src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1205731&amp;theme=light&amp;t=1786794147726"',
+  'alt="Cockroach Crawler on Product Hunt" width="250" height="54"'
 ]) {
   if (!homeHtml.includes(recognition)) errors.push(`home page is missing launch-directory recognition: ${recognition}`);
 }
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);
 const headerPolicy = await readFile(join(dist, "_headers"), "utf8");
 if (/\bimmutable\b/.test(headerPolicy)) errors.push("unversioned site assets must remain revalidatable");
-for (const imageOrigin of ["https://launchnest.io", "https://fazier.com"]) {
+for (const imageOrigin of ["https://api.producthunt.com", "https://launchnest.io", "https://fazier.com"]) {
   if (!headerPolicy.includes(imageOrigin)) errors.push(`site image policy is missing launch-directory origin ${imageOrigin}`);
 }
 
