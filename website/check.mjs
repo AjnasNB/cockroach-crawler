@@ -436,13 +436,19 @@ for (const recognition of [
   'aria-label="Launch directories"',
   'href="https://fazier.com/launches/cockroachcrawler.com"',
   'src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&amp;theme=light"',
-  'width="120" height="51" alt="Fazier badge"'
+  'width="120" height="51" alt="Fazier badge"',
+  'href="https://launchnest.io/p/cockroach-crawler" target="_blank"',
+  'src="https://launchnest.io/badge/cockroach-crawler.svg?variant=listed"',
+  'alt="Cockroach Crawler on LaunchNest" width="220" height="56"'
 ]) {
-  if (!homeHtml.includes(recognition)) errors.push(`home page is missing Fazier recognition: ${recognition}`);
+  if (!homeHtml.includes(recognition)) errors.push(`home page is missing launch-directory recognition: ${recognition}`);
 }
 if (videoCount < 5) errors.push(`expected at least 5 embedded captioned videos, found ${videoCount}`);
 const headerPolicy = await readFile(join(dist, "_headers"), "utf8");
 if (/\bimmutable\b/.test(headerPolicy)) errors.push("unversioned site assets must remain revalidatable");
+for (const imageOrigin of ["https://launchnest.io", "https://fazier.com"]) {
+  if (!headerPolicy.includes(imageOrigin)) errors.push(`site image policy is missing launch-directory origin ${imageOrigin}`);
+}
 
 const mockEnvironment = {
   ASSETS: {
