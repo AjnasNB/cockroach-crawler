@@ -7,7 +7,7 @@ observed-development result for its opt-in Node quality `balanced` path:
 
 | Version | Corpus | Pages | Precision | Recall | Macro F1 |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `0.7.0` | WCEB v1.0, observed partition | 511 | **0.894101** | **0.926022** | **0.890524** |
+| `0.7.0` | WCEB v1.0, observed partition | 511 | **0.894101 (89.4101%)** | **0.926022 (92.6022%)** | **0.890524 (89.0524%)** |
 
 This is positive, reproducible release evidence within its declared
 scope. It is not untouched held-out confirmation. Publication reports the
@@ -60,7 +60,7 @@ case-insensitive literal inclusion.
 | Surface and corpus | Pages | Precision | Recall | F1 | Required-snippet recall | Unwanted inclusion | Abstentions |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Core `structural`, observed partition | 511 | 0.793763 | 0.873844 | 0.791500 | 0.835584 | 0.178735 | - |
-| Quality `balanced`, observed partition | 511 | **0.894101** | **0.926022** | **0.890524** | **0.864090** | 0.111383 | - |
+| Quality `balanced`, observed partition | 511 | **0.894101 (89.4101%)** | **0.926022 (92.6022%)** | **0.890524 (89.0524%)** | **0.864090** | 0.111383 | - |
 | Quality `balanced`, WCEB development split | 1,497 | 0.852784 | 0.896259 | 0.847064 | 0.755867 | **0.096181** | - |
 | Quality `balanced`, fail-closed, observed partition | 511 | 0.847901 | 0.875080 | 0.844935 | 0.812035 | 0.104207 | 43 |
 

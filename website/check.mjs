@@ -121,7 +121,7 @@ if (sitemapLocations.filter((location) => /\/docs\/capabilities\/[^/]+\/[^/]+\/$
 const searchIndex = JSON.parse(await readFile(join(dist, "search.json"), "utf8"));
 if (!Array.isArray(searchIndex) || searchIndex.length !== sitemapLocations.length) errors.push("search.json must index every public route");
 const benchmarkSearch = searchIndex.find((entry) => entry.url === "https://cockroachcrawler.com/benchmark/");
-if (!benchmarkSearch || !benchmarkSearch.description.includes("0.894101 precision") || !benchmarkSearch.description.includes("0.926022 recall") || !benchmarkSearch.description.includes("0.890524 macro F1")) {
+if (!benchmarkSearch || !benchmarkSearch.description.includes("89.4101% precision") || !benchmarkSearch.description.includes("92.6022% recall") || !benchmarkSearch.description.includes("89.0524% macro F1")) {
   errors.push("search.json must publish the exact stable 0.7.0 benchmark in the benchmark route description");
 }
 if (JSON.stringify(searchIndex).includes("Core structural · observed 511") || JSON.stringify(searchIndex).includes("0.793763")) {
@@ -308,6 +308,13 @@ if (releaseHtml.includes("Release · 0.3.0")) errors.push("release page must not
 const benchmarkHtml = await readFile(join(dist, "benchmark", "index.html"), "utf8");
 for (const proof of [
   "observed-development evidence",
+  "89.4101% precision",
+  "92.6022% recall",
+  "89.0524% macro F1",
+  "Do not combine unlike product metrics",
+  "98.71% result",
+  "It is not Crawler extraction precision, recall, or F1",
+  "A 98% precision claim requires new evidence, not a renamed number",
   "0.894101",
   "0.926022",
   "0.890524",
@@ -337,6 +344,9 @@ for (const proof of [
   if (!benchmarkHtml.includes(proof)) errors.push(`benchmark page is missing scoped development evidence: ${proof}`);
 }
 if (benchmarkHtml.includes("511 held-out pages") || benchmarkHtml.includes("complete held-out")) errors.push("benchmark page must not present the observed 511-page corpus as untouched evidence");
+if (benchmarkHtml.includes("98.71% extraction precision") || benchmarkHtml.includes("0.987 precision") || benchmarkHtml.includes("98.71% Crawler precision")) {
+  errors.push("benchmark page must not relabel Qarinah context reduction as Crawler extraction precision");
+}
 if (!benchmarkHtml.includes("<tbody><tr><td>Quality balanced · observed 511</td><td><strong>0.894101</strong></td><td><strong>0.926022</strong></td><td><strong>0.890524</strong></td>")) {
   errors.push("benchmark page must lead its stable summary table with the exact quality-balanced row");
 }

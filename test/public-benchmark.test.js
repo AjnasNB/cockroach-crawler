@@ -130,6 +130,9 @@ test("0.7.0 benchmark evidence is packaged, versioned, and independently verifia
   assert.equal(development.scope.confirmatoryEligible, false);
   assert.equal(observed.scope.evaluationStatus, "observed-development-evidence-after-project-iteration");
   assert.ok(observed.results.precision < 0.9, "0.894101 must not be rounded into a 0.90 claim.");
+  assert.equal((observed.results.precision * 100).toFixed(4), "89.4101");
+  assert.equal((observed.results.recall * 100).toFixed(4), "92.6022");
+  assert.equal((observed.results.f1 * 100).toFixed(4), "89.0524");
 
   const verification = execFileSync(
     process.execPath,
