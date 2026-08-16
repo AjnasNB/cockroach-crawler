@@ -4,6 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/cockroach-crawler.svg)](https://www.npmjs.com/package/cockroach-crawler)
 [![release 0.7.0](https://img.shields.io/badge/release-0.7.0-10b981.svg)](https://github.com/AjnasNB/cockroach-crawler/releases/tag/v0.7.0)
+[![prerelease 0.8.0-rc.1](https://img.shields.io/badge/prerelease-0.8.0--rc.1-f59e0b.svg)](https://www.npmjs.com/package/cockroach-crawler/v/0.8.0-rc.1)
 [![CI](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/AjnasNB/cockroach-crawler/actions/workflows/ci.yml)
 [![Node.js 22 / 24 / 26](https://img.shields.io/badge/Node.js-22%20%7C%2024%20%7C%2026-339933.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](./LICENSE)
@@ -97,7 +98,23 @@ Every capability stays behind creator-owned origin, request, byte, redirect, con
 - **Proof travels with the content:** canonical URLs, redirect history, content hashes, retrieval metadata, failures, warnings, and provenance stay attached to results.
 - **No-key routes are explicit:** public GitHub reads and an optional reviewed YouTube route work without developer API credentials; session-backed providers remain separately installed and operator controlled.
 
-Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [category-based alternatives guide](https://cockroachcrawler.com/compare/) covering Firecrawl, Crawl4AI, Crawlee, Scrapy, Trafilatura, Playwright, Puppeteer, Apify, and ScrapingBee before choosing a crawler.
+Cockroach Crawler is not a hosted proxy fleet or an access-control bypass. Compared with broad crawling platforms, its differentiator is the inspectable boundary around every returned record. Read the [category-based alternatives guide](https://cockroachcrawler.com/compare/) covering managed acquisition, crawler frameworks, specialist extraction, and direct browser-automation libraries before choosing a crawler.
+
+### Opt-in governed browser automation
+
+`cockroach-crawler/browser-automation` is a separate, opt-in authority boundary for hosts that need direct page actions. It binds one exact origin per isolated session and validates action/effect allowlists, deadlines, session lifetime, uploads, saved artifacts, and bounded plain-data results before dispatch to the optional Playwright runtime. It is published for evaluation in `0.8.0-rc.1` through npm's `next` tag; stable `latest` remains `0.7.0`.
+
+```bash
+npm install cockroach-crawler@next playwright
+npx playwright install chromium firefox
+```
+
+Playwright is an optional peer dependency owned by the consuming host, not an
+ambient runtime installed by the crawler. The `0.8.0-rc.1` lockfile and CI use
+exact Playwright `1.62.1`; the public peer range is `>=1.48.0 <2`, and runtime
+method probes can expose fewer handlers on older compatible builds.
+
+The [browser-automation guide](docs/BROWSER-AUTOMATION.md) and [machine-readable capability matrix](docs/browser-automation-capability-matrix.json) distinguish cataloged contracts from built-in handlers, trusted-service-dependent handlers, explicit unsupported states, and actions exercised by installed engines. The 102 cataloged contracts are not a claim of comprehensive runtime support; the current maximum configured backend exposes 71 bounded handlers, names 31 unsupported actions, and exercises the same 28 action kinds against installed Chromium and Firefox. Ordered multi-file upload is included; ambiguous click-triggered download persistence and persistent request mutation stay fail-closed.
 
 ## 50 top-level shipped capabilities
 
@@ -989,13 +1006,13 @@ npm run bench
 npm run audit:licenses
 npm run worker:check
 npm run worker:types
-npx playwright install chromium
+npx playwright install chromium firefox
 npm run test:browser
 npm audit --omit=dev --audit-level=high
 npm pack --dry-run --json --ignore-scripts
 ```
 
-The normal suite covers adversarial SSRF (including Azure's host-platform address), IPv4/IPv6/provider endpoints, mixed DNS, pinned redirects, robots failure modes, sitemap origin policy, exact budgets and callback deadlines, unknown-key/prototype/accessor resistance, immutable agent policy, literal-only agent filters, CLI behavior, and packed external TypeScript consumption. The real Chromium suite verifies rendering/clicks, pinned proxying, redirect cookies and provenance, sensitive subresource/redirect denial, close-time request races, popup first requests, robots on subresources, decoded-byte and duration limits, WebSocket blocking, WebRTC/STUN blocking, and denial of state-changing methods.
+The normal suite covers adversarial SSRF (including Azure's host-platform address), IPv4/IPv6/provider endpoints, mixed DNS, pinned redirects, robots failure modes, sitemap origin policy, exact budgets and callback deadlines, unknown-key/prototype/accessor resistance, immutable agent policy, literal-only agent filters, CLI behavior, and packed external TypeScript consumption. The crawler rendering suite verifies Chromium rendering/clicks, pinned proxying, redirect cookies and provenance, sensitive subresource/redirect denial, close-time request races, popup first requests, robots on subresources, decoded-byte and duration limits, WebSocket blocking, WebRTC/STUN blocking, and denial of state-changing methods. The governed-action smoke executes its exact 28-action evidence set on both installed Chromium and Firefox.
 
 See [docs/RELEASE.md](./docs/RELEASE.md) for the complete release gate.
 

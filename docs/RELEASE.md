@@ -1,5 +1,38 @@
 # Release checklist
 
+## 0.8.0-rc.1 governed browser prerelease
+
+This release adds the opt-in `cockroach-crawler/browser-automation` export.
+It is a prerelease evaluation surface, not a stable promotion and not a claim
+of comprehensive browser-library parity. The generated matrix records 102
+cataloged contracts, 60 built-in handlers, 11 trusted-service-dependent
+handlers, 31 explicit unsupported actions, and the same 28 action kinds
+executed in installed Chromium and Firefox.
+
+Publish `0.8.0-rc.1` only from an independently reviewed, green merge commit
+through `.github/workflows/publish-npm.yml`, the registered trusted-publisher
+workflow. The workflow must select `next`; its prerelease guard rejects
+`latest`. After registry provenance and signature verification, create an
+annotated `v0.8.0-rc.1` tag at that exact merge commit and a GitHub prerelease
+with checksums plus the generated capability matrix and engine-verified action
+list. Stable npm `latest` and the stable website documentation remain 0.7.0.
+
+Before publication:
+
+1. Confirm package, lockfile, runtime constant, MCP Registry metadata,
+   CodeMeta, and citation metadata all identify `0.8.0-rc.1`.
+2. Run `npm run release:check` from a full-history checkout. The release
+   invariant must prove that immutable `v0.7.0`, its benchmark digest, and the
+   historical white-paper evidence have not changed.
+3. Run the Chromium and Firefox integration job and require the generated
+   matrix to match the checked-in artifact exactly.
+4. Verify the package is absent before publishing and that
+   `npm view cockroach-crawler@latest version` remains `0.7.0` afterwards.
+5. Deploy candidate documentation only after npm `next` and the matching
+   GitHub prerelease are both coherent with the reviewed main-branch commit.
+
+The sections below remain the historical stable 0.7 release record.
+
 Use this checklist from a clean, reviewed commit. Never publish from a worktree
 containing unreviewed changes or credentials. Release `0.7.0` requires
 quality-backend, benchmark-integrity, provider/security, packed-consumer, and

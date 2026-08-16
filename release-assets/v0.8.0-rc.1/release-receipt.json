@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "cockroach.release-assets.v1",
+  "package": "cockroach-crawler",
+  "version": "0.8.0-rc.1",
+  "npmDistTag": "next",
+  "stableLatest": "0.7.0",
+  "capabilityAccounting": {
+    "catalogedActions": 102,
+    "catalogedCategories": 16,
+    "builtInHandlerActions": 60,
+    "trustedServiceRequiredActions": 11,
+    "maximumConfiguredHandlers": 71,
+    "explicitlyUnsupportedActions": 31,
+    "realEngineIntegrationVerifiedActionsPerEngine": 28,
+    "testedEngines": [
+      "chromium",
+      "firefox"
+    ]
+  },
+  "npmArtifact": {
+    "recordedBy": ".github/workflows/publish-npm.yml",
+    "note": "The trusted-publishing workflow records the exact tarball size, SHA-256, and npm integrity for the merge commit."
+  }
+}
