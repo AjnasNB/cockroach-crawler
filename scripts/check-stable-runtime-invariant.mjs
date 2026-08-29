@@ -6,6 +6,52 @@ const root = new URL("../", import.meta.url);
 const reviewedPackageCommit = "62f270636a019c9bcc617a13fe254640bcd06925";
 const stableVersion = "0.7.0";
 const errors = [];
+const approvedSecurityLockRefresh = new Map([
+  ["node_modules/@cloudflare/workerd-darwin-64", {
+    version: "1.20260828.1",
+    sha256: "14d18938967dd77a49973b6b9664d61fd63b91327cf8a6d82e87df02c1d489c4"
+  }],
+  ["node_modules/@cloudflare/workerd-darwin-arm64", {
+    version: "1.20260828.1",
+    sha256: "8085ab39af1ffa7ecaf352746c7aa2e257c4755a5dff858de19767a2bf698904"
+  }],
+  ["node_modules/@cloudflare/workerd-linux-64", {
+    version: "1.20260828.1",
+    sha256: "83a4fbf92cdeb09ad89f4d76875604582a6729ef1fdfd3c5885959750891174b"
+  }],
+  ["node_modules/@cloudflare/workerd-linux-arm64", {
+    version: "1.20260828.1",
+    sha256: "3925210d7a2395c104a3e885bb63d66c81397c6970396b73dc4ba6a998f133f1"
+  }],
+  ["node_modules/@cloudflare/workerd-windows-64", {
+    version: "1.20260828.1",
+    sha256: "7906b51fb2027fcd3f4799bbdcbb19adb1090e2a40f9291e4ab8db810a64da1c"
+  }],
+  ["node_modules/@jridgewell/sourcemap-codec", {
+    version: "1.6.0",
+    sha256: "a92e530c580b9c6b8b5f17e0b24ae94a2d5882cd621a41510db27cfc97167cee"
+  }],
+  ["node_modules/@speed-highlight/core", {
+    version: "1.2.24",
+    sha256: "dc992a123924ebb886c43a06227ef69dd7715a09d197c075e9775e75a53467d0"
+  }],
+  ["node_modules/miniflare", {
+    version: "5.20260828.0-alpha",
+    sha256: "6d08e3026535faae281315761296efad722b0c240c0475ca39a7ae0c1a338c42"
+  }],
+  ["node_modules/miniflare/node_modules/undici", {
+    version: null,
+    sha256: "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+  }],
+  ["node_modules/workerd", {
+    version: "1.20260828.1",
+    sha256: "84d68c76f377943a906b3ea9373956d480df5fccb0014574c87456f64df760c7"
+  }],
+  ["node_modules/wrangler", {
+    version: "4.127.1",
+    sha256: "f03dc7ceb0c9fc973a9e2e69fbc77d6e56c19368426db70af07b347a7357dbcc"
+  }]
+]);
 
 function git(args) {
   try {
@@ -128,9 +174,25 @@ requireValue(currentLock.version === stableVersion, `package-lock.json must iden
 requireValue(currentLock.packages?.[""]?.version === stableVersion, `package-lock root package must identify ${stableVersion}`);
 currentLock.version = historicalLock.version;
 currentLock.packages[""].version = historicalLock.packages[""].version;
+for (const [path, expected] of approvedSecurityLockRefresh) {
+  const entry = currentLock.packages[path] ?? null;
+  requireValue(
+    (entry?.version ?? null) === expected.version,
+    `${path} must resolve to the approved security-refresh version ${expected.version ?? "<deduplicated>"}`
+  );
+  requireValue(
+    sha256(JSON.stringify(entry)) === expected.sha256,
+    `${path} changed beyond its exact approved security-refresh lock entry`
+  );
+  if (entry === null) {
+    delete historicalLock.packages[path];
+  } else {
+    historicalLock.packages[path] = structuredClone(entry);
+  }
+}
 requireValue(
   deepEqual(currentLock, historicalLock),
-  "package-lock dependency graph drifted from the reviewed RC package"
+  "package-lock dependency graph drifted outside the approved security refresh"
 );
 
 const currentServer = await currentJson("server.json");
@@ -199,6 +261,7 @@ if (errors.length > 0) {
     stableVersion,
     reviewedPackageCommit,
     approvedRuntimeMetadata: [...approvedRuntimeMetadata].sort(),
+    approvedSecurityLockRefresh: Object.fromEntries(approvedSecurityLockRefresh),
     unchangedRuntimeFiles: runtimePaths,
     immutableEvidenceFiles: immutableEvidencePaths.length,
     observedQualitySha256: sha256(qualityBytes)
