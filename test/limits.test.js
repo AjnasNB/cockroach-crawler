@@ -4,6 +4,16 @@ import { afterEach, test } from "node:test";
 import { crawl, crawlDetailed, discoverSitemapUrls, extractPage } from "../src/index.js";
 
 const servers = new Set();
+const HTML_TEXT_ENTITIES = new Map([
+  ["&", "&amp;"],
+  ["<", "&lt;"],
+  [">", "&gt;"],
+  ['"', "&quot;"]
+]);
+
+function escapeHtmlText(value) {
+  return String(value).replace(/[&<>"]/g, (character) => HTML_TEXT_ENTITIES.get(character));
+}
 
 async function listen(handler) {
   const server = createServer(handler);
@@ -32,7 +42,7 @@ test("maxPages and onPage are exact under concurrency", async () => {
   const baseUrl = await listen((request, response) => {
     hits += 1;
     response.setHeader("content-type", "text/html");
-    response.end(`<main><h1>${request.url}</h1></main>`);
+    response.end(`<main><h1>${escapeHtmlText(request.url)}</h1></main>`);
   });
   const observed = [];
   const pages = await crawl({
@@ -134,7 +144,7 @@ test("queue and URL-length budgets bound discovered links", async () => {
       </main>`);
       return;
     }
-    response.end(`<main><h1>${request.url}</h1></main>`);
+    response.end(`<main><h1>${escapeHtmlText(request.url)}</h1></main>`);
   });
   const result = await crawlDetailed({
     ...localOptions,
