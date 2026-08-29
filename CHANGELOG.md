@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Security
+
+- Hardened browser integration fixtures so they use test-scoped certificate
+  authorities, escaped reflected request data, non-credentialed CORS, and
+  prototype-safe state without weakening the scenarios under test.
+- Refreshed the development-only Wrangler and Miniflare lock graph so their
+  Undici dependency deduplicates to patched version `7.29.0`, resolving five
+  open advisories. Runtime source, production dependency declarations, and
+  frozen benchmark evidence remain unchanged. The stable-runtime invariant
+  pins every permitted lock entry and rejects any additional graph drift.
+
 ## 0.7.0 - 2026-08-09
 
 This stable release promotes the reviewed 0.7 API and package surface without

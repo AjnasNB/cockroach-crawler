@@ -103,6 +103,11 @@ test("stable metadata is the only shipped-runtime drift from the reviewed RC pac
   assert.equal(receipt.ok, true);
   assert.equal(receipt.stableVersion, "0.7.0");
   assert.equal(receipt.reviewedPackageCommit, "62f270636a019c9bcc617a13fe254640bcd06925");
+  assert.equal(receipt.approvedSecurityLockRefresh["node_modules/wrangler"].version, "4.127.1");
+  assert.equal(
+    receipt.approvedSecurityLockRefresh["node_modules/miniflare/node_modules/undici"].version,
+    null
+  );
   assert.equal(receipt.observedQualitySha256, "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535");
 });
 

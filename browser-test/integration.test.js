@@ -5,14 +5,20 @@ import { createServer } from "node:http";
 import { createServer as createHttpsServer } from "node:https";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, test } from "node:test";
+import { after, afterEach, test } from "node:test";
+import { createSecureContext, getCACertificates, setDefaultCACertificates } from "node:tls";
 import { chromium } from "playwright";
-import coreBundle from "playwright-core/lib/coreBundle";
 import { parsePdf } from "../src/documents.js";
-import { crawl } from "../src/index.js";
+import { generateTestCertificate } from "./test-certificate.js";
 
 const servers = new Set();
 const udpSockets = new Set();
+
+function fixtureMode(value) {
+  if (value === "native") return "native";
+  if (value === "crawler") return "crawler";
+  return null;
+}
 
 async function listenServer(handler) {
   const server = createServer(handler);
@@ -25,24 +31,36 @@ async function listen(handler) {
   return (await listenServer(handler)).url;
 }
 
-const testTlsCredentials = coreBundle.utils.generateSelfSignedCertificate();
+const defaultCertificateAuthorities = getCACertificates("default");
+const sourceTlsCredentials = generateTestCertificate("source.origin.test");
+const targetTlsCredentials = generateTestCertificate("target.crawler.test");
+const testTlsContexts = new Map([
+  ["source.origin.test", createSecureContext(sourceTlsCredentials)],
+  ["target.crawler.test", createSecureContext(targetTlsCredentials)]
+]);
+setDefaultCACertificates([
+  ...defaultCertificateAuthorities,
+  sourceTlsCredentials.cert,
+  targetTlsCredentials.cert
+]);
+after(() => setDefaultCACertificates(defaultCertificateAuthorities));
+const { crawl } = await import("../src/index.js");
 
 async function listenHttpsServer(handler) {
-  const server = createHttpsServer(testTlsCredentials, handler);
+  const server = createHttpsServer({
+    ...targetTlsCredentials,
+    SNICallback(servername, callback) {
+      const context = testTlsContexts.get(servername);
+      if (!context) {
+        callback(new Error(`Unexpected test TLS server name: ${servername}`));
+        return;
+      }
+      callback(null, context);
+    }
+  }, handler);
   servers.add(server);
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   return { server, url: `https://127.0.0.1:${server.address().port}` };
-}
-
-async function withTestTls(callback) {
-  const previous = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-  try {
-    return await callback();
-  } finally {
-    if (previous === undefined) delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
-    else process.env.NODE_TLS_REJECT_UNAUTHORIZED = previous;
-  }
 }
 
 afterEach(async () => {
@@ -615,11 +633,11 @@ test("browser cookie bridge matches native rejection of unsafe HTTPS response co
   let crawlerFinalCookie = null;
   const { server } = await listenHttpsServer((request, response) => {
     const port = server.address().port;
-    const source = `https://source.test:${port}`;
-    const target = `https://target.test:${port}`;
+    const source = `https://source.origin.test:${port}`;
+    const target = `https://target.crawler.test:${port}`;
     const hostname = String(request.headers.host || "").split(":", 1)[0];
     const mode = request.url.includes("native") ? "native" : "crawler";
-    if (hostname === "source.test" && ["/native", "/crawler"].includes(request.url)) {
+    if (hostname === "source.origin.test" && ["/native", "/crawler"].includes(request.url)) {
       response.setHeader("content-type", "text/html");
       response.end(`<main>
         <img src="${target}/plant-${mode}">
@@ -627,7 +645,7 @@ test("browser cookie bridge matches native rejection of unsafe HTTPS response co
       </main>`);
       return;
     }
-    if (hostname === "target.test" && request.url === `/plant-${mode}`) {
+    if (hostname === "target.crawler.test" && request.url === `/plant-${mode}`) {
       response.setHeader("set-cookie", [
         "valid_none=ok; SameSite=None; Secure; Path=/",
         "none_without_secure=blocked; SameSite=None; Path=/",
@@ -642,12 +660,12 @@ test("browser cookie bridge matches native rejection of unsafe HTTPS response co
       response.end();
       return;
     }
-    if (hostname === "target.test" && request.url === "/final-native") {
+    if (hostname === "target.crawler.test" && request.url === "/final-native") {
       nativeFinalCookie = request.headers.cookie || "";
       response.end("native final");
       return;
     }
-    if (hostname === "target.test" && request.url === "/final-crawler") {
+    if (hostname === "target.crawler.test" && request.url === "/final-crawler") {
       crawlerFinalCookie = request.headers.cookie || "";
       response.end("crawler final");
       return;
@@ -656,11 +674,11 @@ test("browser cookie bridge matches native rejection of unsafe HTTPS response co
     response.end("not found");
   });
   const port = server.address().port;
-  const source = `https://source.test:${port}`;
-  const target = `https://target.test:${port}`;
+  const source = `https://source.origin.test:${port}`;
+  const target = `https://target.crawler.test:${port}`;
   const browser = await chromium.launch({
     headless: true,
-    args: ["--host-resolver-rules=MAP source.test 127.0.0.1, MAP target.test 127.0.0.1"]
+    args: ["--host-resolver-rules=MAP source.origin.test 127.0.0.1, MAP target.crawler.test 127.0.0.1"]
   });
   try {
     const context = await browser.newContext({ ignoreHTTPSErrors: true });
@@ -675,7 +693,7 @@ test("browser cookie bridge matches native rejection of unsafe HTTPS response co
     }]);
     const page = await context.newPage();
     await page.goto(`${source}/native`, { waitUntil: "load" });
-    await Promise.all([page.waitForURL(/target\.test/), page.click("#navigate")]);
+    await Promise.all([page.waitForURL(/target\.crawler\.test/), page.click("#navigate")]);
     await context.close();
   } finally {
     await browser.close();
@@ -687,7 +705,7 @@ test("browser cookie bridge matches native rejection of unsafe HTTPS response co
     cookies: [{
       name: "credential_seed",
       value: "ok",
-      domain: "target.test",
+      domain: "target.crawler.test",
       path: "/",
       expires: -1,
       httpOnly: true,
@@ -697,7 +715,7 @@ test("browser cookie bridge matches native rejection of unsafe HTTPS response co
     origins: []
   }), "utf8");
   try {
-    await withTestTls(() => crawl({
+    await crawl({
       seeds: [`${source}/crawler`],
       maxPages: 1,
       sameOrigin: false,
@@ -707,7 +725,7 @@ test("browser cookie bridge matches native rejection of unsafe HTTPS response co
       allowPrivateNetworks: true,
       dnsLookup: async () => [{ address: "127.0.0.1", family: 4 }],
       browser: { storageState, waitUntil: "load", click: ["#navigate"] }
-    }));
+    });
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -747,10 +765,10 @@ test("browser cookie bridge accepts an explicitly Secure SameSite=None HTTPS nav
     response.end("not found");
   });
   const port = server.address().port;
-  const origin = `https://target.test:${port}`;
+  const origin = `https://target.crawler.test:${port}`;
   const browser = await chromium.launch({
     headless: true,
-    args: ["--host-resolver-rules=MAP target.test 127.0.0.1"]
+    args: ["--host-resolver-rules=MAP target.crawler.test 127.0.0.1"]
   });
   try {
     const context = await browser.newContext({ ignoreHTTPSErrors: true });
@@ -762,7 +780,7 @@ test("browser cookie bridge accepts an explicitly Secure SameSite=None HTTPS nav
     await browser.close();
   }
 
-  await withTestTls(() => crawl({
+  await crawl({
     seeds: [`${origin}/crawler`],
     maxPages: 1,
     obeyRobots: false,
@@ -770,7 +788,7 @@ test("browser cookie bridge accepts an explicitly Secure SameSite=None HTTPS nav
     allowPrivateNetworks: true,
     dnsLookup: async () => [{ address: "127.0.0.1", family: 4 }],
     browser: { waitUntil: "load", click: ["#navigate"] }
-  }));
+  });
 
   assert.match(nativeCookie || "", /(?:^|; )valid_none=ok(?:;|$)/);
   assert.match(crawlerCookie || "", /(?:^|; )valid_none=ok(?:;|$)/);
@@ -891,7 +909,12 @@ test("browser cookie bridge matches native credentials, path, and negative Max-A
   };
   const baseUrl = await listen((request, response) => {
     const parsed = new URL(request.url, "http://local.test");
-    const mode = parsed.searchParams.get("mode") || parsed.pathname.split("/").at(-1);
+    const mode = fixtureMode(parsed.searchParams.get("mode") || parsed.pathname.split("/").at(-1));
+    if (!mode) {
+      response.statusCode = 404;
+      response.end("not found");
+      return;
+    }
     if (["/dir/native", "/dir/crawler"].includes(parsed.pathname)) {
       response.setHeader("set-cookie", [
         "top_cookie=ok; SameSite=Strict; Path=/",
@@ -912,11 +935,6 @@ test("browser cookie bridge matches native credentials, path, and negative Max-A
           document.body.dataset.done = 'yes';
         })();
       </script></body>`);
-      return;
-    }
-    if (!["native", "crawler"].includes(mode)) {
-      response.statusCode = 404;
-      response.end("not found");
       return;
     }
     if (parsed.pathname === "/omit") {
@@ -969,13 +987,18 @@ test("browser cookie bridge matches native credentials, path, and negative Max-A
 });
 
 test("browser cookie bridge treats sandboxed opaque frames as incomplete like native Chromium", async () => {
-  const observed = {
-    native: Object.create(null),
-    crawler: Object.create(null)
-  };
+  const observed = new Map([
+    ["native", Object.create(null)],
+    ["crawler", Object.create(null)]
+  ]);
   const baseUrl = await listen((request, response) => {
     const parsed = new URL(request.url, "http://local.test");
-    const mode = parsed.searchParams.get("mode") || parsed.pathname.slice(1);
+    const mode = fixtureMode(parsed.searchParams.get("mode") || parsed.pathname.slice(1));
+    if (!mode) {
+      response.statusCode = 404;
+      response.end("not found");
+      return;
+    }
     if (["/native", "/crawler"].includes(parsed.pathname)) {
       response.setHeader("set-cookie", "strict_top=secret; SameSite=Strict; Path=/; HttpOnly");
       response.setHeader("content-type", "text/html");
@@ -993,17 +1016,15 @@ test("browser cookie bridge treats sandboxed opaque frames as incomplete like na
       return;
     }
     if (parsed.pathname === "/sandbox-probe") {
-      observed[mode].probe = request.headers.cookie || "";
-      response.setHeader("access-control-allow-origin", "null");
-      response.setHeader("access-control-allow-credentials", "true");
+      observed.get(mode).probe = request.headers.cookie || "";
+      response.setHeader("access-control-allow-origin", "*");
       response.setHeader("set-cookie", "sandbox_planted=blocked; SameSite=Strict; Path=/");
       response.end("probe");
       return;
     }
     if (parsed.pathname === "/sandbox-after") {
-      observed[mode].after = request.headers.cookie || "";
-      response.setHeader("access-control-allow-origin", "null");
-      response.setHeader("access-control-allow-credentials", "true");
+      observed.get(mode).after = request.headers.cookie || "";
+      response.setHeader("access-control-allow-origin", "*");
       response.end("after");
       return;
     }
@@ -1031,8 +1052,8 @@ test("browser cookie bridge treats sandboxed opaque frames as incomplete like na
   });
 
   for (const mode of ["native", "crawler"]) {
-    assert.equal(observed[mode].probe, "");
-    assert.equal(observed[mode].after, "");
+    assert.equal(observed.get(mode).probe, "");
+    assert.equal(observed.get(mode).after, "");
   }
 });
 
