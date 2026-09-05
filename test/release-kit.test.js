@@ -93,7 +93,7 @@ test("the packed feature inventory stays complete and release-honest", async () 
   assert.doesNotMatch(features, /DFS and relevance\/adaptive strategies \| Not implemented/);
 });
 
-test("stable metadata is the only shipped-runtime drift from the reviewed RC package", () => {
+test("stable runtime source and evidence stay frozen with the exact security-refreshed dependency lock", () => {
   const output = execFileSync(
     process.execPath,
     [path.join(ROOT, "scripts", "check-stable-runtime-invariant.mjs")],
@@ -103,6 +103,8 @@ test("stable metadata is the only shipped-runtime drift from the reviewed RC pac
   assert.equal(receipt.ok, true);
   assert.equal(receipt.stableVersion, "0.7.0");
   assert.equal(receipt.reviewedPackageCommit, "62f270636a019c9bcc617a13fe254640bcd06925");
+  assert.equal(receipt.dependencyLockKind, "security-refresh-2026-09-05");
+  assert.equal(receipt.dependencyLockSha256, "844c5e432f4ec20d47d1cdaca64b1f7c5ceffb177589304cbb2703bcfd0ee302");
   assert.equal(receipt.observedQualitySha256, "a71c884e9521d1cd1c6326dc07c1d1a5c36344244c45d4900a078ae92a8de535");
 });
 

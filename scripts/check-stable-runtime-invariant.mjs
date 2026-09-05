@@ -5,6 +5,10 @@ import { readFile } from "node:fs/promises";
 const root = new URL("../", import.meta.url);
 const reviewedPackageCommit = "62f270636a019c9bcc617a13fe254640bcd06925";
 const stableVersion = "0.7.0";
+// Exact security-refresh candidate, reviewed through the PR. Runtime source,
+// declared dependency ranges, and published benchmark evidence stay frozen.
+// See docs/DEPENDENCY-REFRESH-2026-09-05.md; arbitrary lock drift is still denied.
+const securityRefreshLockSha256 = "844c5e432f4ec20d47d1cdaca64b1f7c5ceffb177589304cbb2703bcfd0ee302";
 const errors = [];
 
 function git(args) {
@@ -129,8 +133,8 @@ requireValue(currentLock.packages?.[""]?.version === stableVersion, `package-loc
 currentLock.version = historicalLock.version;
 currentLock.packages[""].version = historicalLock.packages[""].version;
 requireValue(
-  deepEqual(currentLock, historicalLock),
-  "package-lock dependency graph drifted from the reviewed RC package"
+  sha256(JSON.stringify(currentLock)) === securityRefreshLockSha256,
+  "package-lock dependency graph differs from the exact security-refresh candidate"
 );
 
 const currentServer = await currentJson("server.json");
@@ -199,7 +203,9 @@ if (errors.length > 0) {
     stableVersion,
     reviewedPackageCommit,
     approvedRuntimeMetadata: [...approvedRuntimeMetadata].sort(),
-    unchangedRuntimeFiles: runtimePaths,
+    checkedRuntimePaths: runtimePaths,
+    dependencyLockKind: "security-refresh-2026-09-05",
+    dependencyLockSha256: sha256(JSON.stringify(currentLock)),
     immutableEvidenceFiles: immutableEvidencePaths.length,
     observedQualitySha256: sha256(qualityBytes)
   }, null, 2));
