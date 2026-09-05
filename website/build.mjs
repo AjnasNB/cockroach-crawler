@@ -698,6 +698,7 @@ function nav(active) {
     return `<a href="${href}"${current}>${page.nav}</a>`;
   };
   return `
+<aside class="fikeya-family" aria-label="Fikeya platform"><a href="https://fikeya.com/">Fikeya</a><span> / Cockroach Crawler · Web discovery component</span><a href="https://fikeya.com/platform/#crawler">Explore the platform →</a></aside>
     <header class="site-header">
       <div class="shell nav-shell">
         <a class="brand" href="/" aria-label="Cockroach Crawler home">
