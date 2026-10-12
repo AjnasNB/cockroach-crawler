@@ -100,7 +100,7 @@ jobs:
           if (result.correctness.status !== "passed") throw new Error("Benchmark correctness failed.");
           NODE
       - name: Upload raw benchmark evidence
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: benchmark-evidence-${{ github.sha }}
           path: bench/results/ci-local-regression.json
@@ -152,7 +152,7 @@ jobs:
           integrity="sha512-$(openssl dgst -sha512 -binary "${tarball}" | openssl base64 -A)"
           printf '## Exact package artifact\n\n- Package: `cockroach-crawler@%s`\n- Commit: `%s`\n- Size: `%s` bytes\n- SHA-256: `%s`\n- Integrity: `%s`\n- npm CLI: `12.0.1`\n' "${installed_version}" "${GITHUB_SHA}" "${size}" "${sha256}" "${integrity}" >> "${GITHUB_STEP_SUMMARY}"
       - name: Upload exact package artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: package-artifact-${{ github.sha }}
           path: ${{ runner.temp }}/pack/*.tgz
