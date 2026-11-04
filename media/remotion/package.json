@@ -16,14 +16,14 @@
     "validate": "node scripts/validate-renders.mjs"
   },
   "dependencies": {
-    "@remotion/media": "4.0.490",
+    "@remotion/media": "4.0.540",
     "@remotion/transitions": "4.0.490",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "remotion": "4.0.490"
   },
   "devDependencies": {
-    "@remotion/cli": "4.0.490",
+    "@remotion/cli": "4.0.540",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "typescript": "5.9.3"
